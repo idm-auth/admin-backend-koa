@@ -3,8 +3,6 @@
 │
 ├── src
 │   ├── index.ts                # começa tudo aqui
-│   ├── configs/                # Configura coisas
-│   │   ├── server.ts           # Entrada da aplicação
 │   ├── routes/                 # Importa todas as rotas
 │   │   ├── index.ts            # Registra todas as versões
 │   │   ├── v_/                 # Versão base
@@ -28,6 +26,7 @@
 │   │   └── user.model.ts
 │   │   └── product.model.ts
 │   ├── plugins/                          # Plugins koa (ex: JWT, CORS, DB)
+│   │   └── koaServer.plugins.ts          # Configuração do Koa Server
 │   │   └── db.plugin.ts
 │   │   └── auth.plugin.ts
 │   └── schemas/                          # Schemas de validação (ajuda koa a ser rápido)
