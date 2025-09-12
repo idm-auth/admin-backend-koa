@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { BaseConfigSchema } from '../base/baseConfig.v1.model';
+import { BaseConfigSchema } from './baseConfig.v1.model';
 
 export const WebAdminConfigSchema = new Schema({
   ...BaseConfigSchema.obj,

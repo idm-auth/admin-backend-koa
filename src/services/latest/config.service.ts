@@ -4,7 +4,7 @@ import type {
 } from '@idm-auth/backend-communications-schema/config/v1/webAdmin/response';
 
 import { getLogger, getRequestId } from '@/utils/localStorage.util';
-import { WebAdminConfigModel } from '@/models/config/webAdminConfig.v1.model';
+import { WebAdminConfigModel } from '@/models/db/core/config/webAdminConfig.v1.model';
 
 const getConfig = async (args: { app: string; env: EnvConfig }) => {
   const logger = getLogger();

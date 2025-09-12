@@ -2,7 +2,7 @@ import { describe, it, beforeAll, afterAll, beforeEach, expect } from 'vitest';
 import service from '@/services/latest/config.service';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { WebAdminConfigModel } from '@/models/config/webAdminConfig.v1.model';
+import { WebAdminConfigModel } from '@/models/db/core/config/webAdminConfig.v1.model';
 
 let mongo: MongoMemoryServer;
 
