@@ -15,7 +15,7 @@ services:
       <<: *default-environment
     volumes:
       - ..:/workspace:consistent
-      - ~/.npmrc:/home/node/.npmrc:cached
+      - ~/.npmrc:/home/dev-user/.npmrc:cached
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - ../../backend-communications-schema:/workspace/.external/backend-communications-schema:consistent
     ports:
@@ -31,7 +31,7 @@ services:
     environment:
       <<: *default-environment
     volumes:
-      - .devcontainer/containers/monogodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./containers/monogodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - ../.mongodata:/data/db
     networks:
       - private-network
