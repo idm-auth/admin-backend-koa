@@ -1,0 +1,44 @@
+x-environment: &default-environment
+  ENVIRONMENT_ACTIVE: local
+  MONGO_INITDB_ROOT_USERNAME: root
+  MONGO_INITDB_ROOT_PASSWORD: root_pass
+  MONGO_INITDB_DATABASE: mongoose
+
+services:
+  workspace:
+    image: workspace
+    tty: true
+    build:
+      context: ..
+      dockerfile: .devcontainer/containers/workspace/Dockerfile
+    environment:
+      <<: *default-environment
+    volumes:
+      - ..:/workspace:consistent
+      - ~/.npmrc:/home/node/.npmrc:cached
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ../../backend-communications-schema:/workspace/.external/backend-communications-schema:consistent
+    ports:
+      - 8080:8080
+    networks:
+      - dev-network
+      - private-network
+  mongo:
+    image: mongo
+    build:
+      context: ..
+      dockerfile: .devcontainer/containers/monogodb/Dockerfile
+    environment:
+      <<: *default-environment
+    volumes:
+      - .devcontainer/containers/monogodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ../.mongodata:/data/db
+    networks:
+      - private-network
+
+networks:
+  private-network:
+    driver: bridge
+  dev-network:
+    name: dev-network
+    external: true

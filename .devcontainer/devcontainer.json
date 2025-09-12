@@ -1,0 +1,65 @@
+{
+  "name": "backend-koa",
+  "service": "workspace",
+  "dockerComposeFile": "docker-compose.yml",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "dev-user",
+  // "postAttachCommand": "sh .devcontainer/scripts/postAttachCommand.sh",
+  "postStartCommand": "sh .devcontainer/scripts/postStartCommand.sh",
+  "overrideCommand": true,
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "workbench.colorCustomizations": {
+          "activityBar.background": "#0528eecb",
+          "activityBar.activeBackground": "#0528eecb",
+          "activityBar.inactiveForeground": "#ffffff",
+          "statusBar.background": "#0528eecb",
+          "statusBar.foreground": "#ffffff"
+        },
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": [
+          "source.fixAll.eslint"
+        ],
+        "eslint.validate": [
+          "javascript",
+          "typescript",
+        ],
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.autoImportSuggestions.enabled": true,
+        "javascript.autoImportSuggestions.enabled": true,
+        // "typescript.suggest.completeFunctionCalls": true,
+        // "editor.suggest.showTypeParameters": true,
+        // "typescript.inlayHints.parameterNames.enabled": "all",
+        // "typescript.inlayHints.variableTypes.enabled": true,
+        // "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+        // "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+        // "editor.quickSuggestions": {
+        //   "other": true,
+        //   "comments": false,
+        //   "strings": true
+        // },
+        // "editor.parameterHints.enabled": true,
+        // "editor.suggest.showMethods": true,
+        // "editor.suggest.showFunctions": true,
+        // "editor.suggest.showVariables": true,
+        // "editor.suggest.showProperties": true,
+        // "editor.suggest.showOperators": true
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "wayou.vscode-todo-highlight",
+        "mk12.better-git-line-blame",
+        "mongodb.mongodb-vscode"
+      ]
+    }
+  }
+}
