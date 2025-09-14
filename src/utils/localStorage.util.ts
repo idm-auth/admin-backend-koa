@@ -1,7 +1,6 @@
 // src/utils/localStorage.util.ts
 import { AsyncLocalStorage } from 'async_hooks';
 import type { Logger } from 'pino';
-import { logger } from '@/plugins/pino.plugin';
 
 interface RequestContext {
   requestId: string;

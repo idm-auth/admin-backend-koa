@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const requestIdMiddleware = async (
   ctx: Context,
-  next: () => Promise<any>
+  next: () => Promise<unknown>
 ) => {
   const requestId = ctx.get('X-Request-ID') || uuidv4(); // pega do header ou gera novo
 

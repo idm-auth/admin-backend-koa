@@ -1,8 +1,9 @@
-import { describe, it, beforeAll, afterAll, beforeEach, expect } from 'vitest';
-import service from '@/services/latest/config.service';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { WebAdminConfigModel } from '@/models/db/core/config/webAdminConfig.v1.model';
+import service from '@/services/latest/config.service';
+import { webAdminConfigZSchema } from '@idm-auth/backend-communications-schema/config/v1/webAdmin/response';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let mongo: MongoMemoryServer;
 
@@ -21,7 +22,7 @@ afterAll(async () => {
 describe('config.service', () => {
   it('getConfig.OK', async () => {
     const createdConfig = await WebAdminConfigModel.create({
-      name: 'web-admin',
+      app: 'web-admin',
       env: 'development',
       api: {
         main: {
@@ -29,11 +30,11 @@ describe('config.service', () => {
         },
       },
     });
-
-    const result = await service.getConfig({
+    const compareTo = webAdminConfigZSchema.parse(createdConfig.toObject());
+    const result = await service.getWebAdminConfig({
       app: 'web-admin',
       env: 'development',
     });
-    expect(result).toEqual(createdConfig.toObject());
+    expect(result).toEqual(compareTo);
   });
 });
