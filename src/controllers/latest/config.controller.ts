@@ -16,4 +16,9 @@ const getConfig = async (ctx: Context & { params: Params }) => {
   ctx.body = webAdminConfig;
 };
 
-export default { getConfig };
+const getInitSetup = async (ctx: Context) => {
+  const result = await service.initSetup();
+  ctx.body = result;
+};
+
+export default { getConfig, getInitSetup };

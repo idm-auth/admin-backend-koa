@@ -1,15 +1,16 @@
 const databaseAdmin = 'admin';
-const database = 'mongoose';
-const collection = 'mongoose';
+const database = 'idm-core-db';
+const collection = 'Realms';
 const user = 'mongoose';
 const pwd = 'mongoose';
 use(database);
 db.createCollection(collection);
 
+use(databaseAdmin);
 db.createUser({
   user: user,
   pwd: pwd,
-  roles: [{ role: 'readWrite', db: database }],
+  roles: ['readWriteAnyDatabase'],
 });
 
 // const databaseSingleTenant = 'singleTenant';

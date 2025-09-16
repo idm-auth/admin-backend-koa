@@ -10,7 +10,6 @@ const initialize = () => {
     ctx.body = 'Hello from Koa server!';
   });
 
-  router.allowedMethods();
   return router;
 };
 

@@ -25,12 +25,15 @@
   "dependencies": {
     "@idm-auth/backend-communications-schema": "file:.external/backend-communications-schema/dist",
     "@koa/bodyparser": "^6.0.0",
+    "@koa/cors": "^5.0.0",
     "@koa/router": "^14.0.0",
     "@types/koa-bodyparser": "^4.3.12",
+    "dotenv": "^17.2.2",
     "koa": "^3.0.1",
     "koa-logger": "^4.0.0",
     "mongoose": "^8.18.1",
     "pino": "^9.9.5",
+    "pino-caller": "^4.0.0",
     "uuid": "^13.0.0",
     "zod": "^4.1.8"
   },

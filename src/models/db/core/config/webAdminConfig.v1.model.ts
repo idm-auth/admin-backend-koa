@@ -1,4 +1,5 @@
-import { InferSchemaType, model, Schema } from 'mongoose';
+import { getCoreDb } from '@/plugins/mongo.plugin';
+import { InferSchemaType, Schema } from 'mongoose';
 import { BaseConfigSchema } from './baseConfig.v1.model';
 
 export const WebAdminConfigSchema = new Schema({
@@ -12,7 +13,8 @@ export const WebAdminConfigSchema = new Schema({
 
 export type WebAdminConfig = InferSchemaType<typeof WebAdminConfigSchema>;
 
-export const WebAdminConfigModel = model(
-  'WebAdminConfig',
-  WebAdminConfigSchema
-);
+// model em cima do core DB
+export const WebAdminConfigModel = async () => {
+  const conn = await getCoreDb();
+  return conn.model('WebAdminConfig', WebAdminConfigSchema);
+};

@@ -14,17 +14,23 @@ const getWebAdminConfig = async (
 ): GetWebAdminConfigReturn => {
   const logger = getLogger();
 
-  const model = await WebAdminConfigModel.findOne({
+  const model = await WebAdminConfigModel();
+  logger.debug({
+    app: args.app,
+    env: args.env,
+  });
+
+  const doc = await model.findOne({
     app: args.app,
     env: args.env,
   });
   logger.info({
-    msg: `model: ${JSON.stringify(model)}`,
+    msg: `model: ${JSON.stringify(doc)}`,
   });
 
   // 1. Converter para objeto plain
-  if (!model) return null; // já lida com não encontrado
-  const plainObject = model.toObject(); // método oficial do Mongoose
+  if (!doc) return null; // já lida com não encontrado
+  const plainObject = doc.toObject(); // método oficial do Mongoose
 
   // 2. Validar/parsear com Zod
   const result = webAdminConfigZSchema.parse(plainObject);
@@ -32,4 +38,29 @@ const getWebAdminConfig = async (
   return result;
 };
 
-export default { getWebAdminConfig };
+export const initSetup = async () => {
+  const logger = getLogger();
+  const model = await WebAdminConfigModel();
+  const base = {
+    app: 'web-admin',
+    env: process.env.ENV_NAME || 'development',
+  };
+  const doc = await model.findOne(base);
+  if (!doc) {
+    const config = {
+      ...base,
+      api: {
+        main: {
+          url: process.env.API_MAIN_URL || 'http://locahost:3000',
+        },
+      },
+    };
+    logger.debug(config);
+    await model.create(config);
+    return { status: 201 };
+  } else {
+    return { status: 200 };
+  }
+};
+
+export default { getWebAdminConfig, initSetup };

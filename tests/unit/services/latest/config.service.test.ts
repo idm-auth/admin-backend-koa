@@ -1,4 +1,5 @@
 import { WebAdminConfigModel } from '@/models/db/core/config/webAdminConfig.v1.model';
+import { initMainConnection } from '@/plugins/mongo.plugin';
 import service from '@/services/latest/config.service';
 import { webAdminConfigZSchema } from '@idm-auth/backend-communications-schema/config/v1/webAdmin/response';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -9,9 +10,7 @@ let mongo: MongoMemoryServer;
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri(), {
-    dbName: `config_service_${Date.now()}`,
-  });
+  initMainConnection(mongo.getUri());
 });
 
 afterAll(async () => {
@@ -21,7 +20,8 @@ afterAll(async () => {
 
 describe('config.service', () => {
   it('getConfig.OK', async () => {
-    const createdConfig = await WebAdminConfigModel.create({
+    const model = await WebAdminConfigModel();
+    const createdConfig = await model.create({
       app: 'web-admin',
       env: 'development',
       api: {
