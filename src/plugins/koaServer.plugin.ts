@@ -1,11 +1,13 @@
 import { requestIdMiddleware } from '@/middleware/requestId.middleware';
 import router from '@/routes/index.routes';
 import cors from '@koa/cors';
+import bodyParser from '@koa/bodyparser';
 import Koa from 'koa';
 
 const initialize = async () => {
   const app = new Koa();
   app.use(cors());
+  app.use(bodyParser());
 
   app.use(requestIdMiddleware);
   app.use(router.initialize().routes());
