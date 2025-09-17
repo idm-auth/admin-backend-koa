@@ -16,7 +16,6 @@ services:
     volumes:
       - ..:/workspace:consistent
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      - ../../backend-communications-schema:/workspace/.external/backend-communications-schema:consistent
     ports:
       - 8080:8080
     networks:

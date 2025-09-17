@@ -3,7 +3,7 @@ import {
   WebAdminConfig as WebAdminConfigResponse,
   webAdminConfigZSchema,
   EnvConfig,
-} from '@idm-auth/backend-communications-schema/config/v1/webAdmin/response';
+} from '@/schemas/config/v1/webAdmin/response';
 import { getLogger } from '@/utils/localStorage.util';
 
 export type GetConfigArgs = { app: string; env: EnvConfig };

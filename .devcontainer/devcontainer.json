@@ -58,7 +58,8 @@
         "EditorConfig.EditorConfig",
         "wayou.vscode-todo-highlight",
         "mk12.better-git-line-blame",
-        "mongodb.mongodb-vscode"
+        "mongodb.mongodb-vscode",
+        "AmazonWebServices.amazon-q-vscode"
       ]
     }
   }
