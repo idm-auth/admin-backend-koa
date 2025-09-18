@@ -1,6 +1,6 @@
 const databaseAdmin = 'admin';
 const database = 'idm-core-db';
-const collection = 'Realms';
+const collection = 'realms';
 const user = 'mongoose';
 const pwd = 'mongoose';
 use(database);

@@ -1,6 +1,6 @@
+import { EnvConfig } from '@/schemas/config/v1/webAdmin/response';
 import service from '@/services/latest/config.service';
 import { Context } from 'koa';
-import type { EnvConfig } from '@idm-auth/backend-communications-schema/config/v1/webAdmin/response';
 
 type Params = {
   env: EnvConfig;

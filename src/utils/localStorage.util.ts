@@ -16,8 +16,13 @@ export const runWithContext = (
   return asyncLocalStorage.run(context, callback);
 };
 
-export const getLogger = (): Logger | Console => {
-  return asyncLocalStorage.getStore()?.logger ?? console;
+export const getLogger = (): Logger => {
+  const contextLogger = asyncLocalStorage.getStore()?.logger;
+  if (contextLogger) return contextLogger;
+  
+  // Fallback para logger Pino quando não há contexto
+  const pino = require('pino');
+  return pino({ level: 'debug' });
 };
 
 export const getRequestId = (): string => {

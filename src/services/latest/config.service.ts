@@ -6,12 +6,10 @@ import {
 } from '@/schemas/config/v1/webAdmin/response';
 import { getLogger } from '@/utils/localStorage.util';
 
-export type GetConfigArgs = { app: string; env: EnvConfig };
-export type GetWebAdminConfigReturn = Promise<WebAdminConfigResponse | null>;
-
-const getWebAdminConfig = async (
-  args: GetConfigArgs
-): GetWebAdminConfigReturn => {
+const getWebAdminConfig = async (args: {
+  app: string;
+  env: EnvConfig;
+}): Promise<WebAdminConfigResponse | null> => {
   const logger = getLogger();
 
   const model = await WebAdminConfigModel();

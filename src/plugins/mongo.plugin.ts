@@ -1,12 +1,8 @@
-import { RealmModel } from '@/models/db/core/realms/realms.v1.model';
 import mongoose, { Connection } from 'mongoose';
 import { getLogger } from '@/plugins/pino.plugin';
 
+export type DBName = string;
 let mainConnection: Connection;
-
-// cache em memória de tenants
-type RealmInfo = { publicUUID: string; dbName: string };
-const tenantCache = new Map<string, RealmInfo>();
 
 // cria apenas uma conexão principal
 export const initMainConnection = async (mongodbUri?: string) => {
@@ -34,20 +30,8 @@ export const getCoreDb = async (): Promise<Connection> => {
 };
 
 // acesso dinâmico a um realm
-export const getRealmDb = async (tenantId: string): Promise<Connection> => {
+export const getRealmDb = async (dbName: DBName): Promise<Connection> => {
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
 
-  // consulta cache
-  let realmInfo = tenantCache.get(tenantId);
-
-  if (!realmInfo) {
-    const model = await RealmModel();
-    const realmDoc = await model.findOne({ publicUUID: tenantId }).lean();
-    if (!realmDoc) throw new Error(`Tenant não encontrado: ${tenantId}`);
-
-    realmInfo = { publicUUID: realmDoc.publicUUID, dbName: realmDoc.dbName };
-    tenantCache.set(tenantId, realmInfo);
-  }
-
-  return mainConnection.useDb(realmInfo.dbName, { useCache: true });
+  return mainConnection.useDb(dbName, { useCache: true });
 };

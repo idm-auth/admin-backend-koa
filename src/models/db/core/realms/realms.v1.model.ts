@@ -10,5 +10,5 @@ export const RealmSchema = new mongoose.Schema({
 // model em cima do core DB
 export const RealmModel = async () => {
   const conn = await getCoreDb();
-  return conn.model('Realms', RealmSchema);
+  return conn.model('realms', RealmSchema);
 };

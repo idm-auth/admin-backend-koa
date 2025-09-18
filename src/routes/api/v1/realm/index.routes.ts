@@ -1,12 +1,11 @@
-// index.routes.ts
 import Router from '@koa/router';
-import v1 from './v1/index.routes';
+import user from './user.routes';
 
 const initialize = () => {
   const router = new Router({
-    prefix: '/config',
+    prefix: '/realm/:tenantId',
   });
-  router.use(v1.initialize().routes());
+  router.use(user.initialize().routes());
 
   return router;
 };

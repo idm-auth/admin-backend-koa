@@ -12,8 +12,8 @@ const login = async (ctx: Context) => {
 
     ctx.status = 200;
     ctx.body = result;
-  } catch (error) {
-    logger.error({ error });
+  } catch (error: unknown) {
+    logger.error(error, 'Error during login');
     ctx.status = 400;
     ctx.body = { error: 'Invalid request' };
   }
