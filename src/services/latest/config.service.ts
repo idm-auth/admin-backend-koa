@@ -1,10 +1,15 @@
-import { WebAdminConfigModel } from '@/models/db/core/config/webAdminConfig.v1.model';
 import {
-  WebAdminConfig as WebAdminConfigResponse,
-  webAdminConfigZSchema,
+  getModel,
+  WebAdminConfig,
+} from '@/models/db/core/config/webAdminConfig.v1.model';
+import {
   EnvConfig,
+  envConfigZSchema,
+  WebAdminConfigResponse,
+  webAdminConfigZSchema,
 } from '@/schemas/config/v1/webAdmin/response';
 import { getLogger } from '@/utils/localStorage.util';
+import realmService from './realm.service';
 
 const getWebAdminConfig = async (args: {
   app: string;
@@ -12,13 +17,12 @@ const getWebAdminConfig = async (args: {
 }): Promise<WebAdminConfigResponse | null> => {
   const logger = getLogger();
 
-  const model = await WebAdminConfigModel();
   logger.debug({
     app: args.app,
     env: args.env,
   });
 
-  const doc = await model.findOne({
+  const doc = await getModel().findOne({
     app: args.app,
     env: args.env,
   });
@@ -38,23 +42,28 @@ const getWebAdminConfig = async (args: {
 
 export const initSetup = async () => {
   const logger = getLogger();
-  const model = await WebAdminConfigModel();
   const base = {
     app: 'web-admin',
     env: process.env.ENV_NAME || 'development',
   };
-  const doc = await model.findOne(base);
+  const doc = await getModel().findOne(base);
   if (!doc) {
-    const config = {
-      ...base,
+    const realmCore = await realmService.initSetup();
+    const config: WebAdminConfig = {
+      app: base.app,
+      env: envConfigZSchema.parse(base.env),
       api: {
         main: {
           url: process.env.API_MAIN_URL || 'http://locahost:3000',
         },
       },
+      coreRealm: {
+        publicUUID: realmCore.publicUUID,
+      },
     };
     logger.debug(config);
-    await model.create(config);
+    await getModel().create(config);
+
     return { status: 201 };
   } else {
     return { status: 200 };

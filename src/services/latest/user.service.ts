@@ -1,4 +1,4 @@
-import { User, UserModel } from '@/models/db/realms/users/users.v1.model';
+import { User, getModel } from '@/models/db/realms/users/users.v1.model';
 import { getLogger } from '@/utils/localStorage.util';
 import realmService from '@/services/latest/realm.service';
 
@@ -12,13 +12,11 @@ const create = async (
   const logger = getLogger();
   logger.debug({ email: args.email });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const Model = await UserModel(dbName);
-  const user = new Model({
+  const user = await getModel(dbName).create({
     email: args.email,
     password: args.password,
   });
 
-  await user.save();
   return user.toObject();
 };
 
@@ -29,8 +27,7 @@ const findById = async (
   const logger = getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const Model = await UserModel(dbName);
-  const user = await Model.findById(args.id);
+  const user = await getModel(dbName).findById(args.id);
   return user ? user.toObject() : null;
 };
 
@@ -41,8 +38,7 @@ const findByEmail = async (
   const logger = getLogger();
   logger.debug({ email: args.email });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const Model = await UserModel(dbName);
-  const user = await Model.findOne({ email: args.email });
+  const user = await getModel(dbName).findOne({ email: args.email });
   return user ? user.toObject() : null;
 };
 
@@ -57,8 +53,7 @@ const update = async (
   const logger = getLogger();
   logger.debug({ id: args.id });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const Model = await UserModel(dbName);
-  const user = await Model.findByIdAndUpdate(
+  const user = await getModel(dbName).findByIdAndUpdate(
     args.id,
     { email: args.email, password: args.password },
     { new: true, runValidators: true }
@@ -73,8 +68,7 @@ const remove = async (
   const logger = getLogger();
   logger.debug({ id: args.id });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const Model = await UserModel(dbName);
-  const user = await Model.findById(args.id);
+  const user = await getModel(dbName).findById(args.id);
   if (!user) return false;
 
   await user.softDelete();

@@ -7,7 +7,7 @@ export interface BaseDocument extends Document {
   deletedAt: Date | null;
 }
 
-export const BaseSchema = new Schema<BaseDocument>({
+export const baseSchema = new Schema<BaseDocument>({
   _id: {
     type: String,
     default: () => uuidv4(),
@@ -17,7 +17,7 @@ export const BaseSchema = new Schema<BaseDocument>({
   deletedAt: { type: Date, default: null },
 });
 
-BaseSchema.pre('save', function (next) {
+baseSchema.pre('save', function (next) {
   const now = new Date();
   this.updatedAt = now;
   if (!this.createdAt) {
@@ -26,11 +26,11 @@ BaseSchema.pre('save', function (next) {
   next();
 });
 
-BaseSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
+baseSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
   this.set({ updatedAt: new Date() });
   next();
 });
 
-BaseSchema.methods.softDelete = async function (): Promise<void> {
+baseSchema.methods.softDelete = async function (): Promise<void> {
   this.deletedAt = new Date();
 };

@@ -23,15 +23,14 @@ export const injectMainConnection = async (argMainConnection: Connection) => {
   }
 };
 // acesso fixo ao core
-export const getCoreDb = async (): Promise<Connection> => {
+export const getCoreDb = (): Connection => {
   const mongodbCoreDBname = process.env.MONGODB_CORE_DBNAME || 'idm-core-db';
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
   return mainConnection.useDb(mongodbCoreDBname, { useCache: true });
 };
 
 // acesso dinâmico a um realm
-export const getRealmDb = async (dbName: DBName): Promise<Connection> => {
+export const getRealmDb = (dbName: DBName): Connection => {
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
-
   return mainConnection.useDb(dbName, { useCache: true });
 };

@@ -1,11 +1,11 @@
 import { InferSchemaType, Schema } from 'mongoose';
-import { BaseSchema } from '@/models/base/base.v1.model';
+import { baseSchema } from '@/models/base/base.v1.model';
 
-export const BaseConfigSchema = new Schema({
+export const baseConfigSchema = new Schema({
   app: { type: String, required: true, unique: true },
   env: { type: String, required: true },
 });
 
-BaseConfigSchema.add(BaseSchema);
+baseConfigSchema.add(baseSchema);
 
-export type BaseConfig = InferSchemaType<typeof BaseConfigSchema>;
+export type BaseConfig = InferSchemaType<typeof baseConfigSchema>;

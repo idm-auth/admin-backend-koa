@@ -16,6 +16,9 @@ export const webAdminConfigZSchema = z.object({
       url: z.string(),
     }),
   }),
+  coreRealm: z.object({
+    publicUUID: z.uuidv4(),
+  }),
 });
 
-export type WebAdminConfig = z.infer<typeof webAdminConfigZSchema>;
+export type WebAdminConfigResponse = z.infer<typeof webAdminConfigZSchema>;

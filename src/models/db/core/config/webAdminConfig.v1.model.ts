@@ -1,20 +1,35 @@
 import { getCoreDb } from '@/plugins/mongo.plugin';
 import { InferSchemaType, Schema } from 'mongoose';
-import { BaseConfigSchema } from './baseConfig.v1.model';
+import { baseConfigSchema, BaseConfig } from './baseConfig.v1.model';
 
-export const WebAdminConfigSchema = new Schema({
-  ...BaseConfigSchema.obj,
+interface IWebAdminConfig extends BaseConfig {
+  api: {
+    main: {
+      url: string;
+    };
+  };
+  coreRealm: {
+    publicUUID: string;
+  };
+}
+
+const schemaName = 'configs';
+export const schema = new Schema<IWebAdminConfig>({
   api: {
     main: {
       url: { type: String, required: true },
     },
   },
+  coreRealm: {
+    publicUUID: { type: String, required: true },
+  },
 });
 
-export type WebAdminConfig = InferSchemaType<typeof WebAdminConfigSchema>;
+schema.add(baseConfigSchema);
 
-// model em cima do core DB
-export const WebAdminConfigModel = async () => {
-  const conn = await getCoreDb();
-  return conn.model('WebAdminConfig', WebAdminConfigSchema);
+export type WebAdminConfig = InferSchemaType<typeof schema>;
+
+export const getModel = () => {
+  const conn = getCoreDb();
+  return conn.model(schemaName, schema);
 };
