@@ -8,7 +8,8 @@ const login = async (ctx: Context) => {
 
   try {
     const body = loginRequestZSchema.parse(ctx.request.body);
-    const result = await authService.login(body);
+    const tenantId = ctx.params.tenantId;
+    const result = await authService.login(tenantId, body);
 
     ctx.status = 200;
     ctx.body = result;

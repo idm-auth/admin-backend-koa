@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import user from './user.routes';
+import user from './users/index.routes';
 
 const initialize = () => {
   const router = new Router({

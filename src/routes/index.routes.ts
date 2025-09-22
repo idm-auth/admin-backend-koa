@@ -1,13 +1,11 @@
 // index.routes.ts
 import Router from '@koa/router';
-import config from './config/index.routes';
-import auth from './auth/index.routes';
+
 import api from './api/index.routes';
 
 const initialize = () => {
   const router = new Router();
-  router.use(config.initialize().routes());
-  router.use(auth.initialize().routes());
+
   router.use(api.initialize().routes());
 
   router.get('/', async (ctx) => {

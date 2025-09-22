@@ -1,22 +1,31 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
 import { getLogger } from '@/utils/localStorage.util';
+import userService from '@/services/latest/user.service';
 
-const login = async (args: LoginRequest): Promise<LoginResponse> => {
+const login = async (
+  tenantId: string,
+  args: LoginRequest
+): Promise<LoginResponse> => {
   const logger = getLogger();
 
   logger.debug({
     email: args.email,
   });
 
-  // TODO: Implementar validação de usuário e senha
+  const user = await userService.findByEmail(tenantId, { email: args.email });
+
+  if (!user || user.password !== args.password) {
+    throw new Error('Invalid credentials');
+  }
+
   // TODO: Implementar geração de token JWT
 
   return {
     token: 'mock-jwt-token',
     user: {
-      id: '1',
-      email: args.email,
+      id: user.id,
+      email: user.email,
     },
   };
 };
