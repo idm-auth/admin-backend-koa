@@ -25,7 +25,7 @@ const login = async (
     token: 'mock-jwt-token',
     user: {
       id: user.id,
-      email: user.email,
+      emails: user.emails,
     },
   };
 };

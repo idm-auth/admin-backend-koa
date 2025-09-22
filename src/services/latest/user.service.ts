@@ -5,15 +5,15 @@ import realmService from '@/services/latest/realm.service';
 const create = async (
   tenantId: string,
   args: {
-    email: string;
+    emails: { email: string; isPrimary: boolean }[];
     password: string;
   }
 ): Promise<User> => {
   const logger = getLogger();
-  logger.debug({ email: args.email });
+  logger.debug({ emails: args.emails });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).create({
-    email: args.email,
+    emails: args.emails,
     password: args.password,
   });
 
@@ -38,7 +38,7 @@ const findByEmail = async (
   const logger = getLogger();
   logger.debug({ email: args.email });
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
-  const user = await getModel(dbName).findOne({ email: args.email });
+  const user = await getModel(dbName).findOne({ 'emails.email': args.email });
   return user ? user.toObject() : null;
 };
 
@@ -46,7 +46,7 @@ const update = async (
   tenantId: string,
   args: {
     id: string;
-    email?: string;
+    emails?: { email: string; isPrimary: boolean }[];
     password?: string;
   }
 ): Promise<User | null> => {
@@ -55,7 +55,7 @@ const update = async (
   const dbName = await realmService.getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).findByIdAndUpdate(
     args.id,
-    { email: args.email, password: args.password },
+    { emails: args.emails, password: args.password },
     { new: true, runValidators: true }
   );
   return user ? user.toObject() : null;
