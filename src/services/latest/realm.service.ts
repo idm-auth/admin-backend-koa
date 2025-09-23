@@ -1,14 +1,17 @@
-import { getModel } from '@/models/db/core/realms/realms.v1.model';
+import {
+  getModel,
+  Realm,
+  RealmDocumentID,
+} from '@/models/db/core/realms/realms.v1.model';
 import { getLogger } from '@/utils/localStorage.util';
 
-const create = async (args: { publicUUID: string; dbName: string }) => {
+const create = async (args: {
+  data: Omit<Realm, 'publicUUID'> & { publicUUID?: string };
+}) => {
   const logger = getLogger();
-  logger.debug({ publicUUID: args.publicUUID });
+  logger.debug(args.data);
 
-  const realm = await getModel().create({
-    publicUUID: args.publicUUID,
-    dbName: args.dbName,
-  });
+  const realm = await getModel().create(args.data);
   return realm.toObject();
 };
 
@@ -28,19 +31,24 @@ const findByPublicUUID = async (args: { publicUUID: string }) => {
   return realm ? realm.toObject() : null;
 };
 
-const update = async (args: {
-  id: string;
-  publicUUID?: string;
-  dbName?: string;
-}) => {
+const findByName = async (args: { name: string }) => {
+  const logger = getLogger();
+  logger.debug({ name: args.name });
+
+  const realm = await getModel().findOne({ name: args.name });
+  return realm ? realm.toObject() : null;
+};
+
+const update = async (args: { id: string; data: RealmDocumentID }) => {
   const logger = getLogger();
   logger.debug({ id: args.id });
 
-  const realm = await getModel().findByIdAndUpdate(
-    args.id,
-    { publicUUID: args.publicUUID, dbName: args.dbName },
-    { new: true, runValidators: true }
-  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { _id, ...updateData } = args.data;
+  const realm = await getModel().findByIdAndUpdate(args.id, updateData, {
+    new: true,
+    runValidators: true,
+  });
   return realm ? realm.toObject() : null;
 };
 
@@ -82,6 +90,7 @@ export default {
   create,
   findById,
   findByPublicUUID,
+  findByName,
   update,
   remove,
   getDBName,

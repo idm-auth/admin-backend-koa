@@ -1,0 +1,24 @@
+import { beforeAll, afterAll } from 'vitest';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import {
+  initMainConnection,
+  closeMainConnection,
+} from '@/plugins/mongo.plugin';
+import { pinoLogger } from '@/plugins/pino.plugin';
+import { dotenv } from '@/plugins/dotenv.plugin';
+
+let mongo: MongoMemoryServer;
+
+beforeAll(async () => {
+  await dotenv.init();
+  await pinoLogger.initialize();
+  mongo = await MongoMemoryServer.create();
+  await initMainConnection(mongo.getUri());
+
+  globalThis.testMongo = mongo;
+});
+
+afterAll(async () => {
+  await closeMainConnection();
+  await mongo.stop();
+});

@@ -2,7 +2,7 @@ import mongoose, { Connection } from 'mongoose';
 import { getLogger } from '@/plugins/pino.plugin';
 
 export type DBName = string;
-let mainConnection: Connection;
+let mainConnection: Connection | null = null;
 
 // cria apenas uma conexão principal
 export const initMainConnection = async (mongodbUri?: string) => {
@@ -17,11 +17,6 @@ export const initMainConnection = async (mongodbUri?: string) => {
   return mainConnection;
 };
 
-export const injectMainConnection = async (argMainConnection: Connection) => {
-  if (!mainConnection) {
-    mainConnection = argMainConnection;
-  }
-};
 // acesso fixo ao core
 export const getCoreDb = (): Connection => {
   const mongodbCoreDBname = process.env.MONGODB_CORE_DBNAME || 'idm-core-db';
@@ -33,4 +28,13 @@ export const getCoreDb = (): Connection => {
 export const getRealmDb = (dbName: DBName): Connection => {
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
   return mainConnection.useDb(dbName, { useCache: true });
+};
+
+export const closeMainConnection = async () => {
+  const logger = await getLogger();
+  if (mainConnection) {
+    logger.info('Fechando conexão principal com MongoDB...');
+    await mainConnection.close();
+    mainConnection = null;
+  }
 };

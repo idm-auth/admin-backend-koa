@@ -8,4 +8,5 @@ import { dotenv } from './plugins/dotenv.plugin';
   await pinoLogger.initialize();
   await initMainConnection();
   await koa.initialize();
+  await koa.listen();
 })();

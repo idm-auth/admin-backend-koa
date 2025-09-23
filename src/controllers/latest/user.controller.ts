@@ -1,6 +1,7 @@
 import { Context } from 'koa';
 import userService from '@/services/latest/user.service';
 import { getLogger } from '@/utils/localStorage.util';
+import { ValidationError } from '@/errors/validation';
 
 const create = async (ctx: Context) => {
   const logger = getLogger();
@@ -8,13 +9,24 @@ const create = async (ctx: Context) => {
     const { tenantId } = ctx.params;
     const { email, password } = ctx.request.body;
 
-    const user = await userService.create(tenantId, { email, password });
+    const user = await userService.create(tenantId, {
+      email,
+      password,
+    });
     ctx.status = 201;
-    ctx.body = user;
+    ctx.body = {
+      id: user._id,
+      email: user.emails[0]?.email,
+    };
   } catch (error: unknown) {
     logger.error(error, 'Error creating user');
-    ctx.status = 500;
-    ctx.body = { error: 'Internal server error' };
+    if (error instanceof ValidationError) {
+      ctx.status = 400;
+      ctx.body = { error: error.message };
+    } else {
+      ctx.status = 500;
+      ctx.body = { error: 'Internal server error' };
+    }
   }
 };
 
@@ -29,7 +41,10 @@ const findById = async (ctx: Context) => {
       ctx.body = { error: 'User not found' };
       return;
     }
-    ctx.body = user;
+    ctx.body = {
+      id: user._id,
+      email: user.emails[0]?.email,
+    };
   } catch (error: unknown) {
     logger.error(error, 'Error finding user');
     ctx.status = 500;
@@ -51,7 +66,10 @@ const findByEmail = async (ctx: Context) => {
       ctx.body = { error: 'User not found' };
       return;
     }
-    ctx.body = user;
+    ctx.body = {
+      id: user._id,
+      email: user.emails[0]?.email,
+    };
   } catch (error: unknown) {
     logger.error(error, 'Error finding user by email');
     ctx.status = 500;
@@ -65,13 +83,20 @@ const update = async (ctx: Context) => {
     const { tenantId, id } = ctx.params;
     const { email, password } = ctx.request.body;
 
-    const user = await userService.update(tenantId, { id, email, password });
+    const user = await userService.update(tenantId, {
+      id,
+      emails: email ? [{ email, isPrimary: true }] : undefined,
+      password,
+    });
     if (!user) {
       ctx.status = 404;
       ctx.body = { error: 'User not found' };
       return;
     }
-    ctx.body = user;
+    ctx.body = {
+      id: user._id,
+      email: user.emails[0]?.email,
+    };
   } catch (error: unknown) {
     logger.error(error, 'Error updating user');
     ctx.status = 500;
