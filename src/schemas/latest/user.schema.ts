@@ -1,8 +1,9 @@
+import { emailSchema, passwordSchema } from '@/schemas/v1/base.schema';
 import z from 'zod';
 
 export const userCreateSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(1, 'Password is required'),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export type UserCreate = z.infer<typeof userCreateSchema>;

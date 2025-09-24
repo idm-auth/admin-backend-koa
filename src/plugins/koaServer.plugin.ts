@@ -1,4 +1,5 @@
 import { requestIdMiddleware } from '@/middleware/requestId.middleware';
+import { errorHandler } from '@/middleware/errorHandler.middleware';
 import { initialize as router } from '@/routes/index.routes';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
@@ -7,9 +8,11 @@ import Koa from 'koa';
 const app = new Koa();
 
 export const initialize = async () => {
+  // Error handler deve ser o primeiro middleware
+  app.use(errorHandler);
+  
   app.use(cors());
   app.use(bodyParser());
-
   app.use(requestIdMiddleware);
   app.use(router().routes());
 

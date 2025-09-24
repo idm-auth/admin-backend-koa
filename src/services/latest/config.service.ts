@@ -7,7 +7,7 @@ import {
   envConfigZSchema,
   WebAdminConfigResponse,
   webAdminConfigZSchema,
-} from '@/schemas/config/v1/webAdmin/response';
+} from '@/schemas/latest/webAdminConfig.schema';
 import { getLogger } from '@/utils/localStorage.util';
 import * as realmService from './realm.service';
 

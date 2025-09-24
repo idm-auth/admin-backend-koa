@@ -7,12 +7,12 @@ describe('GET /api/core/v1/realm/:tenantId/users/search', () => {
   const testEmail = 'searchtest@example.com';
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-search');
+    tenantId = await getTenantId('test-tenant-user-get-search');
 
     // Criar um usuário para os testes de busca
     const userData = {
       email: testEmail,
-      password: 'password123',
+      password: 'Password123!',
     };
 
     await request(getApp().callback())
@@ -46,35 +46,33 @@ describe('GET /api/core/v1/realm/:tenantId/users/search', () => {
   });
 
   it('should return 400 for missing email query parameter', async () => {
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .get(`/api/core/v1/realm/${tenantId}/users/search`)
       .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Email is required');
   });
 
   it('should return 400 for invalid email format', async () => {
     const invalidEmail = 'invalid-email-format';
 
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .get(`/api/core/v1/realm/${tenantId}/users/search`)
       .query({ email: invalidEmail })
       .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Invalid email format');
   });
 
   it('should handle empty email query parameter', async () => {
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .get(`/api/core/v1/realm/${tenantId}/users/search`)
       .query({ email: '' })
       .expect(400);
-  });
 
-  it('should return 500 for server errors', async () => {
-    // Teste com email que cause erro interno se necessário
-    const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/users/search`)
-      .query({ email: 'test@example.com' });
-
-    if (response.status === 500) {
-      expect(response.body).toHaveProperty('error', 'Internal server error');
-    }
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Email is required');
   });
 });

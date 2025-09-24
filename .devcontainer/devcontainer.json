@@ -36,6 +36,12 @@
         "editor.hover.enabled": true,
         "editor.hover.delay": 300,
         "editor.hover.sticky": true,
+        "vitest.enable": true,
+        "vitest.commandLine": "npx vitest",
+        "vitest.include": ["tests/**/*.test.ts"],
+        "vitest.exclude": ["node_modules/**", "dist/**"],
+        "typescript.preferences.includePackageJsonAutoImports": "auto",
+        "typescript.suggest.autoImports": true,
       },
       "extensions": [
         "ms-azuretools.vscode-docker",

@@ -1,5 +1,5 @@
 import { getModel } from '@/models/db/core/config/webAdminConfig.v1.model';
-import { webAdminConfigZSchema } from '@/schemas/config/v1/webAdmin/response';
+import { webAdminConfigZSchema } from '@/schemas/v1/webAdminConfig.schema';
 import * as service from '@/services/latest/config.service';
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, it } from 'vitest';

@@ -6,7 +6,7 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
   let tenantId: string;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-core');
+    tenantId = await getTenantId('test-tenant-user-post');
   });
 
   // Usar variáveis globais do setup
@@ -15,7 +15,7 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
   it('should create a new user successfully', async () => {
     const userData = {
       email: 'test@example.com',
-      password: 'password123',
+      password: 'Password123!',
     };
 
     const response = await request(getApp().callback())
@@ -30,13 +30,16 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
 
   it('should return 400 for missing email', async () => {
     const userData = {
-      password: 'password123',
+      password: 'Password123!',
     };
 
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .post(`/api/core/v1/realm/${tenantId}/users`)
       .send(userData)
       .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Email is required');
   });
 
   it('should return 400 for missing password', async () => {
@@ -44,29 +47,50 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
       email: 'test@example.com',
     };
 
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .post(`/api/core/v1/realm/${tenantId}/users`)
       .send(userData)
       .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Password is required');
   });
 
   it('should return 400 for invalid email format', async () => {
     const userData = {
       email: 'invalid-email',
-      password: 'password123',
+      password: 'Password123!',
     };
 
-    await request(getApp().callback())
+    const response = await request(getApp().callback())
       .post(`/api/core/v1/realm/${tenantId}/users`)
       .send(userData)
       .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toContain('Invalid email format');
+  });
+
+  it('should return 400 for weak password', async () => {
+    const userData = {
+      email: 'test@example.com',
+      password: 'weak',
+    };
+
+    const response = await request(getApp().callback())
+      .post(`/api/core/v1/realm/${tenantId}/users`)
+      .send(userData)
+      .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body.details).toMatch(/Password must/);
   });
 
   it('should return 500 for server errors', async () => {
     // Teste com dados que causem erro interno
     const userData = {
       email: 'test@example.com',
-      password: 'password123',
+      password: 'Password123!',
     };
 
     // Mock para simular erro no service se necessário

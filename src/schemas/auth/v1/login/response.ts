@@ -6,7 +6,7 @@ export const loginResponseZSchema = z.object({
     id: z.string(),
     emails: z.array(
       z.object({
-        email: z.string().email(),
+        email: z.email(),
         isPrimary: z.boolean(),
       })
     ),

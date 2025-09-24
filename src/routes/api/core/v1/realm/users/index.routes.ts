@@ -7,13 +7,9 @@ export const initialize = () => {
   });
 
   router.post('/', userController.create);
-
-  router.get('/:id', userController.findById);
-
   router.get('/search', userController.findByEmail);
-
+  router.get('/:id', userController.findById);
   router.put('/:id', userController.update);
-
   router.delete('/:id', userController.remove);
 
   return router;

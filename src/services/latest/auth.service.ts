@@ -1,7 +1,7 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
 import { getLogger } from '@/utils/localStorage.util';
-import * as userService from '@/services/latest/user.service';
+import * as userService from '@/services/v1/user.service';
 
 export const login = async (
   tenantId: string,
