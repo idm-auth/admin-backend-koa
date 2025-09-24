@@ -1,15 +1,15 @@
 import Router from '@koa/router';
-import config from './config/index.routes';
-import auth from './auth/index.routes';
-import core from './core/index.routes';
+import { initialize as config } from './config/index.routes';
+import { initialize as auth } from './auth/index.routes';
+import { initialize as core } from './core/index.routes';
 
 const initialize = () => {
   const router = new Router({
     prefix: '/api',
   });
-  router.use(config.initialize().routes());
-  router.use(auth.initialize().routes());
-  router.use(core.initialize().routes());
+  router.use(config().routes());
+  router.use(auth().routes());
+  router.use(core().routes());
 
   return router;
 };

@@ -1,2 +1,5 @@
-import base from '@/services/latest/user.service';
-export default { ...base };
+// Re-export all from latest
+export * from '@/services/latest/user.service';
+
+// Override specific methods if needed
+// Example: export const create = customCreate;

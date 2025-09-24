@@ -1,3 +1,5 @@
-import base from '@/services/latest/config.service';
+// Re-export all from latest
+export * from '@/services/latest/config.service';
 
-export default { ...base };
+// Override specific methods if needed
+// Example: export const getWebAdminConfig = customGetWebAdminConfig;

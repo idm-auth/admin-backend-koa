@@ -1,13 +1,13 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
 import { getLogger } from '@/utils/localStorage.util';
-import userService from '@/services/latest/user.service';
+import * as userService from '@/services/latest/user.service';
 
-const login = async (
+export const login = async (
   tenantId: string,
   args: LoginRequest
 ): Promise<LoginResponse> => {
-  const logger = getLogger();
+  const logger = await getLogger();
 
   logger.debug({
     email: args.email,
@@ -29,5 +29,3 @@ const login = async (
     },
   };
 };
-
-export default { login };

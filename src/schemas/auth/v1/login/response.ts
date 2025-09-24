@@ -4,10 +4,12 @@ export const loginResponseZSchema = z.object({
   token: z.string(),
   user: z.object({
     id: z.string(),
-    emails: z.array(z.object({
-      email: z.string().email(),
-      isPrimary: z.boolean()
-    })),
+    emails: z.array(
+      z.object({
+        email: z.string().email(),
+        isPrimary: z.boolean(),
+      })
+    ),
   }),
 });
 

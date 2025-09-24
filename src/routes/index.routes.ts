@@ -3,7 +3,7 @@ import Router from '@koa/router';
 
 import api from './api/index.routes';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router();
 
   router.use(api.initialize().routes());
@@ -14,5 +14,3 @@ const initialize = () => {
 
   return router;
 };
-
-export default { initialize };

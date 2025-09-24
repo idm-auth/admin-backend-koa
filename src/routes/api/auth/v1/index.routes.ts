@@ -1,14 +1,12 @@
 import Router from '@koa/router';
-import realm from './realm/index.routes';
+import { initialize as realm } from './realm/index.routes';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router({
     prefix: '/v1',
   });
 
-  router.use(realm.initialize().routes());
+  router.use(realm().routes());
 
   return router;
 };
-
-export default { initialize };

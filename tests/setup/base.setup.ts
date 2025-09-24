@@ -4,14 +4,14 @@ import {
   initMainConnection,
   closeMainConnection,
 } from '@/plugins/mongo.plugin';
-import { pinoLogger } from '@/plugins/pino.plugin';
+import { initialize } from '@/plugins/pino.plugin';
 import { dotenv } from '@/plugins/dotenv.plugin';
 
 let mongo: MongoMemoryServer;
 
 beforeAll(async () => {
   await dotenv.init();
-  await pinoLogger.initialize();
+  await initialize();
   mongo = await MongoMemoryServer.create();
   await initMainConnection(mongo.getUri());
 

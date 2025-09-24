@@ -1,9 +1,9 @@
 // config.routes.ts
 
 import Router from '@koa/router';
-import configController from '@/controllers/v1/config.controller';
+import * as configController from '@/controllers/v1/config.controller';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router();
   router.get('/init-setup', configController.getInitSetup);
 
@@ -15,5 +15,3 @@ const initialize = () => {
   router.use(routerV1.routes());
   return router;
 };
-
-export default { initialize };

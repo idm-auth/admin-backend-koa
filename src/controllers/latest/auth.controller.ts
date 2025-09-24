@@ -1,10 +1,10 @@
 import { Context } from 'koa';
-import authService from '@/services/latest/auth.service';
+import * as authService from '@/services/latest/auth.service';
 import { loginRequestZSchema } from '@/schemas/auth/v1/login/request';
 import { getLogger } from '@/utils/localStorage.util';
 
-const login = async (ctx: Context) => {
-  const logger = getLogger();
+export const login = async (ctx: Context) => {
+  const logger = await getLogger();
 
   try {
     const body = loginRequestZSchema.parse(ctx.request.body);
@@ -19,5 +19,3 @@ const login = async (ctx: Context) => {
     ctx.body = { error: 'Invalid request' };
   }
 };
-
-export default { login };

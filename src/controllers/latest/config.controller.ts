@@ -1,5 +1,5 @@
 import { EnvConfig } from '@/schemas/config/v1/webAdmin/response';
-import service from '@/services/latest/config.service';
+import * as configService from '@/services/latest/config.service';
 import { Context } from 'koa';
 
 type Params = {
@@ -7,18 +7,16 @@ type Params = {
   appName: string;
 };
 
-const getConfig = async (ctx: Context & { params: Params }) => {
+export const getConfig = async (ctx: Context & { params: Params }) => {
   const { env, appName } = ctx.params;
-  const webAdminConfig = await service.getWebAdminConfig({
+  const webAdminConfig = await configService.getWebAdminConfig({
     app: appName,
     env,
   });
   ctx.body = webAdminConfig;
 };
 
-const getInitSetup = async (ctx: Context) => {
-  const result = await service.initSetup();
+export const getInitSetup = async (ctx: Context) => {
+  const result = await configService.initSetup();
   ctx.body = result;
 };
-
-export default { getConfig, getInitSetup };

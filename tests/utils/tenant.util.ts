@@ -1,4 +1,4 @@
-import realmService from '@/services/latest/realm.service';
+import * as realmService from '@/services/latest/realm.service';
 
 /**
  * Obtém ou cria um tenant ID único para testes

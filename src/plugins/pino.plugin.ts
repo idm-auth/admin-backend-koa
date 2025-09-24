@@ -3,7 +3,7 @@ import pinoCaller from 'pino-caller';
 
 let logger: pino.Logger;
 
-const initialize = async () => {
+export const initialize = async () => {
   const baseLogger = pino({
     level: process.env.LOGGER_LEVEL || 'debug',
     transport: {
@@ -24,9 +24,4 @@ const initialize = async () => {
 export const getLogger = async () => {
   if (!logger) await initialize();
   return logger;
-};
-
-export const pinoLogger = {
-  getLogger,
-  initialize,
 };

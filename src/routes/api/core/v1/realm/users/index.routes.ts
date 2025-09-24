@@ -1,7 +1,7 @@
-import userController from '@/controllers/v1/user.controller';
+import * as userController from '@/controllers/v1/user.controller';
 import Router from '@koa/router';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router({
     prefix: '/users',
   });
@@ -18,5 +18,3 @@ const initialize = () => {
 
   return router;
 };
-
-export default { initialize };

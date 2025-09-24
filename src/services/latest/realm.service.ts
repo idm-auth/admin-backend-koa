@@ -5,42 +5,42 @@ import {
 } from '@/models/db/core/realms/realms.v1.model';
 import { getLogger } from '@/utils/localStorage.util';
 
-const create = async (args: {
+export const create = async (args: {
   data: Omit<Realm, 'publicUUID'> & { publicUUID?: string };
 }) => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug(args.data);
 
   const realm = await getModel().create(args.data);
   return realm.toObject();
 };
 
-const findById = async (args: { id: string }) => {
-  const logger = getLogger();
+export const findById = async (args: { id: string }) => {
+  const logger = await getLogger();
   logger.debug({ id: args.id });
 
   const realm = await getModel().findById(args.id);
   return realm ? realm.toObject() : null;
 };
 
-const findByPublicUUID = async (args: { publicUUID: string }) => {
-  const logger = getLogger();
+export const findByPublicUUID = async (args: { publicUUID: string }) => {
+  const logger = await getLogger();
   logger.debug({ publicUUID: args.publicUUID });
 
   const realm = await getModel().findOne({ publicUUID: args.publicUUID });
   return realm ? realm.toObject() : null;
 };
 
-const findByName = async (args: { name: string }) => {
-  const logger = getLogger();
+export const findByName = async (args: { name: string }) => {
+  const logger = await getLogger();
   logger.debug({ name: args.name });
 
   const realm = await getModel().findOne({ name: args.name });
   return realm ? realm.toObject() : null;
 };
 
-const update = async (args: { id: string; data: RealmDocumentID }) => {
-  const logger = getLogger();
+export const update = async (args: { id: string; data: RealmDocumentID }) => {
+  const logger = await getLogger();
   logger.debug({ id: args.id });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,16 +52,16 @@ const update = async (args: { id: string; data: RealmDocumentID }) => {
   return realm ? realm.toObject() : null;
 };
 
-const remove = async (args: { id: string }) => {
-  const logger = getLogger();
+export const remove = async (args: { id: string }) => {
+  const logger = await getLogger();
   logger.debug({ id: args.id });
 
   const realm = await getModel().findByIdAndDelete(args.id);
   return realm ? true : false;
 };
 
-const getDBName = async (args: { publicUUID: string }) => {
-  const logger = getLogger();
+export const getDBName = async (args: { publicUUID: string }) => {
+  const logger = await getLogger();
   logger.debug({ publicUUID: args.publicUUID });
 
   const realm = await getModel().findOne({ publicUUID: args.publicUUID });
@@ -84,14 +84,4 @@ export const initSetup = async () => {
     });
   }
   return doc.toObject();
-};
-export default {
-  initSetup,
-  create,
-  findById,
-  findByPublicUUID,
-  findByName,
-  update,
-  remove,
-  getDBName,
 };

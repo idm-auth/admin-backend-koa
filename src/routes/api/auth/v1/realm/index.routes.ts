@@ -1,13 +1,11 @@
 import Router from '@koa/router';
-import login from './login/index.routes';
+import { initialize as login } from './login/index.routes';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router({
     prefix: '/realm/:tenantId',
   });
-  router.use(login.initialize().routes());
+  router.use(login().routes());
 
   return router;
 };
-
-export default { initialize };

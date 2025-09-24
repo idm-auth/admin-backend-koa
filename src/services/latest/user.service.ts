@@ -2,33 +2,24 @@ import {
   UserDocument,
   getModel,
 } from '@/models/db/realms/users/users.v1.model';
-import realmService from '@/services/latest/realm.service';
+import { getDBName } from '@/services/latest/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
-import { ValidationError } from '@/errors/validation';
-
-const create = async (
+import { validateUserCreate } from '@/services/latest/validation.service';
+export const create = async (
   tenantId: string,
   args: {
     email: string;
     password: string;
   }
 ): Promise<UserDocument> => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug({ email: args.email });
 
   // Validações de negócio
-  if (!args.email) {
-    throw new ValidationError('Email is required');
-  }
-  if (!args.password) {
-    throw new ValidationError('Password is required');
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(args.email)) {
-    throw new ValidationError('Invalid email format');
-  }
+  await validateUserCreate(tenantId, args);
 
-  const dbName = await realmService.getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).create({
     emails: [{ email: args.email, isPrimary: true }],
     password: args.password,
@@ -37,29 +28,29 @@ const create = async (
   return user;
 };
 
-const findById = async (
+export const findById = async (
   tenantId: string,
   args: { id: string }
 ): Promise<UserDocument | null> => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
-  const dbName = await realmService.getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).findById(args.id);
   return user ? user : null;
 };
 
-const findByEmail = async (
+export const findByEmail = async (
   tenantId: string,
   args: { email: string }
 ): Promise<UserDocument | null> => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug({ email: args.email });
-  const dbName = await realmService.getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).findOne({ 'emails.email': args.email });
   return user ? user : null;
 };
 
-const update = async (
+export const update = async (
   tenantId: string,
   args: {
     id: string;
@@ -67,9 +58,9 @@ const update = async (
     password?: string;
   }
 ): Promise<UserDocument | null> => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug({ id: args.id });
-  const dbName = await realmService.getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
   const user = await getModel(dbName).findByIdAndUpdate(
     args.id,
     { emails: args.emails, password: args.password },
@@ -78,20 +69,20 @@ const update = async (
   return user ? user : null;
 };
 
-const comparePassword = async (
+export const comparePassword = async (
   user: UserDocument,
   password: string
 ): Promise<boolean> => {
   return bcrypt.compare(password, user.password);
 };
 
-const softDelete = async (
+export const softDelete = async (
   tenantId: string,
   args: { id: string }
 ): Promise<boolean> => {
-  const logger = getLogger();
+  const logger = await getLogger();
   logger.debug({ id: args.id });
-  const dbName = await realmService.getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findByIdAndUpdate(args.id, {
     emails: [],
     password: null,
@@ -100,19 +91,9 @@ const softDelete = async (
   return !!result;
 };
 
-const remove = async (
+export const remove = async (
   tenantId: string,
   args: { id: string }
 ): Promise<boolean> => {
   return softDelete(tenantId, args);
-};
-
-export default {
-  create,
-  findById,
-  findByEmail,
-  update,
-  remove,
-  comparePassword,
-  softDelete,
 };

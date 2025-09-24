@@ -1,10 +1,10 @@
 import { Context } from 'koa';
-import userService from '@/services/latest/user.service';
+import * as userService from '@/services/latest/user.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { ValidationError } from '@/errors/validation';
 
-const create = async (ctx: Context) => {
-  const logger = getLogger();
+export const create = async (ctx: Context) => {
+  const logger = await getLogger();
   try {
     const { tenantId } = ctx.params;
     const { email, password } = ctx.request.body;
@@ -30,8 +30,8 @@ const create = async (ctx: Context) => {
   }
 };
 
-const findById = async (ctx: Context) => {
-  const logger = getLogger();
+export const findById = async (ctx: Context) => {
+  const logger = await getLogger();
   try {
     const { tenantId, id } = ctx.params;
 
@@ -52,8 +52,8 @@ const findById = async (ctx: Context) => {
   }
 };
 
-const findByEmail = async (ctx: Context) => {
-  const logger = getLogger();
+export const findByEmail = async (ctx: Context) => {
+  const logger = await getLogger();
   try {
     const { tenantId } = ctx.params;
     const { email } = ctx.query;
@@ -77,8 +77,8 @@ const findByEmail = async (ctx: Context) => {
   }
 };
 
-const update = async (ctx: Context) => {
-  const logger = getLogger();
+export const update = async (ctx: Context) => {
+  const logger = await getLogger();
   try {
     const { tenantId, id } = ctx.params;
     const { email, password } = ctx.request.body;
@@ -104,8 +104,8 @@ const update = async (ctx: Context) => {
   }
 };
 
-const remove = async (ctx: Context) => {
-  const logger = getLogger();
+export const remove = async (ctx: Context) => {
+  const logger = await getLogger();
   try {
     const { tenantId, id } = ctx.params;
 
@@ -122,5 +122,3 @@ const remove = async (ctx: Context) => {
     ctx.body = { error: 'Internal server error' };
   }
 };
-
-export default { create, findById, findByEmail, update, remove };

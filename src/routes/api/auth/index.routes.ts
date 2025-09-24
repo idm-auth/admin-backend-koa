@@ -1,13 +1,11 @@
 import Router from '@koa/router';
-import v1 from './v1/index.routes';
+import { initialize as v1 } from './v1/index.routes';
 
-const initialize = () => {
+export const initialize = () => {
   const router = new Router({
     prefix: '/auth',
   });
-  router.use(v1.initialize().routes());
+  router.use(v1().routes());
 
   return router;
 };
-
-export default { initialize };

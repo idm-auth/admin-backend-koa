@@ -1,6 +1,7 @@
 // src/utils/localStorage.util.ts
 import { AsyncLocalStorage } from 'async_hooks';
 import type { Logger } from 'pino';
+import { getLogger as pinoLogger } from '@/plugins/pino.plugin';
 
 interface RequestContext {
   requestId: string;
@@ -16,13 +17,12 @@ export const runWithContext = (
   return asyncLocalStorage.run(context, callback);
 };
 
-export const getLogger = (): Logger => {
+export const getLogger = async (): Promise<Logger> => {
   const contextLogger = asyncLocalStorage.getStore()?.logger;
   if (contextLogger) return contextLogger;
-  
-  // Fallback para logger Pino quando não há contexto
-  const pino = require('pino');
-  return pino({ level: 'debug' });
+
+  // Fallback para o logger configurado do plugin
+  return await pinoLogger();
 };
 
 export const getRequestId = (): string => {

@@ -1,5 +1,5 @@
 // requestIdMiddleware.ts
-import { pinoLogger } from '@/plugins/pino.plugin';
+import { getLogger } from '@/plugins/pino.plugin';
 import { runWithContext } from '@/utils/localStorage.util';
 import { Context } from 'koa';
 import type { Logger } from 'pino';
@@ -12,10 +12,7 @@ export const requestIdMiddleware = async (
   const requestId = ctx.get('X-Request-ID') || uuidv4(); // pega do header ou gera novo
 
   // cria um child logger com o requestId
-  let logger: Logger | null = pinoLogger.logger;
-  if (!logger) {
-    logger = await pinoLogger.initialize();
-  }
+  let logger: Logger | null = await getLogger();
 
   const requestLogger = logger.child({ requestId });
 

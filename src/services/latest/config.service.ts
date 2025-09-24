@@ -9,13 +9,13 @@ import {
   webAdminConfigZSchema,
 } from '@/schemas/config/v1/webAdmin/response';
 import { getLogger } from '@/utils/localStorage.util';
-import realmService from './realm.service';
+import * as realmService from './realm.service';
 
-const getWebAdminConfig = async (args: {
+export const getWebAdminConfig = async (args: {
   app: string;
   env: EnvConfig;
 }): Promise<WebAdminConfigResponse | null> => {
-  const logger = getLogger();
+  const logger = await getLogger();
 
   logger.debug({
     app: args.app,
@@ -41,7 +41,7 @@ const getWebAdminConfig = async (args: {
 };
 
 export const initSetup = async () => {
-  const logger = getLogger();
+  const logger = await getLogger();
   const base = {
     app: 'web-admin',
     env: process.env.ENV_NAME || 'development',
@@ -69,5 +69,3 @@ export const initSetup = async () => {
     return { status: 200 };
   }
 };
-
-export default { getWebAdminConfig, initSetup };
