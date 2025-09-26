@@ -6,12 +6,15 @@ describe('GET /api/core/v1/realm/:tenantId/users/search', () => {
   let tenantId: string;
   const testEmail = 'searchtest@example.com';
 
+  const getApp = () => globalThis.testKoaApp;
+
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-user-get-search');
 
     // Criar um usuário para os testes de busca
     const userData = {
       email: testEmail,
+      // amazonq-ignore-next-line
       password: 'Password123!',
     };
 
@@ -19,9 +22,6 @@ describe('GET /api/core/v1/realm/:tenantId/users/search', () => {
       .post(`/api/core/v1/realm/${tenantId}/users`)
       .send(userData);
   });
-
-  // Usar variáveis globais do setup
-  const getApp = () => globalThis.testKoaApp;
 
   it('should find user by email successfully', async () => {
     const response = await request(getApp().callback())

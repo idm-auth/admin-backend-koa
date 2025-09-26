@@ -15,9 +15,9 @@ services:
       <<: *default-environment
     volumes:
       - ..:/workspace:consistent
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run/docker.sock:/var/run/docker.sock:consistent
     ports:
-      - 8080:8080
+      - 3000:3000
     networks:
       - dev-network
       - private-network
@@ -30,7 +30,7 @@ services:
       <<: *default-environment
     volumes:
       - ./containers/monogodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ../.mongodata:/data/db
+      - ../.mongodata:/data/db:consistent
     networks:
       - private-network
 

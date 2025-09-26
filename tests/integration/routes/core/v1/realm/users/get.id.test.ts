@@ -7,13 +7,17 @@ describe('GET /api/core/v1/realm/:tenantId/users/:id', () => {
   let tenantId: string;
   let createdUserId: string;
 
+  const getApp = () => globalThis.testKoaApp;
+  const TEST_PASSWORD = 'Password123!';
+
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-user-get-id');
 
     // Criar um usuário para os testes
     const userData = {
       email: 'findtest@example.com',
-      password: 'Password123!',
+      // amazonq-ignore-next-line
+      password: TEST_PASSWORD,
     };
 
     const createResponse = await request(getApp().callback())
@@ -22,11 +26,15 @@ describe('GET /api/core/v1/realm/:tenantId/users/:id', () => {
 
     if (createResponse.status === 201) {
       createdUserId = createResponse.body.id;
+      if (!createdUserId) {
+        throw new Error('User created but no ID returned');
+      }
+    } else {
+      throw new Error(
+        `Failed to create test user: ${createResponse.status} - ${createResponse.body?.error || 'Unknown error'}`
+      );
     }
   });
-
-  // Usar variáveis globais do setup
-  const getApp = () => globalThis.testKoaApp;
 
   it('should find user by id successfully', async () => {
     const response = await request(getApp().callback())

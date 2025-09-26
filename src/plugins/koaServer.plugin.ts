@@ -10,7 +10,7 @@ const app = new Koa();
 export const initialize = async () => {
   // Error handler deve ser o primeiro middleware
   app.use(errorHandler);
-  
+
   app.use(cors());
   app.use(bodyParser());
   app.use(requestIdMiddleware);
@@ -20,7 +20,7 @@ export const initialize = async () => {
 };
 
 export const listen = async () => {
-  const PORT = process.env.PORT || 8080;
+  const PORT = process.env.PORT || 3000;
 
   app.listen(PORT, () => {
     console.log(`Koa server running on http://localhost:${PORT}`);

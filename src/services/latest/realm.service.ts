@@ -1,8 +1,10 @@
+import { NotFoundError } from '@/errors/not-found';
 import {
   getModel,
   Realm,
   RealmDocumentID,
 } from '@/models/db/core/realms/realms.v1.model';
+import { PublicUUID } from '@/schemas/v1/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
 
 export const create = async (args: {
@@ -12,7 +14,7 @@ export const create = async (args: {
   logger.debug(args.data);
 
   const realm = await getModel().create(args.data);
-  return realm.toObject();
+  return realm;
 };
 
 export const findById = async (args: { id: string }) => {
@@ -20,15 +22,21 @@ export const findById = async (args: { id: string }) => {
   logger.debug({ id: args.id });
 
   const realm = await getModel().findById(args.id);
-  return realm ? realm.toObject() : null;
+  if (!realm) {
+    throw new NotFoundError('Realm not found');
+  }
+  return realm;
 };
 
-export const findByPublicUUID = async (args: { publicUUID: string }) => {
+export const findByPublicUUID = async (args: { publicUUID: PublicUUID }) => {
   const logger = await getLogger();
   logger.debug({ publicUUID: args.publicUUID });
 
   const realm = await getModel().findOne({ publicUUID: args.publicUUID });
-  return realm ? realm.toObject() : null;
+  if (!realm) {
+    throw new NotFoundError('Realm not found');
+  }
+  return realm;
 };
 
 export const findByName = async (args: { name: string }) => {
@@ -36,7 +44,10 @@ export const findByName = async (args: { name: string }) => {
   logger.debug({ name: args.name });
 
   const realm = await getModel().findOne({ name: args.name });
-  return realm ? realm.toObject() : null;
+  if (!realm) {
+    throw new NotFoundError('Realm not found');
+  }
+  return realm;
 };
 
 export const update = async (args: { id: string; data: RealmDocumentID }) => {
@@ -49,25 +60,32 @@ export const update = async (args: { id: string; data: RealmDocumentID }) => {
     new: true,
     runValidators: true,
   });
-  return realm ? realm.toObject() : null;
+  if (!realm) {
+    throw new NotFoundError('Realm not found');
+  }
+  return realm;
 };
 
-export const remove = async (args: { id: string }) => {
+export const remove = async (args: { id: string }): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
 
   const realm = await getModel().findByIdAndDelete(args.id);
-  return realm ? true : false;
+  if (!realm) {
+    throw new NotFoundError('Realm not found');
+  }
 };
 
-export const getDBName = async (args: { publicUUID: string }) => {
+export const getDBName = async (args: { publicUUID: PublicUUID }) => {
   const logger = await getLogger();
   logger.debug({ publicUUID: args.publicUUID });
 
   const realm = await getModel().findOne({ publicUUID: args.publicUUID });
 
   if (!realm || !realm.dbName) {
-    throw new Error(`DBName not found for publicUUID: ${args.publicUUID}`);
+    throw new NotFoundError(
+      `DBName not found for publicUUID: ${args.publicUUID}`
+    );
   }
 
   return realm.dbName;
@@ -83,5 +101,5 @@ export const initSetup = async () => {
       dbName: mongoDBCoreDBName,
     });
   }
-  return doc.toObject();
+  return doc;
 };

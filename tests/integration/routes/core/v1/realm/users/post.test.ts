@@ -5,17 +5,18 @@ import { getTenantId } from '@test/utils/tenant.util';
 describe('POST /api/core/v1/realm/:tenantId/users', () => {
   let tenantId: string;
 
+  const getApp = () => globalThis.testKoaApp;
+  const TEST_PASSWORD = 'Password123!';
+
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-user-post');
   });
 
-  // Usar variáveis globais do setup
-  const getApp = () => globalThis.testKoaApp;
-
   it('should create a new user successfully', async () => {
     const userData = {
       email: 'test@example.com',
-      password: 'Password123!',
+      // amazonq-ignore-next-line
+      password: TEST_PASSWORD,
     };
 
     const response = await request(getApp().callback())
@@ -30,7 +31,8 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
 
   it('should return 400 for missing email', async () => {
     const userData = {
-      password: 'Password123!',
+      // amazonq-ignore-next-line
+      password: TEST_PASSWORD,
     };
 
     const response = await request(getApp().callback())
@@ -59,7 +61,8 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
   it('should return 400 for invalid email format', async () => {
     const userData = {
       email: 'invalid-email',
-      password: 'Password123!',
+      // amazonq-ignore-next-line
+      password: TEST_PASSWORD,
     };
 
     const response = await request(getApp().callback())
@@ -74,6 +77,7 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
   it('should return 400 for weak password', async () => {
     const userData = {
       email: 'test@example.com',
+      // amazonq-ignore-next-line
       password: 'weak',
     };
 
@@ -90,7 +94,8 @@ describe('POST /api/core/v1/realm/:tenantId/users', () => {
     // Teste com dados que causem erro interno
     const userData = {
       email: 'test@example.com',
-      password: 'Password123!',
+      // amazonq-ignore-next-line
+      password: TEST_PASSWORD,
     };
 
     // Mock para simular erro no service se necessário

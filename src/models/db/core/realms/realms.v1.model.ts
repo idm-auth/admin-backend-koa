@@ -17,6 +17,17 @@ export const schema = new mongoose.Schema({
     default: () => uuidv4(),
   },
   dbName: { type: String, required: true },
+  jwtConfig: {
+    type: {
+      secret: {
+        type: String,
+        required: true,
+        default: 'default-super-secret-jwt-key-change-in-production',
+      },
+      expiresIn: { type: String, required: true, default: '24h' },
+    },
+    default: {},
+  },
 });
 schema.add(baseDocumentSchema);
 

@@ -1,7 +1,8 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
-import { getLogger } from '@/utils/localStorage.util';
+import * as jwtService from '@/services/latest/jwt.service';
 import * as userService from '@/services/v1/user.service';
+import { getLogger } from '@/utils/localStorage.util';
 
 export const login = async (
   tenantId: string,
@@ -15,16 +16,19 @@ export const login = async (
 
   const user = await userService.findByEmail(tenantId, { email: args.email });
 
-  if (!user || user.password !== args.password) {
+  if (!user || !(await userService.comparePassword(user, args.password))) {
     throw new Error('Invalid credentials');
   }
 
-  // TODO: Implementar geração de token JWT
+  const token = await jwtService.generateToken(tenantId, {
+    userId: user._id,
+    email: args.email,
+  });
 
   return {
-    token: 'mock-jwt-token',
+    token,
     user: {
-      id: user.id,
+      id: user._id,
       emails: user.emails,
     },
   };

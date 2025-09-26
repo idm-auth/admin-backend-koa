@@ -30,12 +30,8 @@ export const getWebAdminConfig = async (args: {
     msg: `model: ${JSON.stringify(doc)}`,
   });
 
-  // 1. Converter para objeto plain
-  if (!doc) return null; // já lida com não encontrado
-  const plainObject = doc.toObject(); // método oficial do Mongoose
-
-  // 2. Validar/parsear com Zod
-  const result = webAdminConfigZSchema.parse(plainObject);
+  if (!doc) return null;
+  const result = webAdminConfigZSchema.parse(doc);
 
   return result;
 };

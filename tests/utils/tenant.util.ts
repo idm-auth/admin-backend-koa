@@ -1,4 +1,5 @@
 import * as realmService from '@/services/v1/realm.service';
+import { NotFoundError } from '@/errors/not-found';
 
 /**
  * Obtém ou cria um tenant ID único para testes
@@ -6,11 +7,14 @@ import * as realmService from '@/services/v1/realm.service';
  * @returns publicUUID do tenant
  */
 export async function getTenantId(name: string): Promise<string> {
-  let realm = await realmService.findByName({ name: name });
-
-  if (!realm) {
-    realm = await realmService.create({ data: { name, dbName: name } });
+  try {
+    const realm = await realmService.findByName({ name });
+    return realm.publicUUID;
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      const realm = await realmService.create({ data: { name, dbName: name } });
+      return realm.publicUUID;
+    }
+    throw error;
   }
-
-  return realm.publicUUID;
 }

@@ -9,7 +9,7 @@ interface IWebAdminConfig extends BaseConfig {
     };
   };
   coreRealm: {
-    publicUUID: string;
+    publicUUID: PublicUUID;
   };
 }
 

@@ -3,6 +3,9 @@ import z from 'zod';
 export const DocIdSchema = z.uuidv4('Invalid ID');
 export type DocId = z.infer<typeof DocIdSchema>;
 
+export const publicUUIDSchema = z.uuidv4('Invalid ID');
+export type PublicUUID = z.infer<typeof publicUUIDSchema>;
+
 export const emailSchema = z.email({
   pattern: z.regexes.rfc5322Email,
   error: (issue) =>
