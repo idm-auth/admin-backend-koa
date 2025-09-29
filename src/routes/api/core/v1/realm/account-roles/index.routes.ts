@@ -1,0 +1,15 @@
+import * as accountRoleController from '@/controllers/v1/accountRole.controller';
+import Router from '@koa/router';
+
+export const initialize = () => {
+  const router = new Router({
+    prefix: '/account-roles',
+  });
+
+  router.post('/', accountRoleController.addRoleToAccount);
+  router.delete('/', accountRoleController.removeRoleFromAccount);
+  router.get('/account/:accountId', accountRoleController.getAccountRoles);
+  router.get('/role/:roleId', accountRoleController.getRoleAccounts);
+
+  return router;
+};

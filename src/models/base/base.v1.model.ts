@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const baseDocumentIDSchema = new Schema({
   _id: {
     type: String,
-    default: () => uuidv4(),
+    default: uuidv4,
   },
 });
 
