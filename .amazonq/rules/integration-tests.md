@@ -51,7 +51,7 @@
 
 ## Exemplo de Estrutura
 ```typescript
-describe('POST /api/core/v1/realm/:tenantId/users', () => {
+describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
   let tenantId: string;
 
   const getApp = () => globalThis.testKoaApp;

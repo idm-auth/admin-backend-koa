@@ -1,12 +1,12 @@
 # API Documentation
 
-## Users API
+## Accounts API
 
-### Create User
+### Create Account
 
-Cria um novo usuário no sistema.
+Cria uma nova conta no sistema.
 
-**Endpoint:** `POST /api/core/v1/realm/{tenantId}/users`
+**Endpoint:** `POST /api/core/v1/realm/{tenantId}/accounts`
 
 **Headers:**
 
@@ -14,7 +14,7 @@ Cria um novo usuário no sistema.
 
 **Body Parameters:**
 
-- `email` (string, required): Email válido do usuário
+- `email` (string, required): Email válido da conta
 - `password` (string, required): Senha com pelo menos 8 caracteres, contendo:
   - 1 letra minúscula
   - 1 letra maiúscula
@@ -24,7 +24,7 @@ Cria um novo usuário no sistema.
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/core/v1/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c7/users \
+curl -X POST http://localhost:3000/api/core/v1/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c7/accounts \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@idm-auth.io",
@@ -37,13 +37,13 @@ curl -X POST http://localhost:3000/api/core/v1/realm/4565ebbb-c38b-46b7-890c-84b
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "email": "user@example.com"
+  "email": "account@example.com"
 }
 ```
 
 ### Other Endpoints
 
-- `GET /api/core/v1/realm/{tenantId}/users/search?email={email}` - Buscar usuário por email
-- `GET /api/core/v1/realm/{tenantId}/users/{id}` - Buscar usuário por ID
-- `PUT /api/core/v1/realm/{tenantId}/users/{id}` - Atualizar usuário
-- `DELETE /api/core/v1/realm/{tenantId}/users/{id}` - Remover usuário
+- `GET /api/core/v1/realm/{tenantId}/accounts/search?email={email}` - Buscar conta por email
+- `GET /api/core/v1/realm/{tenantId}/accounts/{id}` - Buscar conta por ID
+- `PUT /api/core/v1/realm/{tenantId}/accounts/{id}` - Atualizar conta
+- `DELETE /api/core/v1/realm/{tenantId}/accounts/{id}` - Remover conta

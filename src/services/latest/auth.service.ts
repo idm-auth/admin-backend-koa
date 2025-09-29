@@ -1,7 +1,7 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
 import * as jwtService from '@/services/latest/jwt.service';
-import * as userService from '@/services/v1/user.service';
+import * as accountService from '@/services/v1/account.service';
 import { getLogger } from '@/utils/localStorage.util';
 
 export const login = async (
@@ -14,22 +14,22 @@ export const login = async (
     email: args.email,
   });
 
-  const user = await userService.findByEmail(tenantId, { email: args.email });
+  const account = await accountService.findByEmail(tenantId, { email: args.email });
 
-  if (!user || !(await userService.comparePassword(user, args.password))) {
+  if (!account || !(await accountService.comparePassword(account, args.password))) {
     throw new Error('Invalid credentials');
   }
 
   const token = await jwtService.generateToken(tenantId, {
-    userId: user._id,
+    accountId: account._id,
     email: args.email,
   });
 
   return {
     token,
-    user: {
-      id: user._id,
-      emails: user.emails,
+    account: {
+      id: account._id,
+      emails: account.emails,
     },
   };
 };

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
-import * as userService from '@/services/v1/user.service';
+import * as accountService from '@/services/v1/account.service';
 
 describe('POST /api/auth/v1/realm/:tenantId/login', () => {
   let tenantId: string;
@@ -11,8 +11,8 @@ describe('POST /api/auth/v1/realm/:tenantId/login', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-auth-login');
 
-    // Criar usuário para teste de login
-    await userService.create(tenantId, {
+    // Criar conta para teste de login
+    await accountService.create(tenantId, {
       email: 'test@example.com',
       password: 'Password123!',
     });

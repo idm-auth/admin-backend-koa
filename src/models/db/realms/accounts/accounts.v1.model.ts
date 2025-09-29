@@ -8,7 +8,7 @@ import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
 import bcrypt from 'bcrypt';
 import mongoose, { InferSchemaType, Model } from 'mongoose';
 
-const schemaName = 'users';
+const schemaName = 'accounts';
 
 export const schema = new mongoose.Schema({
   emails: [
@@ -23,9 +23,9 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type User = InferSchemaType<typeof schema>;
-export type UserDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type UserDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type Account = InferSchemaType<typeof schema>;
+export type AccountDocument = InferSchemaType<typeof schema> & BaseDocument;
+export type AccountDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
 
 schema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 
@@ -39,7 +39,7 @@ schema.pre('save', async function (next) {
 
 schema.pre('save', async function (next) {
   if (this.isModified('emails')) {
-    const Model = this.constructor as Model<UserDocument>;
+    const Model = this.constructor as Model<AccountDocument>;
     const primaryCount = this.emails.filter((e) => e.isPrimary).length;
     if (primaryCount > 1) {
       throw new Error('Only one primary email allowed');
@@ -59,5 +59,5 @@ schema.pre('save', async function (next) {
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);
-  return conn.model<UserDocument>(schemaName, schema);
+  return conn.model<AccountDocument>(schemaName, schema);
 };

@@ -18,7 +18,7 @@
 mockJwt.verify.mockReturnValueOnce(mockPayload);
 
 // ❌ Mock que não testa comportamento real
-mockService.findById.mockResolvedValue(user);
+mockService.findById.mockResolvedValue(account);
 
 // ❌ Mock complexo sem necessidade
 vi.mock('jsonwebtoken', async () => {

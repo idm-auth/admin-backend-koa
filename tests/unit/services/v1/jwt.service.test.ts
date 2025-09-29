@@ -7,7 +7,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 describe('JWT Service', () => {
   let tenantId: string;
   const mockPayload: JwtPayload = {
-    userId: 'user-123',
+    accountId: 'account-123',
     email: 'test@example.com',
   };
 
@@ -23,7 +23,7 @@ describe('JWT Service', () => {
     });
 
     it('deve lançar erro para payload inválido', async () => {
-      const invalidPayload = { userId: '' } as JwtPayload;
+      const invalidPayload = { accountId: '' } as JwtPayload;
 
       await expect(
         jwtService.generateToken(tenantId, invalidPayload)
@@ -37,7 +37,7 @@ describe('JWT Service', () => {
       const result = await jwtService.verifyToken(tenantId, token);
 
       expect(result).toBeDefined();
-      expect(result).toHaveProperty('userId', mockPayload.userId);
+      expect(result).toHaveProperty('accountId', mockPayload.accountId);
       expect(result).toHaveProperty('email', mockPayload.email);
     });
 

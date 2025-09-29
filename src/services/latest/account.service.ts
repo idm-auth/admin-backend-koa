@@ -1,9 +1,9 @@
 import {
-  UserDocument,
+  AccountDocument,
   getModel,
-} from '@/models/db/realms/users/users.v1.model';
+} from '@/models/db/realms/accounts/accounts.v1.model';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { UserCreate, userCreateSchema } from '@/schemas/v1/user.schema';
+import { AccountCreate, accountCreateSchema } from '@/schemas/v1/account.schema';
 import { getDBName } from '@/services/v1/realm.service';
 import {
   validateEmailUnique,
@@ -15,50 +15,50 @@ import bcrypt from 'bcrypt';
 
 export const create = async (
   tenantId: string,
-  args: UserCreate
-): Promise<UserDocument> => {
+  args: AccountCreate
+): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.debug({ email: args.email });
   // Validações de negócio
-  await validateZod(args, userCreateSchema);
+  await validateZod(args, accountCreateSchema);
   await validateEmailUnique(tenantId, args.email);
 
   const dbName = await getDBName({ publicUUID: tenantId });
-  const user = await getModel(dbName).create({
+  const account = await getModel(dbName).create({
     emails: [{ email: args.email, isPrimary: true }],
     password: args.password,
   });
 
-  return user;
+  return account;
 };
 
 export const findById = async (
   tenantId: string,
   args: { id: DocId }
-): Promise<UserDocument> => {
+): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
   await validateZod(args.id, DocIdSchema);
   const dbName = await getDBName({ publicUUID: tenantId });
-  const user = await getModel(dbName).findById(args.id);
-  if (!user) {
-    throw new NotFoundError('User not found');
+  const account = await getModel(dbName).findById(args.id);
+  if (!account) {
+    throw new NotFoundError('Account not found');
   }
-  return user;
+  return account;
 };
 
 export const findByEmail = async (
   tenantId: string,
   args: { email: string }
-): Promise<UserDocument> => {
+): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.debug({ email: args.email });
   const dbName = await getDBName({ publicUUID: tenantId });
-  const user = await getModel(dbName).findOne({ 'emails.email': args.email });
-  if (!user) {
-    throw new NotFoundError('User not found');
+  const account = await getModel(dbName).findOne({ 'emails.email': args.email });
+  if (!account) {
+    throw new NotFoundError('Account not found');
   }
-  return user;
+  return account;
 };
 
 export const update = async (
@@ -68,26 +68,26 @@ export const update = async (
     emails?: { email: string; isPrimary: boolean }[];
     password?: string;
   }
-): Promise<UserDocument> => {
+): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
   const dbName = await getDBName({ publicUUID: tenantId });
-  const user = await getModel(dbName).findByIdAndUpdate(
+  const account = await getModel(dbName).findByIdAndUpdate(
     args.id,
     { emails: args.emails, password: args.password },
     { new: true, runValidators: true }
   );
-  if (!user) {
-    throw new NotFoundError('User not found');
+  if (!account) {
+    throw new NotFoundError('Account not found');
   }
-  return user;
+  return account;
 };
 
 export const comparePassword = async (
-  user: UserDocument,
+  account: AccountDocument,
   password: string
 ): Promise<boolean> => {
-  return bcrypt.compare(password, user.password);
+  return bcrypt.compare(password, account.password);
 };
 
 export const softDelete = async (
@@ -103,7 +103,7 @@ export const softDelete = async (
     salt: null,
   });
   if (!result) {
-    throw new NotFoundError('User not found');
+    throw new NotFoundError('Account not found');
   }
 };
 

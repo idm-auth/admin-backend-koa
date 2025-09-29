@@ -1,15 +1,15 @@
 import { ValidationError } from '@/errors/validation';
 import { NotFoundError } from '@/errors/not-found';
 import { z } from 'zod';
-import { findByEmail } from '@/services/v1/user.service';
+import { findByEmail } from '@/services/v1/account.service';
 
 export const validateEmailUnique = async (
   tenantId: string,
   email: string
 ): Promise<void> => {
   try {
-    const existingUser = await findByEmail(tenantId, { email });
-    if (existingUser) {
+    const existingAccount = await findByEmail(tenantId, { email });
+    if (existingAccount) {
       throw new ValidationError('Email already exists');
     }
   } catch (error) {

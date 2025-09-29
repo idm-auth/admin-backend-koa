@@ -3,64 +3,64 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 
-describe('GET /api/core/v1/realm/:tenantId/users/:id', () => {
+describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
   let tenantId: string;
-  let createdUserId: string;
+  let createdAccountId: string;
 
   const getApp = () => globalThis.testKoaApp;
   const TEST_PASSWORD = 'Password123!';
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-user-get-id');
+    tenantId = await getTenantId('test-tenant-account-get-id');
 
-    // Criar um usuário para os testes
-    const userData = {
+    // Criar uma conta para os testes
+    const accountData = {
       email: 'findtest@example.com',
       // amazonq-ignore-next-line
       password: TEST_PASSWORD,
     };
 
     const createResponse = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/users`)
-      .send(userData);
+      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .send(accountData);
 
     if (createResponse.status === 201) {
-      createdUserId = createResponse.body.id;
-      if (!createdUserId) {
-        throw new Error('User created but no ID returned');
+      createdAccountId = createResponse.body.id;
+      if (!createdAccountId) {
+        throw new Error('Account created but no ID returned');
       }
     } else {
       throw new Error(
-        `Failed to create test user: ${createResponse.status} - ${createResponse.body?.error || 'Unknown error'}`
+        `Failed to create test account: ${createResponse.status} - ${createResponse.body?.error || 'Unknown error'}`
       );
     }
   });
 
-  it('should find user by id successfully', async () => {
+  it('should find account by id successfully', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/users/${createdUserId}`)
+      .get(`/api/core/v1/realm/${tenantId}/accounts/${createdAccountId}`)
       .expect(200);
 
-    expect(response.body).toHaveProperty('id', createdUserId);
+    expect(response.body).toHaveProperty('id', createdAccountId);
     expect(response.body).toHaveProperty('email');
     expect(response.body).not.toHaveProperty('password');
   });
 
-  it('should return 404 for non-existent user', async () => {
+  it('should return 404 for non-existent account', async () => {
     const nonExistentId = uuidv4();
 
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/users/${nonExistentId}`)
+      .get(`/api/core/v1/realm/${tenantId}/accounts/${nonExistentId}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'User not found');
+    expect(response.body).toHaveProperty('error', 'Account not found');
   });
 
-  it('should return 400 for invalid user id format', async () => {
+  it('should return 400 for invalid account id format', async () => {
     const invalidId = 'invalid-id';
 
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/users/${invalidId}`)
+      .get(`/api/core/v1/realm/${tenantId}/accounts/${invalidId}`)
       .expect(400);
 
     expect(response.body).toHaveProperty('error', 'Validation failed');
@@ -69,7 +69,7 @@ describe('GET /api/core/v1/realm/:tenantId/users/:id', () => {
 
   it('should return 404 when id parameter is missing', async () => {
     await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/users/`)
+      .get(`/api/core/v1/realm/${tenantId}/accounts/`)
       .expect(404);
   });
 });

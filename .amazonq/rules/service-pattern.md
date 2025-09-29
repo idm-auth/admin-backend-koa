@@ -16,17 +16,17 @@
 ## Exemplos
 ```typescript
 // ✅ Correto
-export const findById = async (id: string): Promise<UserDocument> => {
-  const user = await getModel().findById(id);
-  if (!user) {
-    throw new NotFoundError('User not found');
+export const findById = async (id: string): Promise<AccountDocument> => {
+  const account = await getModel().findById(id);
+  if (!account) {
+    throw new NotFoundError('Account not found');
   }
-  return user;
+  return account;
 };
 
 // ❌ Incorreto
 export const findById = async (id: string) => {
-  const user = await getModel().findById(id);
-  return user ? user.toObject() : null;
+  const account = await getModel().findById(id);
+  return account ? account.toObject() : null;
 };
 ```
