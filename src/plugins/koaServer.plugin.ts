@@ -1,6 +1,8 @@
-import { requestIdMiddleware } from '@/middleware/requestId.middleware';
 import { errorHandler } from '@/middleware/errorHandler.middleware';
+import { requestIdMiddleware } from '@/middleware/requestId.middleware';
+import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
 import { initialize as router } from '@/routes/index.routes';
+import { initialize as swaggerRoutes } from '@/routes/swagger.routes';
 import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
@@ -15,10 +17,21 @@ export const initialize = async () => {
   app.use(cors());
   app.use(bodyParser());
   app.use(requestIdMiddleware);
-  
+
   const appRouter = router();
   app.use(appRouter.routes());
-  
+
+  // Swagger routes apenas em desenvolvimento
+  if (process.env.NODE_ENV !== 'production') {
+    const swagger = swaggerRoutes();
+    app.use(swagger.routes());
+  }
+
+  // Swagger plugin (static files) depois das rotas
+  if (process.env.NODE_ENV !== 'production') {
+    swaggerPlugin(app);
+  }
+
   // Log das rotas registradas
   logRoutesDetailed(appRouter);
 
