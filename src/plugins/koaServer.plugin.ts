@@ -1,6 +1,7 @@
 import { requestIdMiddleware } from '@/middleware/requestId.middleware';
 import { errorHandler } from '@/middleware/errorHandler.middleware';
 import { initialize as router } from '@/routes/index.routes';
+import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Koa from 'koa';
@@ -14,7 +15,12 @@ export const initialize = async () => {
   app.use(cors());
   app.use(bodyParser());
   app.use(requestIdMiddleware);
-  app.use(router().routes());
+  
+  const appRouter = router();
+  app.use(appRouter.routes());
+  
+  // Log das rotas registradas
+  logRoutesDetailed(appRouter);
 
   return app;
 };

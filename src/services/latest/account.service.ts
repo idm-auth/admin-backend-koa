@@ -3,7 +3,10 @@ import {
   getModel,
 } from '@/models/db/realms/accounts/accounts.v1.model';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { AccountCreate, accountCreateSchema } from '@/schemas/v1/account.schema';
+import {
+  AccountCreate,
+  accountCreateSchema,
+} from '@/schemas/v1/account.schema';
 import { getDBName } from '@/services/v1/realm.service';
 import {
   validateEmailUnique,
@@ -54,7 +57,9 @@ export const findByEmail = async (
   const logger = await getLogger();
   logger.debug({ email: args.email });
   const dbName = await getDBName({ publicUUID: tenantId });
-  const account = await getModel(dbName).findOne({ 'emails.email': args.email });
+  const account = await getModel(dbName).findOne({
+    'emails.email': args.email,
+  });
   if (!account) {
     throw new NotFoundError('Account not found');
   }
