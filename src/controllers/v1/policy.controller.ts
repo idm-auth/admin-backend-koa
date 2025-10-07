@@ -1,1 +1,0 @@
-export * from '@/domains/realms/policies/v1/policy.controller';

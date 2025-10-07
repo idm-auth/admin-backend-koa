@@ -6,6 +6,7 @@ import * as policies from './policies/v1/policies.routes';
 import * as accountGroups from './account-groups/v1/account-groups.routes';
 import * as groupRoles from './group-roles/v1/group-roles.routes';
 import * as accountRoles from './account-roles/v1/account-roles.routes';
+import * as authentication from './authentication/v1/authentication.routes';
 
 export const initialize = async () => {
   const router = new Router({ prefix: '/realm/:tenantId' });
@@ -17,6 +18,7 @@ export const initialize = async () => {
   const accountGroupsRouter = await accountGroups.initialize();
   const groupRolesRouter = await groupRoles.initialize();
   const accountRolesRouter = await accountRoles.initialize();
+  const authenticationRouter = await authentication.initialize();
 
   router.use(accountsRouter.routes());
   router.use(groupsRouter.routes());
@@ -25,6 +27,7 @@ export const initialize = async () => {
   router.use(accountGroupsRouter.routes());
   router.use(groupRolesRouter.routes());
   router.use(accountRolesRouter.routes());
+  router.use(authenticationRouter.routes());
 
   return router;
 };

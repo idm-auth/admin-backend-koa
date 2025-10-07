@@ -1,13 +1,13 @@
+import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import {
   GroupDocument,
   getModel,
 } from '@/domains/realms/groups/latest/group.model';
+import { NotFoundError } from '@/errors/not-found';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { GroupCreate, groupCreateSchema } from '@/domains/realms/groups/latest/group.schema';
-import { getDBName } from '@/services/v1/realm.service';
 import { validateZod } from '@/services/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
-import { NotFoundError } from '@/errors/not-found';
+import { GroupCreate, groupCreateSchema } from './group.schema';
 
 export const create = async (
   tenantId: string,

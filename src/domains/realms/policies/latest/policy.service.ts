@@ -3,8 +3,11 @@ import {
   getModel,
 } from '@/domains/realms/policies/latest/policy.model';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { PolicyCreate, policyCreateSchema } from '@/domains/realms/policies/latest/policy.schema';
-import { getDBName } from '@/services/v1/realm.service';
+import {
+  PolicyCreate,
+  policyCreateSchema,
+} from '@/domains/realms/policies/latest/policy.schema';
+import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { validateZod } from '@/services/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
@@ -69,13 +72,13 @@ export const update = async (
   const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).findByIdAndUpdate(
     args.id,
-    { 
-      name: args.name, 
-      description: args.description, 
+    {
+      name: args.name,
+      description: args.description,
       effect: args.effect,
       actions: args.actions,
       resources: args.resources,
-      conditions: args.conditions
+      conditions: args.conditions,
     },
     { new: true, runValidators: true }
   );

@@ -3,8 +3,11 @@ import {
   getModel,
 } from '@/domains/realms/roles/latest/role.model';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { RoleCreate, roleCreateSchema } from '@/domains/realms/roles/latest/role.schema';
-import { getDBName } from '@/services/v1/realm.service';
+import {
+  RoleCreate,
+  roleCreateSchema,
+} from '@/domains/realms/roles/latest/role.schema';
+import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { validateZod } from '@/services/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
@@ -66,7 +69,11 @@ export const update = async (
   const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).findByIdAndUpdate(
     args.id,
-    { name: args.name, description: args.description, permissions: args.permissions },
+    {
+      name: args.name,
+      description: args.description,
+      permissions: args.permissions,
+    },
     { new: true, runValidators: true }
   );
   if (!role) {

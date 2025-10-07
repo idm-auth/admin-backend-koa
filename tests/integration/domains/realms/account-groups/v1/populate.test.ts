@@ -5,7 +5,7 @@ import * as groupService from '@/domains/realms/groups/v1/group.service';
 import * as roleService from '@/domains/realms/roles/v1/role.service';
 import * as accountGroupService from '@/domains/realms/account-groups/v1/account-group.service';
 import { getModel } from '@/domains/realms/account-groups/v1/account-group.model';
-import { getDBName } from '@/services/v1/realm.service';
+import { getDBName } from '@/domains/core/realms/v1/realm.service';
 
 describe('AccountGroups Populate Test', () => {
   let tenantId: string;

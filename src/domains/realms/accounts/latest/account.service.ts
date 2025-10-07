@@ -1,14 +1,14 @@
-import { AccountDocument, getModel } from './account.model';
+import { getDBName } from '@/domains/core/realms/latest/realm.service';
+import { NotFoundError } from '@/errors/not-found';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { AccountCreate, accountCreateSchema } from './account.schema';
-import { getDBName } from '@/services/v1/realm.service';
 import {
   validateEmailUnique,
   validateZod,
 } from '@/services/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
-import { NotFoundError } from '@/errors/not-found';
 import bcrypt from 'bcrypt';
+import { AccountDocument, getModel } from './account.model';
+import { AccountCreate, accountCreateSchema } from './account.schema';
 
 export const create = async (
   tenantId: string,

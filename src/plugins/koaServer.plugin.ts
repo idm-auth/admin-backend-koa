@@ -1,8 +1,8 @@
 import { errorHandler } from '@/middleware/errorHandler.middleware';
 import { requestIdMiddleware } from '@/middleware/requestId.middleware';
 import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
-import { initialize as router } from '@/routes/index.routes';
-import { initialize as swaggerRoutes } from '@/routes/swagger.routes';
+import { initialize as api } from '@/domains/api.routes';
+import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';
 import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
@@ -18,8 +18,8 @@ export const initialize = async () => {
   app.use(bodyParser());
   app.use(requestIdMiddleware);
 
-  const appRouter = await router();
-  app.use(appRouter.routes());
+  const apiRouter = await api();
+  app.use(apiRouter.routes());
 
   // Swagger routes apenas em desenvolvimento
   if (process.env.NODE_ENV !== 'production') {
@@ -33,8 +33,8 @@ export const initialize = async () => {
   }
 
   // Log das rotas registradas
-  if (process.env.NODE_ENV == 'developer') {
-    logRoutesDetailed(appRouter);
+  if (process.env.NODE_ENV == 'development') {
+    logRoutesDetailed(apiRouter);
   }
   return app;
 };

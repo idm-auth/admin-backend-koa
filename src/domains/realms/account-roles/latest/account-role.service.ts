@@ -1,7 +1,10 @@
 import { AccountRoleDocument, getModel } from './account-role.model';
 import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
-import { AccountRoleCreate, accountRoleCreateSchema } from './account-role.schema';
-import { getDBName } from '@/services/v1/realm.service';
+import {
+  AccountRoleCreate,
+  accountRoleCreateSchema,
+} from './account-role.schema';
+import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { validateZod } from '@/services/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
@@ -26,13 +29,13 @@ export const removeRoleFromAccount = async (
 ): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ accountId: args.accountId, roleId: args.roleId });
-  
+
   const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findOneAndDelete({
     accountId: args.accountId,
     roleId: args.roleId,
   });
-  
+
   if (!result) {
     throw new NotFoundError('Account-Role relationship not found');
   }
@@ -45,10 +48,12 @@ export const getAccountRoles = async (
   const logger = await getLogger();
   logger.debug({ accountId: args.accountId });
   await validateZod(args.accountId, DocIdSchema);
-  
+
   const dbName = await getDBName({ publicUUID: tenantId });
-  const accountRoles = await getModel(dbName).find({ accountId: args.accountId });
-  
+  const accountRoles = await getModel(dbName).find({
+    accountId: args.accountId,
+  });
+
   return accountRoles;
 };
 
@@ -59,9 +64,9 @@ export const getRoleAccounts = async (
   const logger = await getLogger();
   logger.debug({ roleId: args.roleId });
   await validateZod(args.roleId, DocIdSchema);
-  
+
   const dbName = await getDBName({ publicUUID: tenantId });
   const roleAccounts = await getModel(dbName).find({ roleId: args.roleId });
-  
+
   return roleAccounts;
 };

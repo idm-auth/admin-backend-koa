@@ -28,3 +28,10 @@ export const passwordSchema = z
   );
 
 export type Password = z.infer<typeof passwordSchema>;
+
+export const errorResponseSchema = z.object({
+  error: z.string(),
+  details: z.string().optional(),
+});
+
+export type ErrorResponse = z.infer<typeof errorResponseSchema>;
