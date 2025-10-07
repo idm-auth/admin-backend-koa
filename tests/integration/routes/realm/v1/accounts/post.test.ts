@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 
-describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
+describe('POST /api/realm/:tenantId/v1/accounts', () => {
   let tenantId: string;
 
   const getApp = () => globalThis.testKoaApp;
@@ -20,7 +20,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData)
       .expect(201);
 
@@ -36,7 +36,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData)
       .expect(400);
 
@@ -50,7 +50,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData)
       .expect(400);
 
@@ -66,7 +66,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData)
       .expect(400);
 
@@ -82,7 +82,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData)
       .expect(400);
 
@@ -100,7 +100,7 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
 
     // Mock para simular erro no service se necessário
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData);
 
     if (response.status === 500) {

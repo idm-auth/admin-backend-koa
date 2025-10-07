@@ -4,7 +4,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import * as accountService from '@/services/v1/account.service';
 import * as roleService from '@/services/v1/role.service';
 
-describe('POST /api/core/v1/realm/:tenantId/account-roles', () => {
+describe('POST /api/realm/:tenantId/v1/account-roles', () => {
   let tenantId: string;
   let accountId: string;
   let roleId: string;
@@ -34,7 +34,7 @@ describe('POST /api/core/v1/realm/:tenantId/account-roles', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/account-roles`)
+      .post(`/api/realm/${tenantId}/v1/account-roles`)
       .send(relationData)
       .expect(201);
 
@@ -49,7 +49,7 @@ describe('POST /api/core/v1/realm/:tenantId/account-roles', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/account-roles`)
+      .post(`/api/realm/${tenantId}/v1/account-roles`)
       .send(relationData)
       .expect(400);
 

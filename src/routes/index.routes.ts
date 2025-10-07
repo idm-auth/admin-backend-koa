@@ -1,7 +1,7 @@
 // index.routes.ts
 import Router from '@koa/router';
 
-import api from './api/index.routes';
+import * as api from './api/index.routes';
 
 export const initialize = async () => {
   const router = new Router();

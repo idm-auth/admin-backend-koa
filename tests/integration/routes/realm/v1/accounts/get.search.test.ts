@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 
-describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
+describe('GET /api/realm/:tenantId/v1/accounts/search', () => {
   let tenantId: string;
 
   const getApp = () => globalThis.testKoaApp;
@@ -19,7 +19,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
     };
 
     const createResponse = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData);
 
     if (createResponse.status !== 201) {
@@ -31,7 +31,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
 
   it('should find account by email successfully', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/search`)
+      .get(`/api/realm/${tenantId}/v1/accounts/search`)
       .query({ email: 'searchtest@example.com' })
       .expect(200);
 
@@ -42,7 +42,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
 
   it('should return 400 for missing email parameter', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/search`)
+      .get(`/api/realm/${tenantId}/v1/accounts/search`)
       .expect(400);
 
     expect(response.body).toHaveProperty('error', 'Validation failed');
@@ -50,7 +50,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
 
   it('should return 400 for invalid email format', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/search`)
+      .get(`/api/realm/${tenantId}/v1/accounts/search`)
       .query({ email: 'invalid-email' })
       .expect(400);
 
@@ -60,7 +60,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/search', () => {
 
   it('should return 404 for non-existent email', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/search`)
+      .get(`/api/realm/${tenantId}/v1/accounts/search`)
       .query({ email: 'nonexistent@example.com' })
       .expect(404);
 

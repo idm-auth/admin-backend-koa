@@ -6,12 +6,12 @@ import {
   swaggerPocParamsSchema,
   swaggerPocQuerySchema,
   swaggerPocListResponseSchema,
-  errorResponseSchema
+  errorResponseSchema,
 } from '@/schemas/latest/swagger-poc.schema';
 
 export const initialize = async () => {
   const router = new SwaggerRouter({ prefix: '/v1' });
-  
+
   // GET /users - List users with query validation
   router.addRoute({
     name: 'listUsers',
@@ -20,11 +20,11 @@ export const initialize = async () => {
     handlers: [swaggerPocController.list],
     validate: {
       query: swaggerPocQuerySchema,
-      response: swaggerPocListResponseSchema
+      response: swaggerPocListResponseSchema,
     },
-    tags: ['Users']
+    tags: ['Users'],
   });
-  
+
   // POST /users - Create user with body validation
   router.addRoute({
     name: 'createUser',
@@ -35,12 +35,12 @@ export const initialize = async () => {
       body: swaggerPocCreateSchema,
       response: swaggerPocResponseSchema,
       responses: {
-        400: errorResponseSchema
-      }
+        400: errorResponseSchema,
+      },
     },
-    tags: ['Users']
+    tags: ['Users'],
   });
-  
+
   // GET /users/:id - Get user by ID
   router.addRoute({
     name: 'getUserById',
@@ -51,11 +51,11 @@ export const initialize = async () => {
       params: swaggerPocParamsSchema,
       response: swaggerPocResponseSchema,
       responses: {
-        404: errorResponseSchema
-      }
+        404: errorResponseSchema,
+      },
     },
-    tags: ['Users']
+    tags: ['Users'],
   });
-  
+
   return router;
 };

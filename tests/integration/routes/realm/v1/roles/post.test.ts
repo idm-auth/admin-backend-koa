@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 
-describe('POST /api/core/v1/realm/:tenantId/roles', () => {
+describe('POST /api/realm/:tenantId/v1/roles', () => {
   let tenantId: string;
 
   const getApp = () => globalThis.testKoaApp;
@@ -19,7 +19,7 @@ describe('POST /api/core/v1/realm/:tenantId/roles', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/roles`)
+      .post(`/api/realm/${tenantId}/v1/roles`)
       .send(roleData)
       .expect(201);
 
@@ -35,7 +35,7 @@ describe('POST /api/core/v1/realm/:tenantId/roles', () => {
     };
 
     const response = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/roles`)
+      .post(`/api/realm/${tenantId}/v1/roles`)
       .send(roleData)
       .expect(400);
 

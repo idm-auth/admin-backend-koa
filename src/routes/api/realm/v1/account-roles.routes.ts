@@ -9,7 +9,7 @@ export const initialize = async () => {
   router.post('/', accountRoleController.addRoleToAccount);
   router.delete('/', accountRoleController.removeRoleFromAccount);
   router.get('/account/:accountId', accountRoleController.getAccountRoles);
-  router.get('/role/:roleId', accountRoleController.getRoleAccounts);
+  router.get('/roles/:roleId', accountRoleController.getRoleAccounts);
 
   return router;
 };

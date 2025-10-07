@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 
-describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
+describe('GET /api/realm/:tenantId/v1/accounts/:id', () => {
   let tenantId: string;
   let createdAccountId: string;
 
@@ -21,7 +21,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
     };
 
     const createResponse = await request(getApp().callback())
-      .post(`/api/core/v1/realm/${tenantId}/accounts`)
+      .post(`/api/realm/${tenantId}/v1/accounts`)
       .send(accountData);
 
     if (createResponse.status === 201) {
@@ -38,7 +38,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
 
   it('should find account by id successfully', async () => {
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/${createdAccountId}`)
+      .get(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .expect(200);
 
     expect(response.body).toHaveProperty('id', createdAccountId);
@@ -50,7 +50,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
     const nonExistentId = uuidv4();
 
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/${nonExistentId}`)
+      .get(`/api/realm/${tenantId}/v1/accounts/${nonExistentId}`)
       .expect(404);
 
     expect(response.body).toHaveProperty('error', 'Account not found');
@@ -60,7 +60,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
     const invalidId = 'invalid-id';
 
     const response = await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/${invalidId}`)
+      .get(`/api/realm/${tenantId}/v1/accounts/${invalidId}`)
       .expect(400);
 
     expect(response.body).toHaveProperty('error', 'Validation failed');
@@ -69,7 +69,7 @@ describe('GET /api/core/v1/realm/:tenantId/accounts/:id', () => {
 
   it('should return 404 when id parameter is missing', async () => {
     await request(getApp().callback())
-      .get(`/api/core/v1/realm/${tenantId}/accounts/`)
+      .get(`/api/realm/${tenantId}/v1/accounts/`)
       .expect(404);
   });
 });
