@@ -1,5 +1,5 @@
 import { InferSchemaType, Schema } from 'mongoose';
-import { baseDocumentSchema } from '@/models/base/base.v1.model';
+import { baseDocumentSchema } from '@/domains/commons/base/latest/base.model';
 
 export const baseConfigSchema = new Schema({
   app: { type: String, required: true, unique: true },

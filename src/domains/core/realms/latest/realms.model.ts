@@ -2,7 +2,7 @@
 import {
   BaseDocumentID,
   baseDocumentSchema,
-} from '@/models/base/base.v1.model';
+} from '@/domains/commons/base/latest/base.model';
 import { getCoreDb } from '@/plugins/mongo.plugin';
 import mongoose, { InferSchemaType } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';

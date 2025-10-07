@@ -2,7 +2,7 @@ import {
   BaseDocument,
   BaseDocumentID,
   baseDocumentSchema,
-} from '@/models/base/base.v1.model';
+} from '@/domains/commons/base/latest/base.model';
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
 import mongoose, { InferSchemaType } from 'mongoose';
 
@@ -17,7 +17,8 @@ schema.add(baseDocumentSchema);
 
 export type GroupRole = InferSchemaType<typeof schema>;
 export type GroupRoleDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type GroupRoleDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type GroupRoleDocumentID = InferSchemaType<typeof schema> &
+  BaseDocumentID;
 
 schema.index({ groupId: 1, roleId: 1 }, { unique: true });
 schema.index({ groupId: 1 });

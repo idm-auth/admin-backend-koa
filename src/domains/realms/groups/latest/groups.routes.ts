@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as groupController from './group.controller';
 import { groupCreateSchema } from './group.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';

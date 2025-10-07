@@ -4,7 +4,7 @@ import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
 import {
   validateEmailUnique,
   validateZod,
-} from '@/services/v1/validation.service';
+} from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
 import { AccountDocument, getModel } from './account.model';

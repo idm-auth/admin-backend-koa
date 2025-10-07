@@ -3,7 +3,7 @@ import {
   BaseDocument,
   BaseDocumentID,
   baseDocumentSchema,
-} from '@/models/base/base.v1.model';
+} from '@/domains/commons/base/latest/base.model';
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
 import bcrypt from 'bcrypt';
 import mongoose, { InferSchemaType, Model } from 'mongoose';

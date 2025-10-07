@@ -1,6 +1,7 @@
 import { getCoreDb } from '@/plugins/mongo.plugin';
 import { InferSchemaType, Schema } from 'mongoose';
-import { baseConfigSchema, BaseConfig } from './baseConfig.v1.model';
+import { baseConfigSchema, BaseConfig } from './baseConfig.model';
+import { PublicUUID } from '@/schemas/latest/base.schema';
 
 interface IWebAdminConfig extends BaseConfig {
   api: {

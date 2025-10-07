@@ -1,8 +1,11 @@
+import {
+  OpenAPIRegistry,
+  OpenApiGeneratorV3,
+  extendZodWithOpenApi,
+} from '@asteasolutions/zod-to-openapi';
 import Router from '@koa/router';
 import { Context, Next } from 'koa';
 import { ZodSchema, z } from 'zod';
-import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
 extendZodWithOpenApi(z);
 
@@ -34,13 +37,15 @@ export class SwaggerRouter {
 
   addRoute(config: RouteConfig) {
     this.routeConfigs.push(config);
-    
+
     // Registra no OpenAPI
     this.registerInSwagger(config);
-    
+
     // Cria middleware de validação
-    const validationMiddleware = this.createValidationMiddleware(config.validate);
-    
+    const validationMiddleware = this.createValidationMiddleware(
+      config.validate
+    );
+
     // Registra no Koa Router
     this.router[config.method](
       config.path,
@@ -48,52 +53,54 @@ export class SwaggerRouter {
       ...(config.middlewares || []),
       ...config.handlers
     );
-    
+
     return this;
   }
 
   private registerInSwagger(config: RouteConfig) {
     const { validate, path, method, tags = [] } = config;
-    
-    const requestBody = validate?.body ? {
-      content: { 'application/json': { schema: validate.body } }
-    } : undefined;
+
+    const requestBody = validate?.body
+      ? {
+          content: { 'application/json': { schema: validate.body } },
+        }
+      : undefined;
 
     const parameters = [];
     if (validate?.params) {
-      const paramNames = path.match(/:(\w+)/g)?.map(p => p.slice(1)) || [];
-      paramNames.forEach(name => {
+      const paramNames = path.match(/:(\w+)/g)?.map((p) => p.slice(1)) || [];
+      paramNames.forEach((name) => {
         parameters.push({
           name,
           in: 'path' as const,
           required: true,
-          schema: { type: 'string' }
+          schema: { type: 'string' },
         });
       });
     }
 
     if (validate?.query) {
-      Object.keys((validate.query as any).shape || {}).forEach(name => {
+      Object.keys((validate.query as any).shape || {}).forEach((name) => {
         parameters.push({
           name,
           in: 'query' as const,
-          schema: { type: 'string' }
+          schema: { type: 'string' },
         });
       });
     }
 
     const responses: Record<string, any> = {};
-    
+
     if (validate?.response) {
       responses['200'] = {
-        content: { 'application/json': { schema: validate.response } }
+        content: { 'application/json': { schema: validate.response } },
       };
     }
 
     if (validate?.responses) {
       Object.entries(validate.responses).forEach(([status, schema]) => {
         responses[status] = {
-          content: { 'application/json': { schema } }
+          content: { 'application/json': { schema } },
         };
       });
     }
@@ -108,7 +115,7 @@ export class SwaggerRouter {
       tags: tags.length ? tags : [this.extractTagFromPath(path)],
       parameters: parameters.length ? parameters : undefined,
       requestBody,
-      responses
+      responses,
     });
   }
 
@@ -117,17 +124,17 @@ export class SwaggerRouter {
       if (validate) {
         // Preserva parâmetros existentes do router pai
         const existingParams = { ...ctx.params };
-        
+
         // Valida params
         if (validate.params) {
           ctx.params = validate.params.parse(ctx.params);
         }
-        
+
         // Valida query
         if (validate.query) {
           ctx.query = validate.query.parse(ctx.query) as any;
         }
-        
+
         // Valida body
         if (validate.body) {
           ctx.request.body = validate.body.parse(ctx.request.body);
@@ -157,11 +164,11 @@ export class SwaggerRouter {
     const generator = new OpenApiGeneratorV3(this.registry.definitions);
     return generator.generateDocument({
       openapi: '3.0.0',
-      info: { 
-        title: 'Swagger POC API', 
+      info: {
+        title: 'Swagger POC API',
         version: '1.0.0',
-        description: 'API documentation generated from Zod schemas'
-      }
+        description: 'API documentation generated from Zod schemas',
+      },
     });
   }
 

@@ -1,7 +1,7 @@
 import { LoginRequest } from './authentication.schema';
 import { LoginResponse } from './authentication.schema';
-import * as jwtService from '@/services/latest/jwt.service';
-import * as accountService from '@/domains/realms/accounts/v1/account.service';
+import * as jwtService from '@/domains/realms/jwt/latest/jwt.service';
+import * as accountService from '@/domains/realms/accounts/latest/account.service';
 import { getLogger } from '@/utils/localStorage.util';
 
 export const login = async (
@@ -14,9 +14,14 @@ export const login = async (
     email: args.email,
   });
 
-  const account = await accountService.findByEmail(tenantId, { email: args.email });
+  const account = await accountService.findByEmail(tenantId, {
+    email: args.email,
+  });
 
-  if (!account || !(await accountService.comparePassword(account, args.password))) {
+  if (
+    !account ||
+    !(await accountService.comparePassword(account, args.password))
+  ) {
     throw new Error('Invalid credentials');
   }
 

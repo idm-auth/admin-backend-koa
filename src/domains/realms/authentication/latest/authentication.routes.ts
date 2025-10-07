@@ -1,6 +1,9 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as authenticationController from './authentication.controller';
-import { loginRequestSchema, loginResponseSchema } from './authentication.schema';
+import {
+  loginRequestSchema,
+  loginResponseSchema,
+} from './authentication.schema';
 import { errorResponseSchema } from '@/schemas/latest/base.schema';
 
 export const initialize = async () => {

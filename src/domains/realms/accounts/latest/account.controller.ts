@@ -1,6 +1,6 @@
 import { emailSchema } from '@/schemas/v1/base.schema';
 import * as accountService from './account.service';
-import { validateZod } from '@/services/v1/validation.service';
+import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { Context } from 'koa';
 
 export const create = async (ctx: Context) => {

@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as accountGroupController from './account-group.controller';
 import { accountGroupCreateSchema } from './account-group.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';

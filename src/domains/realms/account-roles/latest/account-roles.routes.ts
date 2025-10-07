@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as accountRoleController from './account-role.controller';
 import {
   accountRoleCreateSchema,

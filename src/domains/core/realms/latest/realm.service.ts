@@ -3,7 +3,7 @@ import {
   getModel,
   Realm,
   RealmDocumentID,
-} from '@/models/db/core/realms/realms.v1.model';
+} from '@/domains/core/realms/latest/realms.model';
 import { PublicUUID } from '@/schemas/v1/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
 

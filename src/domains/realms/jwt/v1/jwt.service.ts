@@ -1,7 +1,10 @@
-import { JwtPayload, jwtPayloadSchema } from '@/schemas/latest/jwt.schema';
+import {
+  JwtPayload,
+  jwtPayloadSchema,
+} from '@/domains/realms/jwt/latest/jwt.schema';
 import { PublicUUID } from '@/schemas/v1/base.schema';
 import * as realmService from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/services/v1/validation.service';
+import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import jwt, { PrivateKey, Secret, SignOptions } from 'jsonwebtoken';
 import { StringValue } from 'ms';

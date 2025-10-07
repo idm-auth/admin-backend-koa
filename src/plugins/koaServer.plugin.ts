@@ -25,6 +25,7 @@ export const initialize = async () => {
   if (process.env.NODE_ENV !== 'production') {
     const swagger = await swaggerRoutes();
     app.use(swagger.routes());
+    logRoutesDetailed(swagger);
   }
 
   // Swagger plugin (static files) depois das rotas

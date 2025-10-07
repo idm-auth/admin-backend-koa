@@ -2,7 +2,6 @@ import Router from '@koa/router';
 import { readFileSync } from 'fs';
 import { Context } from 'koa';
 import { absolutePath } from 'swagger-ui-dist';
-import * as apiRoutes from '@/domains/api.routes';
 
 export const initialize = async () => {
   const router = new Router();

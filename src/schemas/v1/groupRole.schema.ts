@@ -1,1 +1,0 @@
-export * from '@/domains/realms/group-roles/v1/group-role.schema';

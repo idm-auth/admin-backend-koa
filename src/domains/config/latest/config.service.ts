@@ -1,7 +1,7 @@
 import {
   getModel,
   WebAdminConfig,
-} from '@/models/db/core/config/webAdminConfig.v1.model';
+} from '@/domains/config/latest/webAdminConfig.model';
 import {
   EnvConfig,
   envConfigZSchema,

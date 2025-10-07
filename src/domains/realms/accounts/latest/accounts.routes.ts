@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as accountController from './account.controller';
 import { accountCreateSchema } from './account.schema';
 import { emailSchema, DocIdSchema } from '@/schemas/latest/base.schema';

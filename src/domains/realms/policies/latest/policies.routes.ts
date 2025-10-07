@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/utils/swagger-router';
+import { SwaggerRouter } from '@/domains/swagger/swagger-router';
 import * as policyController from './policy.controller';
 import { policyCreateSchema } from './policy.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';

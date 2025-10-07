@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { JwtPayload } from '@/schemas/latest/jwt.schema';
-import * as jwtService from '@/services/v1/jwt.service';
+import { JwtPayload } from '@/domains/realms/jwt/latest/jwt.schema';
+import * as jwtService from '@/domains/realms/jwt/v1/jwt.service';
 import { getTenantId } from '@test/utils/tenant.util';
 
 describe('JWT Service', () => {

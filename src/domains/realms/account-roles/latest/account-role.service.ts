@@ -5,7 +5,7 @@ import {
   accountRoleCreateSchema,
 } from './account-role.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/services/v1/validation.service';
+import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
