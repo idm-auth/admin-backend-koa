@@ -6,6 +6,9 @@ export default defineConfig({
   test: {
     globals: true, // habilita describe, it, expect
     environment: 'node',
+    env: {
+      NODE_ENV: 'test',
+    },
     setupFiles: [
       'tests/setup/base.setup.ts',
       'tests/setup/integration.setup.ts',

@@ -1,2 +1,2 @@
 // Re-export all from latest
-export * from '@/controllers/latest/accountRole.controller';
+export * from '@/domains/realms/account-roles/v1/account-role.controller';

@@ -115,6 +115,9 @@ export class SwaggerRouter {
   private createValidationMiddleware(validate?: RouteConfig['validate']) {
     return async (ctx: Context, next: Next) => {
       if (validate) {
+        // Preserva parâmetros existentes do router pai
+        const existingParams = { ...ctx.params };
+        
         // Valida params
         if (validate.params) {
           ctx.params = validate.params.parse(ctx.params);

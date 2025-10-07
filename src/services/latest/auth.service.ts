@@ -1,7 +1,7 @@
 import { LoginRequest } from '@/schemas/auth/v1/login/request';
 import { LoginResponse } from '@/schemas/auth/v1/login/response';
 import * as jwtService from '@/services/latest/jwt.service';
-import * as accountService from '@/services/v1/account.service';
+import * as accountService from '@/domains/realms/accounts/v1/account.service';
 import { getLogger } from '@/utils/localStorage.util';
 
 export const login = async (

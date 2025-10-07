@@ -40,7 +40,7 @@ export const initSetup = async () => {
   const logger = await getLogger();
   const base = {
     app: 'web-admin',
-    env: process.env.ENV_NAME || 'development',
+    env: process.env.NODE_ENV || 'development',
   };
   const doc = await getModel().findOne(base);
   if (!doc) {

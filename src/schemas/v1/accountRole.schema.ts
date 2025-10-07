@@ -1,2 +1,2 @@
 // Re-export all from latest
-export * from '@/schemas/latest/accountRole.schema';
+export * from '@/domains/realms/account-roles/v1/account-role.schema';

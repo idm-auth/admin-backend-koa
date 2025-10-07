@@ -1,8 +1,8 @@
-import * as swaggerPocRoutes from '@/routes/api/swagger-poc/v1/index.routes';
 import Router from '@koa/router';
 import { readFileSync } from 'fs';
 import { Context } from 'koa';
 import { absolutePath } from 'swagger-ui-dist';
+import * as apiRoutes from '@/routes/api/index.routes';
 
 export const initialize = async () => {
   const router = new Router();
@@ -30,14 +30,15 @@ export const initialize = async () => {
   // OpenAPI JSON
   router.get('/api-docs/swagger.json', async (ctx: Context) => {
     ctx.type = 'application/json';
-    try {
-      const swaggerRouter = await swaggerPocRoutes.initialize();
-      ctx.body = swaggerRouter.getOpenAPIDocument();
-    } catch (error) {
-      console.error('Error generating OpenAPI document:', error);
-      ctx.status = 500;
-      ctx.body = { error: 'Failed to generate OpenAPI document' };
-    }
+    ctx.body = {
+      openapi: '3.0.0',
+      info: {
+        title: 'API Documentation',
+        version: '1.0.0',
+        description: 'API documentation for all domains'
+      },
+      paths: {}
+    };
   });
 
   return router;

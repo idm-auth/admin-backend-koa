@@ -1,2 +1,1 @@
-// Re-export all from latest
-export * from '@/controllers/latest/groupRole.controller';
+export * from '@/domains/realms/group-roles/v1/group-role.controller';

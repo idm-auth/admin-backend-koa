@@ -1,7 +1,7 @@
 import { ValidationError } from '@/errors/validation';
 import { NotFoundError } from '@/errors/not-found';
 import { z } from 'zod';
-import { findByEmail } from '@/services/v1/account.service';
+import { findByEmail } from '@/domains/realms/accounts/v1/account.service';
 
 export const validateEmailUnique = async (
   tenantId: string,

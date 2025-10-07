@@ -5,22 +5,37 @@
 - Prefira código explícito a código "inteligente"
 - Mantenha funções pequenas e com responsabilidade única
 
-## Estrutura
-- Organize imports: externos, internos, relativos
-- Use barrel exports quando apropriado
-- Prefira composição a herança
+## Arquitetura DDD
+- **SEMPRE organize código por domínios** em `src/domains/{contexto}/{dominio}/`
+- Use estrutura `latest/` e `v1/` dentro de cada domínio
+- Inclua rotas dentro do domínio: `{dominio}.routes.ts`
+- Testes organizados por domínio: `tests/integration/domains/{contexto}/{dominio}/v1/`
+
+## Estrutura de Domínios
+- **realms/**: Multi-tenant (accounts, groups, roles, policies)
+- **auth/**: Autenticação (login, tokens, passwords)
+- **core/**: Funcionalidades centrais (config, realm)
 
 ## Separação de Responsabilidades
 - Controllers: apenas recebem dados e chamam services
 - Services: contêm toda lógica de negócio e validações
 - Models: apenas estrutura de dados e validações de schema
+- Routes: definição de endpoints com SwaggerRouter
+- Schemas: validações Zod para requests/responses
 - NUNCA coloque validações de negócio no controller
 - Use classes de erro personalizadas para diferentes tipos de erro
 
+## Rotas (SwaggerRouter)
+- **SEMPRE use SwaggerRouter** em vez de Router tradicional
+- Defina validações Zod para body, params, query e responses
+- Inclua tags do domínio e responses de erro específicos
+- Organize rotas dentro do domínio correspondente
+
 ## Exports e Imports
 - Use `export const` em vez de `const` + `export { }`
-- Para versionamento: `export * from '@/path/latest'` no v1
+- Para versionamento: `export * from '@/domains/{contexto}/{dominio}/latest/{arquivo}'` no v1
 - Para sobrescrever: declare nova função com mesmo nome após o `export *`
 - Para estender: importe função original e chame + adicione funcionalidade
-- Use `import * as service from '@/path'` para imports de módulos
+- Use `import * as service from '@/domains/{contexto}/{dominio}/v1/{arquivo}'` para imports entre domínios
 - Evite `export default { }` - prefira named exports
+- **NUNCA use barrel exports** - imports diretos são preferíveis

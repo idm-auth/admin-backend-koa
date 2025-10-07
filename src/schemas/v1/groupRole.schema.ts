@@ -1,2 +1,1 @@
-// Re-export all from latest
-export * from '@/schemas/latest/groupRole.schema';
+export * from '@/domains/realms/group-roles/v1/group-role.schema';

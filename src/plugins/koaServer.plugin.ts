@@ -33,8 +33,9 @@ export const initialize = async () => {
   }
 
   // Log das rotas registradas
-  logRoutesDetailed(appRouter);
-
+  if (process.env.NODE_ENV == 'developer') {
+    logRoutesDetailed(appRouter);
+  }
   return app;
 };
 

@@ -1,2 +1,1 @@
-// Re-export all from latest
-export * from '@/services/latest/groupRole.service';
+export * from '@/domains/realms/group-roles/v1/group-role.service';
