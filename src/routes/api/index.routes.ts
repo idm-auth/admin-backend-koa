@@ -4,14 +4,19 @@ import { initialize as auth } from './auth/index.routes';
 import { initialize as core } from './core/index.routes';
 import { initialize as swaggerPoc } from './swagger-poc/index.routes';
 
-const initialize = () => {
+const initialize = async () => {
   const router = new Router({
     prefix: '/api',
   });
-  router.use(config().routes());
-  router.use(auth().routes());
-  router.use(core().routes());
-  router.use('/swagger-poc', swaggerPoc().routes());
+  const configRouter = await config();
+  const authRouter = await auth();
+  const coreRouter = await core();
+  const swaggerPocRouter = await swaggerPoc();
+  
+  router.use(configRouter.routes());
+  router.use(authRouter.routes());
+  router.use(coreRouter.routes());
+  router.use('/swagger-poc', swaggerPocRouter.routes());
 
   return router;
 };

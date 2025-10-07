@@ -18,12 +18,12 @@ export const initialize = async () => {
   app.use(bodyParser());
   app.use(requestIdMiddleware);
 
-  const appRouter = router();
+  const appRouter = await router();
   app.use(appRouter.routes());
 
   // Swagger routes apenas em desenvolvimento
   if (process.env.NODE_ENV !== 'production') {
-    const swagger = swaggerRoutes();
+    const swagger = await swaggerRoutes();
     app.use(swagger.routes());
   }
 

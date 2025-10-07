@@ -9,7 +9,7 @@ import {
   errorResponseSchema
 } from '@/schemas/latest/swagger-poc.schema';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new SwaggerRouter({ prefix: '/v1' });
   
   // GET /users - List users with query validation

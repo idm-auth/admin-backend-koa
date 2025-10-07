@@ -1,7 +1,7 @@
 import * as groupRoleController from '@/controllers/v1/groupRole.controller';
 import Router from '@koa/router';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router({
     prefix: '/group-roles',
   });

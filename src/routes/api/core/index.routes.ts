@@ -2,11 +2,12 @@
 import Router from '@koa/router';
 import { initialize as v1 } from './v1/index.routes';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router({
     prefix: '/core',
   });
-  router.use(v1().routes());
+  const v1Router = await v1();
+  router.use(v1Router.routes());
 
   return router;
 };

@@ -1,7 +1,7 @@
 import * as policyController from '@/controllers/v1/policy.controller';
 import Router from '@koa/router';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router({
     prefix: '/policies',
   });

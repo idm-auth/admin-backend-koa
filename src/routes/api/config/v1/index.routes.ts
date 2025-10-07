@@ -3,7 +3,7 @@
 import Router from '@koa/router';
 import * as configController from '@/controllers/v1/config.controller';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router();
   router.get('/init-setup', configController.getInitSetup);
 

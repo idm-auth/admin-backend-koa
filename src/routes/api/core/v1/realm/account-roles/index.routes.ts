@@ -1,7 +1,7 @@
 import * as accountRoleController from '@/controllers/v1/accountRole.controller';
 import Router from '@koa/router';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router({
     prefix: '/account-roles',
   });

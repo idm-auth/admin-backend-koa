@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { Context } from 'koa';
 import { absolutePath } from 'swagger-ui-dist';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router();
 
   // Custom HTML with correct title and base path
@@ -31,7 +31,7 @@ export const initialize = () => {
   router.get('/api-docs/swagger.json', async (ctx: Context) => {
     ctx.type = 'application/json';
     try {
-      const swaggerRouter = swaggerPocRoutes.initialize();
+      const swaggerRouter = await swaggerPocRoutes.initialize();
       ctx.body = swaggerRouter.getOpenAPIDocument();
     } catch (error) {
       console.error('Error generating OpenAPI document:', error);

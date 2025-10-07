@@ -7,17 +7,25 @@ import { initialize as accountGroup } from './account-groups/index.routes';
 import { initialize as accountRole } from './account-roles/index.routes';
 import { initialize as groupRole } from './group-roles/index.routes';
 
-export const initialize = () => {
+export const initialize = async () => {
   const router = new Router({
     prefix: '/realm/:tenantId',
   });
-  router.use(account().routes());
-  router.use(group().routes());
-  router.use(role().routes());
-  router.use(policy().routes());
-  router.use(accountGroup().routes());
-  router.use(accountRole().routes());
-  router.use(groupRole().routes());
+  const accountRouter = await account();
+  const groupRouter = await group();
+  const roleRouter = await role();
+  const policyRouter = await policy();
+  const accountGroupRouter = await accountGroup();
+  const accountRoleRouter = await accountRole();
+  const groupRoleRouter = await groupRole();
+  
+  router.use(accountRouter.routes());
+  router.use(groupRouter.routes());
+  router.use(roleRouter.routes());
+  router.use(policyRouter.routes());
+  router.use(accountGroupRouter.routes());
+  router.use(accountRoleRouter.routes());
+  router.use(groupRoleRouter.routes());
 
   return router;
 };
