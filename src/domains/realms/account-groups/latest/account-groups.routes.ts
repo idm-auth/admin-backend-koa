@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as accountGroupController from './account-group.controller';
 import { accountGroupCreateSchema } from './account-group.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';
@@ -27,7 +27,7 @@ const groupParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/account-groups' });
+  const router = new MagicRouter({ prefix: '/account-groups' });
 
   // POST /account-groups - Add account to group
   router.addRoute({

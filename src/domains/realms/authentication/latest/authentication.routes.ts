@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as authenticationController from './authentication.controller';
 import {
   loginRequestSchema,
@@ -7,7 +7,7 @@ import {
 import { errorResponseSchema } from '@/schemas/latest/base.schema';
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/authentication' });
+  const router = new MagicRouter({ prefix: '/authentication' });
 
   router.addRoute({
     name: 'login',

@@ -1,4 +1,4 @@
-import { MagicRouter } from '@/domains/swagger/MagicRouter';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as groupController from './group.controller';
 import { groupCreateSchema } from './group.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';

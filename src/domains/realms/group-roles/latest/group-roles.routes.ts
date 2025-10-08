@@ -1,4 +1,4 @@
-import { magicRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as groupRoleController from './group-role.controller';
 import {
   groupRoleCreateSchema,
@@ -9,7 +9,7 @@ import {
 } from './group-role.schema';
 
 export const initialize = async () => {
-  const router = magicRouter({ prefix: '/group-roles' });
+  const router = new MagicRouter({ prefix: '/group-roles' });
 
   router.addRoute({
     name: 'addRoleToGroup',

@@ -1,8 +1,8 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { DocIdSchema } from '@/schemas/latest/base.schema';
+import { MagicRouter } from '@/utils/core/MagicRouter';
+import { z } from 'zod';
 import * as policyController from './policy.controller';
 import { policyCreateSchema } from './policy.schema';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
 
 // Response schemas
 const policyResponseSchema = z.object({
@@ -12,7 +12,7 @@ const policyResponseSchema = z.object({
   effect: z.enum(['Allow', 'Deny']),
   actions: z.array(z.string()),
   resources: z.array(z.string()),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.record(z.string(), z.any()).optional(),
 });
 
 const errorResponseSchema = z.object({
@@ -31,7 +31,7 @@ const policyParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/policies' });
+  const router = new MagicRouter({ prefix: '/policies' });
 
   // POST /policies - Create policy
   router.addRoute({
@@ -166,7 +166,7 @@ export const initialize = async () => {
               effect: z.enum(['Allow', 'Deny']).optional(),
               actions: z.array(z.string()).optional(),
               resources: z.array(z.string()).optional(),
-              conditions: z.record(z.any()).optional(),
+              conditions: z.record(z.string(), z.string()).optional(),
             }),
           },
         },

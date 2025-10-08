@@ -6,7 +6,7 @@ export const policyCreateSchema = z.object({
   effect: z.enum(['Allow', 'Deny'], { error: 'Effect must be Allow or Deny' }),
   actions: z.array(z.string()).min(1, 'At least one action is required'),
   resources: z.array(z.string()).min(1, 'At least one resource is required'),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.record(z.string(), z.string()).optional(),
 });
 
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;

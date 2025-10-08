@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { Context } from 'koa';
 import { absolutePath } from 'swagger-ui-dist';
-import { MagicRouter } from './MagicRouter';
+import { MagicRouter } from '../../utils/core/MagicRouter';
 import { getOpenAPIDocument } from './openApiGenerator';
 
 export const initialize = async () => {

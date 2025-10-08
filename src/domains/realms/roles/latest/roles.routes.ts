@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as roleController from './role.controller';
 import { roleCreateSchema } from './role.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';
@@ -28,7 +28,7 @@ const roleParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/roles' });
+  const router = new MagicRouter({ prefix: '/roles' });
 
   // POST /roles - Create role
   router.addRoute({

@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as accountRoleController from './account-role.controller';
 import {
   accountRoleCreateSchema,
@@ -9,7 +9,7 @@ import {
 } from './account-role.schema';
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/account-roles' });
+  const router = new MagicRouter({ prefix: '/account-roles' });
 
   router.addRoute({
     name: 'addRoleToAccount',

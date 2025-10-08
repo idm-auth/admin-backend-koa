@@ -10,6 +10,7 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "amazonQ.enableLocalIndex": true,
         "workbench.colorCustomizations": {
           "activityBar.background": "#0528eecb",
           "activityBar.activeBackground": "#0528eecb",
@@ -38,8 +39,13 @@
         "editor.hover.sticky": true,
         "vitest.enable": true,
         "vitest.commandLine": "npx vitest",
-        "vitest.include": ["tests/**/*.test.ts"],
-        "vitest.exclude": ["node_modules/**", "dist/**"],
+        "vitest.include": [
+          "tests/**/*.test.ts"
+        ],
+        "vitest.exclude": [
+          "node_modules/**",
+          "dist/**"
+        ],
         "typescript.preferences.includePackageJsonAutoImports": "auto",
         "typescript.suggest.autoImports": true,
       },
