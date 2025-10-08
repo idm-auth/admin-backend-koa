@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as groupRoleController from './group-role.controller';
 import {
   groupRoleCreateSchema,
@@ -9,18 +9,39 @@ import {
 } from './group-role.schema';
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/group-roles' });
+  const router = new MagicRouter({ prefix: '/group-roles' });
 
   router.addRoute({
     name: 'addRoleToGroup',
     method: 'post',
     path: '/',
+    summary: 'Add role to group',
     handlers: [groupRoleController.addRoleToGroup],
-    validate: {
-      body: groupRoleCreateSchema,
-      response: groupRoleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: groupRoleCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role added to group successfully',
+        content: {
+          'application/json': {
+            schema: groupRoleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Group-Roles'],
@@ -30,12 +51,36 @@ export const initialize = async () => {
     name: 'removeRoleFromGroup',
     method: 'delete',
     path: '/',
+    summary: 'Remove role from group',
     handlers: [groupRoleController.removeRoleFromGroup],
-    validate: {
-      body: groupRoleCreateSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: groupRoleCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role removed from group successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Group-Roles'],
@@ -44,13 +89,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getGroupRoles',
     method: 'get',
-    path: '/group/:groupId',
+    path: '/group/{groupId}',
+    summary: 'Get group roles',
     handlers: [groupRoleController.getGroupRoles],
-    validate: {
+    request: {
       params: groupRoleParamsSchema,
-      response: groupRoleResponseSchema.array(),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of group roles',
+        content: {
+          'application/json': {
+            schema: groupRoleResponseSchema.array(),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Group-Roles'],
@@ -59,13 +119,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleGroups',
     method: 'get',
-    path: '/role/:roleId',
+    path: '/role/{roleId}',
+    summary: 'Get role groups',
     handlers: [groupRoleController.getRoleGroups],
-    validate: {
+    request: {
       params: roleGroupParamsSchema,
-      response: groupRoleResponseSchema.array(),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of role groups',
+        content: {
+          'application/json': {
+            schema: groupRoleResponseSchema.array(),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Group-Roles'],

@@ -1,8 +1,8 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { DocIdSchema } from '@/schemas/latest/base.schema';
+import { MagicRouter } from '@/utils/core/MagicRouter';
+import { z } from 'zod';
 import * as policyController from './policy.controller';
 import { policyCreateSchema } from './policy.schema';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
 
 // Response schemas
 const policyResponseSchema = z.object({
@@ -12,7 +12,7 @@ const policyResponseSchema = z.object({
   effect: z.enum(['Allow', 'Deny']),
   actions: z.array(z.string()),
   resources: z.array(z.string()),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.record(z.string(), z.any()).optional(),
 });
 
 const errorResponseSchema = z.object({
@@ -31,19 +31,40 @@ const policyParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/policies' });
+  const router = new MagicRouter({ prefix: '/policies' });
 
   // POST /policies - Create policy
   router.addRoute({
     name: 'createPolicy',
     method: 'post',
     path: '/',
+    summary: 'Create policy',
     handlers: [policyController.create],
-    validate: {
-      body: policyCreateSchema,
-      response: policyResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: policyCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Policy created successfully',
+        content: {
+          'application/json': {
+            schema: policyResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Policies'],
@@ -54,13 +75,35 @@ export const initialize = async () => {
     name: 'searchPolicy',
     method: 'get',
     path: '/search',
+    summary: 'Search policy by name',
     handlers: [policyController.findByName],
-    validate: {
+    request: {
       query: policySearchQuerySchema,
-      response: policyResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Policy found',
+        content: {
+          'application/json': {
+            schema: policyResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Policies'],
@@ -70,14 +113,36 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getPolicyById',
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Get policy by ID',
     handlers: [policyController.findById],
-    validate: {
+    request: {
       params: policyParamsSchema,
-      response: policyResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Policy found',
+        content: {
+          'application/json': {
+            schema: policyResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Policies'],
@@ -87,22 +152,50 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updatePolicy',
     method: 'put',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Update policy',
     handlers: [policyController.update],
-    validate: {
+    request: {
       params: policyParamsSchema,
-      body: z.object({
-        name: z.string().optional(),
-        description: z.string().optional(),
-        effect: z.enum(['Allow', 'Deny']).optional(),
-        actions: z.array(z.string()).optional(),
-        resources: z.array(z.string()).optional(),
-        conditions: z.record(z.any()).optional(),
-      }),
-      response: policyResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().optional(),
+              description: z.string().optional(),
+              effect: z.enum(['Allow', 'Deny']).optional(),
+              actions: z.array(z.string()).optional(),
+              resources: z.array(z.string()).optional(),
+              conditions: z.record(z.string(), z.string()).optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Policy updated successfully',
+        content: {
+          'application/json': {
+            schema: policyResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Policies'],
@@ -112,13 +205,31 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removePolicy',
     method: 'delete',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Remove policy',
     handlers: [policyController.remove],
-    validate: {
+    request: {
       params: policyParamsSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Policy removed successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Policies'],

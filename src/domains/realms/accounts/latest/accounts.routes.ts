@@ -1,8 +1,8 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
+import { DocIdSchema, emailSchema } from '@/schemas/latest/base.schema';
+import { z } from 'zod';
 import * as accountController from './account.controller';
 import { accountCreateSchema } from './account.schema';
-import { emailSchema, DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
 
 // Response schemas
 const accountResponseSchema = z.object({
@@ -27,19 +27,40 @@ const accountParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/accounts' });
+  const router = new MagicRouter({ prefix: '/accounts' });
 
   // POST /accounts - Create account
   router.addRoute({
     name: 'createAccount',
     method: 'post',
     path: '/',
+    summary: 'Create account',
     handlers: [accountController.create],
-    validate: {
-      body: accountCreateSchema,
-      response: accountResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: accountCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account created successfully',
+        content: {
+          'application/json': {
+            schema: accountResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Accounts'],
@@ -50,13 +71,35 @@ export const initialize = async () => {
     name: 'searchAccount',
     method: 'get',
     path: '/search',
+    summary: 'Search account by email',
     handlers: [accountController.findByEmail],
-    validate: {
+    request: {
       query: accountSearchQuerySchema,
-      response: accountResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Account found',
+        content: {
+          'application/json': {
+            schema: accountResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Accounts'],
@@ -66,14 +109,36 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getAccountById',
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Get account by ID',
     handlers: [accountController.findById],
-    validate: {
+    request: {
       params: accountParamsSchema,
-      response: accountResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Account found',
+        content: {
+          'application/json': {
+            schema: accountResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Accounts'],
@@ -83,18 +148,46 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updateAccount',
     method: 'put',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Update account',
     handlers: [accountController.update],
-    validate: {
+    request: {
       params: accountParamsSchema,
-      body: z.object({
-        email: emailSchema.optional(),
-        password: z.string().optional(),
-      }),
-      response: accountResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              email: emailSchema.optional(),
+              password: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account updated successfully',
+        content: {
+          'application/json': {
+            schema: accountResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Accounts'],
@@ -104,13 +197,31 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removeAccount',
     method: 'delete',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Remove account',
     handlers: [accountController.remove],
-    validate: {
+    request: {
       params: accountParamsSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Account removed successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Accounts'],

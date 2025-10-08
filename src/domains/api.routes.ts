@@ -1,20 +1,19 @@
-import Router from '@koa/router';
-
 import * as config from '@/domains/config/config.routes';
 
 import * as realms from '@/domains/realms/realms.routes';
+import { MagicRouter } from '../utils/core/MagicRouter';
 
 export const initialize = async () => {
-  const router = new Router({
+  const router = new MagicRouter({
     prefix: '/api',
   });
   const configRouter = await config.initialize();
 
   const realmsRouter = await realms.initialize();
 
-  router.use(configRouter.routes());
+  router.useMagic(configRouter);
 
-  router.use(realmsRouter.routes());
+  router.useMagic(realmsRouter);
 
   return router;
 };

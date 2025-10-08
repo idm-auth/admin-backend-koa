@@ -25,3 +25,7 @@ export const getLogger = async () => {
   if (!logger) await initialize();
   return logger;
 };
+
+export const getLoggerNoAsync = () => {
+  return logger;
+};

@@ -1,0 +1,1647 @@
+[
+  {
+    "type": "route",
+    "route": {
+      "name": "createAccount",
+      "method": "post",
+      "path": "/api/realm/:tenantId/v1/accounts/",
+      "summary": "Create account",
+      "handlers": [null],
+      "request": {
+        "body": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "format": "email",
+                        "check": "string_format",
+                        "abort": false,
+                        "pattern": {}
+                      },
+                      "type": "string",
+                      "format": "email",
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "password": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "checks": [{}, {}, {}, {}, {}]
+                      },
+                      "type": "string",
+                      "format": "regex",
+                      "minLength": 8,
+                      "maxLength": null
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {
+                            "~standard": { "vendor": "zod", "version": 1 },
+                            "def": {
+                              "type": "string",
+                              "format": "email",
+                              "check": "string_format",
+                              "abort": false,
+                              "pattern": {}
+                            },
+                            "type": "string",
+                            "format": "email",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "type": "string",
+                      "format": "email",
+                      "minLength": null,
+                      "maxLength": null
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Accounts"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "searchAccount",
+      "method": "get",
+      "path": "/api/realm/:tenantId/v1/accounts/search",
+      "summary": "Search account by email",
+      "handlers": [null],
+      "request": {
+        "query": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "email": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "email",
+                  "check": "string_format",
+                  "abort": false,
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "email",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {
+                            "~standard": { "vendor": "zod", "version": 1 },
+                            "def": {
+                              "type": "string",
+                              "format": "email",
+                              "check": "string_format",
+                              "abort": false,
+                              "pattern": {}
+                            },
+                            "type": "string",
+                            "format": "email",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "type": "string",
+                      "format": "email",
+                      "minLength": null,
+                      "maxLength": null
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Accounts"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "getAccountById",
+      "method": "get",
+      "path": "/api/realm/:tenantId/v1/accounts/{id}",
+      "summary": "Get account by ID",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "tenantId": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              },
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {
+                            "~standard": { "vendor": "zod", "version": 1 },
+                            "def": {
+                              "type": "string",
+                              "format": "email",
+                              "check": "string_format",
+                              "abort": false,
+                              "pattern": {}
+                            },
+                            "type": "string",
+                            "format": "email",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "type": "string",
+                      "format": "email",
+                      "minLength": null,
+                      "maxLength": null
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Accounts"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "updateAccount",
+      "method": "put",
+      "path": "/api/realm/:tenantId/v1/accounts/{id}",
+      "summary": "Update account",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "tenantId": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              },
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        },
+        "body": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": {
+                            "type": "string",
+                            "format": "email",
+                            "check": "string_format",
+                            "abort": false,
+                            "pattern": {}
+                          },
+                          "type": "string",
+                          "format": "email",
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    },
+                    "password": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "email": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {
+                            "~standard": { "vendor": "zod", "version": 1 },
+                            "def": {
+                              "type": "string",
+                              "format": "email",
+                              "check": "string_format",
+                              "abort": false,
+                              "pattern": {}
+                            },
+                            "type": "string",
+                            "format": "email",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "type": "string",
+                      "format": "email",
+                      "minLength": null,
+                      "maxLength": null
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Accounts"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "removeAccount",
+      "method": "delete",
+      "path": "/api/realm/:tenantId/v1/accounts/{id}",
+      "summary": "Remove account",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "tenantId": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              },
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": { "description": "Account removed successfully" },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Accounts"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "createGroup",
+      "method": "post",
+      "path": "/api/realm/:tenantId/v1/groups/",
+      "summary": "Create group",
+      "handlers": [null],
+      "request": {
+        "body": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Group created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Groups"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "searchGroup",
+      "method": "get",
+      "path": "/api/realm/:tenantId/v1/groups/search",
+      "summary": "Search group by name",
+      "handlers": [null],
+      "request": {
+        "query": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "name": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": { "type": "string" },
+                "type": "string",
+                "format": null,
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Group found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Groups"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "getGroupById",
+      "method": "get",
+      "path": "/api/realm/:tenantId/v1/groups/{id}",
+      "summary": "Get group by ID",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Group found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Groups"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "updateGroup",
+      "method": "put",
+      "path": "/api/realm/:tenantId/v1/groups/{id}",
+      "summary": "Update group",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        },
+        "body": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Group updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "id": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "name": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "description": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Groups"]
+    }
+  },
+  {
+    "type": "route",
+    "route": {
+      "name": "removeGroup",
+      "method": "delete",
+      "path": "/api/realm/:tenantId/v1/groups/{id}",
+      "summary": "Remove group",
+      "handlers": [null],
+      "request": {
+        "params": {
+          "~standard": { "vendor": "zod", "version": 1 },
+          "def": {
+            "type": "object",
+            "shape": {
+              "id": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "string",
+                  "format": "uuid",
+                  "check": "string_format",
+                  "abort": false,
+                  "version": "v4",
+                  "pattern": {}
+                },
+                "type": "string",
+                "format": "uuid",
+                "minLength": null,
+                "maxLength": null
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "responses": {
+        "200": { "description": "Group removed successfully" },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "~standard": { "vendor": "zod", "version": 1 },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "error": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": { "type": "string" },
+                      "type": "string",
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "details": {
+                      "~standard": { "vendor": "zod", "version": 1 },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": { "vendor": "zod", "version": 1 },
+                          "def": { "type": "string" },
+                          "type": "string",
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      },
+                      "type": "optional"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Groups"]
+    }
+  }
+]

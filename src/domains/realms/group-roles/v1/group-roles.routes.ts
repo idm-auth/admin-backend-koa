@@ -1,11 +1,11 @@
-import Router from '@koa/router';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as latestRoutes from '@/domains/realms/group-roles/latest/group-roles.routes';
 
 export const initialize = async () => {
-  const router = new Router({ prefix: '/v1' });
+  const router = new MagicRouter({ prefix: '/v1' });
   const latestRouter = await latestRoutes.initialize();
-  
-  router.use(latestRouter.routes());
-  
+
+  router.useMagic(latestRouter);
+
   return router;
 };

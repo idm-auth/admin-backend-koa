@@ -1,5 +1,5 @@
-import { errorHandler } from '@/middleware/errorHandler.middleware';
-import { requestIdMiddleware } from '@/middleware/requestId.middleware';
+import { errorHandler } from '@/middlewares/errorHandler.middleware';
+import { requestIdMiddleware } from '@/middlewares/requestId.middleware';
 import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
 import { initialize as api } from '@/domains/api.routes';
 import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';
@@ -24,6 +24,7 @@ export const initialize = async () => {
   // Swagger routes apenas em desenvolvimento
   if (process.env.NODE_ENV !== 'production') {
     const swagger = await swaggerRoutes();
+    apiRouter.registryAll();
     app.use(swagger.routes());
     logRoutesDetailed(swagger);
   }

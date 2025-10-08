@@ -1,4 +1,4 @@
-import Router from '@koa/router';
+import { MagicRouter } from '../../utils/core/MagicRouter';
 import * as accounts from './accounts/v1/accounts.routes';
 import * as groups from './groups/v1/groups.routes';
 import * as roles from './roles/v1/roles.routes';
@@ -9,7 +9,7 @@ import * as accountRoles from './account-roles/v1/account-roles.routes';
 import * as authentication from './authentication/v1/authentication.routes';
 
 export const initialize = async () => {
-  const router = new Router({ prefix: '/realm/:tenantId' });
+  const router = new MagicRouter({ prefix: '/realm/:tenantId' });
 
   const accountsRouter = await accounts.initialize();
   const groupsRouter = await groups.initialize();
@@ -20,14 +20,14 @@ export const initialize = async () => {
   const accountRolesRouter = await accountRoles.initialize();
   const authenticationRouter = await authentication.initialize();
 
-  router.use(accountsRouter.routes());
-  router.use(groupsRouter.routes());
-  router.use(rolesRouter.routes());
-  router.use(policiesRouter.routes());
-  router.use(accountGroupsRouter.routes());
-  router.use(groupRolesRouter.routes());
-  router.use(accountRolesRouter.routes());
-  router.use(authenticationRouter.routes());
+  router.useMagic(accountsRouter);
+  router.useMagic(groupsRouter);
+  router.useMagic(rolesRouter);
+  router.useMagic(policiesRouter);
+  router.useMagic(accountGroupsRouter);
+  router.useMagic(groupRolesRouter);
+  router.useMagic(accountRolesRouter);
+  router.useMagic(authenticationRouter);
 
   return router;
 };
