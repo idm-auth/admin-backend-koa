@@ -1,5 +1,5 @@
-import { errorHandler } from '@/middleware/errorHandler.middleware';
-import { requestIdMiddleware } from '@/middleware/requestId.middleware';
+import { errorHandler } from '@/middlewares/errorHandler.middleware';
+import { requestIdMiddleware } from '@/middlewares/requestId.middleware';
 import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
 import { initialize as api } from '@/domains/api.routes';
 import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';

@@ -1,7 +1,7 @@
 import { Context, Next } from 'koa';
 import { MagicRouteConfig } from '@/utils/core/MagicRouter';
 
-export const createValidationMiddleware = (config: MagicRouteConfig) => {
+export const requestValidationMiddleware = (config: MagicRouteConfig) => {
   return async (ctx: Context, next: Next) => {
     const { request } = config;
 
@@ -38,5 +38,24 @@ export const createValidationMiddleware = (config: MagicRouteConfig) => {
     }
 
     await next();
+  };
+};
+
+export const responseValidationMiddleware = (config: MagicRouteConfig) => {
+  return async (ctx: Context, next: Next) => {
+    await next();
+
+    const { responses } = config;
+    if (!responses) return;
+
+    const statusCode = String(ctx.status);
+    const responseConfig = responses[statusCode];
+
+    if (!responseConfig || 'content' in responseConfig === false) return;
+
+    const schema = responseConfig.content?.['application/json']?.schema;
+    if (schema && 'parse' in schema) {
+      ctx.body = schema.parse(ctx.body);
+    }
   };
 };

@@ -8,7 +8,10 @@ import Router from '@koa/router';
 import { Context, Next } from 'koa';
 import { registry } from '../../domains/swagger/openApiGenerator';
 import pino from 'pino';
-import { createValidationMiddleware } from '@/middlewares/validation.middleware';
+import {
+  requestValidationMiddleware,
+  responseValidationMiddleware,
+} from '@/middlewares/validation.middleware';
 
 export type MagicRouteConfig = RouteConfig & {
   name: string;
@@ -30,11 +33,13 @@ export class MagicRouter extends Router {
 
   addRoute(config: MagicRouteConfig): this {
     const middlewares = config.middlewares || [];
-    const validationMiddleware = createValidationMiddleware(config);
+    const requestValidation = requestValidationMiddleware(config);
+    const responseValidation = responseValidationMiddleware(config);
     const allHandlers = [
-      validationMiddleware,
+      requestValidation,
       ...middlewares,
       ...config.handlers,
+      responseValidation,
     ];
 
     // Converte path OpenAPI {param} para Koa :param
