@@ -1,4 +1,4 @@
-import { SwaggerRouter } from '@/domains/swagger/swagger-router';
+import { MagicRouter } from '@/domains/swagger/MagicRouter';
 import * as groupController from './group.controller';
 import { groupCreateSchema } from './group.schema';
 import { DocIdSchema } from '@/schemas/latest/base.schema';
@@ -27,19 +27,40 @@ const groupParamsSchema = z.object({
 });
 
 export const initialize = async () => {
-  const router = new SwaggerRouter({ prefix: '/groups' });
+  const router = new MagicRouter({ prefix: '/groups' });
 
   // POST /groups - Create group
   router.addRoute({
     name: 'createGroup',
     method: 'post',
     path: '/',
+    summary: 'Create group',
     handlers: [groupController.create],
-    validate: {
-      body: groupCreateSchema,
-      response: groupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: groupCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Group created successfully',
+        content: {
+          'application/json': {
+            schema: groupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Groups'],
@@ -50,13 +71,35 @@ export const initialize = async () => {
     name: 'searchGroup',
     method: 'get',
     path: '/search',
+    summary: 'Search group by name',
     handlers: [groupController.findByName],
-    validate: {
+    request: {
       query: groupSearchQuerySchema,
-      response: groupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Group found',
+        content: {
+          'application/json': {
+            schema: groupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Groups'],
@@ -66,14 +109,36 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getGroupById',
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Get group by ID',
     handlers: [groupController.findById],
-    validate: {
+    request: {
       params: groupParamsSchema,
-      response: groupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Group found',
+        content: {
+          'application/json': {
+            schema: groupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Groups'],
@@ -83,18 +148,46 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updateGroup',
     method: 'put',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Update group',
     handlers: [groupController.update],
-    validate: {
+    request: {
       params: groupParamsSchema,
-      body: z.object({
-        name: z.string().optional(),
-        description: z.string().optional(),
-      }),
-      response: groupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().optional(),
+              description: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Group updated successfully',
+        content: {
+          'application/json': {
+            schema: groupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Groups'],
@@ -104,13 +197,31 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removeGroup',
     method: 'delete',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Remove group',
     handlers: [groupController.remove],
-    validate: {
+    request: {
       params: groupParamsSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Group removed successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Groups'],

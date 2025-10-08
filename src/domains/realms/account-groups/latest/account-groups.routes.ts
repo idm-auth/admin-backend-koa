@@ -34,12 +34,33 @@ export const initialize = async () => {
     name: 'addAccountToGroup',
     method: 'post',
     path: '/',
+    summary: 'Add account to group',
     handlers: [accountGroupController.addAccountToGroup],
-    validate: {
-      body: accountGroupCreateSchema,
-      response: accountGroupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: accountGroupCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account added to group successfully',
+        content: {
+          'application/json': {
+            schema: accountGroupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Groups'],
@@ -50,15 +71,39 @@ export const initialize = async () => {
     name: 'removeAccountFromGroup',
     method: 'delete',
     path: '/',
+    summary: 'Remove account from group',
     handlers: [accountGroupController.removeAccountFromGroup],
-    validate: {
-      body: z.object({
-        accountId: z.string(),
-        groupId: z.string(),
-      }),
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              accountId: z.string(),
+              groupId: z.string(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account removed from group successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Groups'],
@@ -69,17 +114,45 @@ export const initialize = async () => {
     name: 'updateAccountGroupRoles',
     method: 'put',
     path: '/',
+    summary: 'Update account group roles',
     handlers: [accountGroupController.updateAccountGroupRoles],
-    validate: {
-      body: z.object({
-        accountId: z.string(),
-        groupId: z.string(),
-        roles: z.array(z.string()),
-      }),
-      response: accountGroupResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              accountId: z.string(),
+              groupId: z.string(),
+              roles: z.array(z.string()),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account group roles updated successfully',
+        content: {
+          'application/json': {
+            schema: accountGroupResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Groups'],
@@ -89,13 +162,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getAccountGroups',
     method: 'get',
-    path: '/account/:accountId',
+    path: '/account/{accountId}',
+    summary: 'Get account groups',
     handlers: [accountGroupController.getAccountGroups],
-    validate: {
+    request: {
       params: accountParamsSchema,
-      response: z.array(accountGroupResponseSchema),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of account groups',
+        content: {
+          'application/json': {
+            schema: z.array(accountGroupResponseSchema),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Groups'],
@@ -105,13 +193,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getGroupAccounts',
     method: 'get',
-    path: '/group/:groupId',
+    path: '/group/{groupId}',
+    summary: 'Get group accounts',
     handlers: [accountGroupController.getGroupAccounts],
-    validate: {
+    request: {
       params: groupParamsSchema,
-      response: z.array(accountGroupResponseSchema),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of group accounts',
+        content: {
+          'application/json': {
+            schema: z.array(accountGroupResponseSchema),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Groups'],

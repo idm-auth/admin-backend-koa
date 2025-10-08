@@ -24,6 +24,7 @@ export const initialize = async () => {
   // Swagger routes apenas em desenvolvimento
   if (process.env.NODE_ENV !== 'production') {
     const swagger = await swaggerRoutes();
+    apiRouter.registryAll();
     app.use(swagger.routes());
     logRoutesDetailed(swagger);
   }

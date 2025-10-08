@@ -15,12 +15,33 @@ export const initialize = async () => {
     name: 'addRoleToAccount',
     method: 'post',
     path: '/',
+    summary: 'Add role to account',
     handlers: [accountRoleController.addRoleToAccount],
-    validate: {
-      body: accountRoleCreateSchema,
-      response: accountRoleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: accountRoleCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role added to account successfully',
+        content: {
+          'application/json': {
+            schema: accountRoleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Roles'],
@@ -30,12 +51,36 @@ export const initialize = async () => {
     name: 'removeRoleFromAccount',
     method: 'delete',
     path: '/',
+    summary: 'Remove role from account',
     handlers: [accountRoleController.removeRoleFromAccount],
-    validate: {
-      body: accountRoleCreateSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: accountRoleCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role removed from account successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Roles'],
@@ -44,13 +89,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getAccountRoles',
     method: 'get',
-    path: '/account/:accountId',
+    path: '/account/{accountId}',
+    summary: 'Get account roles',
     handlers: [accountRoleController.getAccountRoles],
-    validate: {
+    request: {
       params: accountRoleParamsSchema,
-      response: accountRoleResponseSchema.array(),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of account roles',
+        content: {
+          'application/json': {
+            schema: accountRoleResponseSchema.array(),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Roles'],
@@ -59,13 +119,28 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleAccounts',
     method: 'get',
-    path: '/roles/:roleId',
+    path: '/roles/{roleId}',
+    summary: 'Get role accounts',
     handlers: [accountRoleController.getRoleAccounts],
-    validate: {
+    request: {
       params: roleAccountParamsSchema,
-      response: accountRoleResponseSchema.array(),
-      responses: {
-        400: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'List of role accounts',
+        content: {
+          'application/json': {
+            schema: accountRoleResponseSchema.array(),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Account-Roles'],

@@ -35,12 +35,33 @@ export const initialize = async () => {
     name: 'createRole',
     method: 'post',
     path: '/',
+    summary: 'Create role',
     handlers: [roleController.create],
-    validate: {
-      body: roleCreateSchema,
-      response: roleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: roleCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role created successfully',
+        content: {
+          'application/json': {
+            schema: roleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Roles'],
@@ -51,13 +72,35 @@ export const initialize = async () => {
     name: 'searchRole',
     method: 'get',
     path: '/search',
+    summary: 'Search role by name',
     handlers: [roleController.findByName],
-    validate: {
+    request: {
       query: roleSearchQuerySchema,
-      response: roleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Role found',
+        content: {
+          'application/json': {
+            schema: roleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Roles'],
@@ -67,14 +110,36 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleById',
     method: 'get',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Get role by ID',
     handlers: [roleController.findById],
-    validate: {
+    request: {
       params: roleParamsSchema,
-      response: roleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Role found',
+        content: {
+          'application/json': {
+            schema: roleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Roles'],
@@ -84,19 +149,47 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updateRole',
     method: 'put',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Update role',
     handlers: [roleController.update],
-    validate: {
+    request: {
       params: roleParamsSchema,
-      body: z.object({
-        name: z.string().optional(),
-        description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
-      }),
-      response: roleResponseSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().optional(),
+              description: z.string().optional(),
+              permissions: z.array(z.string()).optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role updated successfully',
+        content: {
+          'application/json': {
+            schema: roleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Roles'],
@@ -106,13 +199,31 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removeRole',
     method: 'delete',
-    path: '/:id',
+    path: '/{id}',
+    summary: 'Remove role',
     handlers: [roleController.remove],
-    validate: {
+    request: {
       params: roleParamsSchema,
-      responses: {
-        400: errorResponseSchema,
-        404: errorResponseSchema,
+    },
+    responses: {
+      200: {
+        description: 'Role removed successfully',
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Roles'],

@@ -13,12 +13,33 @@ export const initialize = async () => {
     name: 'login',
     method: 'post',
     path: '/login',
+    summary: 'User login',
     handlers: [authenticationController.login],
-    validate: {
-      body: loginRequestSchema,
-      response: loginResponseSchema,
-      responses: {
-        400: errorResponseSchema,
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: loginRequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Login successful',
+        content: {
+          'application/json': {
+            schema: loginResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
       },
     },
     tags: ['Authentication'],
