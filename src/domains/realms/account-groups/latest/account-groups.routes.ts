@@ -1,20 +1,18 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import * as accountGroupController from './account-group.controller';
 import { accountGroupCreateSchema } from './account-group.schema';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
+import { DocIdSchema, errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+
+extendZodWithOpenApi(z);
 
 // Response schemas
 const accountGroupResponseSchema = z.object({
-  id: z.string(),
-  accountId: z.string(),
-  groupId: z.string(),
-  roles: z.array(z.string()).optional(),
-});
-
-const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
+  id: DocIdSchema,
+  accountId: DocIdSchema,
+  groupId: DocIdSchema,
+  roles: z.array(DocIdSchema).optional(),
 });
 
 // Params schemas

@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 export const policyCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),

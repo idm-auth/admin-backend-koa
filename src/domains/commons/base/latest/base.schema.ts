@@ -1,6 +1,10 @@
-import z from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
+extendZodWithOpenApi(z);
 
-export const DocIdSchema = z.uuidv4('Invalid ID');
+export const DocIdSchema = z
+  .uuidv4('Invalid ID')
+  .openapi({ description: 'Some string' });
 export type DocId = z.infer<typeof DocIdSchema>;
 
 export const publicUUIDSchema = z.uuidv4('Invalid ID');

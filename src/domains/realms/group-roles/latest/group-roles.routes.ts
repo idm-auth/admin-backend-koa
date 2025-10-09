@@ -1,12 +1,16 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import * as groupRoleController from './group-role.controller';
 import {
   groupRoleCreateSchema,
   groupRoleResponseSchema,
   groupRoleParamsSchema,
   roleGroupParamsSchema,
-  errorResponseSchema,
 } from './group-role.schema';
+import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+
+extendZodWithOpenApi(z);
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
@@ -89,7 +93,7 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getGroupRoles',
     method: 'get',
-    path: '/group/{groupId}',
+    path: '/group/:groupId',
     summary: 'Get group roles',
     handlers: [groupRoleController.getGroupRoles],
     request: {
@@ -119,7 +123,7 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleGroups',
     method: 'get',
-    path: '/role/{roleId}',
+    path: '/role/:roleId',
     summary: 'Get role groups',
     handlers: [groupRoleController.getRoleGroups],
     request: {

@@ -1,17 +1,18 @@
+import { validateZod } from '@/domains/commons/validations/v1/validation.service';
+import { getModel, Realm } from '@/domains/core/realms/latest/realms.model';
 import { NotFoundError } from '@/errors/not-found';
-import {
-  getModel,
-  Realm,
-  RealmDocumentID,
-} from '@/domains/core/realms/latest/realms.model';
-import { PublicUUID } from '@/schemas/v1/base.schema';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { PublicUUID } from '@/domains/commons/base/v1/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
+import { realmCreateSchema } from './realm.schema';
 
 export const create = async (args: {
   data: Omit<Realm, 'publicUUID'> & { publicUUID?: string };
 }) => {
   const logger = await getLogger();
   logger.debug(args.data);
+
+  await validateZod(args.data, realmCreateSchema);
 
   const realm = await getModel().create(args.data);
   return realm;
@@ -20,6 +21,8 @@ export const create = async (args: {
 export const findById = async (args: { id: string }) => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
+
+  await validateZod(args.id, DocIdSchema);
 
   const realm = await getModel().findById(args.id);
   if (!realm) {
@@ -50,13 +53,13 @@ export const findByName = async (args: { name: string }) => {
   return realm;
 };
 
-export const update = async (args: { id: string; data: RealmDocumentID }) => {
+export const update = async (args: { id: string; data: Partial<Realm> }) => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { _id, ...updateData } = args.data;
-  const realm = await getModel().findByIdAndUpdate(args.id, updateData, {
+  await validateZod(args.id, DocIdSchema);
+
+  const realm = await getModel().findByIdAndUpdate(args.id, args.data, {
     new: true,
     runValidators: true,
   });
@@ -69,6 +72,8 @@ export const update = async (args: { id: string; data: RealmDocumentID }) => {
 export const remove = async (args: { id: string }): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
+
+  await validateZod(args.id, DocIdSchema);
 
   const realm = await getModel().findByIdAndDelete(args.id);
   if (!realm) {

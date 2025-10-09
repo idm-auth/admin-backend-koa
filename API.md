@@ -24,7 +24,7 @@ Cria uma nova conta no sistema.
 **Example Request:**
 
 ```bash
-curl -X POST http://localhost:3000/api/core/v1/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c7/accounts \
+curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c7/v1/accounts \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@idm-auth.io",

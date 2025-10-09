@@ -1,15 +1,18 @@
-import z from 'zod';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+
+extendZodWithOpenApi(z);
 
 export const groupRoleCreateSchema = z.object({
-  groupId: z.string({ error: 'Group ID is required' }),
-  roleId: z.string({ error: 'Role ID is required' }),
+  groupId: DocIdSchema,
+  roleId: DocIdSchema,
 });
 
 export const groupRoleResponseSchema = z.object({
-  id: z.string(),
-  groupId: z.string(),
-  roleId: z.string(),
+  id: DocIdSchema,
+  groupId: DocIdSchema,
+  roleId: DocIdSchema,
 });
 
 export const groupRoleParamsSchema = z.object({
@@ -18,11 +21,6 @@ export const groupRoleParamsSchema = z.object({
 
 export const roleGroupParamsSchema = z.object({
   roleId: DocIdSchema,
-});
-
-export const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
 });
 
 export type GroupRoleCreate = z.infer<typeof groupRoleCreateSchema>;

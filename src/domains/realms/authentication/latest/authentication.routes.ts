@@ -4,7 +4,7 @@ import {
   loginRequestSchema,
   loginResponseSchema,
 } from './authentication.schema';
-import { errorResponseSchema } from '@/schemas/latest/base.schema';
+import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/authentication' });

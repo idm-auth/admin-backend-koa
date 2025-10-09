@@ -1,3 +1,7 @@
+import {
+  requestValidationMiddleware,
+  responseValidationMiddleware,
+} from '@/middlewares/validation.middleware';
 import { getLoggerNoAsync } from '@/plugins/pino.plugin';
 import {
   OpenAPIRegistry,
@@ -6,12 +10,8 @@ import {
 } from '@asteasolutions/zod-to-openapi';
 import Router from '@koa/router';
 import { Context, Next } from 'koa';
-import { registry } from '../../domains/swagger/openApiGenerator';
 import pino from 'pino';
-import {
-  requestValidationMiddleware,
-  responseValidationMiddleware,
-} from '@/middlewares/validation.middleware';
+import { registry } from '../../domains/swagger/openApiGenerator';
 
 export type MagicRouteConfig = RouteConfig & {
   name: string;
@@ -104,8 +104,8 @@ export class MagicRouter extends Router {
       };
 
       if (process.env.NODE_ENV === 'development') {
+        const testRegistry = new OpenAPIRegistry();
         try {
-          const testRegistry = new OpenAPIRegistry();
           testRegistry.registerPath(routeConfig);
 
           const generator = new OpenApiGeneratorV3(testRegistry.definitions);
@@ -120,6 +120,10 @@ export class MagicRouter extends Router {
           this.logger.error(
             error,
             `Invalid schema in route ${route.name} at ${routeConfig.path}:`
+          );
+          this.logger.error(
+            { testRegistry: testRegistry.definitions },
+            `testRegistry:`
           );
           this.logger.error(
             `Route config: ${JSON.stringify(routeConfig, null, 2)}`

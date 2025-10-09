@@ -1,5 +1,8 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { emailSchema } from '@/schemas/latest/base.schema';
+import { emailSchema, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+
+extendZodWithOpenApi(z);
 
 export const loginRequestSchema = z.object({
   email: emailSchema,
@@ -9,7 +12,7 @@ export const loginRequestSchema = z.object({
 export const loginResponseSchema = z.object({
   token: z.string(),
   account: z.object({
-    id: z.string(),
+    id: DocIdSchema,
     emails: z.array(
       z.object({
         email: emailSchema,

@@ -1,19 +1,23 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import * as groupController from './group.controller';
 import { groupCreateSchema } from './group.schema';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { createCrudSwagger } from '@/utils/route-responses.util';
+
+extendZodWithOpenApi(z);
 
 // Response schemas
 const groupResponseSchema = z.object({
-  id: z.string(),
+  id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
 });
 
-const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
+const groupUpdateSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
 });
 
 // Query schemas
@@ -28,6 +32,7 @@ const groupParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/groups' });
+  const swagger = createCrudSwagger('Group', groupResponseSchema, groupCreateSchema, groupUpdateSchema);
 
   // POST /groups - Create group
   router.addRoute({
@@ -36,33 +41,8 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create group',
     handlers: [groupController.create],
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: groupCreateSchema,
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Group created successfully',
-        content: {
-          'application/json': {
-            schema: groupResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    request: swagger.create.request,
+    responses: swagger.create.responses,
     tags: ['Groups'],
   });
 
@@ -76,32 +56,7 @@ export const initialize = async () => {
     request: {
       query: groupSearchQuerySchema,
     },
-    responses: {
-      200: {
-        description: 'Group found',
-        content: {
-          'application/json': {
-            schema: groupResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.search.responses,
     tags: ['Groups'],
   });
 
@@ -109,38 +64,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getGroupById',
     method: 'get',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Get group by ID',
     handlers: [groupController.findById],
     request: {
       params: groupParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Group found',
-        content: {
-          'application/json': {
-            schema: groupResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.read.responses,
     tags: ['Groups'],
   });
 
@@ -148,48 +78,14 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updateGroup',
     method: 'put',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Update group',
     handlers: [groupController.update],
     request: {
       params: groupParamsSchema,
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              name: z.string().optional(),
-              description: z.string().optional(),
-            }),
-          },
-        },
-      },
+      ...swagger.update.request,
     },
-    responses: {
-      200: {
-        description: 'Group updated successfully',
-        content: {
-          'application/json': {
-            schema: groupResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.update.responses,
     tags: ['Groups'],
   });
 
@@ -197,33 +93,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removeGroup',
     method: 'delete',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Remove group',
     handlers: [groupController.remove],
     request: {
       params: groupParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Group removed successfully',
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.delete.responses,
     tags: ['Groups'],
   });
 

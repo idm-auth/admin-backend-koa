@@ -31,6 +31,8 @@ services:
     volumes:
       - ./containers/monogodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - ../.mongodata:/data/db:consistent
+    ports:
+      - 27017:27017
     networks:
       - private-network
 

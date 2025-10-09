@@ -1,15 +1,18 @@
-import z from 'zod';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+
+extendZodWithOpenApi(z);
 
 export const accountRoleCreateSchema = z.object({
-  accountId: z.string({ error: 'Account ID is required' }),
-  roleId: z.string({ error: 'Role ID is required' }),
+  accountId: DocIdSchema,
+  roleId: DocIdSchema,
 });
 
 export const accountRoleResponseSchema = z.object({
-  id: z.string(),
-  accountId: z.string(),
-  roleId: z.string(),
+  id: DocIdSchema,
+  accountId: DocIdSchema,
+  roleId: DocIdSchema,
 });
 
 export const accountRoleParamsSchema = z.object({
@@ -18,11 +21,6 @@ export const accountRoleParamsSchema = z.object({
 
 export const roleAccountParamsSchema = z.object({
   roleId: DocIdSchema,
-});
-
-export const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
 });
 
 export type AccountRoleCreate = z.infer<typeof accountRoleCreateSchema>;

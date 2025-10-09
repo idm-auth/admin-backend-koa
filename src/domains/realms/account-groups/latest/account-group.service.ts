@@ -2,7 +2,7 @@ import {
   AccountGroupDocument,
   getModel,
 } from '@/domains/realms/account-groups/latest/account-group.model';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   AccountGroupCreate,
   accountGroupCreateSchema,

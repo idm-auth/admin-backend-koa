@@ -1,6 +1,6 @@
 import * as service from '@/domains/config/latest/config.service';
 import { getModel } from '@/domains/config/v1/webAdminConfig.model';
-import { webAdminConfigZSchema } from '@/schemas/v1/webAdminConfig.schema';
+import { webAdminConfigZSchema } from '@/domains/commons/base/v1/webAdminConfig.schema';
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, it } from 'vitest';
 

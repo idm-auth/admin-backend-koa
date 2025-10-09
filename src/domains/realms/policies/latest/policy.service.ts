@@ -2,7 +2,7 @@ import {
   PolicyDocument,
   getModel,
 } from '@/domains/realms/policies/latest/policy.model';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   PolicyCreate,
   policyCreateSchema,

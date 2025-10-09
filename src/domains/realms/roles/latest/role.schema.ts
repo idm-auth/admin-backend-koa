@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 export const roleCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),

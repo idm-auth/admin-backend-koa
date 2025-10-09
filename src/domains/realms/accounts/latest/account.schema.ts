@@ -1,5 +1,8 @@
-import { emailSchema, passwordSchema } from '@/schemas/v1/base.schema';
-import z from 'zod';
+import {
+  emailSchema,
+  passwordSchema,
+} from '@/domains/commons/base/v1/base.schema';
+import { z } from 'zod';
 
 export const accountCreateSchema = z.object({
   email: emailSchema,

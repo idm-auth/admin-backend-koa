@@ -1,4 +1,4 @@
-import { EnvConfig } from '@/schemas/latest/webAdminConfig.schema';
+import { EnvConfig } from '@/domains/commons/base/webAdminConfig.schema';
 import * as configService from '@/domains/config/latest/config.service';
 import { Context } from 'koa';
 

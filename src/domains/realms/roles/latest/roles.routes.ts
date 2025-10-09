@@ -1,20 +1,25 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import * as roleController from './role.controller';
 import { roleCreateSchema } from './role.schema';
-import { DocIdSchema } from '@/schemas/latest/base.schema';
-import { z } from 'zod';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { createCrudSwagger } from '@/utils/route-responses.util';
+
+extendZodWithOpenApi(z);
 
 // Response schemas
 const roleResponseSchema = z.object({
-  id: z.string(),
+  id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
   permissions: z.array(z.string()).optional(),
 });
 
-const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
+const roleUpdateSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  permissions: z.array(z.string()).optional(),
 });
 
 // Query schemas
@@ -29,6 +34,7 @@ const roleParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/roles' });
+  const swagger = createCrudSwagger('Role', roleResponseSchema, roleCreateSchema, roleUpdateSchema);
 
   // POST /roles - Create role
   router.addRoute({
@@ -37,33 +43,8 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create role',
     handlers: [roleController.create],
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: roleCreateSchema,
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Role created successfully',
-        content: {
-          'application/json': {
-            schema: roleResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    request: swagger.create.request,
+    responses: swagger.create.responses,
     tags: ['Roles'],
   });
 
@@ -77,32 +58,7 @@ export const initialize = async () => {
     request: {
       query: roleSearchQuerySchema,
     },
-    responses: {
-      200: {
-        description: 'Role found',
-        content: {
-          'application/json': {
-            schema: roleResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.search.responses,
     tags: ['Roles'],
   });
 
@@ -110,38 +66,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleById',
     method: 'get',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Get role by ID',
     handlers: [roleController.findById],
     request: {
       params: roleParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Role found',
-        content: {
-          'application/json': {
-            schema: roleResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.read.responses,
     tags: ['Roles'],
   });
 
@@ -149,49 +80,14 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updateRole',
     method: 'put',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Update role',
     handlers: [roleController.update],
     request: {
       params: roleParamsSchema,
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              name: z.string().optional(),
-              description: z.string().optional(),
-              permissions: z.array(z.string()).optional(),
-            }),
-          },
-        },
-      },
+      ...swagger.update.request,
     },
-    responses: {
-      200: {
-        description: 'Role updated successfully',
-        content: {
-          'application/json': {
-            schema: roleResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.update.responses,
     tags: ['Roles'],
   });
 
@@ -199,33 +95,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removeRole',
     method: 'delete',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Remove role',
     handlers: [roleController.remove],
     request: {
       params: roleParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Role removed successfully',
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.delete.responses,
     tags: ['Roles'],
   });
 

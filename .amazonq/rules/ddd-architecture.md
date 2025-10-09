@@ -32,12 +32,15 @@ src/domains/{contexto}/{dominio}/
 - Imports diretos entre arquivos do mesmo domínio
 
 ### V1 (Compatibilidade)
-- Faz re-export do latest por padrão
-- Permite sobrescrever métodos específicos quando necessário
-- Mantém compatibilidade com código existente
+
+#### Arquivos que fazem re-export simples:
+- ✅ `{dominio}.controller.ts`
+- ✅ `{dominio}.service.ts`
+- ✅ `{dominio}.model.ts`
+- ✅ `{dominio}.schema.ts`
 
 ```typescript
-// ✅ Correto - v1 fazendo re-export
+// ✅ Correto - v1 fazendo re-export simples
 export * from '@/domains/realms/accounts/latest/account.service';
 
 // ✅ Correto - sobrescrevendo método específico
@@ -45,33 +48,84 @@ export * from '@/domains/realms/accounts/latest/account.service';
 export const create = customCreateMethod;
 ```
 
-## Rotas (SwaggerRouter)
+#### Arquivo que NÃO faz re-export simples:
+- ❌ `{dominio}.routes.ts` - **Tem estrutura própria (veja seção Rotas)**
 
-### Estrutura das Rotas
-- Use `SwaggerRouter` em vez de Router tradicional
+## Rotas (MagicRouter)
+
+### Estrutura das Rotas no Latest
+- Use `MagicRouter` para definir rotas
 - Defina validações Zod para todos os endpoints
 - Organize por tags do domínio
 - Inclua responses de erro específicos
+- Prefix deve ser o nome do recurso (ex: `/accounts`, `/realms`)
 
 ```typescript
-// ✅ Correto - SwaggerRouter com validação
-const router = new SwaggerRouter({ prefix: '/accounts' });
+// ✅ Correto - latest/{dominio}.routes.ts
+import { MagicRouter } from '@/utils/core/MagicRouter';
+import * as accountController from './account.controller';
 
-router.addRoute({
-  name: 'createAccount',
-  method: 'post',
-  path: '/',
-  handlers: [accountController.create],
-  validate: {
-    body: accountCreateSchema,
-    response: accountResponseSchema,
-    responses: {
-      400: errorResponseSchema,
+export const initialize = async () => {
+  const router = new MagicRouter({ prefix: '/accounts' });
+  
+  router.addRoute({
+    name: 'createAccount',
+    method: 'post',
+    path: '/',
+    handlers: [accountController.create],
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: accountCreateSchema,
+          },
+        },
+      },
     },
-  },
-  tags: ['Accounts'],
-});
+    responses: {
+      200: {
+        description: 'Account created successfully',
+        content: {
+          'application/json': {
+            schema: accountResponseSchema,
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+  
+  return router;
+};
 ```
+
+### Estrutura das Rotas no V1
+- **CRÍTICO: v1/{dominio}.routes.ts NÃO segue o padrão de re-export**
+- **NUNCA use `export * from` em arquivos .routes.ts do v1**
+- V1 cria um novo router com prefix `/v1`
+- Importa e usa o router do latest dentro dele
+- Isso adiciona versionamento à URL
+
+```typescript
+// ✅ Correto - v1/{dominio}.routes.ts
+import * as accounts from '@/domains/realms/accounts/latest/accounts.routes';
+import { MagicRouter } from '@/utils/core/MagicRouter';
+
+export const initialize = async () => {
+  const router = new MagicRouter({
+    prefix: '/v1',
+  });
+  const accountsRouter = await accounts.initialize();
+  router.useMagic(accountsRouter);
+
+  return router;
+};
+```
+
+### Resultado Final das URLs
+- Latest: `/api/{contexto}/{dominio}/{endpoint}`
+- V1: `/api/{contexto}/v1/{dominio}/{endpoint}`
+- Exemplo: `/api/realm/:tenantId/v1/accounts/` para criar account
 
 ### Schemas de Validação
 - **Body**: Para dados de entrada (POST/PUT)

@@ -1,6 +1,6 @@
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   validateEmailUnique,
   validateZod,

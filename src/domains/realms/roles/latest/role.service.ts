@@ -2,7 +2,7 @@ import {
   RoleDocument,
   getModel,
 } from '@/domains/realms/roles/latest/role.model';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   RoleCreate,
   roleCreateSchema,

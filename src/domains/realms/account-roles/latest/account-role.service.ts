@@ -1,5 +1,5 @@
 import { AccountRoleDocument, getModel } from './account-role.model';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   AccountRoleCreate,
   accountRoleCreateSchema,
@@ -25,7 +25,7 @@ export const addRoleToAccount = async (
 
 export const removeRoleFromAccount = async (
   tenantId: string,
-  args: { accountId: string; roleId: string }
+  args: { accountId: DocId; roleId: DocId }
 ): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ accountId: args.accountId, roleId: args.roleId });

@@ -4,7 +4,7 @@ import {
   getModel,
 } from '@/domains/realms/groups/latest/group.model';
 import { NotFoundError } from '@/errors/not-found';
-import { DocId, DocIdSchema } from '@/schemas/latest/base.schema';
+import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { GroupCreate, groupCreateSchema } from './group.schema';

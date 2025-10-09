@@ -3,11 +3,12 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { JwtPayload } from '@/domains/realms/jwt/latest/jwt.schema';
 import * as jwtService from '@/domains/realms/jwt/v1/jwt.service';
 import { getTenantId } from '@test/utils/tenant.util';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('JWT Service', () => {
   let tenantId: string;
   const mockPayload: JwtPayload = {
-    accountId: 'account-123',
+    accountId: uuidv4(),
     email: 'test@example.com',
   };
 

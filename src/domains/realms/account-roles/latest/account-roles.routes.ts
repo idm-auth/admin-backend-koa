@@ -1,12 +1,16 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import * as accountRoleController from './account-role.controller';
+
+extendZodWithOpenApi(z);
 import {
   accountRoleCreateSchema,
   accountRoleResponseSchema,
   accountRoleParamsSchema,
   roleAccountParamsSchema,
-  errorResponseSchema,
 } from './account-role.schema';
+import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-roles' });
@@ -89,7 +93,7 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getAccountRoles',
     method: 'get',
-    path: '/account/{accountId}',
+    path: '/account/:accountId',
     summary: 'Get account roles',
     handlers: [accountRoleController.getAccountRoles],
     request: {
@@ -119,7 +123,7 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getRoleAccounts',
     method: 'get',
-    path: '/roles/{roleId}',
+    path: '/roles/:roleId',
     summary: 'Get role accounts',
     handlers: [accountRoleController.getRoleAccounts],
     request: {

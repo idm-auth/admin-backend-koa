@@ -1,12 +1,16 @@
-import { DocIdSchema } from '@/schemas/latest/base.schema';
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import * as policyController from './policy.controller';
 import { policyCreateSchema } from './policy.schema';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { createCrudSwagger } from '@/utils/route-responses.util';
+
+extendZodWithOpenApi(z);
 
 // Response schemas
 const policyResponseSchema = z.object({
-  id: z.string(),
+  id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
   effect: z.enum(['Allow', 'Deny']),
@@ -15,9 +19,13 @@ const policyResponseSchema = z.object({
   conditions: z.record(z.string(), z.any()).optional(),
 });
 
-const errorResponseSchema = z.object({
-  error: z.string(),
-  details: z.string().optional(),
+const policyUpdateSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  effect: z.enum(['Allow', 'Deny']).optional(),
+  actions: z.array(z.string()).optional(),
+  resources: z.array(z.string()).optional(),
+  conditions: z.record(z.string(), z.string()).optional(),
 });
 
 // Query schemas
@@ -32,6 +40,7 @@ const policyParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/policies' });
+  const swagger = createCrudSwagger('Policy', policyResponseSchema, policyCreateSchema, policyUpdateSchema);
 
   // POST /policies - Create policy
   router.addRoute({
@@ -40,33 +49,8 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create policy',
     handlers: [policyController.create],
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: policyCreateSchema,
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Policy created successfully',
-        content: {
-          'application/json': {
-            schema: policyResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    request: swagger.create.request,
+    responses: swagger.create.responses,
     tags: ['Policies'],
   });
 
@@ -80,32 +64,7 @@ export const initialize = async () => {
     request: {
       query: policySearchQuerySchema,
     },
-    responses: {
-      200: {
-        description: 'Policy found',
-        content: {
-          'application/json': {
-            schema: policyResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.search.responses,
     tags: ['Policies'],
   });
 
@@ -113,38 +72,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'getPolicyById',
     method: 'get',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Get policy by ID',
     handlers: [policyController.findById],
     request: {
       params: policyParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Policy found',
-        content: {
-          'application/json': {
-            schema: policyResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.read.responses,
     tags: ['Policies'],
   });
 
@@ -152,52 +86,14 @@ export const initialize = async () => {
   router.addRoute({
     name: 'updatePolicy',
     method: 'put',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Update policy',
     handlers: [policyController.update],
     request: {
       params: policyParamsSchema,
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              name: z.string().optional(),
-              description: z.string().optional(),
-              effect: z.enum(['Allow', 'Deny']).optional(),
-              actions: z.array(z.string()).optional(),
-              resources: z.array(z.string()).optional(),
-              conditions: z.record(z.string(), z.string()).optional(),
-            }),
-          },
-        },
-      },
+      ...swagger.update.request,
     },
-    responses: {
-      200: {
-        description: 'Policy updated successfully',
-        content: {
-          'application/json': {
-            schema: policyResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.update.responses,
     tags: ['Policies'],
   });
 
@@ -205,33 +101,13 @@ export const initialize = async () => {
   router.addRoute({
     name: 'removePolicy',
     method: 'delete',
-    path: '/{id}',
+    path: '/:id',
     summary: 'Remove policy',
     handlers: [policyController.remove],
     request: {
       params: policyParamsSchema,
     },
-    responses: {
-      200: {
-        description: 'Policy removed successfully',
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
+    responses: swagger.delete.responses,
     tags: ['Policies'],
   });
 
