@@ -1,31 +1,15 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import * as accountGroupController from './account-group.controller';
-import { accountGroupCreateSchema } from './account-group.schema';
 import {
-  DocIdSchema,
-  errorResponseSchema,
-} from '@/domains/commons/base/latest/base.schema';
-
-extendZodWithOpenApi(z);
-
-// Response schemas
-const accountGroupResponseSchema = z.object({
-  id: DocIdSchema,
-  accountId: DocIdSchema,
-  groupId: DocIdSchema,
-  roles: z.array(DocIdSchema).optional(),
-});
-
-// Params schemas
-const accountParamsSchema = z.object({
-  accountId: DocIdSchema,
-});
-
-const groupParamsSchema = z.object({
-  groupId: DocIdSchema,
-});
+  accountGroupCreateSchema,
+  accountGroupResponseSchema,
+  accountParamsSchema,
+  groupParamsSchema,
+  removeAccountFromGroupSchema,
+  updateAccountGroupRolesSchema,
+} from './account-group.schema';
+import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
@@ -106,10 +90,7 @@ export const initialize = async () => {
       body: {
         content: {
           'application/json': {
-            schema: z.object({
-              accountId: z.string(),
-              groupId: z.string(),
-            }),
+            schema: removeAccountFromGroupSchema,
           },
         },
       },
@@ -149,11 +130,7 @@ export const initialize = async () => {
       body: {
         content: {
           'application/json': {
-            schema: z.object({
-              accountId: z.string(),
-              groupId: z.string(),
-              roles: z.array(z.string()),
-            }),
+            schema: updateAccountGroupRolesSchema,
           },
         },
       },

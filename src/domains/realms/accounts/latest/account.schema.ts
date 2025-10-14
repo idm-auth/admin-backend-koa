@@ -2,6 +2,7 @@ import {
   emailSchema,
   passwordSchema,
 } from '@/domains/commons/base/v1/base.schema';
+import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import { z } from 'zod';
 
 export const accountCreateSchema = z.object({
@@ -9,4 +10,30 @@ export const accountCreateSchema = z.object({
   password: passwordSchema,
 });
 
+// Response schemas
+export const accountResponseSchema = z.object({
+  id: DocIdSchema,
+  email: z.string().email(),
+});
+
+export const accountUpdateSchema = z.object({
+  email: z.string().optional(),
+  password: z.string().optional(),
+});
+
+// Query schemas
+export const accountSearchQuerySchema = z.object({
+  email: z.string(),
+});
+
+// Params schemas
+export const accountParamsSchema = z.object({
+  tenantId: z.string(),
+  id: DocIdSchema,
+});
+
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
+export type AccountResponse = z.infer<typeof accountResponseSchema>;
+export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
+export type AccountSearchQuery = z.infer<typeof accountSearchQuerySchema>;
+export type AccountParams = z.infer<typeof accountParamsSchema>;

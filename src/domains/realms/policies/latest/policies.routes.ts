@@ -1,42 +1,13 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as policyController from './policy.controller';
-import { policyCreateSchema } from './policy.schema';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  policyCreateSchema,
+  policyResponseSchema,
+  policyUpdateSchema,
+  policySearchQuerySchema,
+  policyParamsSchema,
+} from './policy.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
-
-extendZodWithOpenApi(z);
-
-// Response schemas
-const policyResponseSchema = z.object({
-  id: DocIdSchema,
-  name: z.string(),
-  description: z.string().optional(),
-  effect: z.enum(['Allow', 'Deny']),
-  actions: z.array(z.string()),
-  resources: z.array(z.string()),
-  conditions: z.record(z.string(), z.any()).optional(),
-});
-
-const policyUpdateSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  effect: z.enum(['Allow', 'Deny']).optional(),
-  actions: z.array(z.string()).optional(),
-  resources: z.array(z.string()).optional(),
-  conditions: z.record(z.string(), z.string()).optional(),
-});
-
-// Query schemas
-const policySearchQuerySchema = z.object({
-  name: z.string(),
-});
-
-// Params schemas
-const policyParamsSchema = z.object({
-  id: DocIdSchema,
-});
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/policies' });

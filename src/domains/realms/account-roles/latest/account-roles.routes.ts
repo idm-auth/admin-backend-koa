@@ -1,9 +1,5 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as accountRoleController from './account-role.controller';
-
-extendZodWithOpenApi(z);
 import {
   accountRoleCreateSchema,
   accountRoleResponseSchema,

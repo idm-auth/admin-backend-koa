@@ -1,34 +1,13 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as groupController from './group.controller';
-import { groupCreateSchema } from './group.schema';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  groupCreateSchema,
+  groupResponseSchema,
+  groupUpdateSchema,
+  groupSearchQuerySchema,
+  groupParamsSchema,
+} from './group.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
-
-extendZodWithOpenApi(z);
-
-// Response schemas
-const groupResponseSchema = z.object({
-  id: DocIdSchema,
-  name: z.string(),
-  description: z.string().optional(),
-});
-
-const groupUpdateSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-});
-
-// Query schemas
-const groupSearchQuerySchema = z.object({
-  name: z.string(),
-});
-
-// Params schemas
-const groupParamsSchema = z.object({
-  id: DocIdSchema,
-});
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/groups' });

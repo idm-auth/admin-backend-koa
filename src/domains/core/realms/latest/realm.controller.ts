@@ -31,10 +31,10 @@ export const findById = async (ctx: Context) => {
 };
 
 export const findByPublicUUID = async (ctx: Context) => {
-  const { publicUUID } = ctx.query;
+  const { publicUUID } = ctx.params;
 
   const realm = await realmService.findByPublicUUID({
-    publicUUID: publicUUID as string,
+    publicUUID,
   });
 
   ctx.body = {

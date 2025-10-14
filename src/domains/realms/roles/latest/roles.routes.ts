@@ -1,36 +1,13 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as roleController from './role.controller';
-import { roleCreateSchema } from './role.schema';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  roleCreateSchema,
+  roleResponseSchema,
+  roleUpdateSchema,
+  roleSearchQuerySchema,
+  roleParamsSchema,
+} from './role.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
-
-extendZodWithOpenApi(z);
-
-// Response schemas
-const roleResponseSchema = z.object({
-  id: DocIdSchema,
-  name: z.string(),
-  description: z.string().optional(),
-  permissions: z.array(z.string()).optional(),
-});
-
-const roleUpdateSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  permissions: z.array(z.string()).optional(),
-});
-
-// Query schemas
-const roleSearchQuerySchema = z.object({
-  name: z.string(),
-});
-
-// Params schemas
-const roleParamsSchema = z.object({
-  id: DocIdSchema,
-});
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/roles' });

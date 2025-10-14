@@ -114,10 +114,14 @@ export const initSetup = async () => {
   if (!mongoDBCoreDBName) {
     throw new Error('MONGODB_CORE_DBNAME is not set');
   }
-  let doc = await getModel().findOne({ dbName: mongoDBCoreDBName });
+  let doc = await getModel().findOne({
+    dbName: mongoDBCoreDBName,
+  });
   if (!doc) {
     doc = await getModel().create({
       dbName: mongoDBCoreDBName,
+      name: 'idm-core-realm',
+      description: 'Realm Core',
     });
   }
   return doc;

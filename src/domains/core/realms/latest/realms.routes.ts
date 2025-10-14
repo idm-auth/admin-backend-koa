@@ -1,34 +1,14 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as realmController from './realm.controller';
-
-extendZodWithOpenApi(z);
-import { realmCreateSchema, realmUpdateSchema } from './realm.schema';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  realmCreateSchema,
+  realmUpdateSchema,
+  realmResponseSchema,
+  realmSearchByNameSchema,
+  realmParamsSchema,
+  realmPublicUUIDParamsSchema,
+} from './realm.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
-
-// Response schemas
-const realmResponseSchema = z.object({
-  id: DocIdSchema,
-  name: z.string(),
-  publicUUID: z.string(),
-  dbName: z.string(),
-});
-
-// Query schemas
-const realmSearchByPublicUUIDSchema = z.object({
-  publicUUID: z.string(),
-});
-
-const realmSearchByNameSchema = z.object({
-  name: z.string(),
-});
-
-// Params schemas
-const realmParamsSchema = z.object({
-  id: DocIdSchema,
-});
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/realms' });
@@ -62,17 +42,17 @@ export const initialize = async () => {
     tags: ['Realms'],
   });
 
-  // GET /realms/search/publicUUID - Search realm by publicUUID
+  // GET /realms/publicUUID/:publicUUID - Get realm by publicUUID
   router.addRoute({
-    name: 'searchRealmByPublicUUID',
+    name: 'getRealmByPublicUUID',
     method: 'get',
-    path: '/search/publicUUID',
-    summary: 'Search realm by publicUUID',
+    path: '/publicUUID/:publicUUID',
+    summary: 'Get realm by publicUUID',
     handlers: [realmController.findByPublicUUID],
     request: {
-      query: realmSearchByPublicUUIDSchema,
+      params: realmPublicUUIDParamsSchema,
     },
-    responses: swagger.search.responses,
+    responses: swagger.read.responses,
     tags: ['Realms'],
   });
 

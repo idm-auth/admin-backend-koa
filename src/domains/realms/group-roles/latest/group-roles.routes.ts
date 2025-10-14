@@ -1,6 +1,4 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import * as groupRoleController from './group-role.controller';
 import {
   groupRoleCreateSchema,
@@ -9,8 +7,6 @@ import {
   roleGroupParamsSchema,
 } from './group-role.schema';
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
-
-extendZodWithOpenApi(z);
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
