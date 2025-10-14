@@ -6,7 +6,17 @@ export const initialize = async () => {
   const router = new MagicRouter({
     prefix: '/config',
   });
-  router.get('/init-setup', configController.getInitSetup);
+  router.get({
+    name: 'getInitSetup',
+    path: '/init-setup',
+    handlers: [configController.getInitSetup],
+    responses: {
+      200: {
+        description: 'Init setup configuration',
+      },
+    },
+    tags: ['Config'],
+  });
   const v1Router = await v1.initialize();
   router.useMagic('', v1Router);
 

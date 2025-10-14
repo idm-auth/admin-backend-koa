@@ -19,9 +19,8 @@ export const initialize = async () => {
   );
 
   // GET /groups - List all groups
-  router.addRoute({
+  router.get({
     name: 'listGroups',
-    method: 'get',
     path: '/',
     summary: 'List all groups',
     handlers: [groupController.findAll],
@@ -30,9 +29,8 @@ export const initialize = async () => {
   });
 
   // POST /groups - Create group
-  router.addRoute({
+  router.post({
     name: 'createGroup',
-    method: 'post',
     path: '/',
     summary: 'Create group',
     handlers: [groupController.create],
@@ -42,9 +40,8 @@ export const initialize = async () => {
   });
 
   // GET /groups/search - Search group by name
-  router.addRoute({
+  router.get({
     name: 'searchGroup',
-    method: 'get',
     path: '/search',
     summary: 'Search group by name',
     handlers: [groupController.findByName],
@@ -56,9 +53,8 @@ export const initialize = async () => {
   });
 
   // GET /groups/:id - Get group by ID
-  router.addRoute({
+  router.get({
     name: 'getGroupById',
-    method: 'get',
     path: '/:id',
     summary: 'Get group by ID',
     handlers: [groupController.findById],
@@ -70,9 +66,8 @@ export const initialize = async () => {
   });
 
   // PUT /groups/:id - Update group
-  router.addRoute({
+  router.put({
     name: 'updateGroup',
-    method: 'put',
     path: '/:id',
     summary: 'Update group',
     handlers: [groupController.update],
@@ -85,9 +80,8 @@ export const initialize = async () => {
   });
 
   // DELETE /groups/:id - Remove group
-  router.addRoute({
+  router.delete({
     name: 'removeGroup',
-    method: 'delete',
     path: '/:id',
     summary: 'Remove group',
     handlers: [groupController.remove],

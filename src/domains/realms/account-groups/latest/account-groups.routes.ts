@@ -15,9 +15,8 @@ export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
 
   // GET /account-groups - List all account-groups
-  router.addRoute({
+  router.get({
     name: 'listAccountGroups',
-    method: 'get',
     path: '/',
     summary: 'List all account-groups',
     handlers: [accountGroupController.findAll],
@@ -43,9 +42,8 @@ export const initialize = async () => {
   });
 
   // POST /account-groups - Add account to group
-  router.addRoute({
+  router.post({
     name: 'addAccountToGroup',
-    method: 'post',
     path: '/',
     summary: 'Add account to group',
     handlers: [accountGroupController.addAccountToGroup],
@@ -80,9 +78,8 @@ export const initialize = async () => {
   });
 
   // DELETE /account-groups - Remove account from group
-  router.addRoute({
+  router.delete({
     name: 'removeAccountFromGroup',
-    method: 'delete',
     path: '/',
     summary: 'Remove account from group',
     handlers: [accountGroupController.removeAccountFromGroup],
@@ -120,9 +117,8 @@ export const initialize = async () => {
   });
 
   // PUT /account-groups - Update account group roles
-  router.addRoute({
+  router.put({
     name: 'updateAccountGroupRoles',
-    method: 'put',
     path: '/',
     summary: 'Update account group roles',
     handlers: [accountGroupController.updateAccountGroupRoles],
@@ -165,9 +161,8 @@ export const initialize = async () => {
   });
 
   // GET /account-groups/account/:accountId - Get account groups
-  router.addRoute({
+  router.get({
     name: 'getAccountGroups',
-    method: 'get',
     path: '/account/{accountId}',
     summary: 'Get account groups',
     handlers: [accountGroupController.getAccountGroups],
@@ -196,9 +191,8 @@ export const initialize = async () => {
   });
 
   // GET /account-groups/group/:groupId - Get group accounts
-  router.addRoute({
+  router.get({
     name: 'getGroupAccounts',
-    method: 'get',
     path: '/group/{groupId}',
     summary: 'Get group accounts',
     handlers: [accountGroupController.getGroupAccounts],

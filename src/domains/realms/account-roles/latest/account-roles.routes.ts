@@ -12,9 +12,8 @@ export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-roles' });
 
   // GET /account-roles - List all account-roles
-  router.addRoute({
+  router.get({
     name: 'listAccountRoles',
-    method: 'get',
     path: '/',
     summary: 'List all account-roles',
     handlers: [accountRoleController.findAll],
@@ -39,9 +38,8 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
-  router.addRoute({
+  router.post({
     name: 'addRoleToAccount',
-    method: 'post',
     path: '/',
     summary: 'Add role to account',
     handlers: [accountRoleController.addRoleToAccount],
@@ -75,9 +73,8 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
-  router.addRoute({
+  router.delete({
     name: 'removeRoleFromAccount',
-    method: 'delete',
     path: '/',
     summary: 'Remove role from account',
     handlers: [accountRoleController.removeRoleFromAccount],
@@ -114,9 +111,8 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
-  router.addRoute({
+  router.get({
     name: 'getAccountRoles',
-    method: 'get',
     path: '/account/:accountId',
     summary: 'Get account roles',
     handlers: [accountRoleController.getAccountRoles],
@@ -144,9 +140,8 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
-  router.addRoute({
+  router.get({
     name: 'getRoleAccounts',
-    method: 'get',
     path: '/roles/:roleId',
     summary: 'Get role accounts',
     handlers: [accountRoleController.getRoleAccounts],

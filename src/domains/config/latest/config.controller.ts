@@ -1,13 +1,10 @@
-import { EnvConfig } from '@/domains/commons/base/webAdminConfig.schema';
 import * as configService from '@/domains/config/latest/config.service';
 import { Context } from 'koa';
+import { ConfigParams } from './config.schema';
 
-type Params = {
-  env: EnvConfig;
-  appName: string;
-};
+type ConfigContext = Context & { params: ConfigParams };
 
-export const getConfig = async (ctx: Context & { params: Params }) => {
+export const getConfig = async (ctx: ConfigContext) => {
   const { env, appName } = ctx.params;
   const webAdminConfig = await configService.getWebAdminConfig({
     app: appName,

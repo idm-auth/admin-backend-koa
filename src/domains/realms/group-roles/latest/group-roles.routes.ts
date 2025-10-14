@@ -12,9 +12,8 @@ export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
 
   // GET /group-roles - List all group-roles
-  router.addRoute({
+  router.get({
     name: 'listGroupRoles',
-    method: 'get',
     path: '/',
     summary: 'List all group-roles',
     handlers: [groupRoleController.findAll],
@@ -39,9 +38,8 @@ export const initialize = async () => {
     tags: ['Group-Roles'],
   });
 
-  router.addRoute({
+  router.post({
     name: 'addRoleToGroup',
-    method: 'post',
     path: '/',
     summary: 'Add role to group',
     handlers: [groupRoleController.addRoleToGroup],
@@ -75,9 +73,8 @@ export const initialize = async () => {
     tags: ['Group-Roles'],
   });
 
-  router.addRoute({
+  router.delete({
     name: 'removeRoleFromGroup',
-    method: 'delete',
     path: '/',
     summary: 'Remove role from group',
     handlers: [groupRoleController.removeRoleFromGroup],
@@ -114,9 +111,8 @@ export const initialize = async () => {
     tags: ['Group-Roles'],
   });
 
-  router.addRoute({
+  router.get({
     name: 'getGroupRoles',
-    method: 'get',
     path: '/group/:groupId',
     summary: 'Get group roles',
     handlers: [groupRoleController.getGroupRoles],
@@ -144,9 +140,8 @@ export const initialize = async () => {
     tags: ['Group-Roles'],
   });
 
-  router.addRoute({
+  router.get({
     name: 'getRoleGroups',
-    method: 'get',
     path: '/role/:roleId',
     summary: 'Get role groups',
     handlers: [groupRoleController.getRoleGroups],

@@ -1,7 +1,9 @@
 import { Context, Next } from 'koa';
 import { MagicRouteConfig } from '@/utils/core/MagicRouter';
 
-export const requestValidationMiddleware = (config: MagicRouteConfig) => {
+export const requestValidationMiddleware = <TContext extends Context = Context>(
+  config: MagicRouteConfig<TContext>
+) => {
   return async (ctx: Context, next: Next) => {
     const { request } = config;
 
@@ -41,7 +43,11 @@ export const requestValidationMiddleware = (config: MagicRouteConfig) => {
   };
 };
 
-export const responseValidationMiddleware = (config: MagicRouteConfig) => {
+export const responseValidationMiddleware = <
+  TContext extends Context = Context,
+>(
+  config: MagicRouteConfig<TContext>
+) => {
   return async (ctx: Context, next: Next) => {
     await next();
 

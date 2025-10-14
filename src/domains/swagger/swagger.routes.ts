@@ -1,11 +1,11 @@
+import Router from '@koa/router';
 import { readFileSync } from 'fs';
 import { Context } from 'koa';
 import { absolutePath } from 'swagger-ui-dist';
-import { MagicRouter } from '../../utils/core/MagicRouter';
 import { getOpenAPIDocument } from './openApiGenerator';
 
 export const initialize = async () => {
-  const router = new MagicRouter();
+  const router = new Router();
 
   // Custom HTML with correct title and base path
   router.get('/api-docs-ui', async (ctx: Context) => {

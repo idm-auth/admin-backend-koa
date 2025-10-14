@@ -19,9 +19,8 @@ export const initialize = async () => {
   );
 
   // GET /roles - List all roles
-  router.addRoute({
+  router.get({
     name: 'listRoles',
-    method: 'get',
     path: '/',
     summary: 'List all roles',
     handlers: [roleController.findAll],
@@ -30,9 +29,8 @@ export const initialize = async () => {
   });
 
   // POST /roles - Create role
-  router.addRoute({
+  router.post({
     name: 'createRole',
-    method: 'post',
     path: '/',
     summary: 'Create role',
     handlers: [roleController.create],
@@ -42,9 +40,8 @@ export const initialize = async () => {
   });
 
   // GET /roles/search - Search role by name
-  router.addRoute({
+  router.get({
     name: 'searchRole',
-    method: 'get',
     path: '/search',
     summary: 'Search role by name',
     handlers: [roleController.findByName],
@@ -56,9 +53,8 @@ export const initialize = async () => {
   });
 
   // GET /roles/:id - Get role by ID
-  router.addRoute({
+  router.get({
     name: 'getRoleById',
-    method: 'get',
     path: '/:id',
     summary: 'Get role by ID',
     handlers: [roleController.findById],
@@ -70,9 +66,8 @@ export const initialize = async () => {
   });
 
   // PUT /roles/:id - Update role
-  router.addRoute({
+  router.put({
     name: 'updateRole',
-    method: 'put',
     path: '/:id',
     summary: 'Update role',
     handlers: [roleController.update],
@@ -85,9 +80,8 @@ export const initialize = async () => {
   });
 
   // DELETE /roles/:id - Remove role
-  router.addRoute({
+  router.delete({
     name: 'removeRole',
-    method: 'delete',
     path: '/:id',
     summary: 'Remove role',
     handlers: [roleController.remove],

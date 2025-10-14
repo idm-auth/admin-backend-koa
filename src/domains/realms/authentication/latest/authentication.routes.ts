@@ -9,9 +9,8 @@ import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/authentication' });
 
-  router.addRoute({
+  router.post({
     name: 'login',
-    method: 'post',
     path: '/login',
     summary: 'User login',
     handlers: [authenticationController.login],

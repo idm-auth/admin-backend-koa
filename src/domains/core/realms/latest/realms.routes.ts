@@ -20,9 +20,8 @@ export const initialize = async () => {
   );
 
   // GET /realms - List all realms
-  router.addRoute({
+  router.get({
     name: 'listRealms',
-    method: 'get',
     path: '/',
     summary: 'List all realms',
     handlers: [realmController.findAll],
@@ -31,9 +30,8 @@ export const initialize = async () => {
   });
 
   // POST /realms - Create realm
-  router.addRoute({
+  router.post({
     name: 'createRealm',
-    method: 'post',
     path: '/',
     summary: 'Create realm',
     handlers: [realmController.create],
@@ -43,9 +41,8 @@ export const initialize = async () => {
   });
 
   // GET /realms/publicUUID/:publicUUID - Get realm by publicUUID
-  router.addRoute({
+  router.get({
     name: 'getRealmByPublicUUID',
-    method: 'get',
     path: '/publicUUID/:publicUUID',
     summary: 'Get realm by publicUUID',
     handlers: [realmController.findByPublicUUID],
@@ -57,9 +54,8 @@ export const initialize = async () => {
   });
 
   // GET /realms/search/name - Search realm by name
-  router.addRoute({
+  router.get({
     name: 'searchRealmByName',
-    method: 'get',
     path: '/search/name',
     summary: 'Search realm by name',
     handlers: [realmController.findByName],
@@ -71,9 +67,8 @@ export const initialize = async () => {
   });
 
   // GET /realms/:id - Get realm by ID
-  router.addRoute({
+  router.get({
     name: 'getRealmById',
-    method: 'get',
     path: '/:id',
     summary: 'Get realm by ID',
     handlers: [realmController.findById],
@@ -85,9 +80,8 @@ export const initialize = async () => {
   });
 
   // PUT /realms/:id - Update realm
-  router.addRoute({
+  router.put({
     name: 'updateRealm',
-    method: 'put',
     path: '/:id',
     summary: 'Update realm',
     handlers: [realmController.update],
@@ -100,9 +94,8 @@ export const initialize = async () => {
   });
 
   // DELETE /realms/:id - Remove realm
-  router.addRoute({
+  router.delete({
     name: 'removeRealm',
-    method: 'delete',
     path: '/:id',
     summary: 'Remove realm',
     handlers: [realmController.remove],

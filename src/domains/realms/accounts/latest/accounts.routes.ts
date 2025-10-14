@@ -19,9 +19,8 @@ export const initialize = async () => {
   );
 
   // GET /accounts - List all accounts
-  router.addRoute({
+  router.get({
     name: 'listAccounts',
-    method: 'get',
     path: '/',
     summary: 'List all accounts',
     handlers: [accountController.findAll],
@@ -30,9 +29,8 @@ export const initialize = async () => {
   });
 
   // POST /accounts - Create account
-  router.addRoute({
+  router.post({
     name: 'createAccount',
-    method: 'post',
     path: '/',
     summary: 'Create account',
     handlers: [accountController.create],
@@ -42,9 +40,8 @@ export const initialize = async () => {
   });
 
   // GET /accounts/search - Search account by email
-  router.addRoute({
+  router.get({
     name: 'searchAccount',
-    method: 'get',
     path: '/search',
     summary: 'Search account by email',
     handlers: [accountController.findByEmail],
@@ -56,9 +53,8 @@ export const initialize = async () => {
   });
 
   // GET /accounts/:id - Get account by ID
-  router.addRoute({
+  router.get({
     name: 'getAccountById',
-    method: 'get',
     path: '/:id',
     summary: 'Get account by ID',
     handlers: [accountController.findById],
@@ -70,9 +66,8 @@ export const initialize = async () => {
   });
 
   // PUT /accounts/:id - Update account
-  router.addRoute({
+  router.put({
     name: 'updateAccount',
-    method: 'put',
     path: '/:id',
     summary: 'Update account',
     handlers: [accountController.update],
@@ -85,9 +80,8 @@ export const initialize = async () => {
   });
 
   // DELETE /accounts/:id - Remove account
-  router.addRoute({
+  router.delete({
     name: 'removeAccount',
-    method: 'delete',
     path: '/:id',
     summary: 'Remove account',
     handlers: [accountController.remove],

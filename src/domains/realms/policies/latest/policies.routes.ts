@@ -19,9 +19,8 @@ export const initialize = async () => {
   );
 
   // GET /policies - List all policies
-  router.addRoute({
+  router.get({
     name: 'listPolicies',
-    method: 'get',
     path: '/',
     summary: 'List all policies',
     handlers: [policyController.findAll],
@@ -30,9 +29,8 @@ export const initialize = async () => {
   });
 
   // POST /policies - Create policy
-  router.addRoute({
+  router.post({
     name: 'createPolicy',
-    method: 'post',
     path: '/',
     summary: 'Create policy',
     handlers: [policyController.create],
@@ -42,9 +40,8 @@ export const initialize = async () => {
   });
 
   // GET /policies/search - Search policy by name
-  router.addRoute({
+  router.get({
     name: 'searchPolicy',
-    method: 'get',
     path: '/search',
     summary: 'Search policy by name',
     handlers: [policyController.findByName],
@@ -56,9 +53,8 @@ export const initialize = async () => {
   });
 
   // GET /policies/:id - Get policy by ID
-  router.addRoute({
+  router.get({
     name: 'getPolicyById',
-    method: 'get',
     path: '/:id',
     summary: 'Get policy by ID',
     handlers: [policyController.findById],
@@ -70,9 +66,8 @@ export const initialize = async () => {
   });
 
   // PUT /policies/:id - Update policy
-  router.addRoute({
+  router.put({
     name: 'updatePolicy',
-    method: 'put',
     path: '/:id',
     summary: 'Update policy',
     handlers: [policyController.update],
@@ -85,9 +80,8 @@ export const initialize = async () => {
   });
 
   // DELETE /policies/:id - Remove policy
-  router.addRoute({
+  router.delete({
     name: 'removePolicy',
-    method: 'delete',
     path: '/:id',
     summary: 'Remove policy',
     handlers: [policyController.remove],
