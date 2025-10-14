@@ -64,7 +64,7 @@ export const update = async (
     effect?: 'Allow' | 'Deny';
     actions?: string[];
     resources?: string[];
-    conditions?: Record<string, any>;
+    conditions?: Record<string, string>;
   }
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
@@ -86,6 +86,14 @@ export const update = async (
     throw new NotFoundError('Policy not found');
   }
   return policy;
+};
+
+export const findAll = async (tenantId: string): Promise<PolicyDocument[]> => {
+  const logger = await getLogger();
+  logger.debug({ tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
+  const policies = await getModel(dbName).find({});
+  return policies;
 };
 
 export const remove = async (

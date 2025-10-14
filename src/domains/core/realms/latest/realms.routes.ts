@@ -39,6 +39,17 @@ export const initialize = async () => {
     realmUpdateSchema
   );
 
+  // GET /realms - List all realms
+  router.addRoute({
+    name: 'listRealms',
+    method: 'get',
+    path: '/',
+    summary: 'List all realms',
+    handlers: [realmController.findAll],
+    responses: swagger.list.responses,
+    tags: ['Realms'],
+  });
+
   // POST /realms - Create realm
   router.addRoute({
     name: 'createRealm',

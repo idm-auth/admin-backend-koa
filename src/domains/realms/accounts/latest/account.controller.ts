@@ -61,6 +61,17 @@ export const update = async (ctx: Context) => {
   };
 };
 
+export const findAll = async (ctx: Context) => {
+  const { tenantId } = ctx.params;
+
+  const accounts = await accountService.findAll(tenantId);
+
+  ctx.body = accounts.map((account) => ({
+    id: account._id,
+    email: account.emails[0]?.email,
+  }));
+};
+
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.params;
 

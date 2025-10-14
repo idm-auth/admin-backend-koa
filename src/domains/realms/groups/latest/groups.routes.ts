@@ -32,7 +32,23 @@ const groupParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/groups' });
-  const swagger = createCrudSwagger('Group', groupResponseSchema, groupCreateSchema, groupUpdateSchema);
+  const swagger = createCrudSwagger(
+    'Group',
+    groupResponseSchema,
+    groupCreateSchema,
+    groupUpdateSchema
+  );
+
+  // GET /groups - List all groups
+  router.addRoute({
+    name: 'listGroups',
+    method: 'get',
+    path: '/',
+    summary: 'List all groups',
+    handlers: [groupController.findAll],
+    responses: swagger.list.responses,
+    tags: ['Groups'],
+  });
 
   // POST /groups - Create group
   router.addRoute({

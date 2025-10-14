@@ -11,30 +11,30 @@ export const requestValidationMiddleware = (config: MagicRouteConfig) => {
 
     // Valida params
     if (request.params) {
-      ctx.params = request.params.parse(ctx.params);
+      await request.params.parseAsync(ctx.params);
     }
 
     // Valida query
     if (request.query) {
-      ctx.query = request.query.parse(ctx.query) as any;
+      await request.query.parseAsync(ctx.query);
     }
 
     // Valida body
     if (request.body?.content?.['application/json']?.schema) {
       const bodySchema = request.body.content['application/json'].schema;
-      if ('parse' in bodySchema) {
-        ctx.request.body = bodySchema.parse(ctx.request.body);
+      if ('parseAsync' in bodySchema) {
+        await bodySchema.parseAsync(ctx.request.body);
       }
     }
 
     // Valida cookies
     if (request.cookies) {
-      ctx.cookies = request.cookies.parse(ctx.cookies) as any;
+      await request.cookies.parseAsync(ctx.cookies);
     }
 
     // Valida headers
     if (request.headers && !Array.isArray(request.headers)) {
-      ctx.headers = request.headers.parse(ctx.headers) as any;
+      await request.headers.parseAsync(ctx.headers);
     }
 
     await next();

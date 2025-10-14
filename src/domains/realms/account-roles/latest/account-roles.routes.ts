@@ -15,6 +15,34 @@ import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-roles' });
 
+  // GET /account-roles - List all account-roles
+  router.addRoute({
+    name: 'listAccountRoles',
+    method: 'get',
+    path: '/',
+    summary: 'List all account-roles',
+    handlers: [accountRoleController.findAll],
+    responses: {
+      200: {
+        description: 'List of account-roles',
+        content: {
+          'application/json': {
+            schema: accountRoleResponseSchema.array(),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+    tags: ['Account-Roles'],
+  });
+
   router.addRoute({
     name: 'addRoleToAccount',
     method: 'post',

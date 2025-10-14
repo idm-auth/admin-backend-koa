@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
+extendZodWithOpenApi(z);
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
 
 export const createSuccessResponse = (
@@ -56,6 +59,15 @@ export const createCrudSwagger = (
       200: createSuccessResponse(
         `${entityName} created successfully`,
         responseSchema
+      ),
+      400: commonResponses.badRequest,
+    },
+  },
+  list: {
+    responses: {
+      200: createSuccessResponse(
+        `List of ${entityName.toLowerCase()}s`,
+        z.array(responseSchema)
       ),
       400: commonResponses.badRequest,
     },

@@ -69,6 +69,14 @@ export const update = async (args: { id: string; data: Partial<Realm> }) => {
   return realm;
 };
 
+export const findAll = async () => {
+  const logger = await getLogger();
+  logger.debug('Finding all realms');
+
+  const realms = await getModel().find({});
+  return realms;
+};
+
 export const remove = async (args: { id: string }): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id: args.id });

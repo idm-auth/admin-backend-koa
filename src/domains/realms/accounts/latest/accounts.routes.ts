@@ -32,7 +32,23 @@ const accountParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
-  const swagger = createCrudSwagger('Account', accountResponseSchema, accountCreateSchema, accountUpdateSchema);
+  const swagger = createCrudSwagger(
+    'Account',
+    accountResponseSchema,
+    accountCreateSchema,
+    accountUpdateSchema
+  );
+
+  // GET /accounts - List all accounts
+  router.addRoute({
+    name: 'listAccounts',
+    method: 'get',
+    path: '/',
+    summary: 'List all accounts',
+    handlers: [accountController.findAll],
+    responses: swagger.list.responses,
+    tags: ['Accounts'],
+  });
 
   // POST /accounts - Create account
   router.addRoute({

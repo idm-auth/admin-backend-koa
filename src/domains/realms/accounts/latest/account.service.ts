@@ -106,6 +106,14 @@ export const softDelete = async (
   }
 };
 
+export const findAll = async (tenantId: string): Promise<AccountDocument[]> => {
+  const logger = await getLogger();
+  logger.debug({ tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
+  const accounts = await getModel(dbName).find({});
+  return accounts;
+};
+
 export const remove = async (
   tenantId: string,
   args: { id: string }

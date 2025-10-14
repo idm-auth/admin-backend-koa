@@ -3,7 +3,8 @@ import { Context } from 'koa';
 
 export const create = async (ctx: Context) => {
   const { tenantId } = ctx.params;
-  const { name, description, effect, actions, resources, conditions } = ctx.request.body;
+  const { name, description, effect, actions, resources, conditions } =
+    ctx.request.body;
 
   const policy = await policyService.create(tenantId, {
     name,
@@ -46,7 +47,9 @@ export const findByName = async (ctx: Context) => {
   const { tenantId } = ctx.params;
   const { name } = ctx.query;
 
-  const policy = await policyService.findByName(tenantId, { name: name as string });
+  const policy = await policyService.findByName(tenantId, {
+    name: name as string,
+  });
 
   ctx.body = {
     id: policy._id,
@@ -61,7 +64,8 @@ export const findByName = async (ctx: Context) => {
 
 export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.params;
-  const { name, description, effect, actions, resources, conditions } = ctx.request.body;
+  const { name, description, effect, actions, resources, conditions } =
+    ctx.request.body;
 
   const policy = await policyService.update(tenantId, {
     id,
@@ -82,6 +86,22 @@ export const update = async (ctx: Context) => {
     resources: policy.resources,
     conditions: policy.conditions,
   };
+};
+
+export const findAll = async (ctx: Context) => {
+  const { tenantId } = ctx.params;
+
+  const policies = await policyService.findAll(tenantId);
+
+  ctx.body = policies.map((policy) => ({
+    id: policy._id,
+    name: policy.name,
+    description: policy.description,
+    effect: policy.effect,
+    actions: policy.actions,
+    resources: policy.resources,
+    conditions: policy.conditions,
+  }));
 };
 
 export const remove = async (ctx: Context) => {

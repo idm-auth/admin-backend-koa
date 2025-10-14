@@ -1,6 +1,9 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { emailSchema, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  emailSchema,
+  DocIdSchema,
+} from '@/domains/commons/base/latest/base.schema';
 
 extendZodWithOpenApi(z);
 

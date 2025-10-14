@@ -74,6 +74,14 @@ export const update = async (
   return group;
 };
 
+export const findAll = async (tenantId: string): Promise<GroupDocument[]> => {
+  const logger = await getLogger();
+  logger.debug({ tenantId });
+  const dbName = await getDBName({ publicUUID: tenantId });
+  const groups = await getModel(dbName).find({});
+  return groups;
+};
+
 export const remove = async (
   tenantId: string,
   args: { id: string }

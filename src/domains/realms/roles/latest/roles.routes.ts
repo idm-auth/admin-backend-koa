@@ -34,7 +34,23 @@ const roleParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/roles' });
-  const swagger = createCrudSwagger('Role', roleResponseSchema, roleCreateSchema, roleUpdateSchema);
+  const swagger = createCrudSwagger(
+    'Role',
+    roleResponseSchema,
+    roleCreateSchema,
+    roleUpdateSchema
+  );
+
+  // GET /roles - List all roles
+  router.addRoute({
+    name: 'listRoles',
+    method: 'get',
+    path: '/',
+    summary: 'List all roles',
+    handlers: [roleController.findAll],
+    responses: swagger.list.responses,
+    tags: ['Roles'],
+  });
 
   // POST /roles - Create role
   router.addRoute({

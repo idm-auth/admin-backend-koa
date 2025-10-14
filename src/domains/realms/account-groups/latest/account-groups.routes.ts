@@ -3,7 +3,10 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import * as accountGroupController from './account-group.controller';
 import { accountGroupCreateSchema } from './account-group.schema';
-import { DocIdSchema, errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  errorResponseSchema,
+} from '@/domains/commons/base/latest/base.schema';
 
 extendZodWithOpenApi(z);
 
@@ -26,6 +29,34 @@ const groupParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
+
+  // GET /account-groups - List all account-groups
+  router.addRoute({
+    name: 'listAccountGroups',
+    method: 'get',
+    path: '/',
+    summary: 'List all account-groups',
+    handlers: [accountGroupController.findAll],
+    responses: {
+      200: {
+        description: 'List of account-groups',
+        content: {
+          'application/json': {
+            schema: z.array(accountGroupResponseSchema),
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+    tags: ['Account-Groups'],
+  });
 
   // POST /account-groups - Add account to group
   router.addRoute({

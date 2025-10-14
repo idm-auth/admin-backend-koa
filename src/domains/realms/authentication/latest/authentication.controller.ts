@@ -7,7 +7,10 @@ export const login = async (ctx: Context) => {
 
   try {
     const tenantId = ctx.params.tenantId;
-    const result = await authenticationService.login(tenantId, ctx.request.body);
+    const result = await authenticationService.login(
+      tenantId,
+      ctx.request.body
+    );
 
     ctx.status = 200;
     ctx.body = result;

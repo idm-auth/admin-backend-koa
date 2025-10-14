@@ -34,7 +34,9 @@ export const findByName = async (ctx: Context) => {
   const { tenantId } = ctx.params;
   const { name } = ctx.query;
 
-  const group = await groupService.findByName(tenantId, { name: name as string });
+  const group = await groupService.findByName(tenantId, {
+    name: name as string,
+  });
 
   ctx.body = {
     id: group._id,
@@ -58,6 +60,18 @@ export const update = async (ctx: Context) => {
     name: group.name,
     description: group.description,
   };
+};
+
+export const findAll = async (ctx: Context) => {
+  const { tenantId } = ctx.params;
+
+  const groups = await groupService.findAll(tenantId);
+
+  ctx.body = groups.map((group) => ({
+    id: group._id,
+    name: group.name,
+    description: group.description,
+  }));
 };
 
 export const remove = async (ctx: Context) => {

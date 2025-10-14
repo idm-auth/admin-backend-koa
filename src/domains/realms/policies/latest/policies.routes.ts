@@ -40,7 +40,23 @@ const policyParamsSchema = z.object({
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/policies' });
-  const swagger = createCrudSwagger('Policy', policyResponseSchema, policyCreateSchema, policyUpdateSchema);
+  const swagger = createCrudSwagger(
+    'Policy',
+    policyResponseSchema,
+    policyCreateSchema,
+    policyUpdateSchema
+  );
+
+  // GET /policies - List all policies
+  router.addRoute({
+    name: 'listPolicies',
+    method: 'get',
+    path: '/',
+    summary: 'List all policies',
+    handlers: [policyController.findAll],
+    responses: swagger.list.responses,
+    tags: ['Policies'],
+  });
 
   // POST /policies - Create policy
   router.addRoute({

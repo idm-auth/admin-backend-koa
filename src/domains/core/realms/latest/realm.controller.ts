@@ -72,6 +72,17 @@ export const update = async (ctx: Context) => {
   };
 };
 
+export const findAll = async (ctx: Context) => {
+  const realms = await realmService.findAll();
+
+  ctx.body = realms.map((realm) => ({
+    id: realm._id,
+    name: realm.name,
+    publicUUID: realm.publicUUID,
+    dbName: realm.dbName,
+  }));
+};
+
 export const remove = async (ctx: Context) => {
   const { id } = ctx.params;
 
