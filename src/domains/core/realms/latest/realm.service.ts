@@ -1,7 +1,10 @@
 import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getModel, Realm } from '@/domains/core/realms/latest/realms.model';
 import { NotFoundError } from '@/errors/not-found';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  publicUUIDSchema,
+} from '@/domains/commons/base/latest/base.schema';
 import { PublicUUID } from '@/domains/commons/base/v1/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
 import { realmCreateSchema } from './realm.schema';
@@ -92,6 +95,9 @@ export const remove = async (args: { id: string }): Promise<void> => {
 export const getDBName = async (args: { publicUUID: PublicUUID }) => {
   const logger = await getLogger();
   logger.debug({ publicUUID: args.publicUUID });
+
+  // Validar formato do publicUUID antes de buscar
+  await validateZod(args.publicUUID, publicUUIDSchema);
 
   const realm = await getModel().findOne({ publicUUID: args.publicUUID });
 

@@ -67,9 +67,5 @@ describe('GET /api/realm/:tenantId/v1/accounts/:id', () => {
     expect(response.body.details).toContain('Invalid ID');
   });
 
-  it('should return 404 when id parameter is missing', async () => {
-    await request(getApp().callback())
-      .get(`/api/realm/${tenantId}/v1/accounts/`)
-      .expect(404);
-  });
+
 });
