@@ -4,7 +4,7 @@ import {
   accountCreateSchema,
   accountResponseSchema,
   accountUpdateSchema,
-  accountSearchQuerySchema,
+
   accountParamsSchema,
 } from './account.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
@@ -39,18 +39,7 @@ export const initialize = async () => {
     tags: ['Accounts'],
   });
 
-  // GET /accounts/search - Search account by email
-  router.get({
-    name: 'searchAccount',
-    path: '/search',
-    summary: 'Search account by email',
-    handlers: [accountController.findByEmail],
-    request: {
-      query: accountSearchQuerySchema,
-    },
-    responses: swagger.search.responses,
-    tags: ['Accounts'],
-  });
+
 
   // GET /accounts/:id - Get account by ID
   router.get({

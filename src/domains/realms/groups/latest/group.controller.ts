@@ -30,20 +30,7 @@ export const findById = async (ctx: Context) => {
   };
 };
 
-export const findByName = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { name } = ctx.query;
 
-  const group = await groupService.findByName(tenantId, {
-    name: name as string,
-  });
-
-  ctx.body = {
-    id: group._id,
-    name: group.name,
-    description: group.description,
-  };
-};
 
 export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.params;

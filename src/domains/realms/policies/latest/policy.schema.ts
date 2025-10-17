@@ -30,10 +30,7 @@ export const policyUpdateSchema = z.object({
   conditions: z.record(z.string(), z.string()).optional(),
 });
 
-// Query schemas
-export const policySearchQuerySchema = z.object({
-  name: z.string(),
-});
+
 
 // Params schemas
 export const policyParamsSchema = z.object({
@@ -43,5 +40,5 @@ export const policyParamsSchema = z.object({
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;
 export type PolicyResponse = z.infer<typeof policyResponseSchema>;
 export type PolicyUpdate = z.infer<typeof policyUpdateSchema>;
-export type PolicySearchQuery = z.infer<typeof policySearchQuerySchema>;
+
 export type PolicyParams = z.infer<typeof policyParamsSchema>;

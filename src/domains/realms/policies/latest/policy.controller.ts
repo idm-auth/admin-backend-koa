@@ -43,24 +43,7 @@ export const findById = async (ctx: Context) => {
   };
 };
 
-export const findByName = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { name } = ctx.query;
 
-  const policy = await policyService.findByName(tenantId, {
-    name: name as string,
-  });
-
-  ctx.body = {
-    id: policy._id,
-    name: policy.name,
-    description: policy.description,
-    effect: policy.effect,
-    actions: policy.actions,
-    resources: policy.resources,
-    conditions: policy.conditions,
-  };
-};
 
 export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.params;

@@ -31,10 +31,7 @@ export const realmResponseSchema = z.object({
   dbName: z.string(),
 });
 
-// Query schemas
-export const realmSearchByNameSchema = z.object({
-  name: z.string(),
-});
+
 
 // Params schemas
 export const realmParamsSchema = z.object({
@@ -48,6 +45,6 @@ export const realmPublicUUIDParamsSchema = z.object({
 export type RealmCreate = z.infer<typeof realmCreateSchema>;
 export type RealmUpdate = z.infer<typeof realmUpdateSchema>;
 export type RealmResponse = z.infer<typeof realmResponseSchema>;
-export type RealmSearchByName = z.infer<typeof realmSearchByNameSchema>;
+
 export type RealmParams = z.infer<typeof realmParamsSchema>;
 export type RealmPublicUUIDParams = z.infer<typeof realmPublicUUIDParamsSchema>;

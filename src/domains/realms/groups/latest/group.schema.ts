@@ -18,10 +18,7 @@ export const groupUpdateSchema = z.object({
   description: z.string().optional(),
 });
 
-// Query schemas
-export const groupSearchQuerySchema = z.object({
-  name: z.string(),
-});
+
 
 // Params schemas
 export const groupParamsSchema = z.object({
@@ -31,5 +28,5 @@ export const groupParamsSchema = z.object({
 export type GroupCreate = z.infer<typeof groupCreateSchema>;
 export type GroupResponse = z.infer<typeof groupResponseSchema>;
 export type GroupUpdate = z.infer<typeof groupUpdateSchema>;
-export type GroupSearchQuery = z.infer<typeof groupSearchQuerySchema>;
+
 export type GroupParams = z.infer<typeof groupParamsSchema>;

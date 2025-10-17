@@ -4,7 +4,7 @@ import {
   groupCreateSchema,
   groupResponseSchema,
   groupUpdateSchema,
-  groupSearchQuerySchema,
+
   groupParamsSchema,
 } from './group.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
@@ -39,18 +39,7 @@ export const initialize = async () => {
     tags: ['Groups'],
   });
 
-  // GET /groups/search - Search group by name
-  router.get({
-    name: 'searchGroup',
-    path: '/search',
-    summary: 'Search group by name',
-    handlers: [groupController.findByName],
-    request: {
-      query: groupSearchQuerySchema,
-    },
-    responses: swagger.search.responses,
-    tags: ['Groups'],
-  });
+
 
   // GET /groups/:id - Get group by ID
   router.get({

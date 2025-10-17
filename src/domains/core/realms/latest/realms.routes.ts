@@ -4,7 +4,7 @@ import {
   realmCreateSchema,
   realmUpdateSchema,
   realmResponseSchema,
-  realmSearchByNameSchema,
+
   realmParamsSchema,
   realmPublicUUIDParamsSchema,
 } from './realm.schema';
@@ -53,18 +53,7 @@ export const initialize = async () => {
     tags: ['Realms'],
   });
 
-  // GET /realms/search/name - Search realm by name
-  router.get({
-    name: 'searchRealmByName',
-    path: '/search/name',
-    summary: 'Search realm by name',
-    handlers: [realmController.findByName],
-    request: {
-      query: realmSearchByNameSchema,
-    },
-    responses: swagger.search.responses,
-    tags: ['Realms'],
-  });
+
 
   // GET /realms/:id - Get realm by ID
   router.get({

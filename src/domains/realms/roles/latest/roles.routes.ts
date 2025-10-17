@@ -4,7 +4,7 @@ import {
   roleCreateSchema,
   roleResponseSchema,
   roleUpdateSchema,
-  roleSearchQuerySchema,
+
   roleParamsSchema,
 } from './role.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
@@ -39,18 +39,7 @@ export const initialize = async () => {
     tags: ['Roles'],
   });
 
-  // GET /roles/search - Search role by name
-  router.get({
-    name: 'searchRole',
-    path: '/search',
-    summary: 'Search role by name',
-    handlers: [roleController.findByName],
-    request: {
-      query: roleSearchQuerySchema,
-    },
-    responses: swagger.search.responses,
-    tags: ['Roles'],
-  });
+
 
   // GET /roles/:id - Get role by ID
   router.get({

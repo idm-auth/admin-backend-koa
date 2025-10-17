@@ -21,10 +21,7 @@ export const roleUpdateSchema = z.object({
   permissions: z.array(z.string()).optional(),
 });
 
-// Query schemas
-export const roleSearchQuerySchema = z.object({
-  name: z.string(),
-});
+
 
 // Params schemas
 export const roleParamsSchema = z.object({
@@ -34,5 +31,5 @@ export const roleParamsSchema = z.object({
 export type RoleCreate = z.infer<typeof roleCreateSchema>;
 export type RoleResponse = z.infer<typeof roleResponseSchema>;
 export type RoleUpdate = z.infer<typeof roleUpdateSchema>;
-export type RoleSearchQuery = z.infer<typeof roleSearchQuerySchema>;
+
 export type RoleParams = z.infer<typeof roleParamsSchema>;

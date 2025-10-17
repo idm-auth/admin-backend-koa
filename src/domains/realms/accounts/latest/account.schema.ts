@@ -21,10 +21,7 @@ export const accountUpdateSchema = z.object({
   password: z.string().optional(),
 });
 
-// Query schemas
-export const accountSearchQuerySchema = z.object({
-  email: z.string(),
-});
+
 
 // Params schemas
 export const accountParamsSchema = z.object({
@@ -35,5 +32,5 @@ export const accountParamsSchema = z.object({
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
 export type AccountResponse = z.infer<typeof accountResponseSchema>;
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
-export type AccountSearchQuery = z.infer<typeof accountSearchQuerySchema>;
+
 export type AccountParams = z.infer<typeof accountParamsSchema>;

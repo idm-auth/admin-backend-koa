@@ -4,7 +4,7 @@ import {
   policyCreateSchema,
   policyResponseSchema,
   policyUpdateSchema,
-  policySearchQuerySchema,
+
   policyParamsSchema,
 } from './policy.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
@@ -39,18 +39,7 @@ export const initialize = async () => {
     tags: ['Policies'],
   });
 
-  // GET /policies/search - Search policy by name
-  router.get({
-    name: 'searchPolicy',
-    path: '/search',
-    summary: 'Search policy by name',
-    handlers: [policyController.findByName],
-    request: {
-      query: policySearchQuerySchema,
-    },
-    responses: swagger.search.responses,
-    tags: ['Policies'],
-  });
+
 
   // GET /policies/:id - Get policy by ID
   router.get({
