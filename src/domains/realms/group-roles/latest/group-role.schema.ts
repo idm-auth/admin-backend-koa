@@ -10,7 +10,7 @@ export const groupRoleCreateSchema = z.object({
 });
 
 export const groupRoleResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   groupId: DocIdSchema,
   roleId: DocIdSchema,
 });

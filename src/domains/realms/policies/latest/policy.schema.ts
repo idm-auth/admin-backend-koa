@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  requestIDParamsSchema,
+} from '@/domains/commons/base/latest/base.schema';
 
 export const policyCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),
@@ -12,7 +15,7 @@ export const policyCreateSchema = z.object({
 
 // Response schemas
 export const policyResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
   effect: z.enum(['Allow', 'Deny']),
@@ -30,15 +33,8 @@ export const policyUpdateSchema = z.object({
   conditions: z.record(z.string(), z.string()).optional(),
 });
 
-
-
-// Params schemas
-export const policyParamsSchema = z.object({
-  id: DocIdSchema,
-});
-
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;
 export type PolicyResponse = z.infer<typeof policyResponseSchema>;
 export type PolicyUpdate = z.infer<typeof policyUpdateSchema>;
 
-export type PolicyParams = z.infer<typeof policyParamsSchema>;
+export type PolicyParams = z.infer<typeof requestIDParamsSchema>;

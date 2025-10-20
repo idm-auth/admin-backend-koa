@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  requestIDParamsSchema,
+} from '@/domains/commons/base/latest/base.schema';
 
 export const groupCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),
@@ -8,7 +11,7 @@ export const groupCreateSchema = z.object({
 
 // Response schemas
 export const groupResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
 });
@@ -18,15 +21,8 @@ export const groupUpdateSchema = z.object({
   description: z.string().optional(),
 });
 
-
-
-// Params schemas
-export const groupParamsSchema = z.object({
-  id: DocIdSchema,
-});
-
 export type GroupCreate = z.infer<typeof groupCreateSchema>;
 export type GroupResponse = z.infer<typeof groupResponseSchema>;
 export type GroupUpdate = z.infer<typeof groupUpdateSchema>;
 
-export type GroupParams = z.infer<typeof groupParamsSchema>;
+export type GroupParams = z.infer<typeof requestIDParamsSchema>;

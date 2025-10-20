@@ -1,16 +1,22 @@
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
-import { getModel, Realm } from '@/domains/core/realms/latest/realms.model';
-import { NotFoundError } from '@/errors/not-found';
 import {
   DocIdSchema,
+  PaginatedResponse,
+  PaginationQuery,
   publicUUIDSchema,
 } from '@/domains/commons/base/latest/base.schema';
 import { PublicUUID } from '@/domains/commons/base/v1/base.schema';
+import { validateZod } from '@/domains/commons/validations/v1/validation.service';
+import {
+  getModel,
+  Realm,
+  RealmOmitId,
+} from '@/domains/core/realms/latest/realms.model';
+import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { realmCreateSchema } from './realm.schema';
 
 export const create = async (args: {
-  data: Omit<Realm, 'publicUUID'> & { publicUUID?: string };
+  data: Omit<RealmOmitId, 'publicUUID'> & { publicUUID?: string };
 }) => {
   const logger = await getLogger();
   logger.debug(args.data);
@@ -72,12 +78,51 @@ export const update = async (args: { id: string; data: Partial<Realm> }) => {
   return realm;
 };
 
-export const findAll = async () => {
+export const findAllPaginated = async (
+  query: PaginationQuery
+): Promise<PaginatedResponse<Realm>> => {
   const logger = await getLogger();
-  logger.debug('Finding all realms');
+  logger.debug(query, 'Finding realms with pagination');
 
-  const realms = await getModel().find({});
-  return realms;
+  const { page, limit, filter, sortBy, descending } = query;
+
+  const skip = (page - 1) * limit;
+
+  // Build filter query
+  const filterQuery: Record<string, unknown> = {};
+  if (filter) {
+    filterQuery.$or = [
+      { name: { $regex: filter, $options: 'i' } },
+      { description: { $regex: filter, $options: 'i' } },
+      { dbName: { $regex: filter, $options: 'i' } },
+    ];
+  }
+
+  // Build sort query
+  const sortQuery: Record<string, 1 | -1> = {};
+  if (sortBy) {
+    sortQuery[sortBy] = descending ? -1 : 1;
+  } else {
+    sortQuery.name = 1; // Default sort by name ascending (A,B,C,D, 1,2,3,4,5)
+  }
+
+  // Execute queries
+  const [realms, total] = await Promise.all([
+    getModel().find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
+    getModel().countDocuments(filterQuery),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data: realms,
+    pagination: {
+      total,
+      page: Number(page),
+      rowsPerPage: Number(limit),
+      totalPages,
+    },
+  };
 };
 
 export const remove = async (args: { id: string }): Promise<void> => {

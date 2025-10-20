@@ -1,5 +1,8 @@
-import * as realmService from './realm.service';
+import { validateZod } from '@/domains/commons/validations/latest/validation.service';
 import { Context } from 'koa';
+import { realmListQuerySchema, RealmPaginatedResponse } from './realm.schema';
+import * as realmService from './realm.service';
+import { getLogger } from '@/utils/localStorage.util';
 
 export const create = async (ctx: Context) => {
   const { name, dbName, jwtConfig } = ctx.request.body;
@@ -10,7 +13,7 @@ export const create = async (ctx: Context) => {
 
   ctx.status = 201;
   ctx.body = {
-    id: realm._id,
+    _id: realm._id,
     name: realm.name,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
@@ -23,7 +26,7 @@ export const findById = async (ctx: Context) => {
   const realm = await realmService.findById({ id });
 
   ctx.body = {
-    id: realm._id,
+    _id: realm._id,
     name: realm.name,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
@@ -38,7 +41,7 @@ export const findByPublicUUID = async (ctx: Context) => {
   });
 
   ctx.body = {
-    id: realm._id,
+    _id: realm._id,
     name: realm.name,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
@@ -51,7 +54,7 @@ export const findByName = async (ctx: Context) => {
   const realm = await realmService.findByName({ name: name as string });
 
   ctx.body = {
-    id: realm._id,
+    _id: realm._id,
     name: realm.name,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
@@ -65,22 +68,36 @@ export const update = async (ctx: Context) => {
   const realm = await realmService.update({ id, data: updateData });
 
   ctx.body = {
-    id: realm._id,
+    _id: realm._id,
     name: realm.name,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
   };
 };
 
-export const findAll = async (ctx: Context) => {
-  const realms = await realmService.findAll();
+export const findAllPaginated = async (ctx: Context) => {
+  const logger = await getLogger();
+  const query = ctx.query;
+  logger.debug(query, 'findAllPaginated query:');
+  const validatedQuery = await validateZod(query, realmListQuerySchema);
+  const serviceResult = await realmService.findAllPaginated(validatedQuery);
 
-  ctx.body = realms.map((realm) => ({
-    id: realm._id,
-    name: realm.name,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-  }));
+  const result: RealmPaginatedResponse = {
+    data: serviceResult.data.map((realm) => ({
+      _id: realm._id,
+      name: realm.name,
+      description: realm.description || undefined,
+      publicUUID: realm.publicUUID,
+      dbName: realm.dbName,
+      jwtConfig: realm.jwtConfig,
+      createdAt: realm.createdAt,
+      updatedAt: realm.updatedAt,
+      deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
+    })),
+    pagination: serviceResult.pagination,
+  };
+
+  ctx.body = result;
 };
 
 export const remove = async (ctx: Context) => {

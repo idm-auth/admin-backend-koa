@@ -14,18 +14,14 @@ export const baseDocumentIDSchema = new Schema({
 });
 
 export const baseDocumentSchema = new Schema({
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
-  deletedAt: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  deletedAt: { type: Date, default: null },
 });
 baseDocumentSchema.add(baseDocumentIDSchema);
 
 baseDocumentSchema.pre('save', function (next) {
-  const now = new Date();
-  this.updatedAt = now;
-  if (!this.createdAt) {
-    this.createdAt = now;
-  }
+  this.updatedAt = new Date();
   next();
 });
 
@@ -37,6 +33,11 @@ baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
 baseDocumentSchema.methods.softDelete = async function (): Promise<void> {
   this.deletedAt = new Date();
 };
+
+// Virtual getter para mapear .id para ._id
+baseDocumentSchema.virtual('id').get(function () {
+  return this._id;
+});
 export type BaseDocumentID = InferSchemaType<typeof baseDocumentIDSchema>;
 
 export type BaseDocument = InferSchemaType<typeof baseDocumentSchema> &

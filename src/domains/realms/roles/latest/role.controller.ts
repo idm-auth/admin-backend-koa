@@ -33,8 +33,6 @@ export const findById = async (ctx: Context) => {
   };
 };
 
-
-
 export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.params;
   const { name, description, permissions } = ctx.request.body;

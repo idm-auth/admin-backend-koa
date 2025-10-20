@@ -4,9 +4,8 @@ import {
   groupCreateSchema,
   groupResponseSchema,
   groupUpdateSchema,
-
-  groupParamsSchema,
 } from './group.schema';
+import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
 
 export const initialize = async () => {
@@ -39,8 +38,6 @@ export const initialize = async () => {
     tags: ['Groups'],
   });
 
-
-
   // GET /groups/:id - Get group by ID
   router.get({
     name: 'getGroupById',
@@ -48,7 +45,7 @@ export const initialize = async () => {
     summary: 'Get group by ID',
     handlers: [groupController.findById],
     request: {
-      params: groupParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Groups'],
@@ -61,7 +58,7 @@ export const initialize = async () => {
     summary: 'Update group',
     handlers: [groupController.update],
     request: {
-      params: groupParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
       ...swagger.update.request,
     },
     responses: swagger.update.responses,
@@ -75,7 +72,7 @@ export const initialize = async () => {
     summary: 'Remove group',
     handlers: [groupController.remove],
     request: {
-      params: groupParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.delete.responses,
     tags: ['Groups'],

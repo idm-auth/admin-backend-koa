@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  requestIDParamsSchema,
+} from '@/domains/commons/base/latest/base.schema';
 
 export const roleCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),
@@ -9,7 +12,7 @@ export const roleCreateSchema = z.object({
 
 // Response schemas
 export const roleResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
   permissions: z.array(z.string()).optional(),
@@ -21,15 +24,8 @@ export const roleUpdateSchema = z.object({
   permissions: z.array(z.string()).optional(),
 });
 
-
-
-// Params schemas
-export const roleParamsSchema = z.object({
-  id: DocIdSchema,
-});
-
 export type RoleCreate = z.infer<typeof roleCreateSchema>;
 export type RoleResponse = z.infer<typeof roleResponseSchema>;
 export type RoleUpdate = z.infer<typeof roleUpdateSchema>;
 
-export type RoleParams = z.infer<typeof roleParamsSchema>;
+export type RoleParams = z.infer<typeof requestIDParamsSchema>;

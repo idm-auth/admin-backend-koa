@@ -4,10 +4,11 @@ import {
   realmCreateSchema,
   realmUpdateSchema,
   realmResponseSchema,
-
-  realmParamsSchema,
   realmPublicUUIDParamsSchema,
+  realmListQuerySchema,
+  realmPaginatedResponseSchema,
 } from './realm.schema';
+import { requestIDParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
 
 export const initialize = async () => {
@@ -16,16 +17,20 @@ export const initialize = async () => {
     'Realm',
     realmResponseSchema,
     realmCreateSchema,
-    realmUpdateSchema
+    realmUpdateSchema,
+    realmPaginatedResponseSchema
   );
 
-  // GET /realms - List all realms
+  // GET /realms - List all realms (paginated)
   router.get({
     name: 'listRealms',
     path: '/',
-    summary: 'List all realms',
-    handlers: [realmController.findAll],
-    responses: swagger.list.responses,
+    summary: 'List all realms with pagination',
+    handlers: [realmController.findAllPaginated],
+    request: {
+      query: realmListQuerySchema,
+    },
+    responses: swagger.listPaginated.responses,
     tags: ['Realms'],
   });
 
@@ -53,8 +58,6 @@ export const initialize = async () => {
     tags: ['Realms'],
   });
 
-
-
   // GET /realms/:id - Get realm by ID
   router.get({
     name: 'getRealmById',
@@ -62,7 +65,7 @@ export const initialize = async () => {
     summary: 'Get realm by ID',
     handlers: [realmController.findById],
     request: {
-      params: realmParamsSchema,
+      params: requestIDParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Realms'],
@@ -75,7 +78,7 @@ export const initialize = async () => {
     summary: 'Update realm',
     handlers: [realmController.update],
     request: {
-      params: realmParamsSchema,
+      params: requestIDParamsSchema,
       ...swagger.update.request,
     },
     responses: swagger.update.responses,
@@ -89,7 +92,7 @@ export const initialize = async () => {
     summary: 'Remove realm',
     handlers: [realmController.remove],
     request: {
-      params: realmParamsSchema,
+      params: requestIDParamsSchema,
     },
     responses: swagger.delete.responses,
     tags: ['Realms'],

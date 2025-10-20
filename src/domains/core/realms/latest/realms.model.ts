@@ -1,6 +1,6 @@
 // schema do core para realms
 import {
-  BaseDocumentID,
+  BaseDocument,
   baseDocumentSchema,
 } from '@/domains/commons/base/latest/base.model';
 import { getCoreDb } from '@/plugins/mongo.plugin';
@@ -32,11 +32,10 @@ export const schema = new mongoose.Schema({
 });
 schema.add(baseDocumentSchema);
 
-export type Realm = InferSchemaType<typeof schema>;
-export type RealmDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
-
+export type Realm = InferSchemaType<typeof schema> & BaseDocument;
+export type RealmOmitId = Omit<Realm, '_id'>;
 // model em cima do core DB
 export const getModel = () => {
   const conn = getCoreDb();
-  return conn.model(schemaName, schema);
+  return conn.model<Realm>(schemaName, schema);
 };

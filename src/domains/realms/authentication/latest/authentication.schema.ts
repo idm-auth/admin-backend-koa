@@ -15,7 +15,7 @@ export const loginRequestSchema = z.object({
 export const loginResponseSchema = z.object({
   token: z.string(),
   account: z.object({
-    id: DocIdSchema,
+    _id: DocIdSchema,
     emails: z.array(
       z.object({
         email: emailSchema,

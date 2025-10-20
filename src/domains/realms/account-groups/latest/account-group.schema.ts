@@ -12,7 +12,7 @@ export const accountGroupCreateSchema = z.object({
 
 // Response schemas
 export const accountGroupResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   accountId: DocIdSchema,
   groupId: DocIdSchema,
   roles: z.array(DocIdSchema).optional(),
@@ -43,5 +43,9 @@ export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;
 export type AccountGroupResponse = z.infer<typeof accountGroupResponseSchema>;
 export type AccountParams = z.infer<typeof accountParamsSchema>;
 export type GroupParams = z.infer<typeof groupParamsSchema>;
-export type RemoveAccountFromGroup = z.infer<typeof removeAccountFromGroupSchema>;
-export type UpdateAccountGroupRoles = z.infer<typeof updateAccountGroupRolesSchema>;
+export type RemoveAccountFromGroup = z.infer<
+  typeof removeAccountFromGroupSchema
+>;
+export type UpdateAccountGroupRoles = z.infer<
+  typeof updateAccountGroupRolesSchema
+>;

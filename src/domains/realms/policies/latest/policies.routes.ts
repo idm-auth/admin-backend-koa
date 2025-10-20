@@ -4,9 +4,8 @@ import {
   policyCreateSchema,
   policyResponseSchema,
   policyUpdateSchema,
-
-  policyParamsSchema,
 } from './policy.schema';
+import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
 
 export const initialize = async () => {
@@ -39,8 +38,6 @@ export const initialize = async () => {
     tags: ['Policies'],
   });
 
-
-
   // GET /policies/:id - Get policy by ID
   router.get({
     name: 'getPolicyById',
@@ -48,7 +45,7 @@ export const initialize = async () => {
     summary: 'Get policy by ID',
     handlers: [policyController.findById],
     request: {
-      params: policyParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Policies'],
@@ -61,7 +58,7 @@ export const initialize = async () => {
     summary: 'Update policy',
     handlers: [policyController.update],
     request: {
-      params: policyParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
       ...swagger.update.request,
     },
     responses: swagger.update.responses,
@@ -75,7 +72,7 @@ export const initialize = async () => {
     summary: 'Remove policy',
     handlers: [policyController.remove],
     request: {
-      params: policyParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.delete.responses,
     tags: ['Policies'],

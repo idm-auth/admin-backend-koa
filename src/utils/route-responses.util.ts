@@ -51,7 +51,8 @@ export const createCrudSwagger = (
   entityName: string,
   responseSchema: z.ZodSchema,
   createSchema?: z.ZodSchema,
-  updateSchema?: z.ZodSchema
+  updateSchema?: z.ZodSchema,
+  paginatedResponseSchema?: z.ZodSchema
 ) => ({
   create: {
     request: createSchema ? createRequestBody(createSchema) : undefined,
@@ -68,6 +69,15 @@ export const createCrudSwagger = (
       200: createSuccessResponse(
         `List of ${entityName.toLowerCase()}s`,
         z.array(responseSchema)
+      ),
+      400: commonResponses.badRequest,
+    },
+  },
+  listPaginated: {
+    responses: {
+      200: createSuccessResponse(
+        `Paginated list of ${entityName.toLowerCase()}s`,
+        paginatedResponseSchema || z.array(responseSchema)
       ),
       400: commonResponses.badRequest,
     },

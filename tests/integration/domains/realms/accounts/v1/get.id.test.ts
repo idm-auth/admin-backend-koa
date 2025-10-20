@@ -66,6 +66,4 @@ describe('GET /api/realm/:tenantId/v1/accounts/:id', () => {
     expect(response.body).toHaveProperty('error', 'Validation failed');
     expect(response.body.details).toContain('Invalid ID');
   });
-
-
 });

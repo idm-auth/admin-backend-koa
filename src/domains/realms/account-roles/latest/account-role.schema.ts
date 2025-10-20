@@ -10,7 +10,7 @@ export const accountRoleCreateSchema = z.object({
 });
 
 export const accountRoleResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   accountId: DocIdSchema,
   roleId: DocIdSchema,
 });

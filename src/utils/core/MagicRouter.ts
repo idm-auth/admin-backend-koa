@@ -1,32 +1,32 @@
 /**
  * MagicRouter - Enhanced Koa Router with OpenAPI Integration
- * 
+ *
  * Este router combina funcionalidades do Koa Router com geração automática
  * de documentação OpenAPI/Swagger usando zod-to-openapi.
- * 
+ *
  * PROBLEMA DE TIPOS GENÉRICOS:
- * 
+ *
  * O cast `as MagicRouteConfig<Context>` nos métodos HTTP é necessário devido
  * a uma limitação do sistema de tipos do TypeScript com covariância de generics.
- * 
+ *
  * Situação:
  * - swaggerRoutes: Array<MagicRouteConfig<Context>>
  * - configLocal: MagicRouteConfig<TContext> onde TContext extends Context
- * 
+ *
  * Mesmo que TContext extends Context, TypeScript não permite a atribuição
  * direta porque TContext pode ser um subtipo mais específico de Context,
  * criando incompatibilidade de covariância.
- * 
+ *
  * O cast é type-safe na prática porque:
  * 1. TContext extends Context garante compatibilidade estrutural
  * 2. Em runtime, todos os contexts são compatíveis
  * 3. TypeScript não possui wildcards como Java (<? extends Context>)
- * 
+ *
  * Alternativas consideradas:
  * - Array<MagicRouteConfig<any>>: Perde type safety
  * - Union types: Complexidade desnecessária
  * - Conditional types: Over-engineering
- * 
+ *
  * O cast é a solução mais pragmática e segura para este caso específico.
  */
 
@@ -84,7 +84,7 @@ export class MagicRouter {
     const middlewares = config.middlewares || [];
     const requestValidation = requestValidationMiddleware<TContext>(config);
     const responseValidation = responseValidationMiddleware<TContext>(config);
-    
+
     return [
       requestValidation,
       ...middlewares,

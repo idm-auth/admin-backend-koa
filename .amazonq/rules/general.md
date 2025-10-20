@@ -17,11 +17,13 @@
 - **core/**: Funcionalidades centrais (config, realm)
 
 ## Separação de Responsabilidades
-- Controllers: apenas recebem dados e chamam services
-- Services: contêm toda lógica de negócio e validações
+- Controllers: recebem dados, fazem validação de entrada (validateZod) e chamam services
+- Services: contêm toda lógica de negócio e recebem dados já validados
 - Models: apenas estrutura de dados e validações de schema
 - Routes: definição de endpoints com SwaggerRouter
 - Schemas: validações Zod para requests/responses
+- Controllers fazem validateZod para query parameters, body e params antes de chamar service
+- Services recebem tipos já validados (ex: PaginationQuery) e não fazem validação de entrada
 - NUNCA coloque validações de negócio no controller
 - Use classes de erro personalizadas para diferentes tipos de erro
 

@@ -4,9 +4,8 @@ import {
   roleCreateSchema,
   roleResponseSchema,
   roleUpdateSchema,
-
-  roleParamsSchema,
 } from './role.schema';
+import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
 
 export const initialize = async () => {
@@ -39,8 +38,6 @@ export const initialize = async () => {
     tags: ['Roles'],
   });
 
-
-
   // GET /roles/:id - Get role by ID
   router.get({
     name: 'getRoleById',
@@ -48,7 +45,7 @@ export const initialize = async () => {
     summary: 'Get role by ID',
     handlers: [roleController.findById],
     request: {
-      params: roleParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Roles'],
@@ -61,7 +58,7 @@ export const initialize = async () => {
     summary: 'Update role',
     handlers: [roleController.update],
     request: {
-      params: roleParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
       ...swagger.update.request,
     },
     responses: swagger.update.responses,
@@ -75,7 +72,7 @@ export const initialize = async () => {
     summary: 'Remove role',
     handlers: [roleController.remove],
     request: {
-      params: roleParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.delete.responses,
     tags: ['Roles'],

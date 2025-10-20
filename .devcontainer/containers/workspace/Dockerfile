@@ -11,6 +11,7 @@ RUN apt update -qq \
   git \
   sudo \
   curl \
+  jq \
   ca-certificates \
   openssh-client \
   && apt-get clean \

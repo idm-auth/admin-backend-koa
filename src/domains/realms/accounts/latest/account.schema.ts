@@ -12,7 +12,7 @@ export const accountCreateSchema = z.object({
 
 // Response schemas
 export const accountResponseSchema = z.object({
-  id: DocIdSchema,
+  _id: DocIdSchema,
   email: z.string().email(),
 });
 
@@ -21,16 +21,6 @@ export const accountUpdateSchema = z.object({
   password: z.string().optional(),
 });
 
-
-
-// Params schemas
-export const accountParamsSchema = z.object({
-  tenantId: z.string(),
-  id: DocIdSchema,
-});
-
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
 export type AccountResponse = z.infer<typeof accountResponseSchema>;
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
-
-export type AccountParams = z.infer<typeof accountParamsSchema>;

@@ -4,9 +4,8 @@ import {
   accountCreateSchema,
   accountResponseSchema,
   accountUpdateSchema,
-
-  accountParamsSchema,
 } from './account.schema';
+import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/route-responses.util';
 
 export const initialize = async () => {
@@ -39,8 +38,6 @@ export const initialize = async () => {
     tags: ['Accounts'],
   });
 
-
-
   // GET /accounts/:id - Get account by ID
   router.get({
     name: 'getAccountById',
@@ -48,7 +45,7 @@ export const initialize = async () => {
     summary: 'Get account by ID',
     handlers: [accountController.findById],
     request: {
-      params: accountParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Accounts'],
@@ -61,7 +58,7 @@ export const initialize = async () => {
     summary: 'Update account',
     handlers: [accountController.update],
     request: {
-      params: accountParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
       ...swagger.update.request,
     },
     responses: swagger.update.responses,
@@ -75,7 +72,7 @@ export const initialize = async () => {
     summary: 'Remove account',
     handlers: [accountController.remove],
     request: {
-      params: accountParamsSchema,
+      params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.delete.responses,
     tags: ['Accounts'],
