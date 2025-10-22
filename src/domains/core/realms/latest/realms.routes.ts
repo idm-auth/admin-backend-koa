@@ -1,15 +1,19 @@
+import {
+  requestIDParamsSchema,
+  requestPublicUUIDParamsSchema,
+} from '@/domains/commons/base/latest/request.schema';
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import * as realmController from './realm.controller';
 import {
+  realmCreateResponseSchema,
   realmCreateSchema,
-  realmUpdateSchema,
-  realmResponseSchema,
-  realmPublicUUIDParamsSchema,
   realmListQuerySchema,
   realmPaginatedResponseSchema,
+  realmResponseSchema,
+  realmUpdateResponseSchema,
+  realmUpdateSchema,
 } from './realm.schema';
-import { requestIDParamsSchema } from '@/domains/commons/base/latest/request.schema';
-import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/realms' });
@@ -18,7 +22,9 @@ export const initialize = async () => {
     realmResponseSchema,
     realmCreateSchema,
     realmUpdateSchema,
-    realmPaginatedResponseSchema
+    realmPaginatedResponseSchema,
+    realmCreateResponseSchema,
+    realmUpdateResponseSchema
   );
 
   // GET /realms - List all realms (paginated)
@@ -54,7 +60,7 @@ export const initialize = async () => {
     summary: 'Get realm by publicUUID',
     handlers: [realmController.findByPublicUUID],
     request: {
-      params: realmPublicUUIDParamsSchema,
+      params: requestPublicUUIDParamsSchema,
     },
     responses: swagger.read.responses,
     tags: ['Realms'],

@@ -1,8 +1,8 @@
 import { getLogger } from '@/utils/localStorage.util';
 import { Context } from 'koa';
-import { RealmPaginatedResponse, RealmResponse } from './realm.schema';
+import { RealmPaginatedResponse } from './realm.schema';
 import * as realmService from './realm.service';
-import { Realm } from './realms.model';
+import * as realmMapper from './realm.mapper';
 
 export const create = async (ctx: Context) => {
   const realm = await realmService.create({
@@ -10,14 +10,7 @@ export const create = async (ctx: Context) => {
   });
 
   ctx.status = 201;
-  ctx.body = {
-    _id: realm._id.toString(),
-    name: realm.name,
-    description: realm.description,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-  };
+  ctx.body = realmMapper.toCreateResponse(realm);
 };
 
 export const findById = async (ctx: Context) => {
@@ -25,14 +18,7 @@ export const findById = async (ctx: Context) => {
 
   const realm = await realmService.findById({ id });
 
-  ctx.body = {
-    _id: realm._id.toString(),
-    name: realm.name,
-    description: realm.description,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-  };
+  ctx.body = realmMapper.toCreateResponse(realm);
 };
 
 export const findByPublicUUID = async (ctx: Context) => {
@@ -42,14 +28,7 @@ export const findByPublicUUID = async (ctx: Context) => {
     publicUUID,
   });
 
-  ctx.body = {
-    _id: realm._id.toString(),
-    name: realm.name,
-    description: realm.description,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-  };
+  ctx.body = realmMapper.toCreateResponse(realm);
 };
 
 export const update = async (ctx: Context) => {
@@ -58,14 +37,7 @@ export const update = async (ctx: Context) => {
 
   const realm = await realmService.update({ id, data: updateData });
 
-  ctx.body = {
-    _id: realm._id,
-    name: realm.name,
-    description: realm.description,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-  };
+  ctx.body = realmMapper.toUpdateResponse(realm);
 };
 
 export const findAllPaginated = async (ctx: Context) => {
@@ -74,14 +46,7 @@ export const findAllPaginated = async (ctx: Context) => {
   logger.debug(query, 'findAllPaginated query:');
   const serviceResult = await realmService.findAllPaginated(query);
 
-  const data: RealmResponse[] = serviceResult.data.map((realm: Realm) => ({
-    _id: realm._id.toString(),
-    name: realm.name,
-    description: realm.description,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-  }));
+  const data = serviceResult.data.map(realmMapper.toListItemResponse);
 
   const result: RealmPaginatedResponse = {
     data,

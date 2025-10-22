@@ -41,11 +41,14 @@ export const realmUpdateSchema = z.object({
 });
 
 // Response schemas
-export const realmResponseSchema = z.strictObject({
+export const realmBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
   publicUUID: publicUUIDSchema,
+});
+
+export const realmCreateResponseSchema = realmBaseResponseSchema.extend({
   dbName: z.string(),
   jwtConfig: z.object({
     secret: z.string(),
@@ -53,22 +56,34 @@ export const realmResponseSchema = z.strictObject({
   }),
 });
 
-// Params schemas
-export const realmPublicUUIDParamsSchema = z.object({
-  publicUUID: publicUUIDSchema,
+export const realmUpdateResponseSchema = realmBaseResponseSchema.extend({
+  dbName: z.string(),
+  jwtConfig: z.object({
+    secret: z.string(),
+    expiresIn: z.string(),
+  }),
 });
+
+export const realmListItemResponseSchema = realmBaseResponseSchema;
+
+// Mantendo para compatibilidade
+export const realmResponseSchema = realmCreateResponseSchema;
 
 export type RealmCreate = z.infer<typeof realmCreateSchema>;
 export type RealmUpdate = z.infer<typeof realmUpdateSchema>;
+export type RealmBaseResponse = z.infer<typeof realmBaseResponseSchema>;
+export type RealmCreateResponse = z.infer<typeof realmCreateResponseSchema>;
+export type RealmUpdateResponse = z.infer<typeof realmUpdateResponseSchema>;
+export type RealmListItemResponse = z.infer<typeof realmListItemResponseSchema>;
 export type RealmResponse = z.infer<typeof realmResponseSchema>;
 
 export type RealmParams = z.infer<typeof requestIDParamsSchema>;
-export type RealmPublicUUIDParams = z.infer<typeof realmPublicUUIDParamsSchema>;
 
 // Pagination schemas
 export const realmListQuerySchema = paginationQuerySchema;
-export const realmPaginatedResponseSchema =
-  createPaginatedResponseSchema(realmResponseSchema);
+export const realmPaginatedResponseSchema = createPaginatedResponseSchema(
+  realmListItemResponseSchema
+);
 
 export type RealmListQuery = z.infer<typeof realmListQuerySchema>;
 export type RealmPaginatedResponse = z.infer<

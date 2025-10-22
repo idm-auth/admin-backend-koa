@@ -50,7 +50,9 @@ export const createCrudSwagger = (
   responseSchema: z.ZodSchema,
   createSchema: z.ZodSchema,
   updateSchema: z.ZodSchema,
-  paginatedResponseSchema?: z.ZodSchema
+  paginatedResponseSchema?: z.ZodSchema,
+  createResponseSchema?: z.ZodSchema,
+  updateResponseSchema?: z.ZodSchema
 ) => ({
   create: {
     request: {
@@ -59,7 +61,7 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `${entityName} created successfully`,
-        responseSchema
+        createResponseSchema || responseSchema
       ),
       400: commonResponses.badRequest,
     },
@@ -96,7 +98,7 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `${entityName} updated successfully`,
-        responseSchema
+        updateResponseSchema || responseSchema
       ),
       400: commonResponses.badRequest,
       404: commonResponses.notFound,

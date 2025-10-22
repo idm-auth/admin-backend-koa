@@ -26,3 +26,11 @@ export const requestTenantIdAndIdParamsSchema = z.object({
 export type RequestTenantIdAndIdParams = z.infer<
   typeof requestTenantIdAndIdParamsSchema
 >;
+
+export const requestPublicUUIDParamsSchema = z.object({
+  publicUUID: publicUUIDSchema,
+});
+
+export type RequestPublicUUIDParams = z.infer<
+  typeof requestPublicUUIDParamsSchema
+>;
