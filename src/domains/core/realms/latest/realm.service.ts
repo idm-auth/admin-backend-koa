@@ -90,6 +90,8 @@ export const findAllPaginated = async (
       { name: { $regex: filter, $options: 'i' } },
       { description: { $regex: filter, $options: 'i' } },
       { dbName: { $regex: filter, $options: 'i' } },
+      { _id: { $regex: filter, $options: 'i' } },
+      { publicUUID: { $regex: filter, $options: 'i' } },
     ];
   }
 
