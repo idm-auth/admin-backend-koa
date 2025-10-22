@@ -48,7 +48,7 @@ describe('PUT /api/core/v1/realms/:id', () => {
     expect(response.body.jwtConfig.expiresIn).toBe(
       updateData.jwtConfig.expiresIn
     );
-    expect(response.body).toHaveProperty('updatedAt');
+
   });
 
   it('should update only provided fields', async () => {

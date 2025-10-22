@@ -1,6 +1,9 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocIdSchema,
+  publicUUIDSchema,
+} from '@/domains/commons/base/latest/base.schema';
 import {
   paginationQuerySchema,
   createPaginatedResponseSchema,
@@ -38,24 +41,21 @@ export const realmUpdateSchema = z.object({
 });
 
 // Response schemas
-export const realmResponseSchema = z.object({
+export const realmResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
-  publicUUID: z.string(),
+  publicUUID: publicUUIDSchema,
   dbName: z.string(),
   jwtConfig: z.object({
     secret: z.string(),
     expiresIn: z.string(),
   }),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().optional(),
 });
 
 // Params schemas
 export const realmPublicUUIDParamsSchema = z.object({
-  publicUUID: z.string(),
+  publicUUID: publicUUIDSchema,
 });
 
 export type RealmCreate = z.infer<typeof realmCreateSchema>;

@@ -1,9 +1,7 @@
+import { DocId } from '@/domains/commons/base/latest/base.schema';
+import { validateEmailUnique } from '@/domains/commons/validations/v1/validation.service';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
-import { DocId } from '@/domains/commons/base/latest/base.schema';
-import {
-  validateEmailUnique,
-} from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
 import { AccountDocument, getModel } from './account.model';

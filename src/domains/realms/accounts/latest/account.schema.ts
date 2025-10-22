@@ -1,9 +1,12 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import {
   emailSchema,
   passwordSchema,
 } from '@/domains/commons/base/v1/base.schema';
 import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import { z } from 'zod';
+
+extendZodWithOpenApi(z);
 
 export const accountCreateSchema = z.object({
   email: emailSchema,

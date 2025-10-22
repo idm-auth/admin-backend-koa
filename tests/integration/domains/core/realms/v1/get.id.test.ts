@@ -39,8 +39,7 @@ describe('GET /api/core/v1/realms/:id', () => {
     expect(response.body).toHaveProperty('jwtConfig');
     expect(response.body.jwtConfig).toHaveProperty('secret', 'test-secret-findbyid');
     expect(response.body.jwtConfig).toHaveProperty('expiresIn', '12h');
-    expect(response.body).toHaveProperty('createdAt');
-    expect(response.body).toHaveProperty('updatedAt');
+
   });
 
   it('should return 404 for non-existent ID', async () => {

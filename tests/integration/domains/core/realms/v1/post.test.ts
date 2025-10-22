@@ -29,9 +29,7 @@ describe('POST /api/core/v1/realms', () => {
     expect(response.body.jwtConfig.expiresIn).toBe(
       realmData.jwtConfig.expiresIn
     );
-    expect(response.body).toHaveProperty('createdAt');
-    expect(response.body).toHaveProperty('updatedAt');
-    expect(response.body).not.toHaveProperty('deletedAt');
+
   });
 
   it('should return 400 for missing name', async () => {

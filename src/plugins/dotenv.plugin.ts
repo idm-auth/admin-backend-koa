@@ -8,7 +8,9 @@ const init = async () => {
 
   // se NODE_ENV=development, carrega também o .env.development
   if (process.env.NODE_ENV === 'development') {
-    dotenvLib.config({ path: path.resolve(process.cwd(), '.env.development') });
+    dotenvLib.config({
+      path: path.resolve(process.cwd(), '.env.development.local'),
+    });
   }
 };
 

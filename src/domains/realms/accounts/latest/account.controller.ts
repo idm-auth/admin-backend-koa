@@ -1,4 +1,5 @@
 import * as accountService from './account.service';
+// import { getLogger } from '@/utils/localStorage.util';
 import { Context } from 'koa';
 
 export const create = async (ctx: Context) => {
@@ -28,19 +29,7 @@ export const findById = async (ctx: Context) => {
   };
 };
 
-export const findByEmail = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
-  const { email } = ctx.validated.query;
 
-  const account = await accountService.findByEmail(tenantId, {
-    email,
-  });
-
-  ctx.body = {
-    _id: account._id.toString(),
-    email: account.emails[0]?.email,
-  };
-};
 
 export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;

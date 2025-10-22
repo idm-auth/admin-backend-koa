@@ -1,18 +1,18 @@
+import { publicUUIDSchema } from '@/domains/commons/base/latest/base.schema';
+import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { createCrudSwagger } from '@/utils/crudSwagger.util';
+import { z } from 'zod';
 import * as accountController from './account.controller';
 import {
   accountCreateSchema,
   accountResponseSchema,
   accountUpdateSchema,
 } from './account.schema';
-import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
-import { publicUUIDSchema } from '@/domains/commons/base/latest/base.schema';
-import { z } from 'zod';
 
 const requestTenantIdParamsSchema = z.object({
   tenantId: publicUUIDSchema,
 });
-import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });

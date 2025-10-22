@@ -11,15 +11,12 @@ export const create = async (ctx: Context) => {
 
   ctx.status = 201;
   ctx.body = {
-    _id: realm._id,
+    _id: realm._id.toString(),
     name: realm.name,
-    description: realm.description || undefined,
+    description: realm.description,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
     jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
   };
 };
 
@@ -29,15 +26,12 @@ export const findById = async (ctx: Context) => {
   const realm = await realmService.findById({ id });
 
   ctx.body = {
-    _id: realm._id,
+    _id: realm._id.toString(),
     name: realm.name,
-    description: realm.description || undefined,
+    description: realm.description,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
     jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
   };
 };
 
@@ -49,33 +43,12 @@ export const findByPublicUUID = async (ctx: Context) => {
   });
 
   ctx.body = {
-    _id: realm._id,
+    _id: realm._id.toString(),
     name: realm.name,
-    description: realm.description || undefined,
+    description: realm.description,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
     jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
-  };
-};
-
-export const findByName = async (ctx: Context) => {
-  const { name } = ctx.validated.query;
-
-  const realm = await realmService.findByName({ name: name as string });
-
-  ctx.body = {
-    _id: realm._id,
-    name: realm.name,
-    description: realm.description || undefined,
-    publicUUID: realm.publicUUID,
-    dbName: realm.dbName,
-    jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
   };
 };
 
@@ -88,13 +61,10 @@ export const update = async (ctx: Context) => {
   ctx.body = {
     _id: realm._id,
     name: realm.name,
-    description: realm.description || undefined,
+    description: realm.description,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
     jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
   };
 };
 
@@ -107,13 +77,10 @@ export const findAllPaginated = async (ctx: Context) => {
   const data: RealmResponse[] = serviceResult.data.map((realm: Realm) => ({
     _id: realm._id.toString(),
     name: realm.name,
-    description: realm.description || undefined,
+    description: realm.description,
     publicUUID: realm.publicUUID,
     dbName: realm.dbName,
     jwtConfig: realm.jwtConfig,
-    createdAt: realm.createdAt,
-    updatedAt: realm.updatedAt,
-    deletedAt: realm.deletedAt ? new Date(realm.deletedAt) : undefined,
   }));
 
   const result: RealmPaginatedResponse = {
