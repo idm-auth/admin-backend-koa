@@ -10,6 +10,7 @@ import {
   updateAccountGroupRolesSchema,
 } from './account-group.schema';
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
@@ -20,6 +21,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all account-groups',
     handlers: [accountGroupController.findAll],
+    request: {
+      params: requestTenantIdParamsSchema,
+    },
     responses: {
       200: {
         description: 'List of account-groups',
@@ -48,6 +52,7 @@ export const initialize = async () => {
     summary: 'Add account to group',
     handlers: [accountGroupController.addAccountToGroup],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {

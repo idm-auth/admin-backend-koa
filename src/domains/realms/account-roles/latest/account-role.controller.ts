@@ -2,8 +2,8 @@ import * as accountRoleService from './account-role.service';
 import { Context } from 'koa';
 
 export const addRoleToAccount = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { accountId, roleId } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { accountId, roleId } = ctx.validated.body;
 
   const accountRole = await accountRoleService.addRoleToAccount(tenantId, {
     accountId,
@@ -19,8 +19,8 @@ export const addRoleToAccount = async (ctx: Context) => {
 };
 
 export const removeRoleFromAccount = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { accountId, roleId } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { accountId, roleId } = ctx.validated.body;
 
   await accountRoleService.removeRoleFromAccount(tenantId, {
     accountId,
@@ -31,7 +31,7 @@ export const removeRoleFromAccount = async (ctx: Context) => {
 };
 
 export const getAccountRoles = async (ctx: Context) => {
-  const { tenantId, accountId } = ctx.params;
+  const { tenantId, accountId } = ctx.validated.params;
 
   const accountRoles = await accountRoleService.getAccountRoles(tenantId, {
     accountId,
@@ -45,7 +45,7 @@ export const getAccountRoles = async (ctx: Context) => {
 };
 
 export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
+  const { tenantId } = ctx.validated.params;
 
   const accountRoles = await accountRoleService.findAll(tenantId);
 
@@ -57,7 +57,7 @@ export const findAll = async (ctx: Context) => {
 };
 
 export const getRoleAccounts = async (ctx: Context) => {
-  const { tenantId, roleId } = ctx.params;
+  const { tenantId, roleId } = ctx.validated.params;
 
   const roleAccounts = await accountRoleService.getRoleAccounts(tenantId, {
     roleId,

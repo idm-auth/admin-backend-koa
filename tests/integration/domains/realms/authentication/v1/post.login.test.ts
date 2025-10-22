@@ -34,7 +34,7 @@ describe('POST /api/realm/:tenantId/v1/authentication/login', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('token');
     expect(response.body).toHaveProperty('account');
-    expect(response.body.account).toHaveProperty('id');
+    expect(response.body.account).toHaveProperty('_id');
     expect(response.body.account).toHaveProperty('emails');
   });
 

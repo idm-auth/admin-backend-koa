@@ -1,14 +1,13 @@
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
 import {
   validateEmailUnique,
-  validateZod,
 } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
 import { AccountDocument, getModel } from './account.model';
-import { AccountCreate, accountCreateSchema } from './account.schema';
+import { AccountCreate } from './account.schema';
 
 export const create = async (
   tenantId: string,
@@ -17,7 +16,6 @@ export const create = async (
   const logger = await getLogger();
   logger.debug({ email: args.email });
   // Validações de negócio
-  await validateZod(args, accountCreateSchema);
   await validateEmailUnique(tenantId, args.email);
 
   const dbName = await getDBName({ publicUUID: tenantId });
@@ -35,7 +33,6 @@ export const findById = async (
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
-  await validateZod(args.id, DocIdSchema);
   const dbName = await getDBName({ publicUUID: tenantId });
   const account = await getModel(dbName).findById(args.id);
   if (!account) {

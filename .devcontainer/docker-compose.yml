@@ -5,8 +5,8 @@ x-environment: &default-environment
   MONGO_INITDB_DATABASE: mongoose
 
 services:
-  workspace:
-    image: workspace
+  backend:
+    image: backend
     tty: true
     build:
       context: ..
@@ -34,6 +34,7 @@ services:
     ports:
       - 27017:27017
     networks:
+      - dev-network
       - private-network
 
 networks:

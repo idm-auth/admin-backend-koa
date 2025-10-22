@@ -1,9 +1,11 @@
 import {
   DocIdSchema,
-  PaginatedResponse,
-  PaginationQuery,
   publicUUIDSchema,
 } from '@/domains/commons/base/latest/base.schema';
+import {
+  PaginatedResponse,
+  PaginationQuery,
+} from '@/domains/commons/base/latest/pagination.schema';
 import { PublicUUID } from '@/domains/commons/base/v1/base.schema';
 import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import {
@@ -13,15 +15,12 @@ import {
 } from '@/domains/core/realms/latest/realms.model';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
-import { realmCreateSchema } from './realm.schema';
 
 export const create = async (args: {
   data: Omit<RealmOmitId, 'publicUUID'> & { publicUUID?: string };
 }) => {
   const logger = await getLogger();
   logger.debug(args.data);
-
-  await validateZod(args.data, realmCreateSchema);
 
   const realm = await getModel().create(args.data);
   return realm;
@@ -30,8 +29,6 @@ export const create = async (args: {
 export const findById = async (args: { id: string }) => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
-
-  await validateZod(args.id, DocIdSchema);
 
   const realm = await getModel().findById(args.id);
   if (!realm) {
@@ -65,8 +62,6 @@ export const findByName = async (args: { name: string }) => {
 export const update = async (args: { id: string; data: Partial<Realm> }) => {
   const logger = await getLogger();
   logger.debug({ id: args.id });
-
-  await validateZod(args.id, DocIdSchema);
 
   const realm = await getModel().findByIdAndUpdate(args.id, args.data, {
     new: true,

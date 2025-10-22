@@ -1,6 +1,6 @@
 {
   "name": "backend-koa",
-  "service": "workspace",
+  "service": "backend",
   "dockerComposeFile": "docker-compose.yml",
   "workspaceFolder": "/workspace",
   "remoteUser": "dev-user",

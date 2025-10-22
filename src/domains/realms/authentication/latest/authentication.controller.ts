@@ -6,10 +6,10 @@ export const login = async (ctx: Context) => {
   const logger = await getLogger();
 
   try {
-    const tenantId = ctx.params.tenantId;
+    const tenantId = ctx.validated.params.tenantId;
     const result = await authenticationService.login(
       tenantId,
-      ctx.request.body
+      ctx.validated.body
     );
 
     ctx.status = 200;

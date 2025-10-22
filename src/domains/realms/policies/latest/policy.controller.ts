@@ -2,9 +2,9 @@ import * as policyService from '@/domains/realms/policies/latest/policy.service'
 import { Context } from 'koa';
 
 export const create = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
+  const { tenantId } = ctx.validated.params;
   const { name, description, effect, actions, resources, conditions } =
-    ctx.request.body;
+    ctx.validated.body;
 
   const policy = await policyService.create(tenantId, {
     name,
@@ -28,7 +28,7 @@ export const create = async (ctx: Context) => {
 };
 
 export const findById = async (ctx: Context) => {
-  const { tenantId, id } = ctx.params;
+  const { tenantId, id } = ctx.validated.params;
 
   const policy = await policyService.findById(tenantId, { id });
 
@@ -44,9 +44,9 @@ export const findById = async (ctx: Context) => {
 };
 
 export const update = async (ctx: Context) => {
-  const { tenantId, id } = ctx.params;
+  const { tenantId, id } = ctx.validated.params;
   const { name, description, effect, actions, resources, conditions } =
-    ctx.request.body;
+    ctx.validated.body;
 
   const policy = await policyService.update(tenantId, {
     id,
@@ -70,7 +70,7 @@ export const update = async (ctx: Context) => {
 };
 
 export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
+  const { tenantId } = ctx.validated.params;
 
   const policies = await policyService.findAll(tenantId);
 
@@ -86,7 +86,7 @@ export const findAll = async (ctx: Context) => {
 };
 
 export const remove = async (ctx: Context) => {
-  const { tenantId, id } = ctx.params;
+  const { tenantId, id } = ctx.validated.params;
 
   await policyService.remove(tenantId, { id });
 

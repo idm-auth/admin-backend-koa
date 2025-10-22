@@ -2,8 +2,8 @@ import * as accountGroupService from '@/domains/realms/account-groups/latest/acc
 import { Context } from 'koa';
 
 export const addAccountToGroup = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { accountId, groupId, roles } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { accountId, groupId, roles } = ctx.validated.body;
 
   const accountGroup = await accountGroupService.addAccountToGroup(tenantId, {
     accountId,
@@ -21,8 +21,8 @@ export const addAccountToGroup = async (ctx: Context) => {
 };
 
 export const removeAccountFromGroup = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { accountId, groupId } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { accountId, groupId } = ctx.validated.body;
 
   await accountGroupService.removeAccountFromGroup(tenantId, {
     accountId,
@@ -33,7 +33,7 @@ export const removeAccountFromGroup = async (ctx: Context) => {
 };
 
 export const getAccountGroups = async (ctx: Context) => {
-  const { tenantId, accountId } = ctx.params;
+  const { tenantId, accountId } = ctx.validated.params;
 
   const accountGroups = await accountGroupService.getAccountGroups(tenantId, {
     accountId,
@@ -48,7 +48,7 @@ export const getAccountGroups = async (ctx: Context) => {
 };
 
 export const getGroupAccounts = async (ctx: Context) => {
-  const { tenantId, groupId } = ctx.params;
+  const { tenantId, groupId } = ctx.validated.params;
 
   const groupAccounts = await accountGroupService.getGroupAccounts(tenantId, {
     groupId,
@@ -63,7 +63,7 @@ export const getGroupAccounts = async (ctx: Context) => {
 };
 
 export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
+  const { tenantId } = ctx.validated.params;
 
   const accountGroups = await accountGroupService.findAll(tenantId);
 
@@ -76,8 +76,8 @@ export const findAll = async (ctx: Context) => {
 };
 
 export const updateAccountGroupRoles = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { accountId, groupId, roles } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { accountId, groupId, roles } = ctx.validated.body;
 
   const accountGroup = await accountGroupService.updateAccountGroupRoles(
     tenantId,

@@ -4,10 +4,9 @@ import {
   getModel,
 } from '@/domains/realms/groups/latest/group.model';
 import { NotFoundError } from '@/errors/not-found';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
-import { GroupCreate, groupCreateSchema } from './group.schema';
+import { GroupCreate } from './group.schema';
 
 export const create = async (
   tenantId: string,
@@ -15,7 +14,6 @@ export const create = async (
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
   logger.debug({ name: args.name });
-  await validateZod(args, groupCreateSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const group = await getModel(dbName).create(args);
@@ -29,7 +27,6 @@ export const findById = async (
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
-  await validateZod(args.id, DocIdSchema);
   const dbName = await getDBName({ publicUUID: tenantId });
   const group = await getModel(dbName).findById(args.id);
   if (!group) {

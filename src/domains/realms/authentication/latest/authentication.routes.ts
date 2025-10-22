@@ -5,6 +5,7 @@ import {
   loginResponseSchema,
 } from './authentication.schema';
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/authentication' });
@@ -15,6 +16,7 @@ export const initialize = async () => {
     summary: 'User login',
     handlers: [authenticationController.login],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {

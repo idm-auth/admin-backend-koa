@@ -24,7 +24,7 @@ describe('POST /api/realm/:tenantId/v1/accounts', () => {
       .send(accountData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('_id');
     expect(response.body.email).toBe(accountData.email);
     expect(response.body).not.toHaveProperty('password');
   });

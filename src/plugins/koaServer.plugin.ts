@@ -26,12 +26,11 @@ export const initialize = async () => {
     const swagger = await swaggerRoutes();
     apiRouter.registryAll();
     app.use(swagger.routes());
-    logRoutesDetailed(swagger);
-  }
-
-  // Swagger plugin (static files) depois das rotas
-  if (process.env.NODE_ENV !== 'production') {
     swaggerPlugin(app);
+    // Log das rotas registradas
+    if (process.env.NODE_ENV == 'development') {
+      logRoutesDetailed(swagger);
+    }
   }
 
   // Log das rotas registradas

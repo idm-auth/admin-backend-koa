@@ -5,8 +5,8 @@ import {
   groupResponseSchema,
   groupUpdateSchema,
 } from './group.schema';
-import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
-import { createCrudSwagger } from '@/utils/route-responses.util';
+import { requestTenantIdAndIdParamsSchema, requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/groups' });
@@ -23,6 +23,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all groups',
     handlers: [groupController.findAll],
+    request: {
+      params: requestTenantIdParamsSchema,
+    },
     responses: swagger.list.responses,
     tags: ['Groups'],
   });
@@ -33,7 +36,10 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create group',
     handlers: [groupController.create],
-    request: swagger.create.request,
+    request: {
+      params: requestTenantIdParamsSchema,
+      body: swagger.create.request.body,
+    },
     responses: swagger.create.responses,
     tags: ['Groups'],
   });
@@ -59,7 +65,7 @@ export const initialize = async () => {
     handlers: [groupController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
-      ...swagger.update.request,
+      body: swagger.update.request.body,
     },
     responses: swagger.update.responses,
     tags: ['Groups'],

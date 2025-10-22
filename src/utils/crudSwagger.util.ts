@@ -37,11 +37,9 @@ export const commonResponses = {
 };
 
 export const createRequestBody = (schema: z.ZodSchema) => ({
-  body: {
-    content: {
-      'application/json': {
-        schema,
-      },
+  content: {
+    'application/json': {
+      schema,
     },
   },
 });
@@ -50,12 +48,14 @@ export const createRequestBody = (schema: z.ZodSchema) => ({
 export const createCrudSwagger = (
   entityName: string,
   responseSchema: z.ZodSchema,
-  createSchema?: z.ZodSchema,
-  updateSchema?: z.ZodSchema,
+  createSchema: z.ZodSchema,
+  updateSchema: z.ZodSchema,
   paginatedResponseSchema?: z.ZodSchema
 ) => ({
   create: {
-    request: createSchema ? createRequestBody(createSchema) : undefined,
+    request: {
+      body: createRequestBody(createSchema),
+    },
     responses: {
       200: createSuccessResponse(
         `${entityName} created successfully`,
@@ -90,7 +90,9 @@ export const createCrudSwagger = (
     },
   },
   update: {
-    request: updateSchema ? createRequestBody(updateSchema) : undefined,
+    request: {
+      body: createRequestBody(updateSchema),
+    },
     responses: {
       200: createSuccessResponse(
         `${entityName} updated successfully`,

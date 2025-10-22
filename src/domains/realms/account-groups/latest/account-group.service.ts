@@ -2,13 +2,11 @@ import {
   AccountGroupDocument,
   getModel,
 } from '@/domains/realms/account-groups/latest/account-group.model';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
 import {
   AccountGroupCreate,
-  accountGroupCreateSchema,
 } from '@/domains/realms/account-groups/latest/account-group.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
@@ -18,7 +16,6 @@ export const addAccountToGroup = async (
 ): Promise<AccountGroupDocument> => {
   const logger = await getLogger();
   logger.debug({ accountId: args.accountId, groupId: args.groupId });
-  await validateZod(args, accountGroupCreateSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const accountGroup = await getModel(dbName).create(args);
@@ -50,7 +47,6 @@ export const getAccountGroups = async (
 ): Promise<AccountGroupDocument[]> => {
   const logger = await getLogger();
   logger.debug({ accountId: args.accountId });
-  await validateZod(args.accountId, DocIdSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const accountGroups = await getModel(dbName).find({
@@ -66,7 +62,6 @@ export const getGroupAccounts = async (
 ): Promise<AccountGroupDocument[]> => {
   const logger = await getLogger();
   logger.debug({ groupId: args.groupId });
-  await validateZod(args.groupId, DocIdSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const groupAccounts = await getModel(dbName).find({ groupId: args.groupId });

@@ -2,8 +2,8 @@ import * as groupRoleService from './group-role.service';
 import { Context } from 'koa';
 
 export const addRoleToGroup = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { groupId, roleId } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { groupId, roleId } = ctx.validated.body;
 
   const groupRole = await groupRoleService.addRoleToGroup(tenantId, {
     groupId,
@@ -19,8 +19,8 @@ export const addRoleToGroup = async (ctx: Context) => {
 };
 
 export const removeRoleFromGroup = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
-  const { groupId, roleId } = ctx.request.body;
+  const { tenantId } = ctx.validated.params;
+  const { groupId, roleId } = ctx.validated.body;
 
   await groupRoleService.removeRoleFromGroup(tenantId, {
     groupId,
@@ -31,7 +31,7 @@ export const removeRoleFromGroup = async (ctx: Context) => {
 };
 
 export const getGroupRoles = async (ctx: Context) => {
-  const { tenantId, groupId } = ctx.params;
+  const { tenantId, groupId } = ctx.validated.params;
 
   const groupRoles = await groupRoleService.getGroupRoles(tenantId, {
     groupId,
@@ -45,7 +45,7 @@ export const getGroupRoles = async (ctx: Context) => {
 };
 
 export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.params;
+  const { tenantId } = ctx.validated.params;
 
   const groupRoles = await groupRoleService.findAll(tenantId);
 
@@ -57,7 +57,7 @@ export const findAll = async (ctx: Context) => {
 };
 
 export const getRoleGroups = async (ctx: Context) => {
-  const { tenantId, roleId } = ctx.params;
+  const { tenantId, roleId } = ctx.validated.params;
 
   const roleGroups = await groupRoleService.getRoleGroups(tenantId, {
     roleId,

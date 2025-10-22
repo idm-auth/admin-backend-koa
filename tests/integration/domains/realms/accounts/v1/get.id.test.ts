@@ -25,7 +25,7 @@ describe('GET /api/realm/:tenantId/v1/accounts/:id', () => {
       .send(accountData);
 
     if (createResponse.status === 201) {
-      createdAccountId = createResponse.body.id;
+      createdAccountId = createResponse.body._id;
       if (!createdAccountId) {
         throw new Error('Account created but no ID returned');
       }
@@ -41,7 +41,7 @@ describe('GET /api/realm/:tenantId/v1/accounts/:id', () => {
       .get(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .expect(200);
 
-    expect(response.body).toHaveProperty('id', createdAccountId);
+    expect(response.body).toHaveProperty('_id', createdAccountId);
     expect(response.body).toHaveProperty('email');
     expect(response.body).not.toHaveProperty('password');
   });

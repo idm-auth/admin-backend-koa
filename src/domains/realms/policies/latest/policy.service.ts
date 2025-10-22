@@ -2,13 +2,11 @@ import {
   PolicyDocument,
   getModel,
 } from '@/domains/realms/policies/latest/policy.model';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
 import {
   PolicyCreate,
-  policyCreateSchema,
 } from '@/domains/realms/policies/latest/policy.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
@@ -18,7 +16,6 @@ export const create = async (
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
   logger.debug({ name: args.name });
-  await validateZod(args, policyCreateSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).create(args);
@@ -32,7 +29,6 @@ export const findById = async (
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
-  await validateZod(args.id, DocIdSchema);
   const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).findById(args.id);
   if (!policy) {

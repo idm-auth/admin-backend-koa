@@ -7,6 +7,7 @@ import {
   roleAccountParamsSchema,
 } from './account-role.schema';
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-roles' });
@@ -17,6 +18,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all account-roles',
     handlers: [accountRoleController.findAll],
+    request: {
+      params: requestTenantIdParamsSchema,
+    },
     responses: {
       200: {
         description: 'List of account-roles',
@@ -44,6 +48,7 @@ export const initialize = async () => {
     summary: 'Add role to account',
     handlers: [accountRoleController.addRoleToAccount],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {

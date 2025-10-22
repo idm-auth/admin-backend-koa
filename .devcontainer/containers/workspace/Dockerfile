@@ -12,6 +12,8 @@ RUN apt update -qq \
   sudo \
   curl \
   jq \
+  procps \
+  iputils-ping \
   ca-certificates \
   openssh-client \
   && apt-get clean \

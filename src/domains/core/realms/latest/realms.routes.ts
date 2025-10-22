@@ -9,7 +9,7 @@ import {
   realmPaginatedResponseSchema,
 } from './realm.schema';
 import { requestIDParamsSchema } from '@/domains/commons/base/latest/request.schema';
-import { createCrudSwagger } from '@/utils/route-responses.util';
+import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/realms' });
@@ -40,7 +40,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create realm',
     handlers: [realmController.create],
-    request: swagger.create.request,
+    request: {
+      body: swagger.create.request.body,
+    },
     responses: swagger.create.responses,
     tags: ['Realms'],
   });
@@ -79,7 +81,7 @@ export const initialize = async () => {
     handlers: [realmController.update],
     request: {
       params: requestIDParamsSchema,
-      ...swagger.update.request,
+      body: swagger.update.request.body,
     },
     responses: swagger.update.responses,
     tags: ['Realms'],

@@ -7,6 +7,7 @@ import {
   roleGroupParamsSchema,
 } from './group-role.schema';
 import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
@@ -17,6 +18,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all group-roles',
     handlers: [groupRoleController.findAll],
+    request: {
+      params: requestTenantIdParamsSchema,
+    },
     responses: {
       200: {
         description: 'List of group-roles',
@@ -44,6 +48,7 @@ export const initialize = async () => {
     summary: 'Add role to group',
     handlers: [groupRoleController.addRoleToGroup],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {

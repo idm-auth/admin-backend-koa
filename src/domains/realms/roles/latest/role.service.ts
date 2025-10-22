@@ -2,13 +2,11 @@ import {
   RoleDocument,
   getModel,
 } from '@/domains/realms/roles/latest/role.model';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
 import {
   RoleCreate,
-  roleCreateSchema,
 } from '@/domains/realms/roles/latest/role.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
@@ -18,7 +16,6 @@ export const create = async (
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
   logger.debug({ name: args.name });
-  await validateZod(args, roleCreateSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).create(args);
@@ -32,7 +29,6 @@ export const findById = async (
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId: tenantId, id: args.id });
-  await validateZod(args.id, DocIdSchema);
   const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).findById(args.id);
   if (!role) {

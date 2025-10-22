@@ -85,10 +85,20 @@ export class MagicRouter {
     const requestValidation = requestValidationMiddleware<TContext>(config);
     const responseValidation = responseValidationMiddleware<TContext>(config);
 
+    // Wrapper apenas no último handler para chamar next()
+    const handlers = [...config.handlers];
+    const lastHandler = handlers.pop();
+
+    const wrappedLastHandler = async (ctx: TContext, next: Next) => {
+      await lastHandler!(ctx, async () => {});
+      await next(); // Chama o responseValidation
+    };
+
     return [
       requestValidation,
       ...middlewares,
-      ...config.handlers,
+      ...handlers,
+      wrappedLastHandler,
       responseValidation,
     ];
   }

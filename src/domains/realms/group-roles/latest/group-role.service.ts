@@ -1,8 +1,7 @@
 import { GroupRoleDocument, getModel } from './group-role.model';
-import { DocId, DocIdSchema } from '@/domains/commons/base/latest/base.schema';
-import { GroupRoleCreate, groupRoleCreateSchema } from './group-role.schema';
+import { DocId } from '@/domains/commons/base/latest/base.schema';
+import { GroupRoleCreate } from './group-role.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
-import { validateZod } from '@/domains/commons/validations/v1/validation.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
@@ -12,7 +11,6 @@ export const addRoleToGroup = async (
 ): Promise<GroupRoleDocument> => {
   const logger = await getLogger();
   logger.debug({ groupId: args.groupId, roleId: args.roleId });
-  await validateZod(args, groupRoleCreateSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const groupRole = await getModel(dbName).create(args);
@@ -44,7 +42,6 @@ export const getGroupRoles = async (
 ): Promise<GroupRoleDocument[]> => {
   const logger = await getLogger();
   logger.debug({ groupId: args.groupId });
-  await validateZod(args.groupId, DocIdSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const groupRoles = await getModel(dbName).find({ groupId: args.groupId });
@@ -68,7 +65,6 @@ export const getRoleGroups = async (
 ): Promise<GroupRoleDocument[]> => {
   const logger = await getLogger();
   logger.debug({ roleId: args.roleId });
-  await validateZod(args.roleId, DocIdSchema);
 
   const dbName = await getDBName({ publicUUID: tenantId });
   const roleGroups = await getModel(dbName).find({ roleId: args.roleId });

@@ -45,8 +45,8 @@ describe('GET /api/realm/:tenantId/v1/accounts', () => {
     expect(response.body.length).toBeGreaterThanOrEqual(2);
 
     // Verificar estrutura dos objetos retornados
-    response.body.forEach((account: { id: string; email: string }) => {
-      expect(account).toHaveProperty('id');
+    response.body.forEach((account: { _id: string; email: string }) => {
+      expect(account).toHaveProperty('_id');
       expect(account).toHaveProperty('email');
       expect(account).not.toHaveProperty('password');
     });

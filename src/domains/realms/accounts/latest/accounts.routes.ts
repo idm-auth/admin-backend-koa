@@ -6,7 +6,13 @@ import {
   accountUpdateSchema,
 } from './account.schema';
 import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
-import { createCrudSwagger } from '@/utils/route-responses.util';
+import { publicUUIDSchema } from '@/domains/commons/base/latest/base.schema';
+import { z } from 'zod';
+
+const requestTenantIdParamsSchema = z.object({
+  tenantId: publicUUIDSchema,
+});
+import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
@@ -23,6 +29,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all accounts',
     handlers: [accountController.findAll],
+    request: {
+      params: requestTenantIdParamsSchema,
+    },
     responses: swagger.list.responses,
     tags: ['Accounts'],
   });
@@ -33,7 +42,10 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create account',
     handlers: [accountController.create],
-    request: swagger.create.request,
+    request: {
+      params: requestTenantIdParamsSchema,
+      body: swagger.create.request.body,
+    },
     responses: swagger.create.responses,
     tags: ['Accounts'],
   });
@@ -59,7 +71,7 @@ export const initialize = async () => {
     handlers: [accountController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
-      ...swagger.update.request,
+      body: swagger.update.request.body,
     },
     responses: swagger.update.responses,
     tags: ['Accounts'],
