@@ -48,6 +48,7 @@
         ],
         "typescript.preferences.includePackageJsonAutoImports": "auto",
         "typescript.suggest.autoImports": true,
+        "remote.autoForwardPorts": false,
       },
       "extensions": [
         "ms-azuretools.vscode-docker",

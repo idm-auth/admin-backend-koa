@@ -29,7 +29,6 @@ describe('POST /api/core/v1/realms', () => {
     expect(response.body.jwtConfig.expiresIn).toBe(
       realmData.jwtConfig.expiresIn
     );
-
   });
 
   it('should return 400 for missing name', async () => {
@@ -87,10 +86,13 @@ describe('POST /api/core/v1/realms', () => {
     };
 
     // Create first realm
-    await request(app.callback())
+    const firstResponse = await request(app.callback())
       .post('/api/core/v1/realms')
       .send(realmData)
       .expect(201);
+
+    expect(firstResponse.body).toHaveProperty('_id');
+    expect(firstResponse.body.name).toBe(realmData.name);
 
     // Try to create second realm with same name using the same app instance
     const duplicateData = {
@@ -106,6 +108,9 @@ describe('POST /api/core/v1/realms', () => {
 
     expect(response.body).toHaveProperty('error', 'Resource already exists');
     expect(response.body).toHaveProperty('field', 'name');
-    expect(response.body).toHaveProperty('details', 'A resource with this name already exists');
+    expect(response.body).toHaveProperty(
+      'details',
+      'A resource with this name already exists'
+    );
   });
 });
