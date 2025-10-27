@@ -1,20 +1,31 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as policyController from './policy.controller';
 import {
+  policyCreateResponseSchema,
   policyCreateSchema,
-  policyResponseSchema,
+  policyListResponseSchema,
+  policyReadResponseSchema,
+  policySearchResponseSchema,
+  policyUpdateResponseSchema,
   policyUpdateSchema,
 } from './policy.schema';
-import { requestTenantIdAndIdParamsSchema, requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import {
+  requestTenantIdAndIdParamsSchema,
+  requestTenantIdParamsSchema,
+} from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/policies' });
   const swagger = createCrudSwagger(
     'Policy',
-    policyResponseSchema,
     policyCreateSchema,
-    policyUpdateSchema
+    policyUpdateSchema,
+    policyCreateResponseSchema,
+    policyUpdateResponseSchema,
+    policyReadResponseSchema,
+    policyListResponseSchema,
+    policySearchResponseSchema
   );
 
   // GET /policies - List all policies

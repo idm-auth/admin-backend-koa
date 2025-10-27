@@ -41,13 +41,15 @@ describe('GET /api/core/v1/realms/publicUUID/:publicUUID', () => {
 
     expect(response.body).toHaveProperty('_id');
     expect(response.body).toHaveProperty('name', 'test-realm-publicuuid');
-    expect(response.body).toHaveProperty('description', 'Test realm for publicUUID endpoint');
+    expect(response.body).toHaveProperty(
+      'description',
+      'Test realm for publicUUID endpoint'
+    );
     expect(response.body).toHaveProperty('dbName', 'test-db-publicuuid');
     expect(response.body).toHaveProperty('publicUUID', createdRealmPublicUUID);
     expect(response.body).toHaveProperty('jwtConfig');
     expect(response.body.jwtConfig).toHaveProperty('secret');
     expect(response.body.jwtConfig).toHaveProperty('expiresIn', '24h');
-
   });
 
   it('should return 404 for non-existent publicUUID', async () => {
@@ -67,7 +69,6 @@ describe('GET /api/core/v1/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/v1/realms/publicUUID/${invalidPublicUUID}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid ID');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 });

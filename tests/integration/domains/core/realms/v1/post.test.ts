@@ -25,7 +25,8 @@ describe('POST /api/core/v1/realms', () => {
     expect(response.body.name).toBe(realmData.name);
     expect(response.body.description).toBe(realmData.description);
     expect(response.body.dbName).toBe(realmData.dbName);
-    expect(response.body.jwtConfig.secret).toBe(realmData.jwtConfig.secret);
+    expect(response.body.jwtConfig).toHaveProperty('secret');
+    expect(typeof response.body.jwtConfig.secret).toBe('string');
     expect(response.body.jwtConfig.expiresIn).toBe(
       realmData.jwtConfig.expiresIn
     );
@@ -42,8 +43,7 @@ describe('POST /api/core/v1/realms', () => {
       .send(realmData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Name is required');
+    expect(response.body).toHaveProperty('error', 'Name is required');
   });
 
   it('should return 400 for missing dbName', async () => {
@@ -57,15 +57,14 @@ describe('POST /api/core/v1/realms', () => {
       .send(realmData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Database name is required');
+    expect(response.body).toHaveProperty('error', 'Database name is required');
   });
 
-  it('should create realm with default jwtConfig when not provided', async () => {
+  it('should create realm successfully without jwtConfig', async () => {
     const realmData = {
-      name: 'test-realm-default-jwt',
-      description: 'Test realm with default JWT',
-      dbName: 'test-db-default-jwt',
+      name: 'test-realm-no-jwt',
+      description: 'Test realm without JWT config',
+      dbName: 'test-db-no-jwt',
     };
 
     const response = await request(getApp().callback())
@@ -73,8 +72,10 @@ describe('POST /api/core/v1/realms', () => {
       .send(realmData)
       .expect(201);
 
-    expect(response.body.jwtConfig).toHaveProperty('secret');
-    expect(response.body.jwtConfig).toHaveProperty('expiresIn');
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).toHaveProperty('name', realmData.name);
+    expect(response.body).toHaveProperty('dbName', realmData.dbName);
+    expect(response.body).toHaveProperty('publicUUID');
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {

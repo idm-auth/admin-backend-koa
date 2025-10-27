@@ -47,12 +47,14 @@ export const createRequestBody = (schema: z.ZodSchema) => ({
 // Helpers para operações CRUD
 export const createCrudSwagger = (
   entityName: string,
-  responseSchema: z.ZodSchema,
   createSchema: z.ZodSchema,
   updateSchema: z.ZodSchema,
-  paginatedResponseSchema?: z.ZodSchema,
-  createResponseSchema?: z.ZodSchema,
-  updateResponseSchema?: z.ZodSchema
+  createResponseSchema: z.ZodSchema,
+  updateResponseSchema: z.ZodSchema,
+  readResponseSchema: z.ZodSchema,
+  listResponseSchema: z.ZodSchema,
+  searchResponseSchema: z.ZodSchema,
+  paginatedResponseSchema?: z.ZodSchema
 ) => ({
   create: {
     request: {
@@ -61,7 +63,7 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `${entityName} created successfully`,
-        createResponseSchema || responseSchema
+        createResponseSchema
       ),
       400: commonResponses.badRequest,
     },
@@ -70,7 +72,7 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `List of ${entityName.toLowerCase()}s`,
-        z.array(responseSchema)
+        listResponseSchema
       ),
       400: commonResponses.badRequest,
     },
@@ -79,14 +81,14 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `Paginated list of ${entityName.toLowerCase()}s`,
-        paginatedResponseSchema || z.array(responseSchema)
+        paginatedResponseSchema || listResponseSchema
       ),
       400: commonResponses.badRequest,
     },
   },
   read: {
     responses: {
-      200: createSuccessResponse(`${entityName} found`, responseSchema),
+      200: createSuccessResponse(`${entityName} found`, readResponseSchema),
       400: commonResponses.badRequest,
       404: commonResponses.notFound,
     },
@@ -98,7 +100,7 @@ export const createCrudSwagger = (
     responses: {
       200: createSuccessResponse(
         `${entityName} updated successfully`,
-        updateResponseSchema || responseSchema
+        updateResponseSchema
       ),
       400: commonResponses.badRequest,
       404: commonResponses.notFound,
@@ -113,7 +115,7 @@ export const createCrudSwagger = (
   },
   search: {
     responses: {
-      200: createSuccessResponse(`${entityName} found`, responseSchema),
+      200: createSuccessResponse(`${entityName} found`, searchResponseSchema),
       400: commonResponses.badRequest,
       404: commonResponses.notFound,
     },

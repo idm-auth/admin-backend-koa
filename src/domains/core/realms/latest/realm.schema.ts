@@ -1,26 +1,36 @@
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
 import {
   DocIdSchema,
   publicUUIDSchema,
 } from '@/domains/commons/base/latest/base.schema';
 import {
-  paginationQuerySchema,
   createPaginatedResponseSchema,
+  paginationQuerySchema,
 } from '@/domains/commons/base/latest/pagination.schema';
 import { requestIDParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
 export const realmCreateSchema = z.object({
-  name: z.string({ error: 'Name is required' }),
-  description: z.string().optional(),
-  dbName: z.string({ error: 'Database name is required' }),
+  name: z
+    .string({ error: 'Name is required' })
+    .regex(/^[a-zA-Z0-9\s_-]+$/, 'Name contains invalid characters')
+    .max(100, 'Name must be at most 100 characters'),
+  description: z
+    .string()
+    .regex(/^[a-zA-Z0-9\s.,!?_-]*$/, 'Description contains invalid characters')
+    .max(500, 'Description must be at most 500 characters')
+    .optional(),
+  dbName: z
+    .string({ error: 'Database name is required' })
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      'Database name can only contain letters, numbers, underscores and hyphens'
+    )
+    .max(50, 'Database name must be at most 50 characters'),
   jwtConfig: z
     .object({
-      secret: z
-        .string({ error: 'JWT secret is required' })
-        .default('default-super-secret-jwt-key-change-in-production'),
       expiresIn: z
         .string({ error: 'JWT expires in is required' })
         .default('24h'),
@@ -29,12 +39,26 @@ export const realmCreateSchema = z.object({
 });
 
 export const realmUpdateSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  dbName: z.string().optional(),
+  name: z
+    .string()
+    .regex(/^[a-zA-Z0-9\s_-]+$/, 'Name contains invalid characters')
+    .max(100, 'Name must be at most 100 characters')
+    .optional(),
+  description: z
+    .string()
+    .regex(/^[a-zA-Z0-9\s.,!?_-]*$/, 'Description contains invalid characters')
+    .max(500, 'Description must be at most 500 characters')
+    .optional(),
+  dbName: z
+    .string()
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      'Database name can only contain letters, numbers, underscores and hyphens'
+    )
+    .max(50, 'Database name must be at most 50 characters')
+    .optional(),
   jwtConfig: z
     .object({
-      secret: z.string().optional(),
       expiresIn: z.string().optional(),
     })
     .optional(),
@@ -44,7 +68,7 @@ export const realmUpdateSchema = z.object({
 export const realmBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().optional().nullish(),
   publicUUID: publicUUIDSchema,
 });
 
@@ -66,8 +90,17 @@ export const realmUpdateResponseSchema = realmBaseResponseSchema.extend({
 
 export const realmListItemResponseSchema = realmBaseResponseSchema;
 
-// Mantendo para compatibilidade
-export const realmResponseSchema = realmCreateResponseSchema;
+export const realmReadResponseSchema = realmBaseResponseSchema.extend({
+  dbName: z.string(),
+  jwtConfig: z.object({
+    secret: z.string(),
+    expiresIn: z.string(),
+  }),
+});
+
+export const realmListResponseSchema = z.array(realmListItemResponseSchema);
+
+export const realmSearchResponseSchema = realmReadResponseSchema;
 
 export type RealmCreate = z.infer<typeof realmCreateSchema>;
 export type RealmUpdate = z.infer<typeof realmUpdateSchema>;
@@ -75,7 +108,9 @@ export type RealmBaseResponse = z.infer<typeof realmBaseResponseSchema>;
 export type RealmCreateResponse = z.infer<typeof realmCreateResponseSchema>;
 export type RealmUpdateResponse = z.infer<typeof realmUpdateResponseSchema>;
 export type RealmListItemResponse = z.infer<typeof realmListItemResponseSchema>;
-export type RealmResponse = z.infer<typeof realmResponseSchema>;
+export type RealmReadResponse = z.infer<typeof realmReadResponseSchema>;
+export type RealmListResponse = z.infer<typeof realmListResponseSchema>;
+export type RealmSearchResponse = z.infer<typeof realmSearchResponseSchema>;
 
 export type RealmParams = z.infer<typeof requestIDParamsSchema>;
 

@@ -37,6 +37,6 @@ describe('POST /api/realm/:tenantId/v1/groups', () => {
       .send(groupData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body).toHaveProperty('error', 'Name is required');
   });
 });

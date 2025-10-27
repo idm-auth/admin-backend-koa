@@ -23,7 +23,7 @@ export const create = async (ctx: Context) => {
 export const findById = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  const role = await roleService.findById(tenantId, { id });
+  const role = await roleService.findById(tenantId, id);
 
   ctx.body = {
     id: role._id,
@@ -37,8 +37,7 @@ export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
   const { name, description, permissions } = ctx.validated.body;
 
-  const role = await roleService.update(tenantId, {
-    id,
+  const role = await roleService.update(tenantId, id, {
     name,
     description,
     permissions,
@@ -68,7 +67,7 @@ export const findAll = async (ctx: Context) => {
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  await roleService.remove(tenantId, { id });
+  await roleService.remove(tenantId, id);
 
   ctx.status = 204;
 };

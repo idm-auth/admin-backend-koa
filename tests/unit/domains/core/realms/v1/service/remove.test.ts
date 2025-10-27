@@ -5,7 +5,7 @@ import * as realmService from '@/domains/core/realms/v1/realm.service';
 describe('realm.service.remove', () => {
   it('should throw NotFoundError when realm not found', async () => {
     await expect(
-      realmService.remove({ id: '550e8400-e29b-41d4-a716-446655440000' })
+      realmService.remove('550e8400-e29b-41d4-a716-446655440000')
     ).rejects.toThrow(NotFoundError);
   });
 });

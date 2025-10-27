@@ -8,7 +8,7 @@ describe('realm.service.findByName', () => {
   it('should throw NotFoundError when realm not found', async () => {
     const uniqueName = `non-existent-${uuidv4()}`;
 
-    await expect(realmService.findByName({ name: uniqueName })).rejects.toThrow(
+    await expect(realmService.findByName(uniqueName)).rejects.toThrow(
       NotFoundError
     );
   });
@@ -24,7 +24,7 @@ describe('realm.service.findByName', () => {
     });
 
     // Buscar o realm pelo nome
-    const foundRealm = await realmService.findByName({ name: uniqueName });
+    const foundRealm = await realmService.findByName(uniqueName);
 
     expect(foundRealm).toHaveProperty('name', uniqueName);
     expect(foundRealm).toHaveProperty('_id', createdRealm._id);

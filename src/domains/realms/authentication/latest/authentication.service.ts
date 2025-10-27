@@ -14,9 +14,10 @@ export const login = async (
     email: args.email,
   });
 
-  const account = await accountService.findByEmail(tenantId, {
-    email: args.email,
-  });
+  const account = await accountService.findByEmail(
+    tenantId,
+    args.email
+  );
 
   if (
     !account ||

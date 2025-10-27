@@ -59,8 +59,7 @@ describe('DELETE /api/core/v1/realms/:id', () => {
       .delete(`/api/core/v1/realms/${invalidId}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid ID');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 404 when trying to delete already deleted realm', async () => {

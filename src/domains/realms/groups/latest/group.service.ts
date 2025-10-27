@@ -10,25 +10,25 @@ import { GroupCreate } from './group.schema';
 
 export const create = async (
   tenantId: string,
-  args: GroupCreate
+  data: GroupCreate
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
-  logger.debug({ name: args.name });
+  logger.debug({ name: data.name });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const group = await getModel(dbName).create(args);
+  const dbName = await getDBName(tenantId);
+  const group = await getModel(dbName).create(data);
 
   return group;
 };
 
 export const findById = async (
   tenantId: string,
-  args: { id: DocId }
+  id: DocId
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
-  logger.debug({ tenantId: tenantId, id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const group = await getModel(dbName).findById(args.id);
+  logger.debug({ tenantId, id });
+  const dbName = await getDBName(tenantId);
+  const group = await getModel(dbName).findById(id);
   if (!group) {
     throw new NotFoundError('Group not found');
   }
@@ -37,12 +37,12 @@ export const findById = async (
 
 export const findByName = async (
   tenantId: string,
-  args: { name: string }
+  name: string
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
-  logger.debug({ name: args.name });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const group = await getModel(dbName).findOne({ name: args.name });
+  logger.debug({ name });
+  const dbName = await getDBName(tenantId);
+  const group = await getModel(dbName).findOne({ name });
   if (!group) {
     throw new NotFoundError('Group not found');
   }
@@ -51,18 +51,18 @@ export const findByName = async (
 
 export const update = async (
   tenantId: string,
-  args: {
-    id: string;
+  id: string,
+  data: {
     name?: string;
     description?: string;
   }
 ): Promise<GroupDocument> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  logger.debug({ id });
+  const dbName = await getDBName(tenantId);
   const group = await getModel(dbName).findByIdAndUpdate(
-    args.id,
-    { name: args.name, description: args.description },
+    id,
+    { name: data.name, description: data.description },
     { new: true, runValidators: true }
   );
   if (!group) {
@@ -74,19 +74,19 @@ export const update = async (
 export const findAll = async (tenantId: string): Promise<GroupDocument[]> => {
   const logger = await getLogger();
   logger.debug({ tenantId });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const groups = await getModel(dbName).find({});
   return groups;
 };
 
 export const remove = async (
   tenantId: string,
-  args: { id: string }
+  id: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findByIdAndDelete(args.id);
+  logger.debug({ id });
+  const dbName = await getDBName(tenantId);
+  const result = await getModel(dbName).findByIdAndDelete(id);
   if (!result) {
     throw new NotFoundError('Group not found');
   }

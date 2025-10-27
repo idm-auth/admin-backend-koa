@@ -27,13 +27,16 @@
 - `logger.debug()` - Debug detalhado
 
 ## Pino Logger - Ordem de Parâmetros
-- Para logs com erro: `logger.error(error, 'mensagem')`
-- Para logs simples: `logger.error('mensagem')`
-- **SEMPRE** coloque o objeto de erro como primeiro parâmetro
+- **SEMPRE** coloque o objeto como primeiro parâmetro, mensagem como segundo
+- Para logs com contexto: `logger.info({ key: value }, 'mensagem')`
+- Para logs com erro: `logger.error({ error, ...context }, 'mensagem')`
+- Para logs simples: `logger.info('mensagem')`
 - Exemplos:
-  - ✅ `logger.error(error, 'Falha na operação')`
-  - ✅ `logger.error('Mensagem simples')`
-  - ❌ `logger.error('Mensagem', error)` // Ordem incorreta
+  - ✅ `logger.error({ error, userId: '123' }, 'Falha na operação')`
+  - ✅ `logger.info({ userId: '123' }, 'Operação realizada')`
+  - ✅ `logger.info('Mensagem simples')`
+  - ❌ `logger.error(error, 'mensagem')` // Erro direto como primeiro parâmetro
+  - ❌ `logger.info('mensagem', { context })` // Ordem incorreta
 
 ## Contexto
 - Em controllers/services: logger automaticamente inclui requestId do contexto

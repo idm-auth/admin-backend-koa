@@ -60,8 +60,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id', () => {
       .delete(`/api/realm/${tenantId}/v1/accounts/${invalidId}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid ID');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 204 when trying to delete already deleted account', async () => {

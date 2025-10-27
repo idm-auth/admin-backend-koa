@@ -27,6 +27,11 @@
 - NUNCA coloque validações de negócio no controller
 - Use classes de erro personalizadas para diferentes tipos de erro
 
+## Padrão TenantId (CRÍTICO)
+- **SEMPRE** tenantId como primeiro parâmetro separado dos dados
+- **NUNCA** misture tenantId com dados em objetos
+- Veja regras detalhadas em `tenant-pattern.md`
+
 ## Rotas (SwaggerRouter)
 - **SEMPRE use SwaggerRouter** em vez de Router tradicional
 - Defina validações Zod para body, params, query e responses
@@ -41,3 +46,9 @@
 - Use `import * as service from '@/domains/{contexto}/{dominio}/v1/{arquivo}'` para imports entre domínios
 - Evite `export default { }` - prefira named exports
 - **NUNCA use barrel exports** - imports diretos são preferíveis
+
+## Assinaturas de Função
+- **SEMPRE** siga o padrão tenantId (veja `tenant-pattern.md`)
+- TenantId sempre primeiro parâmetro quando necessário
+- Dados da operação como parâmetros subsequentes
+- Mantenha consistência em toda a aplicação

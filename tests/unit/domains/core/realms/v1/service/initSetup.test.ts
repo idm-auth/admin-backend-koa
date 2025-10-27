@@ -37,12 +37,12 @@ describe('realm.service.initSetup', () => {
 
   it('should return existing realm when found', async () => {
     process.env.MONGODB_CORE_DBNAME = 'test-existing-db-name';
-    
+
     // Criar um realm primeiro
     const createdRealm = await getModel().create({
       dbName: 'test-existing-db-name',
       name: 'idm-core-realm',
-      description: 'Realm Core'
+      description: 'Realm Core',
     });
 
     const result = await realmService.initSetup();

@@ -30,7 +30,7 @@ extendZodWithOpenApi(z);
 z.string()                                    // string simples
 z.string({ error: 'Field is required' })      // com mensagem de erro
 
-// Email
+// Email - SEMPRE use z.email()
 z.email({
   pattern: z.regexes.rfc5322Email,
   error: (issue) => 
@@ -38,6 +38,9 @@ z.email({
       ? 'Email is required'
       : 'Invalid email format',
 })
+
+// ❌ NUNCA use z.string().email() - está deprecated no Zod v4
+// ✅ SEMPRE use z.email() com configuração completa
 
 // UUID
 z.uuidv4('Invalid ID')                        // UUID v4

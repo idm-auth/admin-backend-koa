@@ -1,9 +1,10 @@
-// schema do core para realms
+// Core schema for realms
 import {
   BaseDocument,
   baseDocumentSchema,
 } from '@/domains/commons/base/latest/base.model';
 import { getCoreDb } from '@/plugins/mongo.plugin';
+import { randomBytes } from 'crypto';
 import mongoose, { InferSchemaType } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,18 +24,18 @@ export const schema = new mongoose.Schema({
       secret: {
         type: String,
         required: true,
-        default: 'default-super-secret-jwt-key-change-in-production',
+        immutable: true,
+        default: () => randomBytes(32).toString('base64'),
       },
       expiresIn: { type: String, required: true, default: '24h' },
     },
-    default: {},
   },
 });
 schema.add(baseDocumentSchema);
 
 export type Realm = InferSchemaType<typeof schema> & BaseDocument;
 export type RealmOmitId = Omit<Realm, '_id'>;
-// model em cima do core DB
+// Model on top of core DB
 export const getModel = () => {
   const conn = getCoreDb();
   return conn.model<Realm>(schemaName, schema);

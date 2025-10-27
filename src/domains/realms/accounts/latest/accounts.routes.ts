@@ -5,34 +5,68 @@ import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import { z } from 'zod';
 import * as accountController from './account.controller';
 import {
+  accountCreateResponseSchema,
   accountCreateSchema,
-  accountResponseSchema,
+  accountListResponseSchema,
+  accountPaginatedResponseSchema,
+  accountReadResponseSchema,
+  accountSearchResponseSchema,
+  accountUpdateResponseSchema,
   accountUpdateSchema,
 } from './account.schema';
+import {
+  emailSchema,
+  passwordSchema,
+} from '@/domains/commons/base/v1/base.schema';
 
 const requestTenantIdParamsSchema = z.object({
   tenantId: publicUUIDSchema,
+});
+
+// Safe query schema that prevents SSRF by restricting filter values
+const safeAccountListQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(25),
+  filter: z
+    .string()
+    .regex(/^[a-zA-Z0-9\s@._-]*$/, 'Invalid filter format')
+    .max(100)
+    .optional(),
+  sortBy: z.enum(['email', 'createdAt', 'updatedAt']).optional(),
+  descending: z.coerce.boolean().default(false),
+});
+
+// Safe update schema that prevents SSRF by using proper validation
+const safeAccountUpdateSchema = z.object({
+  email: emailSchema.optional(),
+  password: passwordSchema.optional(),
 });
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
   const swagger = createCrudSwagger(
     'Account',
-    accountResponseSchema,
     accountCreateSchema,
-    accountUpdateSchema
+    accountUpdateSchema,
+    accountCreateResponseSchema,
+    accountUpdateResponseSchema,
+    accountReadResponseSchema,
+    accountListResponseSchema,
+    accountSearchResponseSchema,
+    accountPaginatedResponseSchema
   );
 
-  // GET /accounts - List all accounts
+  // GET /accounts - List all accounts (paginated)
   router.get({
     name: 'listAccounts',
     path: '/',
-    summary: 'List all accounts',
-    handlers: [accountController.findAll],
+    summary: 'List all accounts with pagination',
+    handlers: [accountController.findAllPaginated],
     request: {
       params: requestTenantIdParamsSchema,
+      query: safeAccountListQuerySchema,
     },
-    responses: swagger.list.responses,
+    responses: swagger.listPaginated.responses,
     tags: ['Accounts'],
   });
 
@@ -71,7 +105,9 @@ export const initialize = async () => {
     handlers: [accountController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
-      body: swagger.update.request.body,
+      body: {
+        content: { 'application/json': { schema: safeAccountUpdateSchema } },
+      },
     },
     responses: swagger.update.responses,
     tags: ['Accounts'],

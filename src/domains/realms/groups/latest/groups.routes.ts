@@ -1,20 +1,31 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as groupController from './group.controller';
 import {
+  groupCreateResponseSchema,
   groupCreateSchema,
-  groupResponseSchema,
+  groupListResponseSchema,
+  groupReadResponseSchema,
+  groupSearchResponseSchema,
+  groupUpdateResponseSchema,
   groupUpdateSchema,
 } from './group.schema';
-import { requestTenantIdAndIdParamsSchema, requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import {
+  requestTenantIdAndIdParamsSchema,
+  requestTenantIdParamsSchema,
+} from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/groups' });
   const swagger = createCrudSwagger(
     'Group',
-    groupResponseSchema,
     groupCreateSchema,
-    groupUpdateSchema
+    groupUpdateSchema,
+    groupCreateResponseSchema,
+    groupUpdateResponseSchema,
+    groupReadResponseSchema,
+    groupListResponseSchema,
+    groupSearchResponseSchema
   );
 
   // GET /groups - List all groups

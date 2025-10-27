@@ -19,7 +19,7 @@ export const generateToken = async (
   // Validações
   await validateZod(payload, jwtPayloadSchema);
 
-  const realm = await realmService.findByPublicUUID({ publicUUID: tenantId });
+  const realm = await realmService.findByPublicUUID(tenantId);
 
   const payloadSign: string | Buffer | object = payload;
   const secretOrPrivateKeySign: Secret | PrivateKey = realm.jwtConfig.secret;
@@ -31,6 +31,6 @@ export const generateToken = async (
 };
 
 export const verifyToken = async (tenantId: PublicUUID, token: string) => {
-  const realm = await realmService.findByPublicUUID({ publicUUID: tenantId });
+  const realm = await realmService.findByPublicUUID(tenantId);
   return jwt.verify(token, realm.jwtConfig.secret);
 };

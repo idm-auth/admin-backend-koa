@@ -14,56 +14,96 @@ import {
   RealmOmitId,
 } from '@/domains/core/realms/latest/realms.model';
 import { NotFoundError } from '@/errors/not-found';
+import { ConflictError } from '@/errors/conflict';
 import { getLogger } from '@/utils/localStorage.util';
 
-export const create = async (args: {
-  data: Omit<RealmOmitId, 'publicUUID'> & { publicUUID?: string };
-}) => {
-  const logger = await getLogger();
-  logger.debug(args.data);
+const validateDBName = async (dbName: string): Promise<void> => {
+  const maliciousPatterns = [
+    /^https?:\/\//i,
+    /^ftp:\/\//i,
+    /^file:\/\//i,
+    /^ldap:\/\//i,
+    /^mongodb:\/\//i,
+    /\.\./,
+    /\/\/+/,
+    /@/,
+    /:/,
+  ];
 
-  const realm = await getModel().create(args.data);
-  return realm;
+  for (const pattern of maliciousPatterns) {
+    if (pattern.test(dbName)) {
+      throw new Error('Invalid database name format');
+    }
+  }
 };
 
-export const findById = async (args: { id: string }) => {
+export const create = async (
+  data: Omit<RealmOmitId, 'publicUUID'> & { publicUUID?: string }
+) => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
+  logger.debug({ data: JSON.stringify(data) }, 'create data:');
 
-  const realm = await getModel().findById(args.id);
+  await validateDBName(data.dbName);
+
+  try {
+    const realm = await getModel().create(data);
+    return realm;
+  } catch (error: any) {
+    if (error.code === 11000) {
+      // MongoDB duplicate key error
+      if (error.keyPattern?.name) {
+        throw new ConflictError('Resource already exists', {
+          field: 'name',
+          details: 'A resource with this name already exists',
+        });
+      }
+    }
+    throw error;
+  }
+};
+
+export const findById = async (id: string) => {
+  const logger = await getLogger();
+  logger.debug({ id });
+
+  const realm = await getModel().findById(id);
   if (!realm) {
     throw new NotFoundError('Realm not found');
   }
   return realm;
 };
 
-export const findByPublicUUID = async (args: { publicUUID: PublicUUID }) => {
+export const findByPublicUUID = async (publicUUID: PublicUUID) => {
   const logger = await getLogger();
-  logger.debug({ publicUUID: args.publicUUID });
+  logger.debug({ publicUUID });
 
-  const realm = await getModel().findOne({ publicUUID: args.publicUUID });
+  const realm = await getModel().findOne({ publicUUID });
   if (!realm) {
     throw new NotFoundError('Realm not found');
   }
   return realm;
 };
 
-export const findByName = async (args: { name: string }) => {
+export const findByName = async (name: string) => {
   const logger = await getLogger();
-  logger.debug({ name: args.name });
+  logger.debug({ name });
 
-  const realm = await getModel().findOne({ name: args.name });
+  const realm = await getModel().findOne({ name });
   if (!realm) {
     throw new NotFoundError('Realm not found');
   }
   return realm;
 };
 
-export const update = async (args: { id: string; data: Partial<Realm> }) => {
+export const update = async (id: string, data: Partial<Realm>) => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
+  logger.debug({ id });
 
-  const realm = await getModel().findByIdAndUpdate(args.id, args.data, {
+  if (data.dbName) {
+    await validateDBName(data.dbName);
+  }
+
+  const realm = await getModel().findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
   });
@@ -77,94 +117,105 @@ export const findAllPaginated = async (
   query: PaginationQuery
 ): Promise<PaginatedResponse<Realm>> => {
   const logger = await getLogger();
-  logger.debug(query, 'Finding realms with pagination');
+  logger.debug(
+    { query: JSON.stringify(query) },
+    'Finding realms with pagination'
+  );
 
-  const { page, limit, filter, sortBy, descending } = query;
+  try {
+    const { page, limit, filter, sortBy, descending } = query;
 
-  const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
-  // Build filter query
-  const filterQuery: Record<string, unknown> = {};
-  if (filter) {
-    filterQuery.$or = [
-      { name: { $regex: filter, $options: 'i' } },
-      { description: { $regex: filter, $options: 'i' } },
-      { dbName: { $regex: filter, $options: 'i' } },
-      { _id: { $regex: filter, $options: 'i' } },
-      { publicUUID: { $regex: filter, $options: 'i' } },
-    ];
+    // Build filter query
+    const filterQuery: Record<string, unknown> = {};
+    if (filter) {
+      filterQuery.$or = [
+        { name: { $regex: filter, $options: 'i' } },
+        { description: { $regex: filter, $options: 'i' } },
+        { dbName: { $regex: filter, $options: 'i' } },
+        { _id: { $regex: filter, $options: 'i' } },
+        { publicUUID: { $regex: filter, $options: 'i' } },
+      ];
+    }
+
+    // Build sort query
+    const sortQuery: Record<string, 1 | -1> = {};
+    if (sortBy) {
+      sortQuery[sortBy] = descending ? -1 : 1;
+    } else {
+      sortQuery.name = 1; // Default sort by name ascending (A,B,C,D, 1,2,3,4,5)
+    }
+
+    // Execute queries
+    const [realms, total] = await Promise.all([
+      getModel().find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
+      getModel().countDocuments(filterQuery),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: realms,
+      pagination: {
+        total,
+        page: Number(page),
+        rowsPerPage: Number(limit),
+        totalPages,
+      },
+    };
+  } catch (error) {
+    logger.error(error, 'Failed to find paginated realms');
+    throw new Error('Failed to retrieve realms');
   }
-
-  // Build sort query
-  const sortQuery: Record<string, 1 | -1> = {};
-  if (sortBy) {
-    sortQuery[sortBy] = descending ? -1 : 1;
-  } else {
-    sortQuery.name = 1; // Default sort by name ascending (A,B,C,D, 1,2,3,4,5)
-  }
-
-  // Execute queries
-  const [realms, total] = await Promise.all([
-    getModel().find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
-    getModel().countDocuments(filterQuery),
-  ]);
-
-  const totalPages = Math.ceil(total / limit);
-
-  return {
-    data: realms,
-    pagination: {
-      total,
-      page: Number(page),
-      rowsPerPage: Number(limit),
-      totalPages,
-    },
-  };
 };
 
-export const remove = async (args: { id: string }): Promise<void> => {
+export const remove = async (id: string): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
+  logger.debug({ id });
 
-  await validateZod(args.id, DocIdSchema);
+  await validateZod(id, DocIdSchema);
 
-  const realm = await getModel().findByIdAndDelete(args.id);
+  const realm = await getModel().findByIdAndDelete(id);
   if (!realm) {
     throw new NotFoundError('Realm not found');
   }
 };
 
-export const getDBName = async (args: { publicUUID: PublicUUID }) => {
+export const getDBName = async (publicUUID: PublicUUID) => {
   const logger = await getLogger();
-  logger.debug({ publicUUID: args.publicUUID });
+  logger.debug({ publicUUID });
 
   // Validar formato do publicUUID antes de buscar
-  await validateZod(args.publicUUID, publicUUIDSchema);
+  await validateZod(publicUUID, publicUUIDSchema);
 
-  const realm = await getModel().findOne({ publicUUID: args.publicUUID });
+  const realm = await getModel().findOne({ publicUUID });
 
   if (!realm || !realm.dbName) {
     throw new NotFoundError(
-      `DBName not found for publicUUID: ${args.publicUUID}`
+      `DBName not found for publicUUID: ${publicUUID}`
     );
   }
 
   return realm.dbName;
 };
 export const initSetup = async () => {
-  const mongoDBCoreDBName = process.env.MONGODB_CORE_DBNAME;
-  if (!mongoDBCoreDBName) {
+  const coreDBName = process.env.MONGODB_CORE_DBNAME;
+  if (!coreDBName) {
     throw new Error('MONGODB_CORE_DBNAME is not set');
   }
-  let doc = await getModel().findOne({
-    dbName: mongoDBCoreDBName,
+
+  let coreRealm = await getModel().findOne({
+    dbName: coreDBName,
   });
-  if (!doc) {
-    doc = await getModel().create({
-      dbName: mongoDBCoreDBName,
+
+  if (!coreRealm) {
+    coreRealm = await getModel().create({
+      dbName: coreDBName,
       name: 'idm-core-realm',
       description: 'Realm Core',
     });
   }
-  return doc;
+
+  return coreRealm;
 };

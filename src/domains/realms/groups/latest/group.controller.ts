@@ -21,7 +21,7 @@ export const create = async (ctx: Context) => {
 export const findById = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  const group = await groupService.findById(tenantId, { id });
+  const group = await groupService.findById(tenantId, id);
 
   ctx.body = {
     id: group._id,
@@ -34,8 +34,7 @@ export const update = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
   const { name, description } = ctx.validated.body;
 
-  const group = await groupService.update(tenantId, {
-    id,
+  const group = await groupService.update(tenantId, id, {
     name,
     description,
   });
@@ -62,7 +61,7 @@ export const findAll = async (ctx: Context) => {
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  await groupService.remove(tenantId, { id });
+  await groupService.remove(tenantId, id);
 
   ctx.status = 204;
 };

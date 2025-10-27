@@ -44,7 +44,7 @@ describe('AccountGroups Populate Test', () => {
   });
 
   it('should do manual populate with UUIDs', async () => {
-    const dbName = await getDBName({ publicUUID: tenantId });
+    const dbName = await getDBName(tenantId);
 
     // 1. Buscar AccountGroups
     const accountGroups = await getModel(dbName).find({ accountId });
@@ -53,15 +53,17 @@ describe('AccountGroups Populate Test', () => {
     const accountGroup = accountGroups[0];
 
     // 2. Populate manual - buscar documentos relacionados
-    const account = await accountService.findById(tenantId, {
-      id: accountGroup.accountId,
-    });
-    const group = await groupService.findById(tenantId, {
-      id: accountGroup.groupId,
-    });
+    const account = await accountService.findById(
+      tenantId,
+      accountGroup.accountId
+    );
+    const group = await groupService.findById(
+      tenantId,
+      accountGroup.groupId
+    );
     const roles = await Promise.all(
       accountGroup.roles.map((roleId) =>
-        roleService.findById(tenantId, { id: roleId })
+        roleService.findById(tenantId, roleId)
       )
     );
 
@@ -73,7 +75,7 @@ describe('AccountGroups Populate Test', () => {
   });
 
   it('should work without populate (return UUIDs)', async () => {
-    const dbName = await getDBName({ publicUUID: tenantId });
+    const dbName = await getDBName(tenantId);
 
     // Sem populate - deve retornar UUIDs
     const accountGroups = await getModel(dbName).find({ accountId });

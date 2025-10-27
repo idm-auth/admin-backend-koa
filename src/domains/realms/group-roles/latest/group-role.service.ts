@@ -7,28 +7,29 @@ import { NotFoundError } from '@/errors/not-found';
 
 export const addRoleToGroup = async (
   tenantId: string,
-  args: GroupRoleCreate
+  data: GroupRoleCreate
 ): Promise<GroupRoleDocument> => {
   const logger = await getLogger();
-  logger.debug({ groupId: args.groupId, roleId: args.roleId });
+  logger.debug({ groupId: data.groupId, roleId: data.roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const groupRole = await getModel(dbName).create(args);
+  const dbName = await getDBName(tenantId);
+  const groupRole = await getModel(dbName).create(data);
 
   return groupRole;
 };
 
 export const removeRoleFromGroup = async (
   tenantId: string,
-  args: { groupId: string; roleId: string }
+  groupId: string,
+  roleId: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ groupId: args.groupId, roleId: args.roleId });
+  logger.debug({ groupId, roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const result = await getModel(dbName).findOneAndDelete({
-    groupId: args.groupId,
-    roleId: args.roleId,
+    groupId,
+    roleId,
   });
 
   if (!result) {
@@ -38,13 +39,13 @@ export const removeRoleFromGroup = async (
 
 export const getGroupRoles = async (
   tenantId: string,
-  args: { groupId: DocId }
+  groupId: DocId
 ): Promise<GroupRoleDocument[]> => {
   const logger = await getLogger();
-  logger.debug({ groupId: args.groupId });
+  logger.debug({ groupId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const groupRoles = await getModel(dbName).find({ groupId: args.groupId });
+  const dbName = await getDBName(tenantId);
+  const groupRoles = await getModel(dbName).find({ groupId });
 
   return groupRoles;
 };
@@ -54,20 +55,20 @@ export const findAll = async (
 ): Promise<GroupRoleDocument[]> => {
   const logger = await getLogger();
   logger.debug({ tenantId });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const groupRoles = await getModel(dbName).find({});
   return groupRoles;
 };
 
 export const getRoleGroups = async (
   tenantId: string,
-  args: { roleId: DocId }
+  roleId: DocId
 ): Promise<GroupRoleDocument[]> => {
   const logger = await getLogger();
-  logger.debug({ roleId: args.roleId });
+  logger.debug({ roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const roleGroups = await getModel(dbName).find({ roleId: args.roleId });
+  const dbName = await getDBName(tenantId);
+  const roleGroups = await getModel(dbName).find({ roleId });
 
   return roleGroups;
 };

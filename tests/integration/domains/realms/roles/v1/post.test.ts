@@ -39,6 +39,6 @@ describe('POST /api/realm/:tenantId/v1/roles', () => {
       .send(roleData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body).toHaveProperty('error', 'Name is required');
   });
 });

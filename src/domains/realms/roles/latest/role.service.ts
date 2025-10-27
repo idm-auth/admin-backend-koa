@@ -3,34 +3,32 @@ import {
   getModel,
 } from '@/domains/realms/roles/latest/role.model';
 import { DocId } from '@/domains/commons/base/latest/base.schema';
-import {
-  RoleCreate,
-} from '@/domains/realms/roles/latest/role.schema';
+import { RoleCreate } from '@/domains/realms/roles/latest/role.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
 export const create = async (
   tenantId: string,
-  args: RoleCreate
+  data: RoleCreate
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
-  logger.debug({ name: args.name });
+  logger.debug({ name: data.name });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const role = await getModel(dbName).create(args);
+  const dbName = await getDBName(tenantId);
+  const role = await getModel(dbName).create(data);
 
   return role;
 };
 
 export const findById = async (
   tenantId: string,
-  args: { id: DocId }
+  id: DocId
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
-  logger.debug({ tenantId: tenantId, id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const role = await getModel(dbName).findById(args.id);
+  logger.debug({ tenantId, id });
+  const dbName = await getDBName(tenantId);
+  const role = await getModel(dbName).findById(id);
   if (!role) {
     throw new NotFoundError('Role not found');
   }
@@ -39,12 +37,12 @@ export const findById = async (
 
 export const findByName = async (
   tenantId: string,
-  args: { name: string }
+  name: string
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
-  logger.debug({ name: args.name });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const role = await getModel(dbName).findOne({ name: args.name });
+  logger.debug({ name });
+  const dbName = await getDBName(tenantId);
+  const role = await getModel(dbName).findOne({ name });
   if (!role) {
     throw new NotFoundError('Role not found');
   }
@@ -53,22 +51,22 @@ export const findByName = async (
 
 export const update = async (
   tenantId: string,
-  args: {
-    id: string;
+  id: string,
+  data: {
     name?: string;
     description?: string;
     permissions?: string[];
   }
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  logger.debug({ id });
+  const dbName = await getDBName(tenantId);
   const role = await getModel(dbName).findByIdAndUpdate(
-    args.id,
+    id,
     {
-      name: args.name,
-      description: args.description,
-      permissions: args.permissions,
+      name: data.name,
+      description: data.description,
+      permissions: data.permissions,
     },
     { new: true, runValidators: true }
   );
@@ -81,19 +79,19 @@ export const update = async (
 export const findAll = async (tenantId: string): Promise<RoleDocument[]> => {
   const logger = await getLogger();
   logger.debug({ tenantId });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const roles = await getModel(dbName).find({});
   return roles;
 };
 
 export const remove = async (
   tenantId: string,
-  args: { id: string }
+  id: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findByIdAndDelete(args.id);
+  logger.debug({ id });
+  const dbName = await getDBName(tenantId);
+  const result = await getModel(dbName).findByIdAndDelete(id);
   if (!result) {
     throw new NotFoundError('Role not found');
   }

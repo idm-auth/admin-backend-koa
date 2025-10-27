@@ -1,4 +1,8 @@
 import { DocId } from '@/domains/commons/base/latest/base.schema';
+import {
+  PaginatedResponse,
+  PaginationQuery,
+} from '@/domains/commons/base/latest/pagination.schema';
 import { validateEmailUnique } from '@/domains/commons/validations/v1/validation.service';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
@@ -9,71 +13,111 @@ import { AccountCreate } from './account.schema';
 
 export const create = async (
   tenantId: string,
-  args: AccountCreate
+  data: AccountCreate
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
-  logger.debug({ email: args.email });
-  // Validações de negócio
-  await validateEmailUnique(tenantId, args.email);
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const account = await getModel(dbName).create({
-    emails: [{ email: args.email, isPrimary: true }],
-    password: args.password,
-  });
+  try {
+    logger.info({ tenantId, email: data.email }, 'Creating new account');
 
-  return account;
+    // Validações de negócio
+    await validateEmailUnique(tenantId, data.email);
+
+    const dbName = await getDBName(tenantId);
+    const account = await getModel(dbName).create({
+      emails: [{ email: data.email, isPrimary: true }],
+      password: data.password,
+    });
+
+    logger.info(
+      { accountId: account._id, tenantId },
+      'Account created successfully'
+    );
+    return account;
+  } catch (error) {
+    logger.error(
+      { error, tenantId, email: data.email },
+      'Failed to create account'
+    );
+    throw error;
+  }
 };
 
 export const findById = async (
   tenantId: string,
-  args: { id: DocId }
+  id: DocId
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
-  logger.debug({ tenantId: tenantId, id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const account = await getModel(dbName).findById(args.id);
+  logger.info({ tenantId, id }, 'Finding account by ID');
+
+  const dbName = await getDBName(tenantId);
+  const account = await getModel(dbName).findById(id);
   if (!account) {
+    logger.warn({ tenantId, id }, 'Account not found');
     throw new NotFoundError('Account not found');
   }
+  logger.info(
+    { accountId: account._id, tenantId },
+    'Account found successfully'
+  );
   return account;
 };
 
 export const findByEmail = async (
   tenantId: string,
-  args: { email: string }
+  email: string
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
-  logger.debug({ email: args.email });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  logger.info({ tenantId, email }, 'Finding account by email');
+
+  const dbName = await getDBName(tenantId);
   const account = await getModel(dbName).findOne({
-    'emails.email': args.email,
+    'emails.email': email,
   });
   if (!account) {
+    logger.warn({ tenantId, email }, 'Account not found by email');
     throw new NotFoundError('Account not found');
   }
+  logger.info(
+    { accountId: account._id, tenantId },
+    'Account found by email successfully'
+  );
   return account;
 };
 
 export const update = async (
   tenantId: string,
-  args: {
-    id: string;
-    emails?: { email: string; isPrimary: boolean }[];
-    password?: string;
-  }
+  id: string,
+  data: { email?: string; password?: string }
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const account = await getModel(dbName).findByIdAndUpdate(
-    args.id,
-    { emails: args.emails, password: args.password },
-    { new: true, runValidators: true }
-  );
+  logger.info({ tenantId, id }, 'Updating account');
+
+  const dbName = await getDBName(tenantId);
+  const updateData: {
+    emails?: Array<{ email: string; isPrimary: boolean }>;
+    password?: string;
+  } = {};
+
+  if (data.email) {
+    updateData.emails = [{ email: data.email, isPrimary: true }];
+  }
+  if (data.password) {
+    updateData.password = data.password;
+  }
+
+  const account = await getModel(dbName).findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
   if (!account) {
+    logger.warn({ tenantId, id }, 'Account not found for update');
     throw new NotFoundError('Account not found');
   }
+  logger.info(
+    { accountId: account._id, tenantId },
+    'Account updated successfully'
+  );
   return account;
 };
 
@@ -81,37 +125,106 @@ export const comparePassword = async (
   account: AccountDocument,
   password: string
 ): Promise<boolean> => {
-  return bcrypt.compare(password, account.password);
+  const logger = await getLogger();
+  logger.info({ accountId: account._id }, 'Comparing password for account');
+
+  const isValid = await bcrypt.compare(password, account.password);
+  logger.info(
+    { accountId: account._id, isValid },
+    'Password comparison completed'
+  );
+
+  return isValid;
 };
 
 export const softDelete = async (
   tenantId: string,
-  args: { id: string }
+  id: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ id: args.id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findByIdAndUpdate(args.id, {
+  logger.info({ tenantId, id }, 'Soft deleting account');
+
+  const dbName = await getDBName(tenantId);
+  const result = await getModel(dbName).findByIdAndUpdate(id, {
     emails: [],
     password: null,
     salt: null,
   });
   if (!result) {
+    logger.warn({ tenantId, id }, 'Account not found for deletion');
     throw new NotFoundError('Account not found');
   }
+  logger.info({ tenantId, id }, 'Account soft deleted successfully');
 };
 
 export const findAll = async (tenantId: string): Promise<AccountDocument[]> => {
   const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  logger.info({ tenantId }, 'Finding all accounts');
+
+  const dbName = await getDBName(tenantId);
   const accounts = await getModel(dbName).find({});
+  logger.info({ tenantId, count: accounts.length }, 'Found all accounts');
   return accounts;
 };
 
-export const remove = async (
+export const findAllPaginated = async (
   tenantId: string,
-  args: { id: string }
-): Promise<void> => {
-  return softDelete(tenantId, args);
+  query: PaginationQuery
+): Promise<PaginatedResponse<AccountDocument>> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, query }, 'Finding accounts with pagination');
+
+  const { page, limit, filter, sortBy, descending } = query;
+  const dbName = await getDBName(tenantId);
+
+  const skip = (page - 1) * limit;
+
+  // Build filter query
+  const filterQuery: Record<string, unknown> = {};
+  if (filter) {
+    filterQuery.$or = [
+      { 'emails.email': { $regex: filter, $options: 'i' } },
+      { _id: { $regex: filter, $options: 'i' } },
+    ];
+  }
+
+  // Build sort query
+  const sortQuery: Record<string, 1 | -1> = {};
+  if (sortBy) {
+    sortQuery[sortBy] = descending ? -1 : 1;
+  } else {
+    sortQuery['emails.email'] = 1; // Default sort by email ascending
+  }
+
+  // Execute queries
+  const [accounts, total] = await Promise.all([
+    getModel(dbName).find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
+    getModel(dbName).countDocuments(filterQuery),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  logger.info(
+    { tenantId, total, page, limit, totalPages },
+    'Accounts pagination completed successfully'
+  );
+
+  return {
+    data: accounts,
+    pagination: {
+      total,
+      page: Number(page),
+      rowsPerPage: Number(limit),
+      totalPages,
+    },
+  };
+};
+
+export const remove = async (tenantId: string, id: string): Promise<void> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id }, 'Removing account');
+
+  await softDelete(tenantId, id);
+
+  logger.info({ tenantId, id }, 'Account removed successfully');
 };

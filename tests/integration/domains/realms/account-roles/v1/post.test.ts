@@ -53,6 +53,6 @@ describe('POST /api/realm/:tenantId/v1/account-roles', () => {
       .send(relationData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 });

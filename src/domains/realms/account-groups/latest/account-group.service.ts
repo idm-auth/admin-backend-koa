@@ -3,37 +3,36 @@ import {
   getModel,
 } from '@/domains/realms/account-groups/latest/account-group.model';
 import { DocId } from '@/domains/commons/base/latest/base.schema';
-import {
-  AccountGroupCreate,
-} from '@/domains/realms/account-groups/latest/account-group.schema';
+import { AccountGroupCreate } from '@/domains/realms/account-groups/latest/account-group.schema';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 
 export const addAccountToGroup = async (
   tenantId: string,
-  args: AccountGroupCreate
+  data: AccountGroupCreate
 ): Promise<AccountGroupDocument> => {
   const logger = await getLogger();
-  logger.debug({ accountId: args.accountId, groupId: args.groupId });
+  logger.debug({ accountId: data.accountId, groupId: data.groupId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const accountGroup = await getModel(dbName).create(args);
+  const dbName = await getDBName(tenantId);
+  const accountGroup = await getModel(dbName).create(data);
 
   return accountGroup;
 };
 
 export const removeAccountFromGroup = async (
   tenantId: string,
-  args: { accountId: string; groupId: string }
+  accountId: string,
+  groupId: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.debug({ accountId: args.accountId, groupId: args.groupId });
+  logger.debug({ accountId, groupId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const result = await getModel(dbName).findOneAndDelete({
-    accountId: args.accountId,
-    groupId: args.groupId,
+    accountId,
+    groupId,
   });
 
   if (!result) {
@@ -43,14 +42,14 @@ export const removeAccountFromGroup = async (
 
 export const getAccountGroups = async (
   tenantId: string,
-  args: { accountId: DocId }
+  accountId: DocId
 ): Promise<AccountGroupDocument[]> => {
   const logger = await getLogger();
-  logger.debug({ accountId: args.accountId });
+  logger.debug({ accountId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const accountGroups = await getModel(dbName).find({
-    accountId: args.accountId,
+    accountId,
   });
 
   return accountGroups;
@@ -58,13 +57,13 @@ export const getAccountGroups = async (
 
 export const getGroupAccounts = async (
   tenantId: string,
-  args: { groupId: DocId }
+  groupId: DocId
 ): Promise<AccountGroupDocument[]> => {
   const logger = await getLogger();
-  logger.debug({ groupId: args.groupId });
+  logger.debug({ groupId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const groupAccounts = await getModel(dbName).find({ groupId: args.groupId });
+  const dbName = await getDBName(tenantId);
+  const groupAccounts = await getModel(dbName).find({ groupId });
 
   return groupAccounts;
 };
@@ -74,26 +73,28 @@ export const findAll = async (
 ): Promise<AccountGroupDocument[]> => {
   const logger = await getLogger();
   logger.debug({ tenantId });
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const accountGroups = await getModel(dbName).find({});
   return accountGroups;
 };
 
 export const updateAccountGroupRoles = async (
   tenantId: string,
-  args: { accountId: string; groupId: string; roles: string[] }
+  accountId: string,
+  groupId: string,
+  roles: string[]
 ): Promise<AccountGroupDocument> => {
   const logger = await getLogger();
   logger.debug({
-    accountId: args.accountId,
-    groupId: args.groupId,
-    roles: args.roles,
+    accountId,
+    groupId,
+    roles,
   });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
+  const dbName = await getDBName(tenantId);
   const accountGroup = await getModel(dbName).findOneAndUpdate(
-    { accountId: args.accountId, groupId: args.groupId },
-    { roles: args.roles },
+    { accountId, groupId },
+    { roles },
     { new: true }
   );
 

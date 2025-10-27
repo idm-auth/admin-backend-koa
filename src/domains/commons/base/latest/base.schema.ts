@@ -1,5 +1,9 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
+import {
+  validateXSS,
+  validateSSRF,
+} from '@/domains/commons/validations/latest/validation.service';
 
 extendZodWithOpenApi(z);
 
@@ -21,6 +25,8 @@ export const emailSchema = z
         ? 'Email is required'
         : 'Invalid email format',
   })
+  .refine(validateXSS, 'Email contains invalid characters')
+  .refine(validateSSRF, 'Email domain not allowed')
   .openapi({ description: 'Valid email address' });
 
 export type Email = z.infer<typeof emailSchema>;

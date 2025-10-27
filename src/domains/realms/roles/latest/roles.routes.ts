@@ -1,20 +1,31 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as roleController from './role.controller';
 import {
+  roleCreateResponseSchema,
   roleCreateSchema,
-  roleResponseSchema,
+  roleListResponseSchema,
+  roleReadResponseSchema,
+  roleSearchResponseSchema,
+  roleUpdateResponseSchema,
   roleUpdateSchema,
 } from './role.schema';
-import { requestTenantIdAndIdParamsSchema, requestTenantIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import {
+  requestTenantIdAndIdParamsSchema,
+  requestTenantIdParamsSchema,
+} from '@/domains/commons/base/latest/request.schema';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/roles' });
   const swagger = createCrudSwagger(
     'Role',
-    roleResponseSchema,
     roleCreateSchema,
-    roleUpdateSchema
+    roleUpdateSchema,
+    roleCreateResponseSchema,
+    roleUpdateResponseSchema,
+    roleReadResponseSchema,
+    roleListResponseSchema,
+    roleSearchResponseSchema
   );
 
   // GET /roles - List all roles

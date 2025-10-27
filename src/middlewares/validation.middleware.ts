@@ -52,6 +52,7 @@ export const responseValidationMiddleware = <
 >(
   config: MagicRouteConfig<TContext>
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return async (ctx: Context, next: Next) => {
     const logger = await getLogger();
 

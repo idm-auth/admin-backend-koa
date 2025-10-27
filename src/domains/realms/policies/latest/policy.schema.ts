@@ -14,7 +14,7 @@ export const policyCreateSchema = z.object({
 });
 
 // Response schemas
-export const policyResponseSchema = z.object({
+export const policyBaseResponseSchema = z.object({
   _id: DocIdSchema,
   name: z.string(),
   description: z.string().optional(),
@@ -23,6 +23,12 @@ export const policyResponseSchema = z.object({
   resources: z.array(z.string()),
   conditions: z.record(z.string(), z.any()).optional(),
 });
+
+export const policyCreateResponseSchema = policyBaseResponseSchema;
+export const policyUpdateResponseSchema = policyBaseResponseSchema;
+export const policyReadResponseSchema = policyBaseResponseSchema;
+export const policyListResponseSchema = z.array(policyBaseResponseSchema);
+export const policySearchResponseSchema = policyReadResponseSchema;
 
 export const policyUpdateSchema = z.object({
   name: z.string().optional(),
@@ -34,7 +40,12 @@ export const policyUpdateSchema = z.object({
 });
 
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;
-export type PolicyResponse = z.infer<typeof policyResponseSchema>;
+export type PolicyBaseResponse = z.infer<typeof policyBaseResponseSchema>;
+export type PolicyCreateResponse = z.infer<typeof policyCreateResponseSchema>;
+export type PolicyUpdateResponse = z.infer<typeof policyUpdateResponseSchema>;
+export type PolicyReadResponse = z.infer<typeof policyReadResponseSchema>;
+export type PolicyListResponse = z.infer<typeof policyListResponseSchema>;
+export type PolicySearchResponse = z.infer<typeof policySearchResponseSchema>;
 export type PolicyUpdate = z.infer<typeof policyUpdateSchema>;
 
 export type PolicyParams = z.infer<typeof requestIDParamsSchema>;

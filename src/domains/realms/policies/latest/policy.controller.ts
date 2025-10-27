@@ -30,7 +30,7 @@ export const create = async (ctx: Context) => {
 export const findById = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  const policy = await policyService.findById(tenantId, { id });
+  const policy = await policyService.findById(tenantId, id);
 
   ctx.body = {
     id: policy._id,
@@ -48,8 +48,7 @@ export const update = async (ctx: Context) => {
   const { name, description, effect, actions, resources, conditions } =
     ctx.validated.body;
 
-  const policy = await policyService.update(tenantId, {
-    id,
+  const policy = await policyService.update(tenantId, id, {
     name,
     description,
     effect,
@@ -88,7 +87,7 @@ export const findAll = async (ctx: Context) => {
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;
 
-  await policyService.remove(tenantId, { id });
+  await policyService.remove(tenantId, id);
 
   ctx.status = 204;
 };

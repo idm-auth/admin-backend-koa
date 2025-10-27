@@ -41,11 +41,13 @@ describe('GET /api/realm/:tenantId/v1/accounts', () => {
       .get(`/api/realm/${tenantId}/v1/accounts/`)
       .expect(200);
 
-    expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body.length).toBeGreaterThanOrEqual(2);
+    expect(response.body).toHaveProperty('data');
+    expect(response.body).toHaveProperty('pagination');
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data.length).toBeGreaterThanOrEqual(2);
 
     // Verificar estrutura dos objetos retornados
-    response.body.forEach((account: { _id: string; email: string }) => {
+    response.body.data.forEach((account: { _id: string; email: string }) => {
       expect(account).toHaveProperty('_id');
       expect(account).toHaveProperty('email');
       expect(account).not.toHaveProperty('password');
@@ -59,8 +61,9 @@ describe('GET /api/realm/:tenantId/v1/accounts', () => {
       .get(`/api/realm/${emptyTenantId}/v1/accounts/`)
       .expect(200);
 
-    expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body.length).toBe(0);
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data.length).toBe(0);
   });
 
   it('should return 400 for invalid tenant id', async () => {

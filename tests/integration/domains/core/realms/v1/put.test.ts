@@ -44,11 +44,11 @@ describe('PUT /api/core/v1/realms/:id', () => {
     expect(response.body).toHaveProperty('_id', createdRealmId);
     expect(response.body.name).toBe(updateData.name);
     expect(response.body.description).toBe(updateData.description);
-    expect(response.body.jwtConfig.secret).toBe(updateData.jwtConfig.secret);
+    expect(response.body.jwtConfig).toHaveProperty('secret');
+    expect(typeof response.body.jwtConfig.secret).toBe('string');
     expect(response.body.jwtConfig.expiresIn).toBe(
       updateData.jwtConfig.expiresIn
     );
-
   });
 
   it('should update only provided fields', async () => {
@@ -90,8 +90,7 @@ describe('PUT /api/core/v1/realms/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid ID');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {

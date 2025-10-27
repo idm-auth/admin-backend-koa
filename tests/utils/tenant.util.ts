@@ -8,11 +8,17 @@ import { NotFoundError } from '@/errors/not-found';
  */
 export async function getTenantId(name: string): Promise<string> {
   try {
-    const realm = await realmService.findByName({ name });
+    const realm = await realmService.findByName(name);
     return realm.publicUUID;
   } catch (error) {
     if (error instanceof NotFoundError) {
-      const realm = await realmService.create({ data: { name, dbName: name } });
+      const realm = await realmService.create({ 
+        name, 
+        dbName: name,
+        jwtConfig: {
+          expiresIn: '24h'
+        }
+      });
       return realm.publicUUID;
     }
     throw error;

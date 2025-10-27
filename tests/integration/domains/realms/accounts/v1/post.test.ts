@@ -40,8 +40,7 @@ describe('POST /api/realm/:tenantId/v1/accounts', () => {
       .send(accountData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Email is required');
+    expect(response.body).toHaveProperty('error', 'Email is required');
   });
 
   it('should return 400 for missing password', async () => {
@@ -54,8 +53,7 @@ describe('POST /api/realm/:tenantId/v1/accounts', () => {
       .send(accountData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Password is required');
+    expect(response.body).toHaveProperty('error', 'Password is required');
   });
 
   it('should return 400 for invalid email format', async () => {
@@ -70,8 +68,7 @@ describe('POST /api/realm/:tenantId/v1/accounts', () => {
       .send(accountData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid email format');
+    expect(response.body).toHaveProperty('error', 'Invalid email format');
   });
 
   it('should return 400 for weak password', async () => {
@@ -86,8 +83,7 @@ describe('POST /api/realm/:tenantId/v1/accounts', () => {
       .send(accountData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toMatch(/Password must/);
+    expect(response.body.error).toMatch(/Password must/);
   });
 
   it('should return 500 for server errors', async () => {

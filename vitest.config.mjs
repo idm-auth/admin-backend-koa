@@ -8,6 +8,7 @@ export default defineConfig({
     environment: 'node',
     env: {
       NODE_ENV: 'test',
+      LOGGER_LEVEL: 'error',
     },
     setupFiles: [
       'tests/setup/base.setup.ts',

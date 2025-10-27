@@ -105,11 +105,10 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Validation failed');
-    expect(response.body.details).toContain('Invalid ID');
+    expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 
-  it('should return 500 for invalid email format', async () => {
+  it('should return 400 for invalid email format', async () => {
     const updateData = {
       email: 'invalid-email',
     };
@@ -117,12 +116,12 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .send(updateData)
-      .expect(500);
+      .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    expect(response.body).toHaveProperty('error', 'Invalid email format');
   });
 
-  it('should return 500 for weak password', async () => {
+  it('should return 400 for weak password', async () => {
     const updateData = {
       password: 'weak',
     };
@@ -130,8 +129,8 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .send(updateData)
-      .expect(500);
+      .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toMatch(/Password must/);
   });
 });
