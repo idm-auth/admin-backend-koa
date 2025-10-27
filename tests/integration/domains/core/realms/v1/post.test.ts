@@ -10,7 +10,6 @@ describe('POST /api/core/v1/realms', () => {
       description: 'Test realm for creation',
       dbName: 'test-db-create',
       jwtConfig: {
-        secret: 'test-secret-key',
         expiresIn: '24h',
       },
     };
@@ -30,6 +29,28 @@ describe('POST /api/core/v1/realms', () => {
     expect(response.body.jwtConfig.expiresIn).toBe(
       realmData.jwtConfig.expiresIn
     );
+  });
+
+  it('should create a new realm successfully with default jwtConfig', async () => {
+    const realmData = {
+      name: 'test-realm-create-default',
+      description: 'Test realm for creation with defaults',
+      dbName: 'test-db-create-default',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/v1/realms')
+      .send(realmData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).toHaveProperty('publicUUID');
+    expect(response.body.name).toBe(realmData.name);
+    expect(response.body.description).toBe(realmData.description);
+    expect(response.body.dbName).toBe(realmData.dbName);
+    expect(response.body.jwtConfig).toHaveProperty('secret');
+    expect(typeof response.body.jwtConfig.secret).toBe('string');
+    expect(response.body.jwtConfig).toHaveProperty('expiresIn');
   });
 
   it('should return 400 for missing name', async () => {

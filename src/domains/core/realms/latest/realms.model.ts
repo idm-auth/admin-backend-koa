@@ -29,6 +29,7 @@ export const schema = new mongoose.Schema({
       },
       expiresIn: { type: String, required: true, default: '24h' },
     },
+    default: {},
   },
 });
 schema.add(baseDocumentSchema);
