@@ -7,20 +7,20 @@
 - Valide o resultado, não apenas se a função foi chamada
 
 ## Quando NÃO usar mocks
-- ❌ **NUNCA** mocke apenas para forçar um retorno específico
-- ❌ **NUNCA** use `mockReturnValueOnce()` sem necessidade real
-- ❌ **NUNCA** mocke bibliotecas que podem ser testadas diretamente
-- ❌ **NUNCA** mocke para "facilitar" o teste
+- **NUNCA** mocke apenas para forçar um retorno específico
+- **NUNCA** use `mockReturnValueOnce()` sem necessidade real
+- **NUNCA** mocke bibliotecas que podem ser testadas diretamente
+- **NUNCA** mocke para "facilitar" o teste
 
 ## Exemplos INCORRETOS
 ```typescript
-// ❌ Mock desnecessário - força retorno fake
+// Mock desnecessário - força retorno fake
 mockJwt.verify.mockReturnValueOnce(mockPayload);
 
-// ❌ Mock que não testa comportamento real
+// Mock que não testa comportamento real
 mockService.findById.mockResolvedValue(account);
 
-// ❌ Mock complexo sem necessidade
+// Mock complexo sem necessidade
 vi.mock('jsonwebtoken', async () => {
   const actual = await vi.importActual('jsonwebtoken');
   return { ...actual, verify: vi.fn() };
@@ -29,24 +29,24 @@ vi.mock('jsonwebtoken', async () => {
 
 ## Exemplos CORRETOS
 ```typescript
-// ✅ Teste real - gera e verifica token
+// Teste real - gera e verifica token
 const token = await jwtService.generateToken(tenantId, payload);
 const result = await jwtService.verifyToken(tenantId, token);
 
-// ✅ Teste de erro com dados inválidos reais
+// Teste de erro com dados inválidos reais
 await expect(
   jwtService.verifyToken(tenantId, 'token-invalido')
 ).rejects.toThrow();
 
-// ✅ Mock apenas para dependências externas (DB, APIs)
+// Mock apenas para dependências externas (DB, APIs)
 vi.mock('@/services/external-api.service');
 ```
 
 ## Quando usar mocks
-- ✅ Dependências externas (APIs, banco de dados)
-- ✅ Operações custosas (filesystem, rede)
-- ✅ Comportamentos não determinísticos (datas, random)
-- ✅ Isolamento de unidade específica
+- Dependências externas (APIs, banco de dados)
+- Operações custosas (filesystem, rede)
+- Comportamentos não determinísticos (datas, random)
+- Isolamento de unidade específica
 
 ## Validações
 - Sempre valide propriedades específicas do resultado

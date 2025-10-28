@@ -5,7 +5,7 @@ export const logRoutesDetailed = (router: Router, prefix = '', level = 0) => {
   const routes = router.stack;
 
   if (level === 0) {
-    console.log('\n🚀 Mapa completo de rotas:');
+    console.log('\nMapa completo de rotas:');
     console.log('═'.repeat(60));
   }
 

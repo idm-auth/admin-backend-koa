@@ -8,14 +8,14 @@
 - Dados em `ctx.validated` já passaram por validação Zod e são type-safe
 
 ```typescript
-// ✅ Correto - dados validados
+// Correto - dados validados
 export const create = async (ctx: Context) => {
   const data = ctx.validated.body;
   const { id } = ctx.validated.params;
   const query = ctx.validated.query;
 };
 
-// ❌ Incorreto - dados não validados
+// Incorreto - dados não validados
 export const create = async (ctx: Context) => {
   const data = ctx.request.body;
   const { id } = ctx.params;
@@ -51,13 +51,13 @@ export const update = async (ctx: Context) => {
 - Use dados de `ctx.validated` diretamente
 
 ```typescript
-// ❌ Incorreto - validação dupla
+// Incorreto - validação dupla
 export const create = async (ctx: Context) => {
   const data = ctx.validated.body;
   const validatedData = await validateZod(data, schema); // Desnecessário!
 };
 
-// ✅ Correto - usa dados já validados
+// Correto - usa dados já validados
 export const create = async (ctx: Context) => {
   const data = ctx.validated.body; // Já validado pelo middleware
   const result = await service.create(data);
@@ -72,7 +72,7 @@ export const create = async (ctx: Context) => {
 - **Nunca** para revalidar dados já validados pelo middleware
 
 ```typescript
-// ✅ Aceitável - validação adicional específica
+// Aceitável - validação adicional específica
 export const complexOperation = async (ctx: Context) => {
   const baseData = ctx.validated.body;
   
@@ -108,16 +108,16 @@ export const create = async (ctx: Context) => {
 ## Benefícios
 
 ### Segurança
-- ✅ Dados sempre validados antes do uso
-- ✅ Prevenção de ataques de injeção
-- ✅ Validação de tipos em runtime
+- Dados sempre validados antes do uso
+- Prevenção de ataques de injeção
+- Validação de tipos em runtime
 
 ### Produtividade
-- ✅ Type safety completo
-- ✅ IntelliSense preciso
-- ✅ Menos bugs relacionados a tipos
+- Type safety completo
+- IntelliSense preciso
+- Menos bugs relacionados a tipos
 
 ### Consistência
-- ✅ Padrão único em toda aplicação
-- ✅ Fácil manutenção
-- ✅ Código mais limpo e legível
+- Padrão único em toda aplicação
+- Fácil manutenção
+- Código mais limpo e legível

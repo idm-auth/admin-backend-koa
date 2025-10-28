@@ -21,7 +21,7 @@ src/domains/realms/accounts/
     └── account.schema.ts (re-export do latest)
 ```
 
-### 🧪 Testes
+### Testes
 ```
 tests/integration/domains/realms/accounts/
 └── v1/
@@ -32,17 +32,17 @@ tests/integration/domains/realms/accounts/
 
 ## Vantagens da Nova Estrutura
 
-### ✅ Organização por Domínio
+### Organização por Domínio
 - **Coesão**: Tudo relacionado a accounts fica junto
 - **Facilita navegação**: Você sabe exatamente onde encontrar código do accounts
 - **Manutenção**: Mudanças em accounts ficam isoladas no domínio
 
-### ✅ Versionamento Interno
+### Versionamento Interno
 - **latest/**: Contém a implementação atual
 - **v1/**: Faz re-export do latest, permitindo sobrescrever métodos específicos
 - **Evolução**: Facilita criação de novas versões sem quebrar compatibilidade
 
-### ✅ Escalabilidade
+### Escalabilidade
 - **Padrão**: Outros domínios podem seguir a mesma estrutura
 - **Isolamento**: Cada domínio evolui independentemente
 - **Organização**: Estrutura clara para novos desenvolvedores
@@ -63,7 +63,7 @@ import * as accountController from '@/domains/realms/accounts/v1/account.control
 
 ## Arquivos Migrados
 
-### ✅ Removidos (Estrutura Antiga)
+### Removidos (Estrutura Antiga)
 - `src/controllers/latest/account.controller.ts`
 - `src/controllers/v1/account.controller.ts`
 - `src/services/latest/account.service.ts`
@@ -73,31 +73,31 @@ import * as accountController from '@/domains/realms/accounts/v1/account.control
 - `src/models/db/realms/accounts/`
 - `tests/integration/routes/realm/v1/accounts/`
 
-### ✅ Criados (Estrutura DDD)
+### Criados (Estrutura DDD)
 - `src/domains/realms/accounts/latest/account.*`
 - `src/domains/realms/accounts/v1/account.*`
 - `tests/integration/domains/realms/accounts/v1/*.test.ts`
 
 ## Compatibilidade
 
-### ✅ Sem Breaking Changes
+### Sem Breaking Changes
 - **Rotas**: Permanecem inalteradas (`/api/realm/:tenantId/v1/accounts`)
 - **APIs**: Mesma interface pública
 - **Testes**: Todos continuam passando
 
-### ✅ Imports Atualizados
+### Imports Atualizados
 - **Rotas**: `src/routes/api/realm/v1/accounts.routes.ts`
 - **Services**: `src/services/latest/auth.service.ts`, `src/services/latest/validation.service.ts`
 - **Testes**: Todos os testes que importavam account service
 
 ## Próximos Passos
 
-### 🎯 Outros Domínios para Migrar
+### Outros Domínios para Migrar
 - `groups` → `src/domains/realms/groups/`
 - `roles` → `src/domains/realms/roles/`
 - `policies` → `src/domains/realms/policies/`
 
-### 🎯 Domínios Auth e Core
+### Domínios Auth e Core
 - `auth` → `src/domains/auth/`
 - `config` → `src/domains/core/config/`
 - `realm` → `src/domains/core/realm/`

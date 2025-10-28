@@ -40,6 +40,10 @@ export const accountUpdateSchema = z.object({
   password: z.string().optional(),
 });
 
+export const accountResetPasswordSchema = z.object({
+  password: passwordSchema,
+});
+
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
 export type AccountBaseResponse = z.infer<typeof accountBaseResponseSchema>;
 export type AccountCreateResponse = z.infer<typeof accountCreateResponseSchema>;
@@ -51,6 +55,7 @@ export type AccountReadResponse = z.infer<typeof accountReadResponseSchema>;
 export type AccountListResponse = z.infer<typeof accountListResponseSchema>;
 export type AccountSearchResponse = z.infer<typeof accountSearchResponseSchema>;
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
+export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
 
 // Pagination schemas
 export const accountListQuerySchema = paginationQuerySchema;

@@ -13,12 +13,12 @@
 ## Uso do Logger
 
 ### Nunca use console.log/console.error
-- ❌ `console.log('message')`
-- ❌ `console.error('error')`
+- `console.log('message')`
+- `console.error('error')`
 
 ### Sempre use o logger apropriado
-- ✅ `const logger = getLogger(); logger.info('message')`
-- ✅ `const logger = getLogger(); logger.error('error')`
+- `const logger = getLogger(); logger.info('message')`
+- `const logger = getLogger(); logger.error('error')`
 
 ## Níveis de Log
 - `logger.error()` - Erros que precisam atenção
@@ -32,11 +32,11 @@
 - Para logs com erro: `logger.error({ error, ...context }, 'mensagem')`
 - Para logs simples: `logger.info('mensagem')`
 - Exemplos:
-  - ✅ `logger.error({ error, userId: '123' }, 'Falha na operação')`
-  - ✅ `logger.info({ userId: '123' }, 'Operação realizada')`
-  - ✅ `logger.info('Mensagem simples')`
-  - ❌ `logger.error(error, 'mensagem')` // Erro direto como primeiro parâmetro
-  - ❌ `logger.info('mensagem', { context })` // Ordem incorreta
+  - `logger.error({ error, userId: '123' }, 'Falha na operação')`
+  - `logger.info({ userId: '123' }, 'Operação realizada')`
+  - `logger.info('Mensagem simples')`
+  - `logger.error(error, 'mensagem')` // Erro direto como primeiro parâmetro
+  - `logger.info('mensagem', { context })` // Ordem incorreta
 
 ## Contexto
 - Em controllers/services: logger automaticamente inclui requestId do contexto
@@ -44,5 +44,5 @@
 
 ## Formatação de Objetos
 - Para objetos complexos: use template strings
-- ✅ `logger.error(`Config: ${JSON.stringify(config, null, 2)}`)`
-- ❌ `logger.error('Config:', JSON.stringify(config))` // Dois parâmetros
+- `logger.error(`Config: ${JSON.stringify(config, null, 2)}`)`
+- `logger.error('Config:', JSON.stringify(config))` // Dois parâmetros

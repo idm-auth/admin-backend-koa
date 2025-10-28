@@ -228,3 +228,30 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
 
   logger.info({ tenantId, id }, 'Account removed successfully');
 };
+
+export const resetPassword = async (
+  tenantId: string,
+  id: string,
+  password: string
+): Promise<AccountDocument> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id }, 'Resetting account password');
+
+  const dbName = await getDBName(tenantId);
+  const account = await getModel(dbName).findByIdAndUpdate(
+    id,
+    { password },
+    { new: true, runValidators: true }
+  );
+  
+  if (!account) {
+    logger.warn({ tenantId, id }, 'Account not found for password reset');
+    throw new NotFoundError('Account not found');
+  }
+  
+  logger.info(
+    { accountId: account._id, tenantId },
+    'Account password reset successfully'
+  );
+  return account;
+};

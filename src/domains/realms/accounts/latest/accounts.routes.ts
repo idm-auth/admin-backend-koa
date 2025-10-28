@@ -10,6 +10,7 @@ import {
   accountListResponseSchema,
   accountPaginatedResponseSchema,
   accountReadResponseSchema,
+  accountResetPasswordSchema,
   accountSearchResponseSchema,
   accountUpdateResponseSchema,
   accountUpdateSchema,
@@ -123,6 +124,57 @@ export const initialize = async () => {
       params: requestTenantIdAndIdParamsSchema,
     },
     responses: swagger.delete.responses,
+    tags: ['Accounts'],
+  });
+
+  // PATCH /accounts/:id/reset-password - Reset account password
+  router.patch({
+    name: 'resetAccountPassword',
+    path: '/:id/reset-password',
+    summary: 'Reset account password',
+    handlers: [accountController.resetPassword],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountResetPasswordSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Password reset successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
     tags: ['Accounts'],
   });
 

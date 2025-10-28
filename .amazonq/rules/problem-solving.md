@@ -12,10 +12,10 @@
 
 ### Exemplos de quando PARAR e PERGUNTAR:
 
-- ❌ "Vou mudar de `parse` para `safeParse`"
-- ❌ "Vou criar uma nova classe/service/filtro"
-- ❌ "Vou trocar a biblioteca X pela Y"
-- ❌ "Vou implementar um wrapper/adapter"
+- "Vou mudar de `parse` para `safeParse`"
+- "Vou criar uma nova classe/service/filtro"
+- "Vou trocar a biblioteca X pela Y"
+- "Vou implementar um wrapper/adapter"
 
 ### O que fazer:
 

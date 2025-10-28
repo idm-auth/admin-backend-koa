@@ -77,3 +77,12 @@ export const remove = async (ctx: Context) => {
 
   ctx.status = 204;
 };
+
+export const resetPassword = async (ctx: Context) => {
+  const { tenantId, id } = ctx.validated.params;
+  const { password } = ctx.validated.body;
+
+  const account = await accountService.resetPassword(tenantId, id, password);
+
+  ctx.body = accountMapper.toUpdateResponse(account);
+};
