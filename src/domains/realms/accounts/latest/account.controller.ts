@@ -5,14 +5,30 @@ import * as accountService from './account.service';
 import * as accountMapper from './account.mapper';
 
 export const create = async (ctx: Context) => {
+  const logger = await getLogger();
   const { tenantId } = ctx.validated.params;
-  const account = await accountService.create(
-    tenantId,
-    ctx.validated.body
-  );
 
-  ctx.status = 201;
-  ctx.body = accountMapper.toCreateResponse(account);
+  try {
+    const account = await accountService.create(tenantId, ctx.validated.body);
+
+    logger.info(
+      { tenantId, accountId: account._id },
+      'Account created successfully'
+    );
+
+    ctx.status = 201;
+    ctx.body = accountMapper.toCreateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        email: ctx.validated.body?.email,
+      },
+      'Failed to create account'
+    );
+    throw error;
+  }
 };
 
 export const findById = async (ctx: Context) => {
@@ -29,60 +45,139 @@ export const findById = async (ctx: Context) => {
 };
 
 export const update = async (ctx: Context) => {
+  const logger = await getLogger();
   const { tenantId, id } = ctx.validated.params;
   const updateData = ctx.validated.body;
 
-  const account = await accountService.update(
-    tenantId,
-    id,
-    updateData
-  );
+  try {
+    const account = await accountService.update(tenantId, id, updateData);
 
-  ctx.body = accountMapper.toUpdateResponse(account);
+    logger.info({ tenantId, accountId: id }, 'Account updated successfully');
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+      },
+      'Failed to update account'
+    );
+    throw error;
+  }
 };
 
 export const findAll = async (ctx: Context) => {
+  const logger = await getLogger();
   const { tenantId } = ctx.validated.params;
 
-  const accounts = await accountService.findAll(tenantId);
+  try {
+    const accounts = await accountService.findAll(tenantId);
 
-  ctx.body = accounts.map(accountMapper.toListItemResponse);
+    logger.debug(
+      { tenantId, count: accounts.length },
+      'Retrieved all accounts'
+    );
+
+    ctx.body = accounts.map(accountMapper.toListItemResponse);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+      },
+      'Failed to retrieve all accounts'
+    );
+    throw error;
+  }
 };
 
 export const findAllPaginated = async (ctx: Context) => {
   const logger = await getLogger();
   const { tenantId } = ctx.validated.params;
   const query = ctx.validated.query;
-  logger.debug(query, 'findAllPaginated query:');
 
-  const serviceResult = await accountService.findAllPaginated(
-    tenantId,
-    query
-  );
+  try {
+    logger.debug({ tenantId, query }, 'Finding paginated accounts');
 
-  const data = serviceResult.data.map(accountMapper.toListItemResponse);
+    const serviceResult = await accountService.findAllPaginated(
+      tenantId,
+      query
+    );
 
-  const result: AccountPaginatedResponse = {
-    data,
-    pagination: serviceResult.pagination,
-  };
+    const data = serviceResult.data.map(accountMapper.toListItemResponse);
 
-  ctx.body = result;
+    const result: AccountPaginatedResponse = {
+      data,
+      pagination: serviceResult.pagination,
+    };
+
+    logger.debug(
+      { tenantId, total: serviceResult.pagination.total },
+      'Retrieved paginated accounts'
+    );
+
+    ctx.body = result;
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        query,
+      },
+      'Failed to retrieve paginated accounts'
+    );
+    throw error;
+  }
 };
 
 export const remove = async (ctx: Context) => {
+  const logger = await getLogger();
   const { tenantId, id } = ctx.validated.params;
 
-  await accountService.remove(tenantId, id);
+  try {
+    await accountService.remove(tenantId, id);
 
-  ctx.status = 204;
+    logger.info({ tenantId, accountId: id }, 'Account removed successfully');
+
+    ctx.status = 204;
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+      },
+      'Failed to remove account'
+    );
+    throw error;
+  }
 };
 
 export const resetPassword = async (ctx: Context) => {
+  const logger = await getLogger();
   const { tenantId, id } = ctx.validated.params;
   const { password } = ctx.validated.body;
 
-  const account = await accountService.resetPassword(tenantId, id, password);
+  try {
+    const account = await accountService.resetPassword(tenantId, id, password);
 
-  ctx.body = accountMapper.toUpdateResponse(account);
+    logger.info(
+      { tenantId, accountId: id },
+      'Account password reset successfully'
+    );
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+      },
+      'Failed to reset account password'
+    );
+    throw error;
+  }
 };

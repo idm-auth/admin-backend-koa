@@ -57,14 +57,9 @@ describe('AccountGroups Populate Test', () => {
       tenantId,
       accountGroup.accountId
     );
-    const group = await groupService.findById(
-      tenantId,
-      accountGroup.groupId
-    );
+    const group = await groupService.findById(tenantId, accountGroup.groupId);
     const roles = await Promise.all(
-      accountGroup.roles.map((roleId) =>
-        roleService.findById(tenantId, roleId)
-      )
+      accountGroup.roles.map((roleId) => roleService.findById(tenantId, roleId))
     );
 
     // 3. Verificar dados populados manualmente

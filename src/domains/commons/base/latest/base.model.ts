@@ -16,7 +16,6 @@ export const baseDocumentIDSchema = new Schema({
 export const baseDocumentSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  deletedAt: { type: Date, default: null },
 });
 baseDocumentSchema.add(baseDocumentIDSchema);
 
@@ -29,10 +28,6 @@ baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
   this.set({ updatedAt: new Date() });
   next();
 });
-
-baseDocumentSchema.methods.softDelete = async function (): Promise<void> {
-  this.deletedAt = new Date();
-};
 
 // Virtual getter para mapear .id para ._id
 baseDocumentSchema.virtual('id').get(function () {

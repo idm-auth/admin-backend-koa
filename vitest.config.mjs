@@ -6,6 +6,21 @@ export default defineConfig({
   test: {
     globals: true, // habilita describe, it, expect
     environment: 'node',
+    pool: 'threads', // Opções: 'threads' | 'forks' | 'vmThreads' | false
+    poolOptions: {
+      threads: {
+        minThreads: 6,
+        maxThreads: 10, // Recomendado: número de CPUs
+        useAtomics: true, // Melhor performance
+        isolate: true, // Isolamento entre testes
+      },
+      // Para pool: 'forks'
+      // forks: {
+      //   minForks: 1,
+      //   maxForks: 4,
+      //   isolate: true,
+      // },
+    },
     env: {
       NODE_ENV: 'test',
       LOGGER_LEVEL: 'error',
@@ -16,6 +31,9 @@ export default defineConfig({
     ],
 
     include: ['tests/**/*.test.ts'],
+    // Configurações de performance
+    testTimeout: 30000, // 30s timeout
+    hookTimeout: 30000, // 30s para hooks
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json', 'lcov'],

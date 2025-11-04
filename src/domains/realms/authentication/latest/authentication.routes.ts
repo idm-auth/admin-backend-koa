@@ -42,6 +42,14 @@ export const initialize = async () => {
           },
         },
       },
+      401: {
+        description: 'Unauthorized - Invalid credentials',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
     },
     tags: ['Authentication'],
   });

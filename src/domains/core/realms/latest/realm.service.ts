@@ -13,8 +13,8 @@ import {
   Realm,
   RealmOmitId,
 } from '@/domains/core/realms/latest/realms.model';
-import { NotFoundError } from '@/errors/not-found';
 import { ConflictError } from '@/errors/conflict';
+import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 
 const validateDBName = async (dbName: string): Promise<void> => {
@@ -48,10 +48,16 @@ export const create = async (
   try {
     const realm = await getModel().create(data);
     return realm;
-  } catch (error: any) {
-    if (error.code === 11000) {
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 11000
+    ) {
       // MongoDB duplicate key error
-      if (error.keyPattern?.name) {
+      const mongoError = error as { keyPattern?: { name?: unknown } };
+      if (mongoError.keyPattern?.name) {
         throw new ConflictError('Resource already exists', {
           field: 'name',
           details: 'A resource with this name already exists',
@@ -192,9 +198,7 @@ export const getDBName = async (publicUUID: PublicUUID) => {
   const realm = await getModel().findOne({ publicUUID });
 
   if (!realm || !realm.dbName) {
-    throw new NotFoundError(
-      `DBName not found for publicUUID: ${publicUUID}`
-    );
+    throw new NotFoundError(`DBName not found for publicUUID: ${publicUUID}`);
   }
 
   return realm.dbName;

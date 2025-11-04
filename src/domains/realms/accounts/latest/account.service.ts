@@ -3,6 +3,7 @@ import {
   PaginatedResponse,
   PaginationQuery,
 } from '@/domains/commons/base/latest/pagination.schema';
+
 import { validateEmailUnique } from '@/domains/commons/validations/v1/validation.service';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
@@ -137,24 +138,21 @@ export const comparePassword = async (
   return isValid;
 };
 
-export const softDelete = async (
+export const hardDelete = async (
   tenantId: string,
   id: string
 ): Promise<void> => {
   const logger = await getLogger();
-  logger.info({ tenantId, id }, 'Soft deleting account');
+  logger.info({ tenantId, id }, 'Deleting account');
 
   const dbName = await getDBName(tenantId);
-  const result = await getModel(dbName).findByIdAndUpdate(id, {
-    emails: [],
-    password: null,
-    salt: null,
-  });
+  const result = await getModel(dbName).findByIdAndDelete(id);
   if (!result) {
     logger.warn({ tenantId, id }, 'Account not found for deletion');
     throw new NotFoundError('Account not found');
   }
-  logger.info({ tenantId, id }, 'Account soft deleted successfully');
+
+  logger.info({ tenantId, id }, 'Account deleted successfully');
 };
 
 export const findAll = async (tenantId: string): Promise<AccountDocument[]> => {
@@ -224,7 +222,7 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Removing account');
 
-  await softDelete(tenantId, id);
+  await hardDelete(tenantId, id);
 
   logger.info({ tenantId, id }, 'Account removed successfully');
 };
@@ -243,12 +241,12 @@ export const resetPassword = async (
     { password },
     { new: true, runValidators: true }
   );
-  
+
   if (!account) {
     logger.warn({ tenantId, id }, 'Account not found for password reset');
     throw new NotFoundError('Account not found');
   }
-  
+
   logger.info(
     { accountId: account._id, tenantId },
     'Account password reset successfully'

@@ -3,6 +3,7 @@ import { getLogger } from '@/utils/localStorage.util';
 import { ValidationError } from '@/errors/validation';
 import { NotFoundError } from '@/errors/not-found';
 import { ConflictError } from '@/errors/conflict';
+import { UnauthorizedError } from '@/errors/unauthorized';
 import { ZodError } from 'zod';
 
 export const errorHandler = async (ctx: Context, next: Next) => {
@@ -10,6 +11,18 @@ export const errorHandler = async (ctx: Context, next: Next) => {
     await next();
   } catch (error: unknown) {
     const logger = await getLogger();
+
+    // Log the error with request context for debugging
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        url: ctx.url,
+        method: ctx.method,
+        requestId: ctx.state.requestId,
+      },
+      'Error caught by error handler middleware'
+    );
 
     if (error instanceof ZodError) {
       const messages = error.issues.map((issue) => issue.message).join(', ');
@@ -30,6 +43,10 @@ export const errorHandler = async (ctx: Context, next: Next) => {
     } else if (error instanceof NotFoundError) {
       logger.warn({ message: error.message }, 'Resource not found');
       ctx.status = 404;
+      ctx.body = { error: error.message };
+    } else if (error instanceof UnauthorizedError) {
+      logger.warn({ message: error.message }, 'Unauthorized access');
+      ctx.status = 401;
       ctx.body = { error: error.message };
     } else if (error instanceof ConflictError) {
       logger.warn({ message: error.message }, 'Resource conflict');
@@ -57,11 +74,26 @@ export const errorHandler = async (ctx: Context, next: Next) => {
         details: `A resource with this ${duplicateField} already exists`,
       };
     } else if (error instanceof Error) {
-      logger.error(error, 'Unhandled error');
+      logger.error(
+        {
+          error: error.message,
+          stack: error.stack,
+          url: ctx.url,
+          method: ctx.method,
+        },
+        'Unhandled Error instance'
+      );
       ctx.status = 500;
       ctx.body = { error: 'Internal server error' };
     } else {
-      logger.error({ error }, 'Unknown error type');
+      logger.error(
+        {
+          error: String(error),
+          url: ctx.url,
+          method: ctx.method,
+        },
+        'Unknown error type caught'
+      );
       ctx.status = 500;
       ctx.body = { error: 'Internal server error' };
     }

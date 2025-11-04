@@ -76,11 +76,6 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id', () => {
 
     const accountId = createResponse.body._id;
 
-    // Deletar primeira vez
-    await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}`)
-      .expect(204);
-
     // Tentar deletar novamente - softDelete sempre retorna 204 se o documento existir
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}`)

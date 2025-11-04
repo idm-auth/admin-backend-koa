@@ -5,9 +5,7 @@ import * as realmService from './realm.service';
 import * as realmMapper from './realm.mapper';
 
 export const create = async (ctx: Context) => {
-  const realm = await realmService.create(
-    ctx.validated.body
-  );
+  const realm = await realmService.create(ctx.validated.body);
 
   ctx.status = 201;
   ctx.body = realmMapper.toCreateResponse(realm);

@@ -12,12 +12,12 @@ export async function getTenantId(name: string): Promise<string> {
     return realm.publicUUID;
   } catch (error) {
     if (error instanceof NotFoundError) {
-      const realm = await realmService.create({ 
-        name, 
+      const realm = await realmService.create({
+        name,
         dbName: name,
         jwtConfig: {
-          expiresIn: '24h'
-        }
+          expiresIn: '24h',
+        },
       });
       return realm.publicUUID;
     }

@@ -90,10 +90,7 @@ export const findAll = async (tenantId: string): Promise<PolicyDocument[]> => {
   return policies;
 };
 
-export const remove = async (
-  tenantId: string,
-  id: string
-): Promise<void> => {
+export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id });
   const dbName = await getDBName(tenantId);

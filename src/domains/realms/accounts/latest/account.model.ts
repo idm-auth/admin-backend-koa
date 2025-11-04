@@ -5,6 +5,7 @@ import {
   baseDocumentSchema,
 } from '@/domains/commons/base/latest/base.model';
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
+
 import bcrypt from 'bcrypt';
 import mongoose, { InferSchemaType } from 'mongoose';
 
@@ -30,32 +31,20 @@ export type AccountDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
 schema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 
 schema.pre('save', async function (next) {
-  if (this.isNew || this.isModified('password')) {
-    this.salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, this.salt);
+  try {
+    if ((this.isNew || this.isModified('password')) && this.password) {
+      this.salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, this.salt);
+    }
+    next();
+  } catch (error) {
+    next(
+      error instanceof Error
+        ? error
+        : new Error('Unknown error during password hashing')
+    );
   }
-  next();
 });
-
-// schema.pre('save', async function (next) {
-//   if (this.isModified('emails')) {
-//     const Model = this.constructor as Model<AccountDocument>;
-//     const primaryCount = this.emails.filter((e) => e.isPrimary).length;
-//     if (primaryCount > 1) {
-//       throw new Error('Only one primary email allowed');
-//     }
-//     for (const emailObj of this.emails) {
-//       const existing = await Model.findOne({
-//         'emails.email': emailObj.email,
-//         _id: { $ne: this._id },
-//       });
-//       if (existing) {
-//         throw new Error(`Email already exists`);
-//       }
-//     }
-//   }
-//   next();
-// });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);
