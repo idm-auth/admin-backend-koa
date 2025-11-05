@@ -34,8 +34,16 @@ export const schema = new mongoose.Schema({
 });
 schema.add(baseDocumentSchema);
 
-export type Realm = InferSchemaType<typeof schema> & BaseDocument;
+export type RealmSchema = InferSchemaType<typeof schema>;
+export type Realm = RealmSchema & BaseDocument;
 export type RealmOmitId = Omit<Realm, '_id'>;
+export type RealmCreate = Omit<RealmSchema, 'publicUUID' | 'jwtConfig'> & {
+  publicUUID?: string;
+  jwtConfig?: {
+    secret?: string;
+    expiresIn?: string;
+  };
+};
 // Model on top of core DB
 export const getModel = () => {
   const conn = getCoreDb();

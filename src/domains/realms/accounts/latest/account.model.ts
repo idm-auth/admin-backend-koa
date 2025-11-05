@@ -24,9 +24,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type Account = InferSchemaType<typeof schema>;
-export type AccountDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type AccountDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type AccountSchema = InferSchemaType<typeof schema>;
+export type Account = AccountSchema & BaseDocument;
+export type AccountDocument = AccountSchema & BaseDocument;
+export type AccountDocumentID = AccountSchema & BaseDocumentID;
+export type AccountCreate = Omit<AccountSchema, never> & {
+  // Todos os campos são obrigatórios para Account
+};
 
 schema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 

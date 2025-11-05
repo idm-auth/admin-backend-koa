@@ -16,11 +16,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type AccountGroup = InferSchemaType<typeof schema>;
-export type AccountGroupDocument = InferSchemaType<typeof schema> &
-  BaseDocument;
-export type AccountGroupDocumentID = InferSchemaType<typeof schema> &
-  BaseDocumentID;
+export type AccountGroupSchema = InferSchemaType<typeof schema>;
+export type AccountGroup = AccountGroupSchema & BaseDocument;
+export type AccountGroupDocument = AccountGroupSchema & BaseDocument;
+export type AccountGroupDocumentID = AccountGroupSchema & BaseDocumentID;
+export type AccountGroupCreate = Omit<AccountGroupSchema, never> & {
+  // Todos os campos são obrigatórios para AccountGroup
+};
 
 schema.index({ accountId: 1, groupId: 1 }, { unique: true });
 schema.index({ accountId: 1 });

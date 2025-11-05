@@ -15,10 +15,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type GroupRole = InferSchemaType<typeof schema>;
-export type GroupRoleDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type GroupRoleDocumentID = InferSchemaType<typeof schema> &
-  BaseDocumentID;
+export type GroupRoleSchema = InferSchemaType<typeof schema>;
+export type GroupRole = GroupRoleSchema & BaseDocument;
+export type GroupRoleDocument = GroupRoleSchema & BaseDocument;
+export type GroupRoleDocumentID = GroupRoleSchema & BaseDocumentID;
+export type GroupRoleCreate = Omit<GroupRoleSchema, never> & {
+  // Todos os campos são obrigatórios para GroupRole
+};
 
 schema.index({ groupId: 1, roleId: 1 }, { unique: true });
 schema.index({ groupId: 1 });

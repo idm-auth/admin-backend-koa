@@ -47,7 +47,6 @@
 ### Database Modeling
 - **Base schema inheritance**: Always extend `baseDocumentSchema` for common fields
 - **UUID as String**: Use `{ type: String, default: uuidv4 }` for _id fields
-- **Soft delete**: Implement soft delete with `deletedAt` field and custom methods
 - **Index strategy**: Create unique indexes for business constraints
 - **Pre-save hooks**: Use Mongoose middleware for automatic field updates
 

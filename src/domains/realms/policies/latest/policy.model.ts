@@ -19,9 +19,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type Policy = InferSchemaType<typeof schema>;
-export type PolicyDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type PolicyDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type PolicySchema = InferSchemaType<typeof schema>;
+export type Policy = PolicySchema & BaseDocument;
+export type PolicyDocument = PolicySchema & BaseDocument;
+export type PolicyDocumentID = PolicySchema & BaseDocumentID;
+export type PolicyCreate = Omit<PolicySchema, never> & {
+  // Todos os campos são obrigatórios para Policy
+};
 
 schema.index({ name: 1 }, { unique: true });
 

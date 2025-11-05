@@ -53,6 +53,8 @@ export const create = customCreateMethod;
 
 ## Rotas (MagicRouter)
 
+**IMPORTANTE**: Use MagicRouter, não SwaggerRouter ou Router tradicional
+
 ### Estrutura das Rotas no Latest
 - Use `MagicRouter` para definir rotas
 - Defina validações Zod para todos os endpoints
@@ -68,12 +70,13 @@ import * as accountController from './account.controller';
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
   
-  router.addRoute({
+  router.post({
     name: 'createAccount',
-    method: 'post',
     path: '/',
+    summary: 'Create account',
     handlers: [accountController.create],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {
@@ -83,11 +86,19 @@ export const initialize = async () => {
       },
     },
     responses: {
-      200: {
+      201: {
         description: 'Account created successfully',
         content: {
           'application/json': {
             schema: accountResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
           },
         },
       },

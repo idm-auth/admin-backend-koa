@@ -15,9 +15,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type Group = InferSchemaType<typeof schema>;
-export type GroupDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type GroupDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type GroupSchema = InferSchemaType<typeof schema>;
+export type Group = GroupSchema & BaseDocument;
+export type GroupDocument = GroupSchema & BaseDocument;
+export type GroupDocumentID = GroupSchema & BaseDocumentID;
+export type GroupCreate = Omit<GroupSchema, never> & {
+  // Todos os campos são obrigatórios para Group
+};
 
 schema.index({ name: 1 }, { unique: true });
 

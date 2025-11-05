@@ -15,9 +15,6 @@ export async function getTenantId(name: string): Promise<string> {
       const realm = await realmService.create({
         name,
         dbName: name,
-        jwtConfig: {
-          expiresIn: '24h',
-        },
       });
       return realm.publicUUID;
     }

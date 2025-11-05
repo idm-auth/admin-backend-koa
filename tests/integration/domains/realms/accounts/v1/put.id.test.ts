@@ -35,9 +35,10 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
     }
   });
 
-  it('should update account email successfully', async () => {
+  it('should update account successfully (no email/password change)', async () => {
     const updateData = {
-      email: 'updated@example.com',
+      // Email e password não podem ser alterados via PUT
+      // Usar métodos específicos para isso
     };
 
     const response = await request(getApp().callback())
@@ -46,13 +47,13 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
       .expect(200);
 
     expect(response.body).toHaveProperty('_id', createdAccountId);
-    expect(response.body.email).toBe(updateData.email);
+    expect(response.body).toHaveProperty('email');
     expect(response.body).not.toHaveProperty('password');
   });
 
-  it('should update account password successfully', async () => {
+  it('should update account successfully (password ignored)', async () => {
     const updateData = {
-      password: 'NewPassword123!',
+      password: 'NewPassword123!', // Será ignorado
     };
 
     const response = await request(getApp().callback())
@@ -64,10 +65,10 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
     expect(response.body).not.toHaveProperty('password');
   });
 
-  it('should update both email and password successfully', async () => {
+  it('should update account successfully (email and password ignored)', async () => {
     const updateData = {
-      email: 'fullyupdated@example.com',
-      password: 'AnotherPassword123!',
+      email: 'fullyupdated@example.com', // Será ignorado
+      password: 'AnotherPassword123!', // Será ignorado
     };
 
     const response = await request(getApp().callback())
@@ -76,7 +77,7 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
       .expect(200);
 
     expect(response.body).toHaveProperty('_id', createdAccountId);
-    expect(response.body.email).toBe(updateData.email);
+    expect(response.body).toHaveProperty('email'); // Email original mantido
     expect(response.body).not.toHaveProperty('password');
   });
 
@@ -108,29 +109,29 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
     expect(response.body).toHaveProperty('error', 'Invalid ID');
   });
 
-  it('should return 400 for invalid email format', async () => {
+  it('should return 200 for invalid email format (email ignored)', async () => {
     const updateData = {
-      email: 'invalid-email',
+      email: 'invalid-email', // Será ignorado
     };
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .send(updateData)
-      .expect(400);
+      .expect(200); // Não valida porque ignora o campo
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format');
+    expect(response.body).toHaveProperty('_id', createdAccountId);
   });
 
-  it('should return 400 for weak password', async () => {
+  it('should return 200 for weak password (password ignored)', async () => {
     const updateData = {
-      password: 'weak',
+      password: 'weak', // Será ignorado
     };
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/v1/accounts/${createdAccountId}`)
       .send(updateData)
-      .expect(400);
+      .expect(200); // Não valida porque ignora o campo
 
-    expect(response.body.error).toMatch(/Password must/);
+    expect(response.body).toHaveProperty('_id', createdAccountId);
   });
 });

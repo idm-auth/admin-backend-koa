@@ -7,42 +7,71 @@ export const requestValidationMiddleware = <TContext extends Context = Context>(
   config: MagicRouteConfig<TContext>
 ) => {
   return async (ctx: Context, next: Next) => {
+    const logger = await getLogger();
     const { request } = config;
+
+    logger.debug(
+      {
+        method: ctx.method,
+        url: ctx.url,
+        routeName: config.name,
+        hasRequest: !!request,
+      },
+      'Request validation middleware started'
+    );
 
     // Inicializa ctx.validated
     ctx.validated = {};
 
     if (!request) {
+      logger.debug('No request validation config, skipping');
       return await next();
     }
 
     // Valida params
     if (request.params) {
+      logger.debug({ params: ctx.params }, 'Validating params');
       ctx.validated.params = await validateZod(ctx.params, request.params);
+      logger.debug('Params validation successful');
     }
 
     // Valida query
     if (request.query) {
+      logger.debug({ query: ctx.query }, 'Validating query');
       ctx.validated.query = await validateZod(ctx.query, request.query);
+      logger.debug('Query validation successful');
     }
 
     // Valida body
     if (request.body?.content?.['application/json']?.schema) {
       const bodySchema = request.body.content['application/json']
         .schema as z.ZodSchema;
-      ctx.validated.body = await validateZod(ctx.request.body, bodySchema);
+
+      logger.debug(
+        {
+          hasBodySchema: true,
+          bodyRequired: request.body.required,
+          requestBody: ctx.request.body,
+          bodyType: typeof ctx.request.body,
+          schemaType: bodySchema.constructor.name,
+          schemaDescription: bodySchema.description || 'No description',
+        },
+        'Validating body'
+      );
+
+      const bodyData = ctx.request.body || {};
+      ctx.validated.body = await validateZod(bodyData, bodySchema);
+      logger.debug('Body validation successful');
     }
 
     // Valida cookies
     if (request.cookies) {
+      logger.debug({ cookies: ctx.cookies }, 'Validating cookies');
       ctx.validated.cookies = await validateZod(ctx.cookies, request.cookies);
+      logger.debug('Cookies validation successful');
     }
 
-    // // Valida headers
-    // if (request.headers && Array.isArray(request.headers)) {
-    //   ctx.parsed.headers = await request.headers.parseAsync(ctx.headers);
-    // }
-
+    logger.debug('Request validation middleware completed');
     await next();
   };
 };

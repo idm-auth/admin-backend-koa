@@ -7,6 +7,7 @@ import {
 import { validateEmailUnique } from '@/domains/commons/validations/v1/validation.service';
 import { getDBName } from '@/domains/core/realms/latest/realm.service';
 import { NotFoundError } from '@/errors/not-found';
+import { ValidationError } from '@/errors/validation';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
 import { AccountDocument, getModel } from './account.model';
@@ -86,26 +87,23 @@ export const findByEmail = async (
   return account;
 };
 
+// Account update function - Email e password não podem ser alterados aqui
+// Email e password devem ter métodos específicos para alteração
 export const update = async (
   tenantId: string,
   id: string,
-  data: { email?: string; password?: string }
+  data: Record<string, unknown>
 ): Promise<AccountDocument> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Updating account');
 
   const dbName = await getDBName(tenantId);
-  const updateData: {
-    emails?: Array<{ email: string; isPrimary: boolean }>;
-    password?: string;
-  } = {};
-
-  if (data.email) {
-    updateData.emails = [{ email: data.email, isPrimary: true }];
-  }
-  if (data.password) {
-    updateData.password = data.password;
-  }
+  
+  // Email e password são excluídos intencionalmente
+  // Use métodos específicos: resetPassword() para senha
+  const updateData = { ...data };
+  delete updateData.email;
+  delete updateData.password;
 
   const account = await getModel(dbName).findByIdAndUpdate(id, updateData, {
     new: true,
@@ -252,4 +250,161 @@ export const resetPassword = async (
     'Account password reset successfully'
   );
   return account;
+};
+
+export const updatePassword = async (
+  tenantId: string,
+  id: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<AccountDocument> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id }, 'Updating account password');
+
+  // Buscar account para validar senha atual
+  const account = await findById(tenantId, id);
+  
+  // Validar senha atual
+  const isCurrentPasswordValid = await comparePassword(account, currentPassword);
+  if (!isCurrentPasswordValid) {
+    throw new NotFoundError('Current password is incorrect');
+  }
+
+  const dbName = await getDBName(tenantId);
+  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
+    id,
+    { password: newPassword },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedAccount) {
+    throw new NotFoundError('Account not found');
+  }
+
+  logger.info(
+    { accountId: updatedAccount._id, tenantId },
+    'Account password updated successfully'
+  );
+  return updatedAccount;
+};
+
+export const addEmail = async (
+  tenantId: string,
+  id: string,
+  email: string
+): Promise<AccountDocument> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id, email }, 'Adding email to account');
+
+  // Validar se email já existe no sistema
+  await validateEmailUnique(tenantId, email);
+
+  const account = await findById(tenantId, id);
+  
+  // Verificar se email já existe na conta
+  const emailExists = account.emails.some(e => e.email === email);
+  if (emailExists) {
+    throw new NotFoundError('Email already exists in this account');
+  }
+
+  const dbName = await getDBName(tenantId);
+  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
+    id,
+    { $push: { emails: { email, isPrimary: false } } },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedAccount) {
+    throw new NotFoundError('Account not found');
+  }
+
+  logger.info(
+    { accountId: updatedAccount._id, tenantId, email },
+    'Email added successfully'
+  );
+  return updatedAccount;
+};
+
+export const removeEmail = async (
+  tenantId: string,
+  id: string,
+  email: string
+): Promise<AccountDocument> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id, email }, 'Removing email from account');
+
+  const account = await findById(tenantId, id);
+  
+  // Verificar se é o único email
+  if (account.emails.length <= 1) {
+    throw new ValidationError('Cannot remove the only email from account');
+  }
+
+  // Verificar se email existe na conta
+  const emailExists = account.emails.some(e => e.email === email);
+  if (!emailExists) {
+    throw new NotFoundError('Email not found in this account');
+  }
+
+  const dbName = await getDBName(tenantId);
+  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
+    id,
+    { $pull: { emails: { email } } },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedAccount) {
+    throw new NotFoundError('Account not found');
+  }
+
+  logger.info(
+    { accountId: updatedAccount._id, tenantId, email },
+    'Email removed successfully'
+  );
+  return updatedAccount;
+};
+
+export const setPrimaryEmail = async (
+  tenantId: string,
+  id: string,
+  email: string
+): Promise<AccountDocument> => {
+  const logger = await getLogger();
+  logger.info({ tenantId, id, email }, 'Setting primary email');
+
+  const account = await findById(tenantId, id);
+  
+  // Verificar se email existe na conta
+  const emailExists = account.emails.some(e => e.email === email);
+  if (!emailExists) {
+    throw new NotFoundError('Email not found in this account');
+  }
+
+  const dbName = await getDBName(tenantId);
+  
+  // Remover isPrimary de todos os emails e definir o novo como primary
+  await getModel(dbName).findByIdAndUpdate(
+    id,
+    { $set: { 'emails.$[].isPrimary': false } }
+  );
+  
+  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
+    id,
+    { $set: { 'emails.$[elem].isPrimary': true } },
+    { 
+      arrayFilters: [{ 'elem.email': email }],
+      new: true, 
+      runValidators: true 
+    }
+  );
+
+  if (!updatedAccount) {
+    throw new NotFoundError('Account not found');
+  }
+
+  logger.info(
+    { accountId: updatedAccount._id, tenantId, email },
+    'Primary email set successfully'
+  );
+  return updatedAccount;
 };

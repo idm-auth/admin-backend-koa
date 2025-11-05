@@ -16,9 +16,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type Role = InferSchemaType<typeof schema>;
-export type RoleDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type RoleDocumentID = InferSchemaType<typeof schema> & BaseDocumentID;
+export type RoleSchema = InferSchemaType<typeof schema>;
+export type Role = RoleSchema & BaseDocument;
+export type RoleDocument = RoleSchema & BaseDocument;
+export type RoleDocumentID = RoleSchema & BaseDocumentID;
+export type RoleCreate = Omit<RoleSchema, never> & {
+  // Todos os campos são obrigatórios para Role
+};
 
 schema.index({ name: 1 }, { unique: true });
 

@@ -83,16 +83,29 @@ const schema = new Schema({
 ### Herança de BaseDocument
 - **SEMPRE estenda baseDocumentSchema**
 - Use `schema.add(baseDocumentSchema)` para herdar campos base
-- Inclui: _id (UUID), createdAt, updatedAt, deletedAt
+- Inclui: _id (UUID), createdAt, updatedAt
+
+### Padrão de Tipos Intermediários
+- **SEMPRE crie tipo Schema intermediário** antes do BaseDocument
+- **Use padrão**: `{Entity}Schema` → `{Entity}` → `{Entity}Create`
+- Facilita criação de tipos derivados sem repetir campos do BaseDocument
 
 ```typescript
-// ✅ Correto
+// ✅ Correto - Padrão com tipo intermediário
 export const schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
 });
-
 schema.add(baseDocumentSchema);
+
+// Tipo intermediário (apenas schema específico)
+export type UserSchema = InferSchemaType<typeof schema>;
+// Tipo completo (schema + BaseDocument)
+export type User = UserSchema & BaseDocument;
+// Tipo para criação (baseado no schema, não no tipo completo)
+export type UserCreate = Omit<UserSchema, 'fieldsWithDefaults'> & {
+  fieldsWithDefaults?: OptionalType;
+};
 ```
 
 ## Índices
@@ -134,17 +147,3 @@ schema.index({ createdAt: -1 });
 - Necessidade de features específicas do MongoDB
 - Restrições de tamanho (ObjectId: 12 bytes vs UUID: 36 bytes)
 
-## Soft Delete
-
-### Implementação
-- Use campo `deletedAt` para soft delete
-- Método `softDelete()` disponível via baseDocumentSchema
-- Filtre documentos deletados nas queries
-
-```typescript
-// ✅ Soft delete
-await document.softDelete();
-
-// ✅ Query excluindo deletados
-const activeDocuments = await Model.find({ deletedAt: { $exists: false } });
-```

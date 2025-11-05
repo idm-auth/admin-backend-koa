@@ -32,11 +32,13 @@
 - **NUNCA** misture tenantId com dados em objetos
 - Veja regras detalhadas em `tenant-pattern.md`
 
-## Rotas (SwaggerRouter)
-- **SEMPRE use SwaggerRouter** em vez de Router tradicional
-- Defina validações Zod para body, params, query e responses
-- Inclua tags do domínio e responses de erro específicos
+## Rotas (MagicRouter)
+- **SEMPRE use MagicRouter** em vez de Router tradicional
+- Use métodos HTTP específicos: `router.get()`, `router.post()`, etc.
+- Defina validações Zod para request (params, query, body) e responses
+- Inclua `summary`, tags do domínio e responses de erro específicos
 - Organize rotas dentro do domínio correspondente
+- Use `router.useMagic()` para composição hierárquica
 
 ## Exports e Imports
 - Use `export const` em vez de `const` + `export { }`

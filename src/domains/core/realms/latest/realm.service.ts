@@ -12,6 +12,7 @@ import {
   getModel,
   Realm,
   RealmOmitId,
+  RealmCreate,
 } from '@/domains/core/realms/latest/realms.model';
 import { ConflictError } from '@/errors/conflict';
 import { NotFoundError } from '@/errors/not-found';
@@ -37,9 +38,7 @@ const validateDBName = async (dbName: string): Promise<void> => {
   }
 };
 
-export const create = async (
-  data: Omit<RealmOmitId, 'publicUUID'> & { publicUUID?: string }
-) => {
+export const create = async (data: RealmCreate) => {
   const logger = await getLogger();
   logger.debug({ data: JSON.stringify(data) }, 'create data:');
 

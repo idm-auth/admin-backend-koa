@@ -23,7 +23,7 @@ export default defineConfig({
     },
     env: {
       NODE_ENV: 'test',
-      LOGGER_LEVEL: 'error',
+      LOGGER_LEVEL: process.env.LOGGER_LEVEL || 'error',
     },
     setupFiles: [
       'tests/setup/base.setup.ts',

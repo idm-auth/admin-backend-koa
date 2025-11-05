@@ -14,11 +14,12 @@ import {
   accountSearchResponseSchema,
   accountUpdateResponseSchema,
   accountUpdateSchema,
+  accountUpdatePasswordSchema,
+  accountAddEmailSchema,
+  accountRemoveEmailSchema,
+  accountSetPrimaryEmailSchema,
 } from './account.schema';
-import {
-  emailSchema,
-  passwordSchema,
-} from '@/domains/commons/base/v1/base.schema';
+
 
 const requestTenantIdParamsSchema = z.object({
   tenantId: publicUUIDSchema,
@@ -37,11 +38,7 @@ const safeAccountListQuerySchema = z.object({
   descending: z.coerce.boolean().default(false),
 });
 
-// Safe update schema that prevents SSRF by using proper validation
-const safeAccountUpdateSchema = z.object({
-  email: emailSchema.optional(),
-  password: passwordSchema.optional(),
-});
+
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
@@ -107,7 +104,7 @@ export const initialize = async () => {
     request: {
       params: requestTenantIdAndIdParamsSchema,
       body: {
-        content: { 'application/json': { schema: safeAccountUpdateSchema } },
+        content: { 'application/json': { schema: accountUpdateSchema } },
       },
     },
     responses: swagger.update.responses,
@@ -165,6 +162,211 @@ export const initialize = async () => {
       },
       404: {
         description: 'Account not found',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+
+  // PATCH /accounts/:id/update-password - Update account password
+  router.patch({
+    name: 'updateAccountPassword',
+    path: '/:id/update-password',
+    summary: 'Update account password',
+    handlers: [accountController.updatePassword],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountUpdatePasswordSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Password updated successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found or current password incorrect',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+
+  // POST /accounts/:id/email - Add email to account
+  router.post({
+    name: 'addAccountEmail',
+    path: '/:id/email',
+    summary: 'Add email to account',
+    handlers: [accountController.addEmail],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountAddEmailSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Email added successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+
+  // DELETE /accounts/:id/email - Remove email from account
+  router.delete({
+    name: 'removeAccountEmail',
+    path: '/:id/email',
+    summary: 'Remove email from account',
+    handlers: [accountController.removeEmail],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountRemoveEmailSchema,
+          },
+        },
+        required: true,
+      },
+    },
+    responses: {
+      200: {
+        description: 'Email removed successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found or email not found',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+
+  // PATCH /accounts/:id/email/primary - Set primary email
+  router.patch({
+    name: 'setAccountPrimaryEmail',
+    path: '/:id/email/primary',
+    summary: 'Set primary email for account',
+    handlers: [accountController.setPrimaryEmail],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountSetPrimaryEmailSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Primary email set successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found or email not found',
         content: {
           'application/json': {
             schema: z.object({

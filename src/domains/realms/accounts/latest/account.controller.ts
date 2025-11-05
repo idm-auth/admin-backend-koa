@@ -181,3 +181,119 @@ export const resetPassword = async (ctx: Context) => {
     throw error;
   }
 };
+
+export const updatePassword = async (ctx: Context) => {
+  const logger = await getLogger();
+  const { tenantId, id } = ctx.validated.params;
+  const { currentPassword, newPassword } = ctx.validated.body;
+
+  try {
+    const account = await accountService.updatePassword(
+      tenantId,
+      id,
+      currentPassword,
+      newPassword
+    );
+
+    logger.info(
+      { tenantId, accountId: id },
+      'Account password updated successfully'
+    );
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+      },
+      'Failed to update account password'
+    );
+    throw error;
+  }
+};
+
+export const addEmail = async (ctx: Context) => {
+  const logger = await getLogger();
+  const { tenantId, id } = ctx.validated.params;
+  const { email } = ctx.validated.body;
+
+  try {
+    const account = await accountService.addEmail(tenantId, id, email);
+
+    logger.info(
+      { tenantId, accountId: id, email },
+      'Email added to account successfully'
+    );
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+        email,
+      },
+      'Failed to add email to account'
+    );
+    throw error;
+  }
+};
+
+export const removeEmail = async (ctx: Context) => {
+  const logger = await getLogger();
+  const { tenantId, id } = ctx.validated.params;
+  const { email } = ctx.validated.body;
+
+  try {
+    const account = await accountService.removeEmail(tenantId, id, email);
+
+    logger.info(
+      { tenantId, accountId: id, email },
+      'Email removed from account successfully'
+    );
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+        email,
+      },
+      'Failed to remove email from account'
+    );
+    throw error;
+  }
+};
+
+export const setPrimaryEmail = async (ctx: Context) => {
+  const logger = await getLogger();
+  const { tenantId, id } = ctx.validated.params;
+  const { email } = ctx.validated.body;
+
+  try {
+    const account = await accountService.setPrimaryEmail(tenantId, id, email);
+
+    logger.info(
+      { tenantId, accountId: id, email },
+      'Primary email set successfully'
+    );
+
+    ctx.body = accountMapper.toUpdateResponse(account);
+  } catch (error) {
+    logger.error(
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId,
+        accountId: id,
+        email,
+      },
+      'Failed to set primary email'
+    );
+    throw error;
+  }
+};

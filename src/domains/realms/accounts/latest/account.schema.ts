@@ -2,7 +2,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import {
   emailSchema,
   passwordSchema,
-} from '@/domains/commons/base/v1/base.schema';
+} from '@/domains/commons/base/latest/base.schema';
 import { DocIdSchema } from '@/domains/commons/base/latest/base.schema';
 import {
   paginationQuerySchema,
@@ -21,6 +21,7 @@ export const accountCreateSchema = z.object({
 export const accountBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   email: emailSchema,
+  isPrimary: z.boolean(),
 });
 
 export const accountCreateResponseSchema = accountBaseResponseSchema;
@@ -35,13 +36,32 @@ export const accountListResponseSchema = z.array(accountListItemResponseSchema);
 
 export const accountSearchResponseSchema = accountReadResponseSchema;
 
+// Account update schema - Email e password não podem ser alterados aqui
+// Email e password devem ter métodos específicos para alteração
 export const accountUpdateSchema = z.object({
-  email: z.string().optional(),
-  password: z.string().optional(),
+  // Adicionar outros campos que podem ser atualizados aqui
+  // email e password são excluídos intencionalmente
 });
 
 export const accountResetPasswordSchema = z.object({
   password: passwordSchema,
+});
+
+export const accountUpdatePasswordSchema = z.object({
+  currentPassword: passwordSchema,
+  newPassword: passwordSchema,
+});
+
+export const accountAddEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export const accountRemoveEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export const accountSetPrimaryEmailSchema = z.object({
+  email: emailSchema,
 });
 
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
@@ -56,6 +76,10 @@ export type AccountListResponse = z.infer<typeof accountListResponseSchema>;
 export type AccountSearchResponse = z.infer<typeof accountSearchResponseSchema>;
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
+export type AccountUpdatePassword = z.infer<typeof accountUpdatePasswordSchema>;
+export type AccountAddEmail = z.infer<typeof accountAddEmailSchema>;
+export type AccountRemoveEmail = z.infer<typeof accountRemoveEmailSchema>;
+export type AccountSetPrimaryEmail = z.infer<typeof accountSetPrimaryEmailSchema>;
 
 // Pagination schemas
 export const accountListQuerySchema = paginationQuerySchema;

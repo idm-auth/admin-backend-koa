@@ -15,10 +15,13 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-export type AccountRole = InferSchemaType<typeof schema>;
-export type AccountRoleDocument = InferSchemaType<typeof schema> & BaseDocument;
-export type AccountRoleDocumentID = InferSchemaType<typeof schema> &
-  BaseDocumentID;
+export type AccountRoleSchema = InferSchemaType<typeof schema>;
+export type AccountRole = AccountRoleSchema & BaseDocument;
+export type AccountRoleDocument = AccountRoleSchema & BaseDocument;
+export type AccountRoleDocumentID = AccountRoleSchema & BaseDocumentID;
+export type AccountRoleCreate = Omit<AccountRoleSchema, never> & {
+  // Todos os campos são obrigatórios para AccountRole
+};
 
 schema.index({ accountId: 1, roleId: 1 }, { unique: true });
 schema.index({ accountId: 1 });
