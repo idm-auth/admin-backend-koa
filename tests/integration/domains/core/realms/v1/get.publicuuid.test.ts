@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
+import * as realmService from '@/domains/core/realms/v1/realm.service';
 
 describe('GET /api/core/v1/realms/publicUUID/:publicUUID', () => {
   let createdRealmPublicUUID: string;
@@ -7,7 +8,7 @@ describe('GET /api/core/v1/realms/publicUUID/:publicUUID', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    // Criar um realm para os testes
+    // Criar um realm para os testes usando service
     const realmData = {
       name: 'test-realm-publicuuid',
       description: 'Test realm for publicUUID endpoint',
@@ -18,19 +19,10 @@ describe('GET /api/core/v1/realms/publicUUID/:publicUUID', () => {
       },
     };
 
-    const createResponse = await request(getApp().callback())
-      .post('/api/core/v1/realms')
-      .send(realmData);
-
-    if (createResponse.status === 201) {
-      createdRealmPublicUUID = createResponse.body.publicUUID;
-      if (!createdRealmPublicUUID) {
-        throw new Error('Realm created but no publicUUID returned');
-      }
-    } else {
-      throw new Error(
-        `Failed to create test realm: ${createResponse.status} - ${createResponse.body?.error || 'Unknown error'}`
-      );
+    const realm = await realmService.create(realmData);
+    createdRealmPublicUUID = realm.publicUUID;
+    if (!createdRealmPublicUUID) {
+      throw new Error('Realm created but no publicUUID returned');
     }
   });
 

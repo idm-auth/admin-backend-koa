@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
+import * as realmService from '@/domains/core/realms/v1/realm.service';
 
 describe('POST /api/core/v1/realms', () => {
   const getApp = () => globalThis.testKoaApp;
@@ -100,33 +101,29 @@ describe('POST /api/core/v1/realms', () => {
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {
-    const app = getApp();
     const realmData = {
       name: 'duplicate-test-realm',
       description: 'First realm',
       dbName: 'first-db',
     };
 
-    // Create first realm
-    const firstResponse = await request(app.callback())
-      .post('/api/core/v1/realms')
-      .send(realmData)
-      .expect(201);
+    // Create first realm using service (pré-configuração)
+    const firstRealm = await realmService.create(realmData);
 
-    expect(firstResponse.body).toHaveProperty('_id');
-    expect(firstResponse.body.name).toBe(realmData.name);
+    expect(firstRealm).toHaveProperty('_id');
+    expect(firstRealm.name).toBe(realmData.name);
 
-    // Try to create second realm with same name using the same app instance
+    // Try to create second realm with same name via API
     const duplicateData = {
       name: 'duplicate-test-realm', // Same name
       description: 'Second realm',
       dbName: 'second-db',
     };
 
-    const response = await request(app.callback())
+    const response = await request(getApp().callback())
       .post('/api/core/v1/realms')
       .send(duplicateData)
-      .expect(409); // 409 Conflict for duplicate resource
+      .expect(409);
 
     expect(response.body).toHaveProperty('error', 'Resource already exists');
     expect(response.body).toHaveProperty('field', 'name');

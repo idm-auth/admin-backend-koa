@@ -82,13 +82,7 @@ export const update = async (
   return policy;
 };
 
-export const findAll = async (tenantId: string): Promise<PolicyDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName(tenantId);
-  const policies = await getModel(dbName).find({});
-  return policies;
-};
+
 
 export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();

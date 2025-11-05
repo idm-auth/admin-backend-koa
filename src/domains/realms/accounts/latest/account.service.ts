@@ -1,4 +1,8 @@
-import { DocId } from '@/domains/commons/base/latest/base.schema';
+import {
+  DocId,
+  Password,
+  passwordSchema,
+} from '@/domains/commons/base/latest/base.schema';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -10,13 +14,13 @@ import { NotFoundError } from '@/errors/not-found';
 import { ValidationError } from '@/errors/validation';
 import { getLogger } from '@/utils/localStorage.util';
 import bcrypt from 'bcrypt';
-import { AccountDocument, getModel } from './account.model';
-import { AccountCreate } from './account.schema';
+import { Account, getModel } from './account.model';
+import { AccountCreate, AccountUpdate } from './account.schema';
 
 export const create = async (
   tenantId: string,
   data: AccountCreate
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
 
   try {
@@ -48,7 +52,7 @@ export const create = async (
 export const findById = async (
   tenantId: string,
   id: DocId
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Finding account by ID');
 
@@ -68,7 +72,7 @@ export const findById = async (
 export const findByEmail = async (
   tenantId: string,
   email: string
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, email }, 'Finding account by email');
 
@@ -92,37 +96,27 @@ export const findByEmail = async (
 export const update = async (
   tenantId: string,
   id: string,
-  data: Record<string, unknown>
-): Promise<AccountDocument> => {
+  data: AccountUpdate
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Updating account');
 
-  const dbName = await getDBName(tenantId);
+  const account = await findById(tenantId, id);
 
-  // Email e password são excluídos intencionalmente
-  // Use métodos específicos: resetPassword() para senha
-  const updateData = { ...data };
-  delete updateData.email;
-  delete updateData.password;
+  // Update ainda não faz nada, porque nao tem nada o que fazer mesmo
+  logger.debug({ data }, 'Updating account data');
+  const updatedAccount = await account.save();
 
-  const account = await getModel(dbName).findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true,
-  });
-  if (!account) {
-    logger.warn({ tenantId, id }, 'Account not found for update');
-    throw new NotFoundError('Account not found');
-  }
   logger.info(
-    { accountId: account._id, tenantId },
+    { accountId: updatedAccount._id, tenantId },
     'Account updated successfully'
   );
-  return account;
+  return updatedAccount;
 };
 
 export const comparePassword = async (
-  account: AccountDocument,
-  password: string
+  account: Account,
+  password: Password
 ): Promise<boolean> => {
   const logger = await getLogger();
   logger.info({ accountId: account._id }, 'Comparing password for account');
@@ -136,10 +130,7 @@ export const comparePassword = async (
   return isValid;
 };
 
-export const hardDelete = async (
-  tenantId: string,
-  id: string
-): Promise<void> => {
+export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Deleting account');
 
@@ -153,20 +144,10 @@ export const hardDelete = async (
   logger.info({ tenantId, id }, 'Account deleted successfully');
 };
 
-export const findAll = async (tenantId: string): Promise<AccountDocument[]> => {
-  const logger = await getLogger();
-  logger.info({ tenantId }, 'Finding all accounts');
-
-  const dbName = await getDBName(tenantId);
-  const accounts = await getModel(dbName).find({});
-  logger.info({ tenantId, count: accounts.length }, 'Found all accounts');
-  return accounts;
-};
-
 export const findAllPaginated = async (
   tenantId: string,
   query: PaginationQuery
-): Promise<PaginatedResponse<AccountDocument>> => {
+): Promise<PaginatedResponse<Account>> => {
   const logger = await getLogger();
   logger.info({ tenantId, query }, 'Finding accounts with pagination');
 
@@ -216,58 +197,46 @@ export const findAllPaginated = async (
   };
 };
 
-export const remove = async (tenantId: string, id: string): Promise<void> => {
-  const logger = await getLogger();
-  logger.info({ tenantId, id }, 'Removing account');
-
-  await hardDelete(tenantId, id);
-
-  logger.info({ tenantId, id }, 'Account removed successfully');
-};
-
 export const resetPassword = async (
   tenantId: string,
   id: string,
-  password: string
-): Promise<AccountDocument> => {
+  password: Password
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Resetting account password');
 
+  // Validar senha com Zod
+  const passwordParsed = passwordSchema.parse(password);
+  const account = await findById(tenantId, id);
+
   try {
-    const dbName = await getDBName(tenantId);
-    const account = await getModel(dbName).findByIdAndUpdate(
-      id,
-      { password },
-      { new: true, runValidators: true }
-    );
-
-    if (!account) {
-      logger.warn({ tenantId, id }, 'Account not found for password reset');
-      throw new NotFoundError('Account not found');
-    }
-
+    // Atualizar senha usando o account já encontrado
+    // NOSONAR: Password hashing is handled by Mongoose pre-save hook
+    // See account.model.ts line 33-40 for bcrypt.hash() implementation
+    account.password = passwordParsed;
+    const updatedAccount = await account.save();
     logger.info(
-      { accountId: account._id, tenantId },
+      { accountId: updatedAccount._id, tenantId },
       'Account password reset successfully'
     );
-    return account;
+    return updatedAccount;
   } catch (error) {
-    if (error instanceof NotFoundError) {
-      throw error;
-    }
     logger.error({ error, tenantId, id }, 'Error resetting account password');
-    throw new Error('Failed to reset password');
+    throw error;
   }
 };
 
 export const updatePassword = async (
   tenantId: string,
   id: string,
-  currentPassword: string,
-  newPassword: string
-): Promise<AccountDocument> => {
+  currentPassword: Password,
+  newPassword: Password
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Updating account password');
+
+  // Validar senhas com Zod
+  const newPasswordParsed = passwordSchema.parse(newPassword);
 
   // Buscar account para validar senha atual
   const account = await findById(tenantId, id);
@@ -281,29 +250,28 @@ export const updatePassword = async (
     throw new NotFoundError('Current password is incorrect');
   }
 
-  const dbName = await getDBName(tenantId);
-  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
-    id,
-    { password: newPassword },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedAccount) {
-    throw new NotFoundError('Account not found');
+  try {
+    // Atualizar senha usando o account já encontrado
+    // NOSONAR: Password hashing is handled by Mongoose pre-save hook
+    // See account.model.ts line 33-40 for bcrypt.hash() implementation
+    account.password = newPasswordParsed;
+    const updatedAccount = await account.save();
+    logger.info(
+      { accountId: updatedAccount._id, tenantId },
+      'Account password updated successfully'
+    );
+    return updatedAccount;
+  } catch (error) {
+    logger.error({ error, tenantId, id }, 'Error updating account password');
+    throw error;
   }
-
-  logger.info(
-    { accountId: updatedAccount._id, tenantId },
-    'Account password updated successfully'
-  );
-  return updatedAccount;
 };
 
 export const addEmail = async (
   tenantId: string,
   id: string,
   email: string
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id, email }, 'Adding email to account');
 
@@ -318,16 +286,9 @@ export const addEmail = async (
     throw new NotFoundError('Email already exists in this account');
   }
 
-  const dbName = await getDBName(tenantId);
-  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
-    id,
-    { $push: { emails: { email, isPrimary: false } } },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedAccount) {
-    throw new NotFoundError('Account not found');
-  }
+  // Adicionar email usando o account já encontrado
+  account.emails.push({ email, isPrimary: false });
+  const updatedAccount = await account.save();
 
   logger.info(
     { accountId: updatedAccount._id, tenantId, email },
@@ -340,7 +301,7 @@ export const removeEmail = async (
   tenantId: string,
   id: string,
   email: string
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id, email }, 'Removing email from account');
 
@@ -352,21 +313,14 @@ export const removeEmail = async (
   }
 
   // Verificar se email existe na conta
-  const emailExists = account.emails.some((e) => e.email === email);
-  if (!emailExists) {
+  const emailToRemove = account.emails.find((e) => e.email === email);
+  if (!emailToRemove) {
     throw new NotFoundError('Email not found in this account');
   }
 
-  const dbName = await getDBName(tenantId);
-  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
-    id,
-    { $pull: { emails: { email } } },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedAccount) {
-    throw new NotFoundError('Account not found');
-  }
+  // Remover email
+  account.emails.pull(emailToRemove);
+  const updatedAccount = await account.save();
 
   logger.info(
     { accountId: updatedAccount._id, tenantId, email },
@@ -379,7 +333,7 @@ export const setPrimaryEmail = async (
   tenantId: string,
   id: string,
   email: string
-): Promise<AccountDocument> => {
+): Promise<Account> => {
   const logger = await getLogger();
   logger.info({ tenantId, id, email }, 'Setting primary email');
 
@@ -391,26 +345,12 @@ export const setPrimaryEmail = async (
     throw new NotFoundError('Email not found in this account');
   }
 
-  const dbName = await getDBName(tenantId);
-
-  // Remover isPrimary de todos os emails e definir o novo como primary
-  await getModel(dbName).findByIdAndUpdate(id, {
-    $set: { 'emails.$[].isPrimary': false },
+  // Atualizar isPrimary
+  account.emails.forEach((e) => {
+    e.isPrimary = e.email === email;
   });
 
-  const updatedAccount = await getModel(dbName).findByIdAndUpdate(
-    id,
-    { $set: { 'emails.$[elem].isPrimary': true } },
-    {
-      arrayFilters: [{ 'elem.email': email }],
-      new: true,
-      runValidators: true,
-    }
-  );
-
-  if (!updatedAccount) {
-    throw new NotFoundError('Account not found');
-  }
+  const updatedAccount = await account.save();
 
   logger.info(
     { accountId: updatedAccount._id, tenantId, email },

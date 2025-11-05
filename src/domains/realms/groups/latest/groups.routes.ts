@@ -28,18 +28,7 @@ export const initialize = async () => {
     groupSearchResponseSchema
   );
 
-  // GET /groups - List all groups
-  router.get({
-    name: 'listGroups',
-    path: '/',
-    summary: 'List all groups',
-    handlers: [groupController.findAll],
-    request: {
-      params: requestTenantIdParamsSchema,
-    },
-    responses: swagger.list.responses,
-    tags: ['Groups'],
-  });
+
 
   // POST /groups - Create group
   router.post({

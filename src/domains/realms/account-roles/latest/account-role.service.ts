@@ -52,15 +52,7 @@ export const getAccountRoles = async (
   return accountRoles;
 };
 
-export const findAll = async (
-  tenantId: string
-): Promise<AccountRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName(tenantId);
-  const accountRoles = await getModel(dbName).find({});
-  return accountRoles;
-};
+
 
 export const getRoleAccounts = async (
   tenantId: string,

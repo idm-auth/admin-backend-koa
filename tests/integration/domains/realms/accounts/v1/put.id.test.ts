@@ -2,6 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
+import * as accountService from '@/domains/realms/accounts/v1/account.service';
 
 describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
   let tenantId: string;
@@ -13,26 +14,12 @@ describe('PUT /api/realm/:tenantId/v1/accounts/:id', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-account-put');
 
-    // Criar uma conta para os testes
-    const accountData = {
+    // Criar uma conta para os testes usando service
+    const account = await accountService.create(tenantId, {
       email: 'updatetest@example.com',
       password: TEST_PASSWORD,
-    };
-
-    const createResponse = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/v1/accounts`)
-      .send(accountData);
-
-    if (createResponse.status === 201) {
-      createdAccountId = createResponse.body._id;
-      if (!createdAccountId) {
-        throw new Error('Account created but no ID returned');
-      }
-    } else {
-      throw new Error(
-        `Failed to create test account: ${createResponse.status} - ${createResponse.body?.error || 'Unknown error'}`
-      );
-    }
+    });
+    createdAccountId = account._id;
   });
 
   it('should update account successfully (no email/password change)', async () => {

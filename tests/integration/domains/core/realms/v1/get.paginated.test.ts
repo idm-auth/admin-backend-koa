@@ -1,13 +1,14 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import type { RealmPaginatedResponse } from '@/domains/core/realms/latest/realm.schema';
+import * as realmService from '@/domains/core/realms/v1/realm.service';
 
 describe('GET /api/core/v1/realms (paginated)', () => {
   const getApp = () => globalThis.testKoaApp;
   const createdRealmIds: string[] = [];
 
   beforeAll(async () => {
-    // Create 30 test realms for pagination testing
+    // Create 30 test realms for pagination testing using service
     for (let i = 1; i <= 30; i++) {
       const realmData = {
         name: `test-realm-${i.toString().padStart(2, '0')}`,
@@ -19,13 +20,8 @@ describe('GET /api/core/v1/realms (paginated)', () => {
         },
       };
 
-      const response = await request(getApp().callback())
-        .post('/api/core/v1/realms')
-        .send(realmData);
-
-      if (response.status === 201) {
-        createdRealmIds.push(response.body.id);
-      }
+      const realm = await realmService.create(realmData);
+      createdRealmIds.push(realm._id);
     }
   });
 

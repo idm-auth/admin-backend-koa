@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
+import * as realmService from '@/domains/core/realms/v1/realm.service';
 
 describe('PUT /api/core/v1/realms/:id', () => {
   let createdRealmId: string;
@@ -17,13 +18,8 @@ describe('PUT /api/core/v1/realms/:id', () => {
       },
     };
 
-    const response = await request(getApp().callback())
-      .post('/api/core/v1/realms')
-      .send(realmData);
-
-    if (response.status === 201) {
-      createdRealmId = response.body._id;
-    }
+    const realm = await realmService.create(realmData);
+    createdRealmId = realm._id;
   });
 
   it('should update realm successfully', async () => {
@@ -94,19 +90,14 @@ describe('PUT /api/core/v1/realms/:id', () => {
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {
-    // Create another realm
+    // Create another realm using service
     const anotherRealmData = {
       name: 'another-realm-for-duplicate-test',
       description: 'Another realm',
       dbName: 'another-db',
     };
 
-    // const anotherResponse =
-    await request(getApp().callback())
-      .post('/api/core/v1/realms')
-      .send(anotherRealmData);
-
-    // const anotherRealmId = anotherResponse.body._id;
+    await realmService.create(anotherRealmData);
 
     // Try to update first realm with the name of the second realm
     const updateData = {

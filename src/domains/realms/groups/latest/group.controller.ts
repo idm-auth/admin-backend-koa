@@ -46,17 +46,7 @@ export const update = async (ctx: Context) => {
   };
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const groups = await groupService.findAll(tenantId);
-
-  ctx.body = groups.map((group) => ({
-    id: group._id,
-    name: group.name,
-    description: group.description,
-  }));
-};
 
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;

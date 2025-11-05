@@ -28,18 +28,7 @@ export const initialize = async () => {
     policySearchResponseSchema
   );
 
-  // GET /policies - List all policies
-  router.get({
-    name: 'listPolicies',
-    path: '/',
-    summary: 'List all policies',
-    handlers: [policyController.findAll],
-    request: {
-      params: requestTenantIdParamsSchema,
-    },
-    responses: swagger.list.responses,
-    tags: ['Policies'],
-  });
+
 
   // POST /policies - Create policy
   router.post({

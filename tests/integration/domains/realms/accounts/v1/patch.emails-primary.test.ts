@@ -2,6 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
+import * as accountService from '@/domains/realms/accounts/v1/account.service';
 
 describe('PATCH /api/realm/:tenantId/v1/accounts/:id/email/primary', () => {
   let tenantId: string;
@@ -13,28 +14,16 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/email/primary', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-primary-email');
 
-    // Criar uma conta para testar definir email principal
-    const accountData = {
+    // Criar uma conta para testar definir email principal usando service
+    const account = await accountService.create(tenantId, {
       email: 'primaryemailtest@example.com',
       password: TEST_PASSWORD,
-    };
+    });
+    accountId = account._id;
 
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/v1/accounts`)
-      .send(accountData);
-
-    if (response.status === 201) {
-      accountId = response.body._id;
-
-      // Adicionar emails secundários
-      await request(getApp().callback())
-        .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
-        .send({ email: 'secondary1@example.com' });
-
-      await request(getApp().callback())
-        .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
-        .send({ email: 'secondary2@example.com' });
-    }
+    // Adicionar emails secundários usando service
+    await accountService.addEmail(tenantId, accountId, 'secondary1@example.com');
+    await accountService.addEmail(tenantId, accountId, 'secondary2@example.com');
   });
 
   it('should set primary email successfully', async () => {

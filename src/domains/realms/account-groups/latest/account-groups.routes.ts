@@ -15,35 +15,7 @@ import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/reque
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
 
-  // GET /account-groups - List all account-groups
-  router.get({
-    name: 'listAccountGroups',
-    path: '/',
-    summary: 'List all account-groups',
-    handlers: [accountGroupController.findAll],
-    request: {
-      params: requestTenantIdParamsSchema,
-    },
-    responses: {
-      200: {
-        description: 'List of account-groups',
-        content: {
-          'application/json': {
-            schema: z.array(accountGroupResponseSchema),
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
-    tags: ['Account-Groups'],
-  });
+
 
   // POST /account-groups - Add account to group
   router.post({

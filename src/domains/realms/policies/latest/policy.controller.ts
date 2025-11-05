@@ -68,21 +68,7 @@ export const update = async (ctx: Context) => {
   };
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const policies = await policyService.findAll(tenantId);
-
-  ctx.body = policies.map((policy) => ({
-    id: policy._id,
-    name: policy.name,
-    description: policy.description,
-    effect: policy.effect,
-    actions: policy.actions,
-    resources: policy.resources,
-    conditions: policy.conditions,
-  }));
-};
 
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;

@@ -25,10 +25,12 @@ export const schema = new mongoose.Schema({
 schema.add(baseDocumentSchema);
 
 export type AccountSchema = InferSchemaType<typeof schema>;
-export type Account = AccountSchema & BaseDocument;
-export type AccountDocument = AccountSchema & BaseDocument;
+export type Account = mongoose.Document & AccountSchema & BaseDocument;
 export type AccountDocumentID = AccountSchema & BaseDocumentID;
 export type AccountCreate = Omit<AccountSchema, never> & {
+  // Todos os campos são obrigatórios para Account
+};
+export type AccountUpdate = Omit<AccountSchema, never> & {
   // Todos os campos são obrigatórios para Account
 };
 
@@ -52,5 +54,5 @@ schema.pre('save', async function (next) {
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);
-  return conn.model<AccountDocument>(schemaName, schema);
+  return conn.model<Account>(schemaName, schema);
 };

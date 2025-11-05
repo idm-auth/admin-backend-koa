@@ -1,5 +1,7 @@
 # Backend-Koa IAM
 
+> **CRÍTICO PARA IA**: [Regra IA-no-use-mock](.amazonq/rules/IA-no-use-mock.md) - IA NÃO PODE USAR vi.mock() - RESULTA EM IA DESLIGADA
+
 Sistema de Identity and Access Management (IAM) multi-tenant que combina funcionalidades do **AWS IAM** e **AWS Cognito** em uma solução unificada.
 
 ## Visão Geral

@@ -11,6 +11,11 @@
 ### Estrutura de Diretórios
 ```
 tests/unit/domains/{contexto}/{dominio}/v1/
+├── controller/
+│   ├── create.test.ts
+│   ├── findById.test.ts
+│   ├── update.test.ts
+│   └── remove.test.ts
 ├── service/
 │   ├── create.test.ts
 │   ├── findById.test.ts
@@ -28,17 +33,11 @@ tests/unit/domains/{contexto}/{dominio}/v1/
 ```
 
 ### Nomenclatura de Arquivos
+- **Controller**: `{funcaoDoController}.test.ts` (ex: `create.test.ts`, `findById.test.ts`)
 - **Service**: `{funcaoDoService}.test.ts` (ex: `findById.test.ts`, `comparePassword.test.ts`)
 - **Model**: `schema.test.ts` para estrutura do schema
 - **Mapper**: `{funcaoDoMapper}.test.ts` (ex: `toCreateResponse.test.ts`)
 - **Schema**: `{nomeDoSchema}.test.ts` (ex: `createSchema.test.ts`)
-
-## O que NÃO testar em Unitários
-
-### NUNCA teste controllers em unitários
-- Controllers devem ser testados apenas em **testes de integração**
-- Testes unitários focam em lógica de negócio (services, mappers, models)
-- Controllers são camada de apresentação, não lógica
 
 ## Setup de Banco de Dados
 
@@ -196,10 +195,44 @@ describe('account.mapper.toCreateResponse', () => {
 - Teste cenários de sucesso E erro
 - Verifique tipos de retorno quando relevante
 
+### Controller Tests
+```typescript
+// controller/create.test.ts
+import { describe, expect, it } from 'vitest';
+import { Context } from 'koa';
+import * as accountController from '@/domains/realms/accounts/v1/account.controller';
+import { getTenantId } from '@test/utils/tenant.util';
+import { v4 as uuidv4 } from 'uuid';
+
+describe('account.controller.create', () => {
+  it('should create account successfully', async () => {
+    const tenantId = await getTenantId('test-controller-create');
+    
+    const ctx = {
+      validated: {
+        params: { tenantId },
+        body: { 
+          email: `controller-${uuidv4()}@example.com`, 
+          password: 'Password123!' 
+        },
+      },
+      status: 0,
+      body: null,
+    } as unknown as Context;
+    
+    await accountController.create(ctx);
+    
+    expect(ctx.status).toBe(201);
+    expect(ctx.body).toHaveProperty('_id');
+    expect(ctx.body).toHaveProperty('email');
+    expect(ctx.body).not.toHaveProperty('password');
+  });
+});
+```
+
 ## Benefícios da Nova Arquitetura
 - **Organização clara** por responsabilidade
 - **Fácil navegação** - Um arquivo por função
 - **Manutenibilidade** - Mudanças isoladas
 - **Consistência** - Padrão único em todo projeto
-- **Foco correto** - Sem controllers em unitários
-```
+- **Cobertura completa** - Controllers, services, mappers e models

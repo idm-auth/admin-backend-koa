@@ -62,18 +62,7 @@ export const getGroupAccounts = async (ctx: Context) => {
   }));
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const accountGroups = await accountGroupService.findAll(tenantId);
-
-  ctx.body = accountGroups.map((ag) => ({
-    id: ag._id,
-    accountId: ag.accountId,
-    groupId: ag.groupId,
-    roles: ag.roles,
-  }));
-};
 
 export const updateAccountGroupRoles = async (ctx: Context) => {
   const { tenantId } = ctx.validated.params;

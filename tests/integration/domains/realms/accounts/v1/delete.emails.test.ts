@@ -4,7 +4,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/v1/account.service';
 
-describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
+describe('POST /api/realm/:tenantId/v1/accounts/:id/email/remove', () => {
   let tenantId: string;
   let accountId: string;
   let primaryEmail: string;
@@ -34,7 +34,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
 
   it('should remove email successfully', async () => {
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email/remove`)
       .set('Content-Type', 'application/json')
       .send({ email: secondaryEmail });
 
@@ -49,7 +49,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
 
   it('should return 400 for missing email', async () => {
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email/remove`)
       .send({})
       .expect(400);
 
@@ -61,7 +61,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
     await accountService.removeEmail(tenantId, accountId, secondaryEmail);
 
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email/remove`)
       .send({ email: primaryEmail })
       .expect(400);
 
@@ -75,7 +75,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
     const nonExistentEmail = `nonexistent-${uuidv4().substring(0, 8)}@example.com`;
 
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email/remove`)
       .send({ email: nonExistentEmail })
       .expect(404);
 
@@ -87,7 +87,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
 
   it('should return 400 for invalid email format', async () => {
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${accountId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${accountId}/email/remove`)
       .send({ email: 'invalid-email' })
       .expect(400);
 
@@ -98,7 +98,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
     const nonExistentId = uuidv4();
 
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/${nonExistentId}/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/${nonExistentId}/email/remove`)
       .send({ email: secondaryEmail })
       .expect(404);
 
@@ -107,7 +107,7 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
 
   it('should return 400 for invalid account ID format', async () => {
     const response = await request(getApp().callback())
-      .delete(`/api/realm/${tenantId}/v1/accounts/invalid-uuid/email`)
+      .post(`/api/realm/${tenantId}/v1/accounts/invalid-uuid/email/remove`)
       .send({ email: secondaryEmail })
       .expect(400);
 

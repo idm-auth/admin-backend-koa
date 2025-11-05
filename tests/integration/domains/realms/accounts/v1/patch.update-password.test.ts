@@ -2,6 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
+import * as accountService from '@/domains/realms/accounts/v1/account.service';
 
 describe('PATCH /api/realm/:tenantId/v1/accounts/:id/update-password', () => {
   let tenantId: string;
@@ -14,19 +15,12 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/update-password', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-update-password');
 
-    // Criar uma conta para testar o update
-    const accountData = {
+    // Criar uma conta para testar o update usando service
+    const account = await accountService.create(tenantId, {
       email: 'updatepasstest@example.com',
       password: CURRENT_PASSWORD,
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/v1/accounts`)
-      .send(accountData);
-
-    if (response.status === 201) {
-      accountId = response.body._id;
-    }
+    });
+    accountId = account._id;
   });
 
   it('should update password successfully', async () => {

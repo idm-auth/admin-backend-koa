@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
+import * as realmService from '@/domains/core/realms/v1/realm.service';
 
 describe('DELETE /api/core/v1/realms/:id', () => {
   let createdRealmId: string;
@@ -17,13 +18,8 @@ describe('DELETE /api/core/v1/realms/:id', () => {
       },
     };
 
-    const response = await request(getApp().callback())
-      .post('/api/core/v1/realms')
-      .send(realmData);
-
-    if (response.status === 201) {
-      createdRealmId = response.body._id;
-    }
+    const realm = await realmService.create(realmData);
+    createdRealmId = realm._id;
   });
 
   it('should delete realm successfully', async () => {
@@ -63,18 +59,15 @@ describe('DELETE /api/core/v1/realms/:id', () => {
   });
 
   it('should return 404 when trying to delete already deleted realm', async () => {
-    // Create a new realm for this test
+    // Create a new realm for this test using service
     const realmData = {
       name: 'test-realm-double-delete',
       description: 'Test realm for double deletion',
       dbName: 'test-db-double-delete',
     };
 
-    const createResponse = await request(getApp().callback())
-      .post('/api/core/v1/realms')
-      .send(realmData);
-
-    const realmId = createResponse.body._id;
+    const realm = await realmService.create(realmData);
+    const realmId = realm._id;
 
     // Delete it first time
     await request(getApp().callback())

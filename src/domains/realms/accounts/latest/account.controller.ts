@@ -68,31 +68,6 @@ export const update = async (ctx: Context) => {
   }
 };
 
-export const findAll = async (ctx: Context) => {
-  const logger = await getLogger();
-  const { tenantId } = ctx.validated.params;
-
-  try {
-    const accounts = await accountService.findAll(tenantId);
-
-    logger.debug(
-      { tenantId, count: accounts.length },
-      'Retrieved all accounts'
-    );
-
-    ctx.body = accounts.map(accountMapper.toListItemResponse);
-  } catch (error) {
-    logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-      },
-      'Failed to retrieve all accounts'
-    );
-    throw error;
-  }
-};
-
 export const findAllPaginated = async (ctx: Context) => {
   const logger = await getLogger();
   const { tenantId } = ctx.validated.params;

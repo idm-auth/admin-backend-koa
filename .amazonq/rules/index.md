@@ -1,5 +1,7 @@
 # Rules Index
 
+> **CRÍTICO**: [IA-no-use-mock.md](IA-no-use-mock.md) - IA NÃO PODE USAR vi.mock() - RESULTA EM IA DESLIGADA
+
 > **IMPORTANTE**: Sempre atualize este index quando criar, modificar ou remover qualquer arquivo de regras!
 
 ## Arquitetura e Padrões
@@ -53,6 +55,12 @@
 - Sufixo "Mock" APENAS para mocks reais
 - Dados de teste com nomes descritivos
 
+### **IA-no-use-mock.md** - IA NÃO PODE USAR MOCKS (CRÍTICO)
+- vi.mock() está PROIBIDO para IA em todo o projeto
+- IA usar vi.mock() resulta em IA DESLIGADA
+- IA só pode usar dados reais e MongoDB em memória
+- Se precisar mock, deve ser feito por HUMANO
+
 ### **unit-tests.md** - Testes Unitários
 - **ARQUITETURA OBRIGATÓRIA**: v1/ com diretórios service/model/mapper/
 - **MongoDB em memória disponível** para todos os testes unitários
@@ -87,6 +95,8 @@
 
 ### **imports.md** - Regras de Imports
 - Aliases obrigatórios: @/ para src, @test/ para tests
+- SEMPRE usar imports estáticos
+- NUNCA usar imports dinâmicos desnecessários
 - NUNCA usar paths relativos
 - Configuração no tsconfig.json
 

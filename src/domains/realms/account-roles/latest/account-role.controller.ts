@@ -44,17 +44,7 @@ export const getAccountRoles = async (ctx: Context) => {
   }));
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const accountRoles = await accountRoleService.findAll(tenantId);
-
-  ctx.body = accountRoles.map((ar) => ({
-    id: ar._id,
-    accountId: ar.accountId,
-    roleId: ar.roleId,
-  }));
-};
 
 export const getRoleAccounts = async (ctx: Context) => {
   const { tenantId, roleId } = ctx.validated.params;

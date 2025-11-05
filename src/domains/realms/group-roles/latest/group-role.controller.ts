@@ -44,17 +44,7 @@ export const getGroupRoles = async (ctx: Context) => {
   }));
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const groupRoles = await groupRoleService.findAll(tenantId);
-
-  ctx.body = groupRoles.map((gr) => ({
-    id: gr._id,
-    groupId: gr.groupId,
-    roleId: gr.roleId,
-  }));
-};
 
 export const getRoleGroups = async (ctx: Context) => {
   const { tenantId, roleId } = ctx.validated.params;

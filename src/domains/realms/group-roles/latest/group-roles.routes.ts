@@ -12,35 +12,7 @@ import { requestTenantIdParamsSchema } from '@/domains/commons/base/latest/reque
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
 
-  // GET /group-roles - List all group-roles
-  router.get({
-    name: 'listGroupRoles',
-    path: '/',
-    summary: 'List all group-roles',
-    handlers: [groupRoleController.findAll],
-    request: {
-      params: requestTenantIdParamsSchema,
-    },
-    responses: {
-      200: {
-        description: 'List of group-roles',
-        content: {
-          'application/json': {
-            schema: groupRoleResponseSchema.array(),
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
-    tags: ['Group-Roles'],
-  });
+
 
   router.post({
     name: 'addRoleToGroup',

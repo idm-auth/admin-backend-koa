@@ -50,15 +50,7 @@ export const getGroupRoles = async (
   return groupRoles;
 };
 
-export const findAll = async (
-  tenantId: string
-): Promise<GroupRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName(tenantId);
-  const groupRoles = await getModel(dbName).find({});
-  return groupRoles;
-};
+
 
 export const getRoleGroups = async (
   tenantId: string,

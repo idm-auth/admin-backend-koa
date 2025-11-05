@@ -76,13 +76,7 @@ export const update = async (
   return role;
 };
 
-export const findAll = async (tenantId: string): Promise<RoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName(tenantId);
-  const roles = await getModel(dbName).find({});
-  return roles;
-};
+
 
 export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();

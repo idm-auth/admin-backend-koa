@@ -28,18 +28,7 @@ export const initialize = async () => {
     roleSearchResponseSchema
   );
 
-  // GET /roles - List all roles
-  router.get({
-    name: 'listRoles',
-    path: '/',
-    summary: 'List all roles',
-    handlers: [roleController.findAll],
-    request: {
-      params: requestTenantIdParamsSchema,
-    },
-    responses: swagger.list.responses,
-    tags: ['Roles'],
-  });
+
 
   // POST /roles - Create role
   router.post({

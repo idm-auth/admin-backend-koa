@@ -68,15 +68,7 @@ export const getGroupAccounts = async (
   return groupAccounts;
 };
 
-export const findAll = async (
-  tenantId: string
-): Promise<AccountGroupDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId });
-  const dbName = await getDBName(tenantId);
-  const accountGroups = await getModel(dbName).find({});
-  return accountGroups;
-};
+
 
 export const updateAccountGroupRoles = async (
   tenantId: string,

@@ -2,6 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
+import * as accountService from '@/domains/realms/accounts/v1/account.service';
 
 describe('POST /api/realm/:tenantId/v1/accounts/:id/email', () => {
   let tenantId: string;
@@ -13,19 +14,12 @@ describe('POST /api/realm/:tenantId/v1/accounts/:id/email', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-add-email');
 
-    // Criar uma conta para testar adicionar email
-    const accountData = {
+    // Criar uma conta para testar adicionar email usando service
+    const account = await accountService.create(tenantId, {
       email: 'addemailtest@example.com',
       password: TEST_PASSWORD,
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/v1/accounts`)
-      .send(accountData);
-
-    if (response.status === 201) {
-      accountId = response.body._id;
-    }
+    });
+    accountId = account._id;
   });
 
   it('should add email successfully', async () => {
@@ -82,31 +76,23 @@ describe('POST /api/realm/:tenantId/v1/accounts/:id/email', () => {
   });
 
   it('should return 400 for email already used by another account', async () => {
-    // Criar outra conta
-    const otherAccountData = {
+    // Criar outra conta usando service
+    const otherAccount = await accountService.create(tenantId, {
       email: 'other@example.com',
       password: TEST_PASSWORD,
+    });
+
+    // Tentar adicionar email da primeira conta na segunda
+    const emailData = {
+      email: 'addemailtest@example.com',
     };
 
-    const otherResponse = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/v1/accounts`)
-      .send(otherAccountData);
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/v1/accounts/${otherAccount._id}/email`)
+      .send(emailData)
+      .expect(400);
 
-    if (otherResponse.status === 201) {
-      // Tentar adicionar email da primeira conta na segunda
-      const emailData = {
-        email: 'addemailtest@example.com',
-      };
-
-      const response = await request(getApp().callback())
-        .post(
-          `/api/realm/${tenantId}/v1/accounts/${otherResponse.body._id}/email`
-        )
-        .send(emailData)
-        .expect(400);
-
-      expect(response.body.error).toMatch(/Email already exists/);
-    }
+    expect(response.body.error).toMatch(/Email already exists/);
   });
 
   it('should return 404 for non-existent account', async () => {

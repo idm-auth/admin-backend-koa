@@ -51,18 +51,7 @@ export const update = async (ctx: Context) => {
   };
 };
 
-export const findAll = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
 
-  const roles = await roleService.findAll(tenantId);
-
-  ctx.body = roles.map((role) => ({
-    id: role._id,
-    name: role.name,
-    description: role.description,
-    permissions: role.permissions,
-  }));
-};
 
 export const remove = async (ctx: Context) => {
   const { tenantId, id } = ctx.validated.params;

@@ -274,10 +274,10 @@ export const initialize = async () => {
     tags: ['Accounts'],
   });
 
-  // DELETE /accounts/:id/email - Remove email from account
-  router.delete({
+  // POST /accounts/:id/email/remove - Remove email from account
+  router.post({
     name: 'removeAccountEmail',
-    path: '/:id/email',
+    path: '/:id/email/remove',
     summary: 'Remove email from account',
     handlers: [accountController.removeEmail],
     request: {
@@ -288,7 +288,6 @@ export const initialize = async () => {
             schema: accountRemoveEmailSchema,
           },
         },
-        required: true,
       },
     },
     responses: {
