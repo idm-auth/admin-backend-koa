@@ -19,27 +19,31 @@ describe('account.service.addEmail', () => {
     const tenantId = await getTenantId('test-account-addemail-2');
     const primaryEmail = `primary-${uuidv4()}@example.com`;
     const secondaryEmail = `secondary-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email: primaryEmail,
       password: 'Password123!',
     });
 
     const updatedAccount = await accountService.addEmail(
-      tenantId, 
-      createdAccount._id, 
+      tenantId,
+      createdAccount._id,
       secondaryEmail
     );
 
     expect(updatedAccount.emails).toHaveLength(2);
-    expect(updatedAccount.emails.some(e => e.email === secondaryEmail)).toBe(true);
-    expect(updatedAccount.emails.find(e => e.email === secondaryEmail)?.isPrimary).toBe(false);
+    expect(updatedAccount.emails.some((e) => e.email === secondaryEmail)).toBe(
+      true
+    );
+    expect(
+      updatedAccount.emails.find((e) => e.email === secondaryEmail)?.isPrimary
+    ).toBe(false);
   });
 
   it('should throw error for duplicate email in same account', async () => {
     const tenantId = await getTenantId('test-account-addemail-3');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',

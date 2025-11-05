@@ -26,7 +26,7 @@ describe('account.mapper.toCreateResponse', () => {
 
   it('should return primary email when exists', () => {
     const result = accountMapper.toCreateResponse(accountWithPrimary);
-    
+
     expect(result).toEqual({
       _id: 'test-id',
       email: 'primary@example.com',
@@ -36,7 +36,7 @@ describe('account.mapper.toCreateResponse', () => {
 
   it('should return first email when no primary exists', () => {
     const result = accountMapper.toCreateResponse(accountNoPrimary);
-    
+
     expect(result).toEqual({
       _id: 'test-id',
       email: 'first@example.com',
@@ -44,13 +44,9 @@ describe('account.mapper.toCreateResponse', () => {
     });
   });
 
-  it('should return empty email when no emails exist', () => {
-    const result = accountMapper.toCreateResponse(accountNoEmails);
-    
-    expect(result).toEqual({
-      _id: 'test-id',
-      email: '',
-      isPrimary: false,
-    });
+  it('should throw error when no emails exist', () => {
+    expect(() => {
+      accountMapper.toCreateResponse(accountNoEmails);
+    }).toThrow('Account must have at least one email');
   });
 });

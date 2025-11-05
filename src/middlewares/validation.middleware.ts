@@ -28,47 +28,63 @@ export const requestValidationMiddleware = <TContext extends Context = Context>(
       return await next();
     }
 
-    // Valida params
-    if (request.params) {
-      logger.debug({ params: ctx.params }, 'Validating params');
-      ctx.validated.params = await validateZod(ctx.params, request.params);
-      logger.debug('Params validation successful');
-    }
+    try {
+      // Valida params
+      if (request.params) {
+        logger.debug({ params: ctx.params }, 'Validating params');
+        ctx.validated.params = await validateZod(ctx.params, request.params);
+        logger.debug('Params validation successful');
+      }
 
-    // Valida query
-    if (request.query) {
-      logger.debug({ query: ctx.query }, 'Validating query');
-      ctx.validated.query = await validateZod(ctx.query, request.query);
-      logger.debug('Query validation successful');
-    }
+      // Valida query
+      if (request.query) {
+        logger.debug({ query: ctx.query }, 'Validating query');
+        ctx.validated.query = await validateZod(ctx.query, request.query);
+        logger.debug('Query validation successful');
+      }
 
-    // Valida body
-    if (request.body?.content?.['application/json']?.schema) {
-      const bodySchema = request.body.content['application/json']
-        .schema as z.ZodSchema;
+      // Valida body
+      if (request.body?.content?.['application/json']?.schema) {
+        const bodySchema = request.body.content['application/json']
+          .schema as z.ZodSchema;
 
-      logger.debug(
+        logger.debug(
+          {
+            hasBodySchema: true,
+            bodyRequired: request.body.required,
+            requestBody: ctx.request.body,
+            bodyType: typeof ctx.request.body,
+            schemaType: bodySchema.constructor.name,
+            schemaDescription: bodySchema.description || 'No description',
+          },
+          'Validating body'
+        );
+
+        const bodyData = ctx.request.body || {};
+        ctx.validated.body = await validateZod(bodyData, bodySchema);
+        logger.debug('Body validation successful');
+      }
+
+      // Valida cookies
+      if (request.cookies) {
+        logger.debug({ cookies: ctx.cookies }, 'Validating cookies');
+        ctx.validated.cookies = await validateZod(ctx.cookies, request.cookies);
+        logger.debug('Cookies validation successful');
+      }
+    } catch (error) {
+      logger.error(
         {
-          hasBodySchema: true,
-          bodyRequired: request.body.required,
-          requestBody: ctx.request.body,
-          bodyType: typeof ctx.request.body,
-          schemaType: bodySchema.constructor.name,
-          schemaDescription: bodySchema.description || 'No description',
+          error,
+          method: ctx.method,
+          url: ctx.url,
+          routeName: config.name,
+          params: ctx.params,
+          query: ctx.query,
+          body: ctx.request.body,
         },
-        'Validating body'
+        'Request validation failed'
       );
-
-      const bodyData = ctx.request.body || {};
-      ctx.validated.body = await validateZod(bodyData, bodySchema);
-      logger.debug('Body validation successful');
-    }
-
-    // Valida cookies
-    if (request.cookies) {
-      logger.debug({ cookies: ctx.cookies }, 'Validating cookies');
-      ctx.validated.cookies = await validateZod(ctx.cookies, request.cookies);
-      logger.debug('Cookies validation successful');
+      throw error;
     }
 
     logger.debug('Request validation middleware completed');

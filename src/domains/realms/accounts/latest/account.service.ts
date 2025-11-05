@@ -98,7 +98,7 @@ export const update = async (
   logger.info({ tenantId, id }, 'Updating account');
 
   const dbName = await getDBName(tenantId);
-  
+
   // Email e password são excluídos intencionalmente
   // Use métodos específicos: resetPassword() para senha
   const updateData = { ...data };
@@ -233,23 +233,31 @@ export const resetPassword = async (
   const logger = await getLogger();
   logger.info({ tenantId, id }, 'Resetting account password');
 
-  const dbName = await getDBName(tenantId);
-  const account = await getModel(dbName).findByIdAndUpdate(
-    id,
-    { password },
-    { new: true, runValidators: true }
-  );
+  try {
+    const dbName = await getDBName(tenantId);
+    const account = await getModel(dbName).findByIdAndUpdate(
+      id,
+      { password },
+      { new: true, runValidators: true }
+    );
 
-  if (!account) {
-    logger.warn({ tenantId, id }, 'Account not found for password reset');
-    throw new NotFoundError('Account not found');
+    if (!account) {
+      logger.warn({ tenantId, id }, 'Account not found for password reset');
+      throw new NotFoundError('Account not found');
+    }
+
+    logger.info(
+      { accountId: account._id, tenantId },
+      'Account password reset successfully'
+    );
+    return account;
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      throw error;
+    }
+    logger.error({ error, tenantId, id }, 'Error resetting account password');
+    throw new Error('Failed to reset password');
   }
-
-  logger.info(
-    { accountId: account._id, tenantId },
-    'Account password reset successfully'
-  );
-  return account;
 };
 
 export const updatePassword = async (
@@ -263,9 +271,12 @@ export const updatePassword = async (
 
   // Buscar account para validar senha atual
   const account = await findById(tenantId, id);
-  
+
   // Validar senha atual
-  const isCurrentPasswordValid = await comparePassword(account, currentPassword);
+  const isCurrentPasswordValid = await comparePassword(
+    account,
+    currentPassword
+  );
   if (!isCurrentPasswordValid) {
     throw new NotFoundError('Current password is incorrect');
   }
@@ -300,9 +311,9 @@ export const addEmail = async (
   await validateEmailUnique(tenantId, email);
 
   const account = await findById(tenantId, id);
-  
+
   // Verificar se email já existe na conta
-  const emailExists = account.emails.some(e => e.email === email);
+  const emailExists = account.emails.some((e) => e.email === email);
   if (emailExists) {
     throw new NotFoundError('Email already exists in this account');
   }
@@ -334,14 +345,14 @@ export const removeEmail = async (
   logger.info({ tenantId, id, email }, 'Removing email from account');
 
   const account = await findById(tenantId, id);
-  
+
   // Verificar se é o único email
   if (account.emails.length <= 1) {
     throw new ValidationError('Cannot remove the only email from account');
   }
 
   // Verificar se email existe na conta
-  const emailExists = account.emails.some(e => e.email === email);
+  const emailExists = account.emails.some((e) => e.email === email);
   if (!emailExists) {
     throw new NotFoundError('Email not found in this account');
   }
@@ -373,28 +384,27 @@ export const setPrimaryEmail = async (
   logger.info({ tenantId, id, email }, 'Setting primary email');
 
   const account = await findById(tenantId, id);
-  
+
   // Verificar se email existe na conta
-  const emailExists = account.emails.some(e => e.email === email);
+  const emailExists = account.emails.some((e) => e.email === email);
   if (!emailExists) {
     throw new NotFoundError('Email not found in this account');
   }
 
   const dbName = await getDBName(tenantId);
-  
+
   // Remover isPrimary de todos os emails e definir o novo como primary
-  await getModel(dbName).findByIdAndUpdate(
-    id,
-    { $set: { 'emails.$[].isPrimary': false } }
-  );
-  
+  await getModel(dbName).findByIdAndUpdate(id, {
+    $set: { 'emails.$[].isPrimary': false },
+  });
+
   const updatedAccount = await getModel(dbName).findByIdAndUpdate(
     id,
     { $set: { 'emails.$[elem].isPrimary': true } },
-    { 
+    {
       arrayFilters: [{ 'elem.email': email }],
-      new: true, 
-      runValidators: true 
+      new: true,
+      runValidators: true,
     }
   );
 

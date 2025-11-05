@@ -11,7 +11,6 @@ import { validateZod } from '@/domains/commons/validations/v1/validation.service
 import {
   getModel,
   Realm,
-  RealmOmitId,
   RealmCreate,
 } from '@/domains/core/realms/latest/realms.model';
 import { ConflictError } from '@/errors/conflict';

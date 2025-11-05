@@ -15,10 +15,12 @@ export const initialize = async () => {
   app.use(errorHandler);
 
   app.use(cors());
-  app.use(bodyParser({
-    enableTypes: ['json', 'form', 'text'],
-    parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'], // Incluir DELETE
-  }));
+  app.use(
+    bodyParser({
+      enableTypes: ['json', 'form', 'text'],
+      parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'], // Incluir DELETE
+    })
+  );
   app.use(requestIdMiddleware);
 
   const apiRouter = await api();

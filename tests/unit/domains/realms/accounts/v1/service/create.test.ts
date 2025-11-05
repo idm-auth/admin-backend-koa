@@ -8,7 +8,7 @@ describe('account.service.create', () => {
   it('should throw ValidationError for duplicate email', async () => {
     const tenantId = await getTenantId('test-account-create-duplicate');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     await accountService.create(tenantId, {
       email,
       password: 'Password123!',
@@ -25,12 +25,12 @@ describe('account.service.create', () => {
   it('should create account successfully', async () => {
     const tenantId = await getTenantId('test-account-create-success');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const account = await accountService.create(tenantId, {
       email,
       password: 'Password123!',
     });
-    
+
     expect(account).toHaveProperty('_id');
     expect(account.emails[0].email).toBe(email);
     expect(account.emails[0].isPrimary).toBe(true);

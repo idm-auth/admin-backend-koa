@@ -74,7 +74,10 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Email not found in this account');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Email not found in this account'
+    );
   });
 
   it('should return 400 for invalid email format', async () => {
@@ -127,7 +130,9 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/email/primary', () => {
     };
 
     const response = await request(getApp().callback())
-      .patch(`/api/realm/${tenantId}/v1/accounts/${nonExistentId}/email/primary`)
+      .patch(
+        `/api/realm/${tenantId}/v1/accounts/${nonExistentId}/email/primary`
+      )
       .send(emailData)
       .expect(404);
 

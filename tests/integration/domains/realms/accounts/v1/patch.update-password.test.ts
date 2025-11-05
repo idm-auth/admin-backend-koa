@@ -82,7 +82,10 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Current password is incorrect');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Current password is incorrect'
+    );
   });
 
   it('should return 400 for weak new password', async () => {
@@ -107,7 +110,9 @@ describe('PATCH /api/realm/:tenantId/v1/accounts/:id/update-password', () => {
     };
 
     const response = await request(getApp().callback())
-      .patch(`/api/realm/${tenantId}/v1/accounts/${nonExistentId}/update-password`)
+      .patch(
+        `/api/realm/${tenantId}/v1/accounts/${nonExistentId}/update-password`
+      )
       .send(updateData)
       .expect(404);
 

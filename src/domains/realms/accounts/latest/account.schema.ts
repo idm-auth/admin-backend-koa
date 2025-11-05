@@ -79,7 +79,9 @@ export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
 export type AccountUpdatePassword = z.infer<typeof accountUpdatePasswordSchema>;
 export type AccountAddEmail = z.infer<typeof accountAddEmailSchema>;
 export type AccountRemoveEmail = z.infer<typeof accountRemoveEmailSchema>;
-export type AccountSetPrimaryEmail = z.infer<typeof accountSetPrimaryEmailSchema>;
+export type AccountSetPrimaryEmail = z.infer<
+  typeof accountSetPrimaryEmailSchema
+>;
 
 // Pagination schemas
 export const accountListQuerySchema = paginationQuerySchema;

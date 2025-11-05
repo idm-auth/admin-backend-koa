@@ -20,7 +20,6 @@ import {
   accountSetPrimaryEmailSchema,
 } from './account.schema';
 
-
 const requestTenantIdParamsSchema = z.object({
   tenantId: publicUUIDSchema,
 });
@@ -37,8 +36,6 @@ const safeAccountListQuerySchema = z.object({
   sortBy: z.enum(['email', 'createdAt', 'updatedAt']).optional(),
   descending: z.coerce.boolean().default(false),
 });
-
-
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });

@@ -99,7 +99,9 @@ describe('POST /api/realm/:tenantId/v1/accounts/:id/email', () => {
       };
 
       const response = await request(getApp().callback())
-        .post(`/api/realm/${tenantId}/v1/accounts/${otherResponse.body._id}/email`)
+        .post(
+          `/api/realm/${tenantId}/v1/accounts/${otherResponse.body._id}/email`
+        )
         .send(emailData)
         .expect(400);
 

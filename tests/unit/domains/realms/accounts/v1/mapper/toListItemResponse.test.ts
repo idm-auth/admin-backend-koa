@@ -13,7 +13,7 @@ describe('account.mapper.toListItemResponse', () => {
 
   it('should return primary email when exists', () => {
     const result = accountMapper.toListItemResponse(accountWithPrimary);
-    
+
     expect(result).toEqual({
       _id: 'test-id',
       email: 'primary@example.com',

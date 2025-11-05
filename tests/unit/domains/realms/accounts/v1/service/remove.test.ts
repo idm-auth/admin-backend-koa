@@ -17,7 +17,7 @@ describe('account.service.remove', () => {
   it('should remove account successfully', async () => {
     const tenantId = await getTenantId('test-account-remove-2');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',

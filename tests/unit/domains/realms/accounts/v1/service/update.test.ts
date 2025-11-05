@@ -17,15 +17,15 @@ describe('account.service.update', () => {
   it('should return account when update with empty data', async () => {
     const tenantId = await getTenantId('test-account-update-2');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',
     });
 
     const updatedAccount = await accountService.update(
-      tenantId, 
-      createdAccount._id, 
+      tenantId,
+      createdAccount._id,
       {} // Update vazio
     );
 
@@ -36,18 +36,18 @@ describe('account.service.update', () => {
   it('should exclude email and password from update', async () => {
     const tenantId = await getTenantId('test-account-update-3');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',
     });
 
     const updatedAccount = await accountService.update(
-      tenantId, 
-      createdAccount._id, 
-      { 
+      tenantId,
+      createdAccount._id,
+      {
         email: 'should-be-ignored@example.com',
-        password: 'should-be-ignored'
+        password: 'should-be-ignored',
       }
     );
 

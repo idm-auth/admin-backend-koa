@@ -17,7 +17,7 @@ describe('account.service.findByEmail', () => {
   it('should return account when found by email', async () => {
     const tenantId = await getTenantId('test-account-findbyemail-2');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',

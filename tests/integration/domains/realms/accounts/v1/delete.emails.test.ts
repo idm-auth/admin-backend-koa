@@ -65,7 +65,10 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
       .send({ email: primaryEmail })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Cannot remove the only email from account');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Cannot remove the only email from account'
+    );
   });
 
   it('should return 404 for email not found in account', async () => {
@@ -76,7 +79,10 @@ describe('DELETE /api/realm/:tenantId/v1/accounts/:id/email', () => {
       .send({ email: nonExistentEmail })
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Email not found in this account');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Email not found in this account'
+    );
   });
 
   it('should return 400 for invalid email format', async () => {

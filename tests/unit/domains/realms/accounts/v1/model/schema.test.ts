@@ -4,7 +4,7 @@ import { schema } from '@/domains/realms/accounts/v1/account.model';
 describe('account.model.schema', () => {
   it('should have required fields defined', () => {
     const paths = schema.paths;
-    
+
     expect(paths).toHaveProperty('_id');
     expect(paths).toHaveProperty('emails');
     expect(paths).toHaveProperty('password');

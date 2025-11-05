@@ -17,13 +17,16 @@ describe('account.service.findById', () => {
   it('should return account when found', async () => {
     const tenantId = await getTenantId('test-account-findbyid-success');
     const email = `test-${uuidv4()}@example.com`;
-    
+
     const createdAccount = await accountService.create(tenantId, {
       email,
       password: 'Password123!',
     });
 
-    const foundAccount = await accountService.findById(tenantId, createdAccount._id);
+    const foundAccount = await accountService.findById(
+      tenantId,
+      createdAccount._id
+    );
 
     expect(foundAccount).toHaveProperty('_id', createdAccount._id);
     expect(foundAccount.emails[0].email).toBe(email);

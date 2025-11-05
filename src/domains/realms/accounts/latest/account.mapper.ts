@@ -1,13 +1,22 @@
+import { AccountDocument } from './account.model';
 import {
   AccountCreateResponse,
-  AccountUpdateResponse,
   AccountListItemResponse,
+  AccountUpdateResponse,
 } from './account.schema';
-import { AccountDocument } from './account.model';
 
 const getPrimaryEmail = (account: AccountDocument) => {
-  const primaryEmail = account.emails.find(e => e.isPrimary);
-  return primaryEmail || account.emails[0] || { email: '', isPrimary: false };
+  if (!account.emails || account.emails.length === 0) {
+    throw new Error('Account must have at least one email');
+  }
+  const primaryEmail = account.emails.find((e) => e.isPrimary);
+  const selectedEmail = primaryEmail || account.emails[0];
+
+  if (!selectedEmail || !selectedEmail.email) {
+    throw new Error('Invalid email data in account');
+  }
+
+  return selectedEmail;
 };
 
 export const toCreateResponse = (
