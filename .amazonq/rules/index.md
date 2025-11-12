@@ -65,8 +65,15 @@
 - **Estrutura simplificada**: `tests/unit/domains/{contexto}/{dominio}/`
 - **MongoDB em memória disponível** para todos os testes unitários
 - **Imports diretos** sem versionamento
-- Um arquivo por função testada
+- Um arquivo por função/funcionalidade testada
 - Teste comportamento real com banco, evite mocks desnecessários
+
+### **test-architecture.md** - Arquitetura de Testes (FUNDAMENTAL)
+- **1 arquivo por função/funcionalidade** - Princípio inviolável
+- **Organização DDD obrigatória** por responsabilidade
+- **Nomenclatura consistente**: `{nome}.test.ts`
+- **Localização correta** de testes de validação e erro
+- **Regras de consolidação** - apenas cenários da mesma função
 
 ### **integration-tests.md** - Testes de Integração
 - **URLs simplificadas**: `/api/{contexto}/{dominio}/` (sem /v1/)
@@ -86,6 +93,12 @@
 - Não modificar código correto
 - Usar logs estruturados
 - Investigação sistemática
+
+### **code-coverage.md** - Cobertura de Código (PERFEIÇÃO)
+- **"Eu busco a perfeição.... se não for 100%, não está correto"**
+- **100% obrigatório** em todas as métricas (statements, branches, functions, lines)
+- **Tolerância zero** - 99.9% não é aceitável
+- **Processo sistemático** para alcançar perfeição
 
 ## Utilitários e Configuração
 

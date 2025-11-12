@@ -24,7 +24,9 @@ describe('realm.service validateDBName', () => {
 
   it('should handle update with malicious dbName', async () => {
     await expect(
-      realmService.update('507f1f77bcf86cd799439011', { dbName: 'https://evil.com' })
+      realmService.update('507f1f77bcf86cd799439011', {
+        dbName: 'https://evil.com',
+      })
     ).rejects.toThrow('Invalid database name format');
   });
 });

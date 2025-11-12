@@ -1,7 +1,4 @@
-import {
-  JwtPayload,
-  jwtPayloadSchema,
-} from './jwt.schema';
+import { JwtPayload, jwtPayloadSchema } from './jwt.schema';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { validateZod } from '@/domains/commons/validations/validation.service';

@@ -1,7 +1,4 @@
-import {
-  getModel,
-  WebAdminConfig,
-} from './webAdminConfig.model';
+import { getModel, WebAdminConfig } from './webAdminConfig.model';
 import {
   EnvConfig,
   envConfigZSchema,

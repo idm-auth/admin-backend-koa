@@ -12,8 +12,6 @@ import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.sche
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/group-roles' });
 
-
-
   router.post({
     name: 'addRoleToGroup',
     path: '/',

@@ -8,11 +8,7 @@ import {
 } from '@/domains/commons/base/pagination.schema';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
 import { validateZod } from '@/domains/commons/validations/validation.service';
-import {
-  getModel,
-  Realm,
-  RealmCreate,
-} from './realms.model';
+import { getModel, Realm, RealmCreate } from './realms.model';
 import { ConflictError } from '@/errors/conflict';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';

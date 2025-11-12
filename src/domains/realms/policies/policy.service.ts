@@ -1,7 +1,4 @@
-import {
-  PolicyDocument,
-  getModel,
-} from './policy.model';
+import { PolicyDocument, getModel } from './policy.model';
 import { DocId } from '@/domains/commons/base/base.schema';
 import { PolicyCreate } from './policy.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';

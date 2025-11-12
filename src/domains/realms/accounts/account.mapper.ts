@@ -1,11 +1,11 @@
-import { AccountDocument } from './account.model';
+import { Account } from './account.model';
 import {
   AccountCreateResponse,
   AccountListItemResponse,
   AccountUpdateResponse,
 } from './account.schema';
 
-const getPrimaryEmail = (account: AccountDocument) => {
+const getPrimaryEmail = (account: Account) => {
   if (!account.emails || account.emails.length === 0) {
     throw new Error('Account must have at least one email');
   }
@@ -19,9 +19,7 @@ const getPrimaryEmail = (account: AccountDocument) => {
   return selectedEmail;
 };
 
-export const toCreateResponse = (
-  account: AccountDocument
-): AccountCreateResponse => {
+export const toCreateResponse = (account: Account): AccountCreateResponse => {
   const email = getPrimaryEmail(account);
   return {
     _id: account._id.toString(),
@@ -30,9 +28,7 @@ export const toCreateResponse = (
   };
 };
 
-export const toUpdateResponse = (
-  account: AccountDocument
-): AccountUpdateResponse => {
+export const toUpdateResponse = (account: Account): AccountUpdateResponse => {
   const email = getPrimaryEmail(account);
   return {
     _id: account._id.toString(),
@@ -42,7 +38,7 @@ export const toUpdateResponse = (
 };
 
 export const toListItemResponse = (
-  account: AccountDocument
+  account: Account
 ): AccountListItemResponse => {
   const email = getPrimaryEmail(account);
   return {

@@ -20,4 +20,15 @@ describe('account.mapper.toListItemResponse', () => {
       isPrimary: true,
     });
   });
+
+  it('should throw error when email is undefined', () => {
+    const accountWithUndefinedEmail = {
+      _id: 'test-id',
+      emails: [{ email: undefined, isPrimary: true }],
+    } as { _id: string; emails: { email: undefined; isPrimary: boolean }[] };
+
+    expect(() =>
+      accountMapper.toListItemResponse(accountWithUndefinedEmail)
+    ).toThrow('Invalid email data in account');
+  });
 });

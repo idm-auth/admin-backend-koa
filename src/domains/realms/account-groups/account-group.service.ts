@@ -1,7 +1,4 @@
-import {
-  AccountGroupDocument,
-  getModel,
-} from './account-group.model';
+import { AccountGroupDocument, getModel } from './account-group.model';
 import { DocId } from '@/domains/commons/base/base.schema';
 import { AccountGroupCreate } from './account-group.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -67,8 +64,6 @@ export const getGroupAccounts = async (
 
   return groupAccounts;
 };
-
-
 
 export const updateAccountGroupRoles = async (
   tenantId: string,

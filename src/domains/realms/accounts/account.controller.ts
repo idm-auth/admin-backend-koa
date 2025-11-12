@@ -24,11 +24,7 @@ export const create = async (ctx: Context) => {
     ctx.body = accountMapper.toCreateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        email: ctx.validated.body?.email,
-      },
+      { error, tenantId, email: ctx.validated.body?.email },
       'Failed to create account'
     );
     throw error;
@@ -61,11 +57,7 @@ export const update = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-      },
+      { error, tenantId, accountId: id },
       'Failed to update account'
     );
     throw error;
@@ -100,11 +92,7 @@ export const findAllPaginated = async (ctx: Context) => {
     ctx.body = result;
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        query,
-      },
+      { error, tenantId, query },
       'Failed to retrieve paginated accounts'
     );
     throw error;
@@ -123,11 +111,7 @@ export const remove = async (ctx: Context) => {
     ctx.status = 204;
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-      },
+      { error, tenantId, accountId: id },
       'Failed to remove account'
     );
     throw error;
@@ -150,11 +134,7 @@ export const resetPassword = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-      },
+      { error, tenantId, accountId: id },
       'Failed to reset account password'
     );
     throw error;
@@ -182,11 +162,7 @@ export const updatePassword = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-      },
+      { error, tenantId, accountId: id },
       'Failed to update account password'
     );
     throw error;
@@ -209,12 +185,7 @@ export const addEmail = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-        email,
-      },
+      { error, tenantId, accountId: id, email },
       'Failed to add email to account'
     );
     throw error;
@@ -237,12 +208,7 @@ export const removeEmail = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-        email,
-      },
+      { error, tenantId, accountId: id, email },
       'Failed to remove email from account'
     );
     throw error;
@@ -265,12 +231,7 @@ export const setPrimaryEmail = async (ctx: Context) => {
     ctx.body = accountMapper.toUpdateResponse(account);
   } catch (error) {
     logger.error(
-      {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        accountId: id,
-        email,
-      },
+      { error, tenantId, accountId: id, email },
       'Failed to set primary email'
     );
     throw error;

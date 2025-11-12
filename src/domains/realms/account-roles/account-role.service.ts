@@ -52,8 +52,6 @@ export const getAccountRoles = async (
   return accountRoles;
 };
 
-
-
 export const getRoleAccounts = async (
   tenantId: string,
   roleId: DocId

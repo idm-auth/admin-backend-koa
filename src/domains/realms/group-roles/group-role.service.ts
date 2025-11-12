@@ -50,8 +50,6 @@ export const getGroupRoles = async (
   return groupRoles;
 };
 
-
-
 export const getRoleGroups = async (
   tenantId: string,
   roleId: DocId

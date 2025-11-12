@@ -44,8 +44,6 @@ export const getGroupRoles = async (ctx: Context) => {
   }));
 };
 
-
-
 export const getRoleGroups = async (ctx: Context) => {
   const { tenantId, roleId } = ctx.validated.params;
 

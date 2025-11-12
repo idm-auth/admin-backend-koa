@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import request from 'supertest';
-import * as accountService from '@/domains/realms/accounts/account.service';
 
 describe('POST /api/realm/:tenantId/authentication/login', () => {
   let tenantId: string;

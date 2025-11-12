@@ -4,8 +4,8 @@
 
 ### Estrutura Obrigatória
 - **Organize por domínio**: `tests/unit/domains/{contexto}/{dominio}/`
-- **Divida por responsabilidade**: `service/`, `model/`, `mapper/`, `schema/`
-- **Um arquivo por função**: Cada função testada tem seu próprio arquivo
+- **Divida por responsabilidade**: `controller/`, `service/`, `mapper/`, `model/`
+- **Um arquivo por função/funcionalidade**: Cada função ou funcionalidade testada tem seu próprio arquivo
 
 ### Estrutura de Diretórios
 ```
@@ -34,7 +34,7 @@ tests/unit/domains/{contexto}/{dominio}/
 ### Nomenclatura de Arquivos
 - **Controller**: `{funcaoDoController}.test.ts` (ex: `create.test.ts`, `findById.test.ts`)
 - **Service**: `{funcaoDoService}.test.ts` (ex: `findById.test.ts`, `comparePassword.test.ts`)
-- **Model**: `schema.test.ts` para estrutura do schema
+- **Model**: `{funcionalidade}.test.ts` (ex: `schema.test.ts`, `pre-save.test.ts`)
 - **Mapper**: `{funcaoDoMapper}.test.ts` (ex: `toCreateResponse.test.ts`)
 - **Schema**: `{nomeDoSchema}.test.ts` (ex: `createSchema.test.ts`)
 
@@ -67,11 +67,13 @@ const tenantId = await getTenantId('test-account-create-unique');
 - **SEMPRE use getTenantId**: Para qualquer teste que envolva realms/tenants
 
 ## Princípios Gerais
+- **1 arquivo por função/funcionalidade** - Princípio fundamental
 - **Teste comportamento real, não mocks artificiais**
 - Use mocks apenas quando absolutamente necessário
 - Prefira dados reais a retornos mockados
 - Valide o resultado, não apenas se a função foi chamada
 - **Aproveite o MongoDB em memória** para testes mais realistas
+- **Testes de validação no arquivo da função específica**
 
 ## Imports nos Testes
 - **Imports diretos** para o domínio

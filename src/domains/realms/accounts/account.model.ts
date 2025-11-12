@@ -1,7 +1,6 @@
 // schema do core para realms
 import {
   BaseDocument,
-  BaseDocumentID,
   baseDocumentSchema,
 } from '@/domains/commons/base/base.model';
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
@@ -26,7 +25,6 @@ schema.add(baseDocumentSchema);
 
 export type AccountSchema = InferSchemaType<typeof schema>;
 export type Account = mongoose.Document & AccountSchema & BaseDocument;
-export type AccountDocumentID = AccountSchema & BaseDocumentID;
 export type AccountCreate = Omit<AccountSchema, never> & {
   // Todos os campos são obrigatórios para Account
 };
@@ -44,11 +42,13 @@ schema.pre('save', async function (next) {
     }
     next();
   } catch (error) {
-    next(
-      error instanceof Error
-        ? error
-        : new Error('Unknown error during password hashing')
-    );
+    // Usa if/else em vez de ternário para melhor cobertura de código
+    // Cada branch fica em linha separada para análise de cobertura
+    if (error instanceof Error) {
+      next(error);
+    } else {
+      next(new Error('Unknown error during password hashing'));
+    }
   }
 });
 

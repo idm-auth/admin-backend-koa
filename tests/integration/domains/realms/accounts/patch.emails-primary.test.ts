@@ -22,8 +22,16 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
     accountId = account._id;
 
     // Adicionar emails secundários usando service
-    await accountService.addEmail(tenantId, accountId, 'secondary1@example.com');
-    await accountService.addEmail(tenantId, accountId, 'secondary2@example.com');
+    await accountService.addEmail(
+      tenantId,
+      accountId,
+      'secondary1@example.com'
+    );
+    await accountService.addEmail(
+      tenantId,
+      accountId,
+      'secondary2@example.com'
+    );
   });
 
   it('should set primary email successfully', async () => {
@@ -119,9 +127,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
     };
 
     const response = await request(getApp().callback())
-      .patch(
-        `/api/realm/${tenantId}/accounts/${nonExistentId}/email/primary`
-      )
+      .patch(`/api/realm/${tenantId}/accounts/${nonExistentId}/email/primary`)
       .send(emailData)
       .expect(404);
 

@@ -129,9 +129,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
     };
 
     const response = await request(getApp().callback())
-      .patch(
-        `/api/realm/${tenantId}/accounts/${nonExistentId}/reset-password`
-      )
+      .patch(`/api/realm/${tenantId}/accounts/${nonExistentId}/reset-password`)
       .send(resetData)
       .expect(404);
 

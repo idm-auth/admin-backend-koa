@@ -15,8 +15,6 @@ import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.sche
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
 
-
-
   // POST /account-groups - Add account to group
   router.post({
     name: 'addAccountToGroup',

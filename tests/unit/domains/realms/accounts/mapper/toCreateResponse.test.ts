@@ -49,4 +49,15 @@ describe('account.mapper.toCreateResponse', () => {
       accountMapper.toCreateResponse(accountNoEmails);
     }).toThrow('Account must have at least one email');
   });
+
+  it('should throw error when email data is invalid', () => {
+    const accountWithInvalidEmail = {
+      _id: 'test-id',
+      emails: [{ email: null, isPrimary: true }],
+    } as { _id: string; emails: { email: null; isPrimary: boolean }[] };
+
+    expect(() =>
+      accountMapper.toCreateResponse(accountWithInvalidEmail)
+    ).toThrow('Invalid email data in account');
+  });
 });

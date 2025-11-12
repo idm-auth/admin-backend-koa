@@ -44,8 +44,6 @@ export const getAccountRoles = async (ctx: Context) => {
   }));
 };
 
-
-
 export const getRoleAccounts = async (ctx: Context) => {
   const { tenantId, roleId } = ctx.validated.params;
 

@@ -20,4 +20,15 @@ describe('account.mapper.toUpdateResponse', () => {
       isPrimary: true,
     });
   });
+
+  it('should throw error when selectedEmail has no email property', () => {
+    const accountWithEmptyEmailObject = {
+      _id: 'test-id',
+      emails: [{ isPrimary: true }],
+    } as { _id: string; emails: { isPrimary: boolean }[] };
+
+    expect(() =>
+      accountMapper.toUpdateResponse(accountWithEmptyEmailObject)
+    ).toThrow('Invalid email data in account');
+  });
 });

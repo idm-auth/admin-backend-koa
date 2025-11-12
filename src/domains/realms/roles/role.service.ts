@@ -1,7 +1,4 @@
-import {
-  RoleDocument,
-  getModel,
-} from './role.model';
+import { RoleDocument, getModel } from './role.model';
 import { DocId } from '@/domains/commons/base/base.schema';
 import { RoleCreate } from './role.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';

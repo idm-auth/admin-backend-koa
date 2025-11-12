@@ -16,6 +16,8 @@ describe('account.controller.remove error handling', () => {
     } as unknown as Context;
 
     // Tentar remover conta inexistente deve gerar erro
-    await expect(accountController.remove(ctx)).rejects.toThrow('Account not found');
+    await expect(accountController.remove(ctx)).rejects.toThrow(
+      'Account not found'
+    );
   });
 });

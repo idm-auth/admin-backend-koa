@@ -62,8 +62,6 @@ export const getGroupAccounts = async (ctx: Context) => {
   }));
 };
 
-
-
 export const updateAccountGroupRoles = async (ctx: Context) => {
   const { tenantId } = ctx.validated.params;
   const { accountId, groupId, roles } = ctx.validated.body;

@@ -1,8 +1,5 @@
 import { getDBName } from '@/domains/core/realms/realm.service';
-import {
-  GroupDocument,
-  getModel,
-} from './group.model';
+import { GroupDocument, getModel } from './group.model';
 import { NotFoundError } from '@/errors/not-found';
 import { DocId } from '@/domains/commons/base/base.schema';
 import { getLogger } from '@/utils/localStorage.util';
