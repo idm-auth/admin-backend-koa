@@ -3,14 +3,13 @@
 ## Arquitetura de Testes Unitários
 
 ### Estrutura Obrigatória
-- **SEMPRE organize por versão**: `tests/unit/domains/{contexto}/{dominio}/v1/`
-- **NUNCA use `latest/`** - sempre `v1/` para testes unitários
+- **Organize por domínio**: `tests/unit/domains/{contexto}/{dominio}/`
 - **Divida por responsabilidade**: `service/`, `model/`, `mapper/`, `schema/`
 - **Um arquivo por função**: Cada função testada tem seu próprio arquivo
 
 ### Estrutura de Diretórios
 ```
-tests/unit/domains/{contexto}/{dominio}/v1/
+tests/unit/domains/{contexto}/{dominio}/
 ├── controller/
 │   ├── create.test.ts
 │   ├── findById.test.ts
@@ -74,19 +73,17 @@ const tenantId = await getTenantId('test-account-create-unique');
 - Valide o resultado, não apenas se a função foi chamada
 - **Aproveite o MongoDB em memória** para testes mais realistas
 
-## Quando NÃO usar mocks
-- **NUNCA** mocke apenas para forçar um retorno específico
-- **NUNCA** use `mockReturnValueOnce()` sem necessidade real
-- **NUNCA** mocke bibliotecas que podem ser testadas diretamente
-- **NUNCA** mocke para "facilitar" o teste
-- **NUNCA** use prefixo "mock" para dados de teste - veja `mocks-and-testing.md`
+## Imports nos Testes
+- **Imports diretos** para o domínio
+- Use paths absolutos para imports entre domínios
 
-## Quando usar mocks
-- Dependências externas (APIs, banco de dados em alguns casos)
-- Operações custosas (filesystem, rede)
-- Comportamentos não determinísticos (datas, random)
-- Bibliotecas de criptografia (bcrypt, jwt)
-- **SEMPRE use sufixo "Mock" apenas para mocks reais** - veja `mocks-and-testing.md`
+```typescript
+// ✅ Correto - import direto
+import * as accountService from '@/domains/realms/accounts/account.service';
+
+// ✅ Correto - import entre domínios
+import * as groupService from '@/domains/realms/groups/group.service';
+```
 
 ## Exemplos por Tipo
 
@@ -97,7 +94,7 @@ const tenantId = await getTenantId('test-account-create-unique');
 // service/create.test.ts
 import { describe, expect, it } from 'vitest';
 import { ValidationError } from '@/errors/validation';
-import * as accountService from '@/domains/realms/accounts/v1/account.service';
+import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -139,31 +136,11 @@ describe('account.service.create', () => {
 });
 ```
 
-#### Teste com Mock (Apenas para Dependências Externas)
-```typescript
-// service/comparePassword.test.ts
-import { describe, expect, it } from 'vitest';
-import bcrypt from 'bcrypt';
-import * as accountService from '@/domains/realms/accounts/v1/account.service';
-
-describe('account.service.comparePassword', () => {
-  it('should return true for matching password', async () => {
-    const plainPassword = 'test-password';
-    const hashedPassword = await bcrypt.hash(plainPassword, 10);
-    const account = { _id: 'account-id', password: hashedPassword } as any;
-    
-    const result = await accountService.comparePassword(account, plainPassword);
-    
-    expect(result).toBe(true);
-  });
-});
-```
-
 ### Model Tests
 ```typescript
 // model/schema.test.ts
 import { describe, expect, it } from 'vitest';
-import { schema } from '@/domains/realms/accounts/v1/account.model';
+import { schema } from '@/domains/realms/accounts/account.model';
 
 describe('account.model.schema', () => {
   it('should have required fields defined', () => {
@@ -178,7 +155,7 @@ describe('account.model.schema', () => {
 ```typescript
 // mapper/toCreateResponse.test.ts
 import { describe, expect, it } from 'vitest';
-import * as accountMapper from '@/domains/realms/accounts/v1/account.mapper';
+import * as accountMapper from '@/domains/realms/accounts/account.mapper';
 
 describe('account.mapper.toCreateResponse', () => {
   it('should return primary email when exists', () => {
@@ -189,18 +166,12 @@ describe('account.mapper.toCreateResponse', () => {
 });
 ```
 
-## Validações
-- Sempre valide propriedades específicas do resultado
-- Use `toHaveProperty()` para verificar estrutura
-- Teste cenários de sucesso E erro
-- Verifique tipos de retorno quando relevante
-
 ### Controller Tests
 ```typescript
 // controller/create.test.ts
 import { describe, expect, it } from 'vitest';
 import { Context } from 'koa';
-import * as accountController from '@/domains/realms/accounts/v1/account.controller';
+import * as accountController from '@/domains/realms/accounts/account.controller';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -230,9 +201,16 @@ describe('account.controller.create', () => {
 });
 ```
 
-## Benefícios da Nova Arquitetura
+## Validações
+- Sempre valide propriedades específicas do resultado
+- Use `toHaveProperty()` para verificar estrutura
+- Teste cenários de sucesso E erro
+- Verifique tipos de retorno quando relevante
+
+## Benefícios da Arquitetura Simplificada
 - **Organização clara** por responsabilidade
 - **Fácil navegação** - Um arquivo por função
 - **Manutenibilidade** - Mudanças isoladas
 - **Consistência** - Padrão único em todo projeto
 - **Cobertura completa** - Controllers, services, mappers e models
+- **Imports diretos** - Sem complexidade desnecessária

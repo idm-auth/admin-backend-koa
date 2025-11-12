@@ -3,7 +3,7 @@
 ## Estrutura de Arquivos
 - Nomear arquivos como `{method}.{endpoint}.test.ts`
 - Exemplos: `post.test.ts`, `get.id.test.ts`, `get.search.test.ts`
-- Organizar por rota: `tests/integration/routes/{domain}/{version}/{resource}/`
+- Organizar por domínio: `tests/integration/domains/{contexto}/{dominio}/`
 
 ## Setup e Configuração
 - **SEMPRE use `beforeAll` para setup inicial**
@@ -49,9 +49,13 @@
 - Para GET search: teste query parameters obrigatórios e opcionais
 - Para validação de email: teste formato válido e inválido
 
+## URLs de Teste
+- Padrão: `/api/{contexto}/{dominio}/{endpoint}`
+- Exemplo: `/api/realm/:tenantId/accounts`
+
 ## Exemplo de Estrutura
 ```typescript
-describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
+describe('POST /api/realm/:tenantId/accounts', () => {
   let tenantId: string;
 
   const getApp = () => globalThis.testKoaApp;
@@ -61,11 +65,22 @@ describe('POST /api/core/v1/realm/:tenantId/accounts', () => {
   });
 
   it('should create successfully', async () => {
-    // teste de sucesso
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/accounts`)
+      .send(accountData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).not.toHaveProperty('password');
   });
 
   it('should return 400 for validation errors', async () => {
-    // testes de validação
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/accounts`)
+      .send(invalidData)
+      .expect(400);
+
+    expect(response.body).toHaveProperty('error');
   });
 });
 ```

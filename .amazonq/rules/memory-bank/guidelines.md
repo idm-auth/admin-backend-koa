@@ -14,7 +14,7 @@
 - **Zod imports**: Always use `import { z } from 'zod'` (never default import)
 - **OpenAPI extension**: Always call `extendZodWithOpenApi(z)` after Zod import
 - **Path aliases**: Use `@/` prefix for absolute imports from src directory
-- **Re-export pattern**: Use `export * from` for version compatibility layers
+- **Direct imports**: Use direct imports without version compatibility layers
 
 ### Documentation Standards
 - **Portuguese comments**: Use Portuguese for code comments and documentation
@@ -26,7 +26,7 @@
 
 ### Domain-Driven Design Structure
 - **Domain organization**: Group related functionality in `domains/{context}/{domain}/`
-- **Version structure**: Maintain `latest/` and `v1/` directories within each domain
+- **Simplified structure**: Files directly in domain root
 - **File naming**: Use `{domain}.{type}.ts` pattern (e.g., `account.service.ts`)
 - **Separation of concerns**: Keep controllers, services, models, schemas, and routes separate
 
@@ -71,7 +71,7 @@
 ## Development Practices
 
 ### Testing Standards
-- **Test organization**: Structure tests by domain and version (`tests/integration/domains/{context}/{domain}/v1/`)
+- **Test organization**: Structure tests by domain (`tests/integration/domains/{context}/{domain}/`)
 - **File naming**: Use `{method}.{endpoint}.test.ts` pattern for integration tests
 - **Setup patterns**: Use `beforeAll` for test setup, `getTenantId()` for tenant context
 - **Assertion specificity**: Test specific properties, not just existence

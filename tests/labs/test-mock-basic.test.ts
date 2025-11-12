@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock ANTES do import - SEM variáveis externas
-vi.mock('@/domains/realms/accounts/latest/account.service', () => ({
+vi.mock('@/domains/realms/accounts/account.service', () => ({
   create: vi.fn(),
 }));
 
-import * as accountService from '@/domains/realms/accounts/latest/account.service';
+import * as accountService from '@/domains/realms/accounts/account.service';
 
 describe('Mock básico', () => {
   it('should call mock function', async () => {

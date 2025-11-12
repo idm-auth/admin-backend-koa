@@ -7,23 +7,24 @@
 
 ## Arquitetura DDD
 - **SEMPRE organize código por domínios** em `src/domains/{contexto}/{dominio}/`
-- Use estrutura `latest/` e `v1/` dentro de cada domínio
+- **Estrutura simplificada**: Arquivos diretamente na raiz do domínio
+- **Sem versionamento interno**: Sem estruturas latest/ ou v1/
 - Inclua rotas dentro do domínio: `{dominio}.routes.ts`
-- Testes organizados por domínio: `tests/integration/domains/{contexto}/{dominio}/v1/`
+- Testes organizados por domínio: `tests/integration/domains/{contexto}/{dominio}/`
 
 ## Estrutura de Domínios
 - **realms/**: Multi-tenant (accounts, groups, roles, policies)
-- **auth/**: Autenticação (login, tokens, passwords)
 - **core/**: Funcionalidades centrais (config, realm)
+- **commons/**: Componentes compartilhados (base, validations)
 
 ## Separação de Responsabilidades
-- Controllers: recebem dados, fazem validação de entrada (validateZod) e chamam services
+- Controllers: recebem dados, fazem validação de entrada e chamam services
 - Services: contêm toda lógica de negócio e recebem dados já validados
 - Models: apenas estrutura de dados e validações de schema
-- Routes: definição de endpoints com SwaggerRouter
+- Routes: definição de endpoints com MagicRouter
 - Schemas: validações Zod para requests/responses
-- Controllers fazem validateZod para query parameters, body e params antes de chamar service
-- Services recebem tipos já validados (ex: PaginationQuery) e não fazem validação de entrada
+- Controllers usam `ctx.validated` (dados já validados pelo middleware)
+- Services recebem tipos já validados (ex: PaginationQuery)
 - NUNCA coloque validações de negócio no controller
 - Use classes de erro personalizadas para diferentes tipos de erro
 
@@ -42,10 +43,8 @@
 
 ## Exports e Imports
 - Use `export const` em vez de `const` + `export { }`
-- Para versionamento: `export * from '@/domains/{contexto}/{dominio}/latest/{arquivo}'` no v1
-- Para sobrescrever: declare nova função com mesmo nome após o `export *`
-- Para estender: importe função original e chame + adicione funcionalidade
-- Use `import * as service from '@/domains/{contexto}/{dominio}/v1/{arquivo}'` para imports entre domínios
+- **Imports diretos**: `import * as service from '@/domains/{contexto}/{dominio}/{arquivo}'`
+- **Imports relativos** dentro do mesmo domínio: `import * as service from './{arquivo}'`
 - Evite `export default { }` - prefira named exports
 - **NUNCA use barrel exports** - imports diretos são preferíveis
 
@@ -54,3 +53,9 @@
 - TenantId sempre primeiro parâmetro quando necessário
 - Dados da operação como parâmetros subsequentes
 - Mantenha consistência em toda a aplicação
+
+## Arquitetura Simplificada
+- **Uma versão ativa** por vez na aplicação
+- **Versionamento via containers** quando necessário para compatibilidade
+- **Sem estruturas de multiversão** no código
+- **Deploy independente** de versões diferentes

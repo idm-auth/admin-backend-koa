@@ -1,4 +1,4 @@
-import { validateZod } from '@/domains/commons/validations/latest/validation.service';
+import { validateZod } from '@/domains/commons/validations/validation.service';
 import { MagicRouteConfig } from '@/utils/core/MagicRouter';
 import { getLogger } from '@/utils/localStorage.util';
 import { Context, Next } from 'koa';

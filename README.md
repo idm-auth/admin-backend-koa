@@ -1,6 +1,6 @@
 # Backend-Koa IAM
 
-> **CRÍTICO PARA IA**: [Regra IA-no-use-mock](.amazonq/rules/IA-no-use-mock.md) - IA NÃO PODE USAR vi.mock() - RESULTA EM IA DESLIGADA
+> **CRÍTICO PARA IA**: [Regra IA-no-use-mock](.amazonq/rules/IA-no-use-mock.md) - IA PRECISA SUPERVISÃO TOTAL PARA MOCKS
 
 Sistema de Identity and Access Management (IAM) multi-tenant que combina funcionalidades do **AWS IAM** e **AWS Cognito** em uma solução unificada.
 
@@ -65,15 +65,13 @@ Este projeto oferece uma alternativa completa aos serviços AWS IAM e Cognito, f
 ```
 src/domains/
 ├── realms/     # Multi-tenant management
-├── auth/       # Authentication services
 ├── core/       # Core functionality
 └── commons/    # Shared components
 ```
 
-### Versionamento
-- `latest/`: Implementação atual
-- `v1/`: Camada de compatibilidade
-- APIs versionadas: `/api/{context}/v1/{domain}`
+### Arquitetura Simplificada
+- Implementação direta na raiz do domínio
+- APIs diretas: `/api/{context}/{domain}`
 
 ## Início Rápido
 
@@ -106,7 +104,7 @@ Acesse `http://localhost:3000/docs` para a documentação Swagger interativa.
 
 ### Criar uma Conta
 ```bash
-curl -X POST http://localhost:3000/api/core/v1/realm/{tenantId}/accounts \
+curl -X POST http://localhost:3000/api/realm/{tenantId}/accounts \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -116,7 +114,7 @@ curl -X POST http://localhost:3000/api/core/v1/realm/{tenantId}/accounts \
 
 ### Buscar Conta por Email
 ```bash
-curl -X GET "http://localhost:3000/api/core/v1/realm/{tenantId}/accounts/search?email=user@example.com"
+curl -X GET "http://localhost:3000/api/realm/{tenantId}/accounts/search?email=user@example.com"
 ```
 
 ## Casos de Uso

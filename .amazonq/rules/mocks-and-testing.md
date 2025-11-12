@@ -1,11 +1,12 @@
 # Regras para Mocks e Testes
 
-## Princípio Fundamental: EVITE MOCKS
+## Princípio Fundamental: MOCKS COM SUPERVISÃO
 
 ### Use o fluxo real da aplicação sempre que possível
 - Prefira dados reais a mocks artificiais
-- Use mocks apenas quando absolutamente necessário
+- Use mocks apenas com supervisão total do humano
 - Teste comportamento real, não implementações mockadas
+- **SEMPRE peça aprovação antes de criar/alterar mocks**
 
 ## Nomenclatura de Mocks
 
@@ -31,23 +32,24 @@ const validUserData = { name: 'John', email: 'john@example.com' };
 const invalidEmail = 'not-an-email';
 ```
 
-## Quando usar Mocks
+## Quando usar Mocks (COM SUPERVISÃO)
 
-### USE mocks apenas para:
+### USE mocks apenas para (com aprovação):
 - **Dependências externas**: APIs, banco de dados, filesystem
 - **Operações custosas**: Rede, I/O, processamento pesado
 - **Comportamentos não determinísticos**: Datas, random, timers
 - **Isolamento de unidade**: Quando precisa isolar a função testada
+- **SEMPRE com supervisão total do humano**
 
-### Exemplos corretos:
+### Exemplos que precisam aprovação:
 ```typescript
-// ✅ Mock de dependência externa
+// ⚠️ Precisa supervisão - Mock de dependência externa
 vi.mock('@/services/external-api.service');
 
-// ✅ Mock de operação custosa
+// ⚠️ Precisa supervisão - Mock de operação custosa
 const dbMock = vi.spyOn(database, 'query').mockResolvedValue(result);
 
-// ✅ Mock de comportamento não determinístico
+// ⚠️ Precisa supervisão - Mock de comportamento não determinístico
 vi.spyOn(Date, 'now').mockReturnValue(1234567890);
 ```
 

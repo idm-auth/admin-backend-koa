@@ -8,12 +8,12 @@
 
 ```typescript
 // ✅ Correto
-import { accountService } from '@/domains/realms/accounts/v1/account.service';
+import { accountService } from '@/domains/realms/accounts/account.service';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 
 // ❌ Incorreto
-import { accountService } from '../../../domains/realms/accounts/v1/account.service';
+import { accountService } from '../../../domains/realms/accounts/account.service';
 import { NotFoundError } from '../../../../errors/not-found';
 ```
 
@@ -52,10 +52,10 @@ import { getTenantId } from '@/tests/utils/tenant.util';
 
 ```typescript
 // ✅ Correto - Import estático
-import * as realmService from '@/domains/core/realms/v1/realm.service';
+import * as realmService from '@/domains/core/realms/realm.service';
 
 // ❌ Incorreto - Import dinâmico desnecessário
-const realmService = await import('@/domains/core/realms/v1/realm.service');
+const realmService = await import('@/domains/core/realms/realm.service');
 ```
 
 ## Benefícios

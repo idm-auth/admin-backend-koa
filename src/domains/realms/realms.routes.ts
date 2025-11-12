@@ -1,12 +1,12 @@
 import { MagicRouter } from '../../utils/core/MagicRouter';
-import * as accounts from './accounts/v1/accounts.routes';
-import * as groups from './groups/v1/groups.routes';
-import * as roles from './roles/v1/roles.routes';
-import * as policies from './policies/v1/policies.routes';
-import * as accountGroups from './account-groups/v1/account-groups.routes';
-import * as groupRoles from './group-roles/v1/group-roles.routes';
-import * as accountRoles from './account-roles/v1/account-roles.routes';
-import * as authentication from './authentication/v1/authentication.routes';
+import * as accounts from './accounts/accounts.routes';
+import * as groups from './groups/groups.routes';
+import * as roles from './roles/roles.routes';
+import * as policies from './policies/policies.routes';
+import * as accountGroups from './account-groups/account-groups.routes';
+import * as groupRoles from './group-roles/group-roles.routes';
+import * as accountRoles from './account-roles/account-roles.routes';
+import * as authentication from './authentication/authentication.routes';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/realm/:tenantId' });
