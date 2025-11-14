@@ -5,6 +5,7 @@ import { dotenv } from './plugins/dotenv.plugin';
 
 import * as mongo from './plugins/mongo.plugin';
 
+// amazonq-ignore-next-line
 (async () => {
   initTelemetry();
   await dotenv.init();

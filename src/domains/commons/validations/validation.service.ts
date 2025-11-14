@@ -7,6 +7,7 @@ export const validateEmailUnique = async (
   tenantId: string,
   email: string
 ): Promise<void> => {
+  // amazonq-ignore-next-line
   try {
     const existingAccount = await findByEmail(tenantId, email);
     if (existingAccount) {

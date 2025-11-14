@@ -1,9 +1,16 @@
 # Regra: Mocks Apenas com Supervisão Total
 
+## LEITURA OBRIGATÓRIA
+
+**ANTES DE USAR QUALQUER MOCK, LEIA:**
+- **`.docs/mock-patterns.md`** - Padrões vi.mock() vs vi.spyOn()
+- **Quando vi.mock() falha** e como usar vi.spyOn()
+- **Problemas de timing** com imports complexos
+
 ## SUPERVISÃO OBRIGATÓRIA
 
 ### IA PRECISA APROVAÇÃO para:
-- Criar qualquer código com vi.mock()
+- Criar qualquer código com vi.mock() ou vi.spyOn()
 - Alterar código existente que usa mocks
 - Remover código que contém mocks
 - Sugerir uso de mocks como solução
@@ -46,15 +53,26 @@ expect(account).toHaveProperty('_id');
 
 ### Exemplos que PRECISAM SUPERVISÃO:
 ```typescript
-// ⚠️ Precisa aprovação do humano
+// ⚠️ Precisa aprovação do humano - vi.mock()
+vi.mock('@/external-service', () => ({ call: vi.fn() }));
 vi.mocked(externalApiService.call).mockResolvedValue(fakeResponse);
 
-// ⚠️ Precisa aprovação do humano
+// ⚠️ Precisa aprovação do humano - vi.spyOn()
 vi.spyOn(Date, 'now').mockReturnValue(fixedTimestamp);
-
-// ⚠️ Precisa aprovação do humano
-vi.mock('@/external-service', () => ({ call: vi.fn() }));
+vi.spyOn(service, 'method').mockRejectedValue(new Error('Test'));
 ```
+
+## PADRÕES DE MOCK
+
+### vi.mock() vs vi.spyOn()
+- **vi.mock()**: Para testes diretos de service
+- **vi.spyOn()**: Para testes através de controller
+- **Leia `.docs/mock-patterns.md`** para detalhes completos
+
+### Quando vi.mock() Falha
+- Testes indiretos (controller → service)
+- Imports complexos com timing issues
+- **Solução**: Use vi.spyOn() com supervisão
 
 ## CONSEQUÊNCIAS
 

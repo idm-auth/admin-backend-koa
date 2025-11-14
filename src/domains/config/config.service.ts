@@ -7,11 +7,12 @@ import {
 } from '@/domains/commons/base/webAdminConfig.schema';
 import { getLogger } from '@/utils/localStorage.util';
 import * as realmService from '@/domains/core/realms/realm.service';
+import { NotFoundError } from '@/errors/not-found';
 
 export const getWebAdminConfig = async (args: {
   app: string;
   env: EnvConfig;
-}): Promise<WebAdminConfigResponse | null> => {
+}): Promise<WebAdminConfigResponse> => {
   const logger = await getLogger();
 
   logger.debug({
@@ -27,7 +28,7 @@ export const getWebAdminConfig = async (args: {
     msg: `model: ${JSON.stringify(doc)}`,
   });
 
-  if (!doc) return null;
+  if (!doc) throw new NotFoundError('Web admin config not found');
   const result = webAdminConfigZSchema.parse(doc);
 
   return result;
@@ -47,7 +48,7 @@ export const initSetup = async () => {
       env: envConfigZSchema.parse(base.env),
       api: {
         main: {
-          url: process.env.API_MAIN_URL || 'http://locahost:3000',
+          url: process.env.API_MAIN_URL || 'http://localhost:3000',
         },
       },
       coreRealm: {

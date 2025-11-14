@@ -4,6 +4,7 @@ import { PolicyCreate } from './policy.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
+import { sanitizeRegexInputForFilter } from '@/utils/pagination.util';
 
 export const create = async (
   tenantId: string,
@@ -39,7 +40,8 @@ export const findByName = async (
   const logger = await getLogger();
   logger.debug({ name });
   const dbName = await getDBName(tenantId);
-  const policy = await getModel(dbName).findOne({ name });
+  const sanitizedName = sanitizeRegexInputForFilter(name);
+  const policy = await getModel(dbName).findOne({ name: sanitizedName });
   if (!policy) {
     throw new NotFoundError('Policy not found');
   }

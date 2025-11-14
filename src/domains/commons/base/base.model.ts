@@ -20,7 +20,10 @@ baseDocumentSchema.pre('save', function (next) {
 });
 
 baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
-  this.set({ updatedAt: new Date() });
+  const update = this.getUpdate();
+  if (update && typeof update === 'object' && !Array.isArray(update)) {
+    (update as Record<string, unknown>).updatedAt = new Date();
+  }
   next();
 });
 

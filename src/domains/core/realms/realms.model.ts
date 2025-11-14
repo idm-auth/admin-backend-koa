@@ -16,7 +16,7 @@ export const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    default: () => uuidv4(),
+    default: uuidv4,
   },
   dbName: { type: String, required: true },
   jwtConfig: {

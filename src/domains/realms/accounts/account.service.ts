@@ -14,6 +14,7 @@ import { NotFoundError } from '@/errors/not-found';
 import { ValidationError } from '@/errors/validation';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
+import { executePagination } from '@/utils/pagination.util';
 import bcrypt from 'bcrypt';
 import { Account, getModel } from './account.model';
 import { AccountCreate, AccountUpdate } from './account.schema';
@@ -229,69 +230,37 @@ export const findAllPaginated = async (
     },
     async (span) => {
       const logger = await getLogger();
-
       logger.info({ tenantId, query }, 'Finding accounts with pagination');
 
-      const { page, limit, filter, sortBy, descending } = query;
-      const dbName = await getDBName(tenantId);
-      const skip = (page - 1) * limit;
+      try {
+        const dbName = await getDBName(tenantId);
+        span.setAttributes({ 'db.name': dbName });
 
-      // Build filter query
-      const filterQuery: Record<string, unknown> = {};
-      if (filter) {
-        filterQuery.$or = [
-          { 'emails.email': { $regex: filter, $options: 'i' } },
-          { _id: { $regex: filter, $options: 'i' } },
-        ];
-        span.setAttributes({ 'query.filter': filter });
+        const result = await executePagination(
+          {
+            model: getModel(dbName),
+            query,
+            defaultSortField: 'emails.email',
+            span,
+          },
+          (sanitizedFilter: string) => ({
+            $or: [
+              { 'emails.email': { $regex: sanitizedFilter, $options: 'i' } },
+              { _id: { $regex: sanitizedFilter, $options: 'i' } },
+            ],
+          })
+        );
+
+        logger.info(
+          { tenantId, total: result.pagination.total, page: result.pagination.page },
+          'Accounts pagination completed successfully'
+        );
+
+        return result;
+      } catch (error) {
+        logger.error(error, 'Failed to find paginated accounts');
+        throw new Error('Failed to retrieve accounts');
       }
-
-      // Build sort query
-      const sortQuery: Record<string, 1 | -1> = {};
-      if (sortBy) {
-        sortQuery[sortBy] = descending ? -1 : 1;
-        span.setAttributes({
-          'query.sortBy': sortBy,
-          'query.descending': descending,
-        });
-      } else {
-        sortQuery['emails.email'] = 1;
-      }
-
-      const [accounts, total] = await Promise.all([
-        getModel(dbName)
-          .find(filterQuery)
-          .sort(sortQuery)
-          .skip(skip)
-          .limit(limit),
-        getModel(dbName).countDocuments(filterQuery),
-      ]);
-
-      const totalPages = Math.ceil(total / limit);
-
-      span.setAttributes({
-        'db.name': dbName,
-        'query.skip': skip,
-        'query.limit': limit,
-        'result.total': total,
-        'result.totalPages': totalPages,
-        'result.accountsCount': accounts.length,
-      });
-
-      logger.info(
-        { tenantId, total, page, limit, totalPages },
-        'Accounts pagination completed successfully'
-      );
-
-      return {
-        data: accounts,
-        pagination: {
-          total,
-          page: Number(page),
-          rowsPerPage: Number(limit),
-          totalPages,
-        },
-      };
     }
   );
 };

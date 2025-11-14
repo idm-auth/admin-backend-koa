@@ -13,6 +13,7 @@ import { ConflictError } from '@/errors/conflict';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
+import { executePagination } from '@/utils/pagination.util';
 
 const SERVICE_NAME = 'realm.service';
 
@@ -193,60 +194,23 @@ export const findAllPaginated = async (
       );
 
       try {
-        const { page, limit, filter, sortBy, descending } = query;
-
-        const skip = (page - 1) * limit;
-
-        // Build filter query
-        const filterQuery: Record<string, unknown> = {};
-        if (filter) {
-          filterQuery.$or = [
-            { name: { $regex: filter, $options: 'i' } },
-            { description: { $regex: filter, $options: 'i' } },
-            { dbName: { $regex: filter, $options: 'i' } },
-            { _id: { $regex: filter, $options: 'i' } },
-            { publicUUID: { $regex: filter, $options: 'i' } },
-          ];
-          span.setAttributes({ 'query.filter': filter });
-        }
-
-        // Build sort query
-        const sortQuery: Record<string, 1 | -1> = {};
-        if (sortBy) {
-          sortQuery[sortBy] = descending ? -1 : 1;
-          span.setAttributes({
-            'query.sortBy': sortBy,
-            'query.descending': descending,
-          });
-        } else {
-          sortQuery.name = 1; // Default sort by name ascending (A,B,C,D, 1,2,3,4,5)
-        }
-
-        // Execute queries
-        const [realms, total] = await Promise.all([
-          getModel().find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
-          getModel().countDocuments(filterQuery),
-        ]);
-
-        const totalPages = Math.ceil(total / limit);
-
-        span.setAttributes({
-          'query.skip': skip,
-          'query.limit': limit,
-          'result.total': total,
-          'result.totalPages': totalPages,
-          'result.realmsCount': realms.length,
-        });
-
-        return {
-          data: realms,
-          pagination: {
-            total,
-            page: Number(page),
-            rowsPerPage: Number(limit),
-            totalPages,
+        return await executePagination(
+          {
+            model: getModel(),
+            query,
+            defaultSortField: 'name',
+            span,
           },
-        };
+          (sanitizedFilter: string) => ({
+            $or: [
+              { name: { $regex: sanitizedFilter, $options: 'i' } },
+              { description: { $regex: sanitizedFilter, $options: 'i' } },
+              { dbName: { $regex: sanitizedFilter, $options: 'i' } },
+              { _id: { $regex: sanitizedFilter, $options: 'i' } },
+              { publicUUID: { $regex: sanitizedFilter, $options: 'i' } },
+            ],
+          })
+        );
       } catch (error) {
         logger.error(error, 'Failed to find paginated realms');
         throw new Error('Failed to retrieve realms');
@@ -297,9 +261,9 @@ export const getDBName = async (publicUUID: PublicUUID) => {
       const realm = await getModel().findOne({ publicUUID });
 
       if (!realm || !realm.dbName) {
-        throw new NotFoundError(
-          `DBName not found for publicUUID: ${publicUUID}`
-        );
+        throw new NotFoundError('DBName not found for publicUUID', {
+          publicUUID,
+        });
       }
 
       span.setAttributes({ 'realm.dbName': realm.dbName });

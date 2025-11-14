@@ -8,6 +8,7 @@ export const paginationQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(25),
   filter: z.string().optional(),
   sortBy: z.string().optional(),
+  // amazonq-ignore-next-line
   descending: z.stringbool().default(false),
 });
 

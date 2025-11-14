@@ -102,7 +102,11 @@ export const responseValidationMiddleware = <
     const logger = await getLogger();
 
     logger.info(
-      `Response validation - Status: ${ctx.status}, Route: ${config.name}`
+      {
+        status: ctx.status,
+        route: config.name,
+      },
+      'Response validation'
     );
 
     const { responses } = config;
@@ -115,7 +119,7 @@ export const responseValidationMiddleware = <
     const responseConfig = responses[statusCode];
 
     if (!responseConfig || !('content' in responseConfig)) {
-      logger.debug(`No schema for status ${statusCode}`);
+      logger.debug({ statusCode }, 'No schema for status');
       return;
     }
 
@@ -128,8 +132,17 @@ export const responseValidationMiddleware = <
         ctx.body = await validateZod(ctx.body, schema);
         logger.info('Response validation successful');
       } catch (error) {
-        logger.error(error, 'Response validation failed - Backend error');
-        logger.error(ctx.body, 'Response body');
+        logger.error(
+          {
+            error,
+            responseBody: ctx.body,
+            method: ctx.method,
+            url: ctx.url,
+            route: config.name,
+            statusCode,
+          },
+          'Response validation failed - Backend error'
+        );
         ctx.status = 500;
         ctx.body = {
           error: 'Internal Server Error',

@@ -29,14 +29,14 @@ export const groupParamsSchema = z.object({
 
 // Body schemas for operations
 export const removeAccountFromGroupSchema = z.object({
-  accountId: z.string(),
-  groupId: z.string(),
+  accountId: DocIdSchema,
+  groupId: DocIdSchema,
 });
 
 export const updateAccountGroupRolesSchema = z.object({
-  accountId: z.string(),
-  groupId: z.string(),
-  roles: z.array(z.string()),
+  accountId: DocIdSchema,
+  groupId: DocIdSchema,
+  roles: z.array(DocIdSchema),
 });
 
 export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;

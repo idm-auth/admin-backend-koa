@@ -53,4 +53,25 @@ describe('realm.service.initSetup', () => {
     // Cleanup
     await getModel().findByIdAndDelete(createdRealm._id);
   });
+
+  it('should handle existing realm scenario for coverage', async () => {
+    process.env.MONGODB_CORE_DBNAME = 'test-coverage-db-name';
+
+    // Criar realm primeiro para garantir que existe
+    const existingRealm = await getModel().create({
+      dbName: 'test-coverage-db-name',
+      name: 'idm-core-realm',
+      description: 'Realm Core',
+    });
+
+    // Chamar initSetup que deve encontrar o realm existente
+    const result = await realmService.initSetup();
+
+    // Verificar que retornou o realm existente (linha 251-252)
+    expect(result._id).toBe(existingRealm._id);
+    expect(result.dbName).toBe('test-coverage-db-name');
+
+    // Cleanup
+    await getModel().findByIdAndDelete(existingRealm._id);
+  });
 });

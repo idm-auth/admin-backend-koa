@@ -65,6 +65,11 @@ export const realmUpdateSchema = z.object({
 });
 
 // Response schemas
+const jwtConfigResponseSchema = z.object({
+  secret: z.string(),
+  expiresIn: z.string(),
+});
+
 export const realmBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
@@ -74,28 +79,19 @@ export const realmBaseResponseSchema = z.strictObject({
 
 export const realmCreateResponseSchema = realmBaseResponseSchema.extend({
   dbName: z.string(),
-  jwtConfig: z.object({
-    secret: z.string(),
-    expiresIn: z.string(),
-  }),
+  jwtConfig: jwtConfigResponseSchema,
 });
 
 export const realmUpdateResponseSchema = realmBaseResponseSchema.extend({
   dbName: z.string(),
-  jwtConfig: z.object({
-    secret: z.string(),
-    expiresIn: z.string(),
-  }),
+  jwtConfig: jwtConfigResponseSchema,
 });
 
 export const realmListItemResponseSchema = realmBaseResponseSchema;
 
 export const realmReadResponseSchema = realmBaseResponseSchema.extend({
   dbName: z.string(),
-  jwtConfig: z.object({
-    secret: z.string(),
-    expiresIn: z.string(),
-  }),
+  jwtConfig: jwtConfigResponseSchema,
 });
 
 export const realmListResponseSchema = z.array(realmListItemResponseSchema);

@@ -1,9 +1,15 @@
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeAll } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
+import { getModel } from '@/domains/core/realms/realms.model';
 
 describe('POST /api/core/realms', () => {
   const getApp = () => globalThis.testKoaApp;
+
+  beforeAll(async () => {
+    // Garantir que os índices estão criados
+    await getModel().createIndexes();
+  });
 
   it('should create a new realm successfully', async () => {
     const realmData = {
