@@ -1,12 +1,18 @@
 import Router from '@koa/router';
+import { getLogger } from '@/plugins/pino.plugin';
 
-export const logRoutesDetailed = (router: Router, prefix = '', level = 0) => {
+export const logRoutesDetailed = async (
+  router: Router,
+  prefix = '',
+  level = 0
+) => {
+  const logger = await getLogger();
   const indent = '  '.repeat(level);
   const routes = router.stack;
 
   if (level === 0) {
-    console.log('\nMapa completo de rotas:');
-    console.log('═'.repeat(60));
+    logger.info('Mapa completo de rotas');
+    logger.info('═'.repeat(60));
   }
 
   routes.forEach((layer) => {
@@ -14,24 +20,12 @@ export const logRoutesDetailed = (router: Router, prefix = '', level = 0) => {
     const path = prefix + layer.path;
 
     methods.forEach((method) => {
-      const methodColor = getMethodColor(method);
-      console.log(`${indent}${methodColor}${method.padEnd(8)}\x1b[0m ${path}`);
+      logger.info({ method, path, level, indent }, 'Rota detalhada registrada');
     });
   });
 
   if (level === 0) {
-    console.log('═'.repeat(60));
-    console.log(`📊 Total: ${routes.length} rotas registradas\n`);
+    logger.info('═'.repeat(60));
+    logger.info({ totalRoutes: routes.length }, 'Total de rotas registradas');
   }
-};
-
-const getMethodColor = (method: string): string => {
-  const colors = {
-    GET: '\x1b[32m', // Verde
-    POST: '\x1b[33m', // Amarelo
-    PUT: '\x1b[34m', // Azul
-    DELETE: '\x1b[31m', // Vermelho
-    PATCH: '\x1b[35m', // Magenta
-  };
-  return colors[method as keyof typeof colors] || '\x1b[37m'; // Branco padrão
 };

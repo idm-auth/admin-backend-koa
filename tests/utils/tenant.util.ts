@@ -1,4 +1,4 @@
-import * as realmService from '@/domains/core/realms/v1/realm.service';
+import * as realmService from '@/domains/core/realms/realm.service';
 import { NotFoundError } from '@/errors/not-found';
 
 /**

@@ -1,11 +1,15 @@
-// index.routes.ts
-import * as configController from '@/domains/config/v1/config.controller';
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import * as v1 from './v1/config.routes';
+import * as configController from './config.controller';
+import { configParamsSchema, ConfigParams } from './config.schema';
+import { Context } from 'koa';
+
+type ConfigContext = Context & { params: ConfigParams };
+
 export const initialize = async () => {
   const router = new MagicRouter({
     prefix: '/config',
   });
+
   router.get({
     name: 'getInitSetup',
     path: '/init-setup',
@@ -17,8 +21,21 @@ export const initialize = async () => {
     },
     tags: ['Config'],
   });
-  const v1Router = await v1.initialize();
-  router.useMagic('', v1Router);
+
+  router.get<ConfigContext>({
+    name: 'getConfig',
+    path: '/app/:appName/env/:env',
+    handlers: [configController.getConfig],
+    request: {
+      params: configParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Application configuration',
+      },
+    },
+    tags: ['Config'],
+  });
 
   return router;
 };

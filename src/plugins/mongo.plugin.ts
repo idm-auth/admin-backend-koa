@@ -10,7 +10,11 @@ export const initMainConnection = async (mongodbUri?: string) => {
   if (!mongodbUriCfg) throw new Error('process.env.MONGODB_URI é requerido');
   const logger = await getLogger();
   logger.info('Inicializando conexão principal com MongoDB...');
-  logger.info(`MongoDB URI: ${mongodbUriCfg}`);
+  const sanitizedUri = mongodbUriCfg.replace(
+    /:\/\/[^:]+:[^@]+@/,
+    '://***:***@'
+  );
+  logger.info({ mongodbUri: sanitizedUri }, 'MongoDB URI configured');
   if (!mainConnection) {
     mainConnection = await mongoose.createConnection(mongodbUriCfg);
   }

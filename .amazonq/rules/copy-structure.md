@@ -4,17 +4,17 @@
 
 ### Processo Obrigatório
 
-1. **LER TODOS OS ARQUIVOS** do exemplo (latest E v1)
+1. **LER TODOS OS ARQUIVOS** do exemplo
    - Não assuma nada baseado apenas nas rules gerais
    - Leia cada tipo de arquivo: controller, service, model, schema, routes
-   - Compare latest vs v1 para identificar diferenças
+   - Analise a estrutura atual do domínio
 
 2. **IDENTIFICAR PADRÕES REAIS**
-   - Quais arquivos fazem re-export simples?
-   - Quais arquivos têm estrutura diferente entre latest e v1?
+   - Qual a estrutura de cada arquivo?
    - Quais imports são usados?
    - Qual a estrutura de cada função?
    - Quais validações são aplicadas?
+   - Como as rotas são organizadas?
 
 3. **REPLICAR EXATAMENTE**
    - Mantenha a mesma estrutura de código
@@ -24,52 +24,46 @@
    - Copie o estilo de nomenclatura
 
 4. **VERIFICAR ANTES DE CRIAR**
-   - Confirme que entendeu todas as diferenças
+   - Confirme que entendeu a estrutura
    - Liste mentalmente o que será criado
    - Garanta que cada arquivo segue o padrão correto
 
-## Exemplos de Diferenças Importantes
+## Estrutura Atual dos Domínios
 
 ### Arquivos .routes.ts
-- **Latest**: Define rotas com MagicRouter e prefix do recurso
-- **V1**: Cria router com prefix `/v1` e usa router do latest
+- Define rotas com MagicRouter e prefix do recurso
+- Implementação direta sem camadas de compatibilidade
 
 ```typescript
-// latest/accounts.routes.ts
+// accounts.routes.ts
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
   // ... define rotas
   return router;
 };
-
-// v1/accounts.routes.ts
-export const initialize = async () => {
-  const router = new MagicRouter({ prefix: '/v1' });
-  const accountsRouter = await accounts.initialize();
-  router.useMagic(accountsRouter);
-  return router;
-};
 ```
 
 ### Outros arquivos (controller, service, model, schema)
-- **Latest**: Implementação completa
-- **V1**: Re-export simples do latest
+- Implementação direta na raiz do domínio
+- Sem estruturas de re-export
 
 ```typescript
-// v1/account.service.ts
-export * from '@/domains/realms/accounts/latest/account.service';
+// account.service.ts
+export const create = async (tenantId: string, data: AccountCreate) => {
+  // implementação direta
+};
 ```
 
 ## Checklist de Verificação
 
 Antes de criar arquivos, confirme:
 
-- [ ] Li TODOS os arquivos do exemplo (latest E v1)?
-- [ ] Identifiquei as diferenças entre latest e v1?
+- [ ] Li TODOS os arquivos do exemplo?
+- [ ] Identifiquei a estrutura atual do domínio?
 - [ ] Entendi qual padrão cada tipo de arquivo segue?
-- [ ] Sei quais arquivos fazem re-export e quais não?
 - [ ] Verifiquei imports e dependências?
 - [ ] Confirmei estrutura de validações?
+- [ ] Entendi como as rotas são organizadas?
 
 ## Princípio Fundamental
 

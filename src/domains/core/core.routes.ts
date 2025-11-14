@@ -1,5 +1,5 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import * as realms from './realms/v1/realms.routes';
+import * as realms from './realms/realms.routes';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/core' });

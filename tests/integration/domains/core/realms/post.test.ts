@@ -1,0 +1,141 @@
+import request from 'supertest';
+import { describe, expect, it, beforeAll } from 'vitest';
+import * as realmService from '@/domains/core/realms/realm.service';
+import { getModel } from '@/domains/core/realms/realms.model';
+
+describe('POST /api/core/realms', () => {
+  const getApp = () => globalThis.testKoaApp;
+
+  beforeAll(async () => {
+    // Garantir que os índices estão criados
+    await getModel().createIndexes();
+  });
+
+  it('should create a new realm successfully', async () => {
+    const realmData = {
+      name: 'test-realm-create',
+      description: 'Test realm for creation',
+      dbName: 'test-db-create',
+      jwtConfig: {
+        expiresIn: '24h',
+      },
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).toHaveProperty('publicUUID');
+    expect(response.body.name).toBe(realmData.name);
+    expect(response.body.description).toBe(realmData.description);
+    expect(response.body.dbName).toBe(realmData.dbName);
+    expect(response.body.jwtConfig).toHaveProperty('secret');
+    expect(typeof response.body.jwtConfig.secret).toBe('string');
+    expect(response.body.jwtConfig.expiresIn).toBe(
+      realmData.jwtConfig.expiresIn
+    );
+  });
+
+  it('should create a new realm successfully with default jwtConfig', async () => {
+    const realmData = {
+      name: 'test-realm-create-default',
+      description: 'Test realm for creation with defaults',
+      dbName: 'test-db-create-default',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).toHaveProperty('publicUUID');
+    expect(response.body.name).toBe(realmData.name);
+    expect(response.body.description).toBe(realmData.description);
+    expect(response.body.dbName).toBe(realmData.dbName);
+    expect(response.body.jwtConfig).toHaveProperty('secret');
+    expect(typeof response.body.jwtConfig.secret).toBe('string');
+    expect(response.body.jwtConfig).toHaveProperty('expiresIn');
+  });
+
+  it('should return 400 for missing name', async () => {
+    const realmData = {
+      description: 'Test realm',
+      dbName: 'test-db',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Name is required');
+  });
+
+  it('should return 400 for missing dbName', async () => {
+    const realmData = {
+      name: 'test-realm',
+      description: 'Test realm',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(400);
+
+    expect(response.body).toHaveProperty('error', 'Database name is required');
+  });
+
+  it('should create realm successfully without jwtConfig', async () => {
+    const realmData = {
+      name: 'test-realm-no-jwt',
+      description: 'Test realm without JWT config',
+      dbName: 'test-db-no-jwt',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body).toHaveProperty('name', realmData.name);
+    expect(response.body).toHaveProperty('dbName', realmData.dbName);
+    expect(response.body).toHaveProperty('publicUUID');
+  });
+
+  it('should return 409 for duplicate name (Conflict)', async () => {
+    const realmData = {
+      name: 'duplicate-test-realm',
+      description: 'First realm',
+      dbName: 'first-db',
+    };
+
+    // Create first realm using service (pré-configuração)
+    const firstRealm = await realmService.create(realmData);
+
+    expect(firstRealm).toHaveProperty('_id');
+    expect(firstRealm.name).toBe(realmData.name);
+
+    // Try to create second realm with same name via API
+    const duplicateData = {
+      name: 'duplicate-test-realm', // Same name
+      description: 'Second realm',
+      dbName: 'second-db',
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(duplicateData)
+      .expect(409);
+
+    expect(response.body).toHaveProperty('error', 'Resource already exists');
+    expect(response.body).toHaveProperty('field', 'name');
+    expect(response.body).toHaveProperty(
+      'details',
+      'A resource with this name already exists'
+    );
+  });
+});

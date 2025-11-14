@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
 extendZodWithOpenApi(z);
-import { errorResponseSchema } from '@/domains/commons/base/latest/base.schema';
+import { errorResponseSchema } from '@/domains/commons/base/base.schema';
 
 export const createSuccessResponse = (
   description: string,

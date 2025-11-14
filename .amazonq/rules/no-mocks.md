@@ -1,31 +1,35 @@
-# Regra: NUNCA Use Mocks Desnecessários
+# Regra: Mocks Apenas com Supervisão Total
 
-## PROIBIDO
+## LEITURA OBRIGATÓRIA
 
-### NUNCA use vi.mock() para:
+**ANTES DE USAR QUALQUER MOCK, LEIA:**
+- **`.docs/mock-patterns.md`** - Padrões vi.mock() vs vi.spyOn()
+- **Quando vi.mock() falha** e como usar vi.spyOn()
+- **Problemas de timing** com imports complexos
+
+## SUPERVISÃO OBRIGATÓRIA
+
+### IA PRECISA APROVAÇÃO para:
+- Criar qualquer código com vi.mock() ou vi.spyOn()
+- Alterar código existente que usa mocks
+- Remover código que contém mocks
+- Sugerir uso de mocks como solução
+
+### EVITAR MOCKS para:
 - Simular comportamentos que podem ser testados com dados reais
-- "Facilitar" testes
+- "Facilitar" testes que podem usar MongoDB em memória
 - Forçar retornos específicos sem necessidade real
 - Testar cenários que não existem na realidade
 - Contornar problemas de configuração
 
-### NUNCA use vi.mocked() para:
-- Mockar services que podem usar banco em memória
-- Mockar funções que funcionam perfeitamente
-- Criar cenários artificiais
+## PERMITIDO COM SUPERVISÃO
 
-### NUNCA use mockImplementation() para:
-- Simular erros que não acontecem na prática
-- Substituir lógica real por lógica fake
-- "Testar" código que não está sendo executado
-
-## PERMITIDO
-
-### Use mocks APENAS para:
+### Use mocks APENAS para (com aprovação):
 - APIs externas reais (HTTP requests)
 - Operações de filesystem quando necessário
 - Bibliotecas de terceiros custosas (bcrypt em alguns casos)
 - Comportamentos não determinísticos (Date.now, Math.random)
+- **SEMPRE com supervisão total do humano**
 
 ## PRINCÍPIO FUNDAMENTAL
 
@@ -47,19 +51,28 @@ const account = await accountService.create(tenantId, {
 expect(account).toHaveProperty('_id');
 ```
 
-### Exemplos PROIBIDOS:
+### Exemplos que PRECISAM SUPERVISÃO:
 ```typescript
-// ❌ Mock desnecessário
-vi.mocked(accountService.create).mockResolvedValue(fakeAccount);
+// ⚠️ Precisa aprovação do humano - vi.mock()
+vi.mock('@/external-service', () => ({ call: vi.fn() }));
+vi.mocked(externalApiService.call).mockResolvedValue(fakeResponse);
 
-// ❌ Mock para simular erro inexistente
-vi.spyOn(Model, 'find').mockImplementation(() => {
-  throw new Error('Fake error');
-});
-
-// ❌ Mock para "facilitar" teste
-vi.mock('@/service', () => ({ create: vi.fn() }));
+// ⚠️ Precisa aprovação do humano - vi.spyOn()
+vi.spyOn(Date, 'now').mockReturnValue(fixedTimestamp);
+vi.spyOn(service, 'method').mockRejectedValue(new Error('Test'));
 ```
+
+## PADRÕES DE MOCK
+
+### vi.mock() vs vi.spyOn()
+- **vi.mock()**: Para testes diretos de service
+- **vi.spyOn()**: Para testes através de controller
+- **Leia `.docs/mock-patterns.md`** para detalhes completos
+
+### Quando vi.mock() Falha
+- Testes indiretos (controller → service)
+- Imports complexos com timing issues
+- **Solução**: Use vi.spyOn() com supervisão
 
 ## CONSEQUÊNCIAS
 
@@ -72,6 +85,11 @@ Mocks desnecessários:
 
 ## REGRA DE OURO
 
-**Se você está usando vi.mock(), vi.mocked(), ou mockImplementation(), PARE e pergunte: "Posso testar isso com dados reais?"**
+**Se você está considerando usar mocks:**
 
-**A resposta é quase sempre SIM.**
+1. **PARE** e pergunte: "Posso testar isso com dados reais?"
+2. **TENTE** alternativas com MongoDB em memória primeiro
+3. **PEÇA SUPERVISÃO** se mock for realmente necessário
+4. **AGUARDE APROVAÇÃO** antes de implementar
+
+**A resposta para dados reais é quase sempre SIM.**

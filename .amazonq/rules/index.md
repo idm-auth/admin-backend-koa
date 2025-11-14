@@ -1,15 +1,15 @@
 # Rules Index
 
-> **CRÍTICO**: [IA-no-use-mock.md](IA-no-use-mock.md) - IA NÃO PODE USAR vi.mock() - RESULTA EM IA DESLIGADA
+> **CRÍTICO**: [IA-no-use-mock.md](IA-no-use-mock.md) - IA PRECISA SUPERVISÃO TOTAL PARA MOCKS
 
 > **IMPORTANTE**: Sempre atualize este index quando criar, modificar ou remover qualquer arquivo de regras!
 
 ## Arquitetura e Padrões
 
 ### **ddd-architecture.md** - Domain-Driven Design
-- Estrutura de domínios por contexto de negócio
-- Organização latest/ e v1/
-- Versionamento e compatibilidade
+- **Estrutura simplificada**: Arquivos diretamente na raiz do domínio
+- **Sem multiversão**: Removidas estruturas latest/ e v1/
+- **Versionamento via containers** quando necessário
 
 ### **tenant-pattern.md** - Padrão TenantId (CRÍTICO)
 - TenantId sempre primeiro parâmetro separado
@@ -55,20 +55,28 @@
 - Sufixo "Mock" APENAS para mocks reais
 - Dados de teste com nomes descritivos
 
-### **IA-no-use-mock.md** - IA NÃO PODE USAR MOCKS (CRÍTICO)
-- vi.mock() está PROIBIDO para IA em todo o projeto
-- IA usar vi.mock() resulta em IA DESLIGADA
-- IA só pode usar dados reais e MongoDB em memória
-- Se precisar mock, deve ser feito por HUMANO
+### **IA-no-use-mock.md** - IA E MOCKS COM SUPERVISÃO (CRÍTICO)
+- IA PRECISA supervisão total para qualquer operação com mocks
+- PROIBIDO criar, alterar ou remover mocks sem aprovação
+- IA deve SEMPRE pedir permissão antes de trabalhar com mocks
+- Alternativas reais devem ser tentadas primeiro
 
 ### **unit-tests.md** - Testes Unitários
-- **ARQUITETURA OBRIGATÓRIA**: v1/ com diretórios service/model/mapper/
+- **Estrutura simplificada**: `tests/unit/domains/{contexto}/{dominio}/`
 - **MongoDB em memória disponível** para todos os testes unitários
-- Um arquivo por função testada
-- NUNCA teste controllers em unitários
+- **Imports diretos** sem versionamento
+- Um arquivo por função/funcionalidade testada
 - Teste comportamento real com banco, evite mocks desnecessários
 
+### **test-architecture.md** - Arquitetura de Testes (FUNDAMENTAL)
+- **1 arquivo por função/funcionalidade** - Princípio inviolável
+- **Organização DDD obrigatória** por responsabilidade
+- **Nomenclatura consistente**: `{nome}.test.ts`
+- **Localização correta** de testes de validação e erro
+- **Regras de consolidação** - apenas cenários da mesma função
+
 ### **integration-tests.md** - Testes de Integração
+- **URLs simplificadas**: `/api/{contexto}/{dominio}/` (sem /v1/)
 - Estrutura de arquivos por método/endpoint
 - Setup com beforeAll e getTenantId
 - Cenários obrigatórios (200, 400, 404, 500)
@@ -86,6 +94,12 @@
 - Usar logs estruturados
 - Investigação sistemática
 
+### **code-coverage.md** - Cobertura de Código (PERFEIÇÃO)
+- **"Eu busco a perfeição.... se não for 100%, não está correto"**
+- **100% obrigatório** em todas as métricas (statements, branches, functions, lines)
+- **Tolerância zero** - 99.9% não é aceitável
+- **Processo sistemático** para alcançar perfeição
+
 ## Utilitários e Configuração
 
 ### **logging.md** - Sistema de Logs
@@ -95,15 +109,24 @@
 
 ### **imports.md** - Regras de Imports
 - Aliases obrigatórios: @/ para src, @test/ para tests
+- **Imports diretos** sem versionamento
 - SEMPRE usar imports estáticos
-- NUNCA usar imports dinâmicos desnecessários
-- NUNCA usar paths relativos
+- NUNCA usar paths relativos para src/
 - Configuração no tsconfig.json
 
+### **telemetry-tracing.md** - Telemetria e Tracing (NOVO)
+- **OpenTelemetry SDK** com auto-instrumentação completa
+- **Tracing manual** com withSpan/withSpanAsync
+- **Constantes centralizadas** para service name/version
+- **Padrões obrigatórios** para controllers, services, mappers
+- **Atributos padronizados** e hierarquia de spans
+- **Jaeger UI** e **Prometheus metrics** integrados
+
 ### **general.md** - Regras Gerais
-- Estilo de código
+- **Arquitetura simplificada** sem multiversão
+- **Versionamento via containers**
 - Separação de responsabilidades
-- Exports e imports
+- Exports e imports diretos
 
 ### **copy-structure.md** - Cópia de Estruturas
 - Processo para "analisar e fazer igual"
@@ -143,6 +166,22 @@
 - Convenções TypeScript
 - Padrões de importação
 - Práticas de segurança
+
+---
+
+## Arquitetura Atual (Simplificada)
+
+### ✅ **Estrutura Atual:**
+- Arquivos diretamente na raiz do domínio
+- Imports diretos sem versionamento
+- URLs simplificadas nas APIs
+- Versionamento via containers quando necessário
+
+### ✅ **Sem Versionamento Interno:**
+- Sem estruturas `latest/` e `v1/` em domínios
+- Sem re-exports de compatibilidade
+- Sem multiversão no código
+- Sem URLs com `/v1/` nos testes
 
 ---
 

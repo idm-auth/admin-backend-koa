@@ -26,6 +26,7 @@ export const getLogger = async () => {
   return logger;
 };
 
+// amazonq-ignore-next-line
 export const getLoggerNoAsync = () => {
   return logger;
 };

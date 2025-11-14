@@ -1,19 +1,21 @@
 import Router from '@koa/router';
+import { getLogger } from '@/plugins/pino.plugin';
 
-export const logRoutes = (router: Router, prefix = '') => {
+export const logRoutes = async (router: Router, prefix = '') => {
+  const logger = await getLogger();
   const routes = router.stack;
 
-  console.log('\n📍 Rotas registradas:');
-  console.log('─'.repeat(50));
+  logger.info('Rotas registradas');
+  logger.info('─'.repeat(50));
 
   routes.forEach((layer) => {
     const methods = layer.methods
       .filter((method) => method !== 'HEAD')
       .join(', ');
     const path = prefix + layer.path;
-    console.log(`${methods.padEnd(15)} ${path}`);
+    logger.info({ methods, path }, 'Rota registrada');
   });
 
-  console.log('─'.repeat(50));
-  console.log(`Total: ${routes.length} rotas\n`);
+  logger.info('─'.repeat(50));
+  logger.info({ totalRoutes: routes.length }, 'Total de rotas');
 };

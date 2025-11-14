@@ -41,14 +41,11 @@ src/
 Each domain follows a consistent structure:
 ```
 domains/{context}/{domain}/
-├── latest/           # Current implementation
-│   ├── {domain}.controller.ts
-│   ├── {domain}.service.ts
-│   ├── {domain}.model.ts
-│   ├── {domain}.schema.ts
-│   └── {domain}.routes.ts
-└── v1/               # Version compatibility layer
-    └── (re-exports from latest/)
+├── {domain}.controller.ts
+├── {domain}.service.ts
+├── {domain}.model.ts
+├── {domain}.schema.ts
+└── {domain}.routes.ts
 ```
 
 ## Key Architectural Components
@@ -74,7 +71,7 @@ domains/{context}/{domain}/
 ### Routes
 - Define API endpoints using MagicRouter
 - Include OpenAPI/Swagger specifications
-- Handle versioning (latest vs v1)
+- Direct implementation without versioning layers
 - Located in `{domain}.routes.ts`
 
 ### Schemas
@@ -87,7 +84,7 @@ domains/{context}/{domain}/
 
 ### Integration Tests
 ```
-tests/integration/domains/{context}/{domain}/v1/
+tests/integration/domains/{context}/{domain}/
 ├── post.test.ts      # Create operations
 ├── get.id.test.ts    # Read by ID operations
 └── get.search.test.ts # Search operations
@@ -110,9 +107,8 @@ tests/unit/domains/{context}/{domain}/
 - Secure tenant context validation
 
 ### API Structure
-- Latest: `/api/{context}/{domain}/{endpoint}`
-- V1: `/api/{context}/v1/{domain}/{endpoint}`
-- Tenant-scoped: `/api/{context}/v1/realm/{tenantId}/{domain}/{endpoint}`
+- Standard: `/api/{context}/{domain}/{endpoint}`
+- Tenant-scoped: `/api/{context}/realm/{tenantId}/{domain}/{endpoint}`
 
 ## Development Environment
 
