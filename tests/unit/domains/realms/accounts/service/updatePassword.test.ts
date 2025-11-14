@@ -67,7 +67,7 @@ describe('account.service.updatePassword', () => {
   it('should handle updatePassword save error', async () => {
     const tenantId = await getTenantId('test-update-password-save-error');
     const dbName = await getDBName(tenantId);
-    
+
     const account = await accountService.create(tenantId, {
       email: `update-save-error-${uuidv4()}@example.com`,
       password: 'Password123!',

@@ -78,7 +78,7 @@ describe('account.service.addEmail', () => {
     const tenantId = await getTenantId('test-add-email-duplicate-validation');
     const primaryEmail = `primary-${uuidv4()}@example.com`;
     const secondaryEmail = `secondary-${uuidv4()}@example.com`;
-    
+
     const account = await accountService.create(tenantId, {
       email: primaryEmail,
       password: 'Password123!',

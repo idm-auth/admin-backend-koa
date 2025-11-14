@@ -114,6 +114,14 @@
 - NUNCA usar paths relativos para src/
 - Configuração no tsconfig.json
 
+### **telemetry-tracing.md** - Telemetria e Tracing (NOVO)
+- **OpenTelemetry SDK** com auto-instrumentação completa
+- **Tracing manual** com withSpan/withSpanAsync
+- **Constantes centralizadas** para service name/version
+- **Padrões obrigatórios** para controllers, services, mappers
+- **Atributos padronizados** e hierarquia de spans
+- **Jaeger UI** e **Prometheus metrics** integrados
+
 ### **general.md** - Regras Gerais
 - **Arquitetura simplificada** sem multiversão
 - **Versionamento via containers**

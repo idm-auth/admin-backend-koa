@@ -1,9 +1,12 @@
+import { withSpan } from '@/utils/tracing.util';
 import { Account } from './account.model';
 import {
   AccountCreateResponse,
   AccountListItemResponse,
   AccountUpdateResponse,
 } from './account.schema';
+
+const MAPPER_NAME = 'account';
 
 const getPrimaryEmail = (account: Account) => {
   if (!account.emails || account.emails.length === 0) {
@@ -20,30 +23,54 @@ const getPrimaryEmail = (account: Account) => {
 };
 
 export const toCreateResponse = (account: Account): AccountCreateResponse => {
-  const email = getPrimaryEmail(account);
-  return {
-    _id: account._id.toString(),
-    email: email.email,
-    isPrimary: email.isPrimary,
-  };
+  return withSpan(
+    {
+      name: `${MAPPER_NAME}.mapper.toCreateResponse`,
+      attributes: { 'account.id': account._id.toString() },
+    },
+    () => {
+      const email = getPrimaryEmail(account);
+      return {
+        _id: account._id.toString(),
+        email: email.email,
+        isPrimary: email.isPrimary,
+      };
+    }
+  );
 };
 
 export const toUpdateResponse = (account: Account): AccountUpdateResponse => {
-  const email = getPrimaryEmail(account);
-  return {
-    _id: account._id.toString(),
-    email: email.email,
-    isPrimary: email.isPrimary,
-  };
+  return withSpan(
+    {
+      name: `${MAPPER_NAME}.mapper.toUpdateResponse`,
+      attributes: { 'account.id': account._id.toString() },
+    },
+    () => {
+      const email = getPrimaryEmail(account);
+      return {
+        _id: account._id.toString(),
+        email: email.email,
+        isPrimary: email.isPrimary,
+      };
+    }
+  );
 };
 
 export const toListItemResponse = (
   account: Account
 ): AccountListItemResponse => {
-  const email = getPrimaryEmail(account);
-  return {
-    _id: account._id.toString(),
-    email: email.email,
-    isPrimary: email.isPrimary,
-  };
+  return withSpan(
+    {
+      name: `${MAPPER_NAME}.mapper.toListItemResponse`,
+      attributes: { 'account.id': account._id.toString() },
+    },
+    () => {
+      const email = getPrimaryEmail(account);
+      return {
+        _id: account._id.toString(),
+        email: email.email,
+        isPrimary: email.isPrimary,
+      };
+    }
+  );
 };

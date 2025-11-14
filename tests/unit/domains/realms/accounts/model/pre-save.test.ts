@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import bcrypt from 'bcrypt';
-import { schema, getModel } from '@/domains/realms/accounts/account.model';
+import { getModel } from '@/domains/realms/accounts/account.model';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getDBName } from '@/domains/core/realms/realm.service';
 

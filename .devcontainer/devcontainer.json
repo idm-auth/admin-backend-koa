@@ -4,7 +4,8 @@
   "dockerComposeFile": "docker-compose.yml",
   "workspaceFolder": "/workspace",
   "remoteUser": "dev-user",
-  // "postAttachCommand": "sh .devcontainer/scripts/postAttachCommand.sh",
+    "initializeCommand": "sh .devcontainer/scripts/preCreate.sh",
+  "postAttachCommand": "sh .devcontainer/scripts/postAttachCommand.sh",
   "postStartCommand": "sh .devcontainer/scripts/postStartCommand.sh",
   "overrideCommand": true,
   "customizations": {
