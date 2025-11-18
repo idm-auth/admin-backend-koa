@@ -252,7 +252,11 @@ export const findAllPaginated = async (
         );
 
         logger.info(
-          { tenantId, total: result.pagination.total, page: result.pagination.page },
+          {
+            tenantId,
+            total: result.pagination.total,
+            page: result.pagination.page,
+          },
           'Accounts pagination completed successfully'
         );
 

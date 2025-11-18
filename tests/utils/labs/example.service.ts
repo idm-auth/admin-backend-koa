@@ -1,3 +1,4 @@
+import { createTestEmail } from '@test/utils/test-constants';
 // Service de exemplo para testes de mock
 export interface User {
   id: string;
@@ -35,7 +36,7 @@ export const findById = async (tenantId: string, id: string): Promise<User> => {
   return {
     id,
     name: 'Example User',
-    email: 'user@example.com',
+    email: createTestEmail('user'), // Test credential - not production
   };
 };
 
@@ -50,6 +51,6 @@ export const update = async (
   return {
     id,
     name: data.name || 'Updated User',
-    email: data.email || 'updated@example.com',
+    email: data.email || createTestEmail('updated'), // Test credential - not production
   };
 };

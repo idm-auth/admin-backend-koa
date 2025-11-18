@@ -3,21 +3,24 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { AccountResponse } from '@/domains/realms/accounts/account.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
   let tenantId: string;
   let accountId: string;
 
   const getApp = () => globalThis.testKoaApp;
-  const CURRENT_PASSWORD = 'Password123!';
-  const NEW_PASSWORD = 'NewPassword456!';
+  const CURRENT_PASSWORD = TEST_PASSWORD; // Test credential - not production
+  const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-update-password');
 
     // Criar uma conta para testar o update usando service
     const account = await accountService.create(tenantId, {
-      email: 'updatepasstest@example.com',
+      email: createTestEmail('updatepasstest'), // Test credential - not production
       password: CURRENT_PASSWORD,
     });
     accountId = account._id;
@@ -34,9 +37,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', accountId);
-    expect(response.body).toHaveProperty('email', 'updatepasstest@example.com');
-    expect(response.body).not.toHaveProperty('password');
+    const accountResponse: AccountResponse = response.body;
+    expect(accountResponse).toHaveProperty('_id', accountId);
+    expect(accountResponse).toHaveProperty(
+      'email',
+      createTestEmail('updatepasstest')
+    );
+    expect(accountResponse).not.toHaveProperty('password');
   });
 
   it('should return 400 for missing currentPassword', async () => {
@@ -49,7 +56,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Password is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Password is required');
   });
 
   it('should return 400 for missing newPassword', async () => {
@@ -62,7 +70,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Password is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Password is required');
   });
 
   it('should return 404 for incorrect current password', async () => {
@@ -76,7 +85,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(404);
 
-    expect(response.body).toHaveProperty(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
       'error',
       'Current password is incorrect'
     );
@@ -93,7 +103,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body.error).toMatch(/Password must/);
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toMatch(/Password must/);
   });
 
   it('should return 404 for non-existent account', async () => {
@@ -108,7 +119,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Account not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Account not found');
   });
 
   it('should return 400 for invalid account ID format', async () => {
@@ -123,6 +135,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

@@ -1,77 +1,101 @@
-import * as policyService from './policy.service';
+import { withSpanAsync } from '@/utils/tracing.util';
 import { Context } from 'koa';
+import * as policyMapper from './policy.mapper';
+import * as policyService from './policy.service';
+
+const CONTROLLER_NAME = 'policy.controller';
 
 export const create = async (ctx: Context) => {
-  const { tenantId } = ctx.validated.params;
-  const { name, description, effect, actions, resources, conditions } =
-    ctx.validated.body;
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.create`,
+      attributes: {
+        operation: 'create',
+        'http.method': 'POST',
+      },
+    },
+    async () => {
+      const { tenantId } = ctx.validated.params;
+      const { name, description, effect, actions, resources, conditions } =
+        ctx.validated.body;
 
-  const policy = await policyService.create(tenantId, {
-    name,
-    description,
-    effect,
-    actions,
-    resources,
-    conditions,
-  });
+      const policy = await policyService.create(tenantId, {
+        name,
+        description,
+        effect,
+        actions,
+        resources,
+        conditions,
+      });
 
-  ctx.status = 201;
-  ctx.body = {
-    id: policy._id,
-    name: policy.name,
-    description: policy.description,
-    effect: policy.effect,
-    actions: policy.actions,
-    resources: policy.resources,
-    conditions: policy.conditions,
-  };
+      ctx.status = 201;
+      ctx.body = policyMapper.toResponse(policy);
+    }
+  );
 };
 
 export const findById = async (ctx: Context) => {
-  const { tenantId, id } = ctx.validated.params;
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.findById`,
+      attributes: {
+        operation: 'findById',
+        'http.method': 'GET',
+      },
+    },
+    async () => {
+      const { tenantId, id } = ctx.validated.params;
 
-  const policy = await policyService.findById(tenantId, id);
+      const policy = await policyService.findById(tenantId, id);
 
-  ctx.body = {
-    id: policy._id,
-    name: policy.name,
-    description: policy.description,
-    effect: policy.effect,
-    actions: policy.actions,
-    resources: policy.resources,
-    conditions: policy.conditions,
-  };
+      ctx.body = policyMapper.toResponse(policy);
+    }
+  );
 };
 
 export const update = async (ctx: Context) => {
-  const { tenantId, id } = ctx.validated.params;
-  const { name, description, effect, actions, resources, conditions } =
-    ctx.validated.body;
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.update`,
+      attributes: {
+        operation: 'update',
+        'http.method': 'PUT',
+      },
+    },
+    async () => {
+      const { tenantId, id } = ctx.validated.params;
+      const { name, description, effect, actions, resources, conditions } =
+        ctx.validated.body;
 
-  const policy = await policyService.update(tenantId, id, {
-    name,
-    description,
-    effect,
-    actions,
-    resources,
-    conditions,
-  });
+      const policy = await policyService.update(tenantId, id, {
+        name,
+        description,
+        effect,
+        actions,
+        resources,
+        conditions,
+      });
 
-  ctx.body = {
-    id: policy._id,
-    name: policy.name,
-    description: policy.description,
-    effect: policy.effect,
-    actions: policy.actions,
-    resources: policy.resources,
-    conditions: policy.conditions,
-  };
+      ctx.body = policyMapper.toResponse(policy);
+    }
+  );
 };
 
 export const remove = async (ctx: Context) => {
-  const { tenantId, id } = ctx.validated.params;
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.remove`,
+      attributes: {
+        operation: 'remove',
+        'http.method': 'DELETE',
+      },
+    },
+    async () => {
+      const { tenantId, id } = ctx.validated.params;
 
-  await policyService.remove(tenantId, id);
+      await policyService.remove(tenantId, id);
 
-  ctx.status = 204;
+      ctx.status = 204;
+    }
+  );
 };

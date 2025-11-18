@@ -35,6 +35,7 @@ import {
   responseValidationMiddleware,
 } from '@/middlewares/validation.middleware';
 import { getLoggerNoAsync } from '@/plugins/pino.plugin';
+import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 import {
   OpenAPIRegistry,
   OpenApiGeneratorV3,
@@ -145,7 +146,7 @@ export class MagicRouter {
         path: fullPrefix + route.path,
       };
 
-      if (process.env.NODE_ENV === 'development') {
+      if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
         const testRegistry = new OpenAPIRegistry();
         try {
           testRegistry.registerPath(routeConfig);

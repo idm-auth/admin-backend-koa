@@ -1,3 +1,4 @@
+import { generateTestEmail } from '@test/utils/test-constants';
 // EXEMPLO 1: vi.mock FUNCIONA - Mock ANTES de todos os imports
 vi.mock('./fake-service', () => ({
   create: vi.fn(),
@@ -17,7 +18,10 @@ describe('Mock Examples - Quando Funciona e Quando Não', () => {
     const mockCreate = vi.mocked(fakeService.create);
     mockCreate.mockRejectedValue(new Error('MOCK_SUCCESS'));
 
-    const ctx = { tenantId: 'test', data: { email: 'test@example.com' } };
+    const ctx = {
+      tenantId: 'test',
+      data: { email: generateTestEmail('test') },
+    }; // Test credential - not production
 
     try {
       await controllerCreate(ctx);
@@ -68,7 +72,10 @@ describe('Mock Examples - Quando Funciona e Quando Não', () => {
     const createSpy = vi.spyOn(fakeService, 'create');
     createSpy.mockRejectedValue(new Error('SPY_SUCCESS'));
 
-    const ctx = { tenantId: 'test', data: { email: 'test@example.com' } };
+    const ctx = {
+      tenantId: 'test',
+      data: { email: generateTestEmail('test') },
+    }; // Test credential - not production
 
     try {
       await controllerCreate(ctx);

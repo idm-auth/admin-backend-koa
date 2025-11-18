@@ -25,7 +25,7 @@ describe('POST /api/realm/:tenantId/policies', () => {
       .send(policyData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('_id');
     expect(response.body.name).toBe(policyData.name);
     expect(response.body.effect).toBe(policyData.effect);
     expect(response.body.actions).toEqual(policyData.actions);

@@ -34,10 +34,12 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
       expect(response.body.data.length).toBeGreaterThanOrEqual(2);
 
       // Verificar estrutura dos objetos retornados
-      response.body.data.forEach((group: { _id: string; name: string; description?: string }) => {
-        expect(group).toHaveProperty('_id');
-        expect(group).toHaveProperty('name');
-      });
+      response.body.data.forEach(
+        (group: { _id: string; name: string; description?: string }) => {
+          expect(group).toHaveProperty('_id');
+          expect(group).toHaveProperty('name');
+        }
+      );
     });
 
     it('should return empty array when no groups exist', async () => {
@@ -60,7 +62,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
       expect(response.body).toHaveProperty('data');
       expect(Array.isArray(response.body.data)).toBe(true);
-      
+
       if (response.body.data.length > 0) {
         expect(response.body.data[0].name).toContain('Paginated Group 1');
       }

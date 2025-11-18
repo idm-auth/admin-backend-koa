@@ -8,6 +8,7 @@ import {
 import { getLogger } from '@/utils/localStorage.util';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { NotFoundError } from '@/errors/not-found';
+import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 
 export const getWebAdminConfig = async (args: {
   app: string;
@@ -38,7 +39,7 @@ export const initSetup = async () => {
   const logger = await getLogger();
   const base = {
     app: 'web-admin',
-    env: process.env.NODE_ENV || 'development',
+    env: getEnvValue(EnvKey.NODE_ENV),
   };
   const doc = await getModel().findOne(base);
   if (!doc) {
@@ -48,7 +49,7 @@ export const initSetup = async () => {
       env: envConfigZSchema.parse(base.env),
       api: {
         main: {
-          url: process.env.API_MAIN_URL || 'http://localhost:3000',
+          url: getEnvValue(EnvKey.API_MAIN_URL),
         },
       },
       coreRealm: {

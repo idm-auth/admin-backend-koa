@@ -12,7 +12,9 @@ export interface AccountGroupResponse {
   updatedAt: string;
 }
 
-export const toResponse = (accountGroup: AccountGroupDocument): AccountGroupResponse =>
+export const toResponse = (
+  accountGroup: AccountGroupDocument
+): AccountGroupResponse =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toResponse`,
@@ -31,7 +33,9 @@ export const toResponse = (accountGroup: AccountGroupDocument): AccountGroupResp
     })
   );
 
-export const toListResponse = (accountGroups: AccountGroupDocument[]): AccountGroupResponse[] =>
+export const toListResponse = (
+  accountGroups: AccountGroupDocument[]
+): AccountGroupResponse[] =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toListResponse`,

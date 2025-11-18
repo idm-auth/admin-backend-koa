@@ -1,6 +1,8 @@
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/errors/not-found';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { AccountDocument } from '@/domains/realms/accounts/account.model';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,12 +18,15 @@ describe('account.service.remove', () => {
 
   it('should remove account successfully', async () => {
     const tenantId = await getTenantId('test-account-remove-2');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production;
 
-    const createdAccount = await accountService.create(tenantId, {
-      email,
-      password: 'Password123!',
-    });
+    const createdAccount: AccountDocument = await accountService.create(
+      tenantId,
+      {
+        email,
+        password: TEST_PASSWORD, // Test credential - not production,
+      }
+    );
 
     // Remove should not throw
     await expect(

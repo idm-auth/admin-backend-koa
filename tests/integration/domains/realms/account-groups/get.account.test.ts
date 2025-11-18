@@ -1,9 +1,12 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { TEST_PASSWORD, generateTestEmail } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
   let tenantId: string;
@@ -15,11 +18,11 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-account-groups-get-account');
-    
+
     // Create test account using service
     const account = await accountService.create(tenantId, {
-      email: `test-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('test', uuidv4()), // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id.toString();
 
@@ -59,28 +62,34 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
       .get(`/api/realm/${tenantId}/account-groups/account/${accountId}`)
       .expect(200);
 
-    expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body).toHaveLength(2);
-    
-    const group1Relation = response.body.find((ag: any) => ag.groupId === groupId1);
-    const group2Relation = response.body.find((ag: any) => ag.groupId === groupId2);
-    
+    // Type safety com o schema definido
+    const accountGroups: AccountGroupResponse[] = response.body;
+
+    expect(Array.isArray(accountGroups)).toBe(true);
+    expect(accountGroups).toHaveLength(2);
+
+    // Agora com type safety completo
+    const group1Relation = accountGroups.find((ag) => ag.groupId === groupId1);
+    const group2Relation = accountGroups.find((ag) => ag.groupId === groupId2);
+
     expect(group1Relation).toBeDefined();
-    expect(group1Relation.roles).toEqual(['admin']);
-    
+    expect(group1Relation?.roles).toEqual(['admin']);
+
     expect(group2Relation).toBeDefined();
-    expect(group2Relation.roles).toEqual(['member']);
+    expect(group2Relation?.roles).toEqual(['member']);
   });
 
   it('should return empty array for account with no groups', async () => {
     // Create new account using service
     const newAccount = await accountService.create(tenantId, {
-      email: `test-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('test', uuidv4()), // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const response = await request(getApp().callback())
-      .get(`/api/realm/${tenantId}/account-groups/account/${newAccount._id.toString()}`)
+      .get(
+        `/api/realm/${tenantId}/account-groups/account/${newAccount._id.toString()}`
+      )
       .expect(200);
 
     expect(Array.isArray(response.body)).toBe(true);
@@ -92,6 +101,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
       .get(`/api/realm/${tenantId}/account-groups/account/invalid-id`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 });

@@ -3,13 +3,14 @@ import { NotFoundError } from '@/errors/not-found';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as validationService from '@/domains/commons/validations/validation.service';
 import { getTenantId } from '@test/utils/tenant.util';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.addEmail', () => {
   it('should throw NotFoundError when account not found', async () => {
     const tenantId = await getTenantId('test-account-addemail');
     const nonExistentId = uuidv4();
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production
 
     await expect(
       accountService.addEmail(tenantId, nonExistentId, email)
@@ -18,12 +19,12 @@ describe('account.service.addEmail', () => {
 
   it('should add email successfully', async () => {
     const tenantId = await getTenantId('test-account-addemail-2');
-    const primaryEmail = `primary-${uuidv4()}@example.com`;
-    const secondaryEmail = `secondary-${uuidv4()}@example.com`;
+    const primaryEmail = generateTestEmail('primary'); // Test credential - not production
+    const secondaryEmail = generateTestEmail('secondary'); // Test credential - not production
 
     const createdAccount = await accountService.create(tenantId, {
       email: primaryEmail,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const updatedAccount = await accountService.addEmail(
@@ -43,11 +44,11 @@ describe('account.service.addEmail', () => {
 
   it('should throw error for duplicate email in same account', async () => {
     const tenantId = await getTenantId('test-account-addemail-3');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production
 
     const createdAccount = await accountService.create(tenantId, {
       email,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await expect(
@@ -59,8 +60,8 @@ describe('account.service.addEmail', () => {
     const tenantId = await getTenantId('test-add-email-not-found-after');
 
     const account = await accountService.create(tenantId, {
-      email: `add-email-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('add-email'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await accountService.remove(tenantId, account._id);
@@ -69,19 +70,19 @@ describe('account.service.addEmail', () => {
       accountService.addEmail(
         tenantId,
         account._id,
-        `new-${uuidv4()}@example.com`
+        generateTestEmail('new') // Test credential - not production
       )
     ).rejects.toThrow(NotFoundError);
   });
 
   it('should handle addEmail with duplicate email validation', async () => {
     const tenantId = await getTenantId('test-add-email-duplicate-validation');
-    const primaryEmail = `primary-${uuidv4()}@example.com`;
-    const secondaryEmail = `secondary-${uuidv4()}@example.com`;
+    const primaryEmail = generateTestEmail('primary'); // Test credential - not production
+    const secondaryEmail = generateTestEmail('secondary'); // Test credential - not production
 
     const account = await accountService.create(tenantId, {
       email: primaryEmail,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await accountService.addEmail(tenantId, account._id, secondaryEmail);

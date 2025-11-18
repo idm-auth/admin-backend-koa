@@ -4,15 +4,15 @@ import * as accountService from '@/domains/realms/accounts/account.service';
 import { getModel } from '@/domains/realms/accounts/account.model';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('account.service.updatePassword', () => {
   it('should throw NotFoundError when current password is incorrect', async () => {
     const tenantId = await getTenantId('test-update-password-wrong-current');
 
     const account = await accountService.create(tenantId, {
-      email: `update-pwd-${uuidv4()}@example.com`,
-      password: 'CurrentPassword123!',
+      email: generateTestEmail('update-pwd'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await expect(
@@ -20,7 +20,7 @@ describe('account.service.updatePassword', () => {
         tenantId,
         account._id,
         'WrongPassword123!',
-        'NewPassword123!'
+        TEST_PASSWORD
       )
     ).rejects.toThrow(NotFoundError);
   });
@@ -29,15 +29,15 @@ describe('account.service.updatePassword', () => {
     const tenantId = await getTenantId('test-update-password-success');
 
     const account = await accountService.create(tenantId, {
-      email: `update-pwd-success-${uuidv4()}@example.com`,
-      password: 'CurrentPassword123!',
+      email: generateTestEmail('update-pwd-success'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const updatedAccount = await accountService.updatePassword(
       tenantId,
       account._id,
-      'CurrentPassword123!',
-      'NewPassword123!'
+      TEST_PASSWORD,
+      'NewPassword456!'
     );
 
     expect(updatedAccount._id).toBe(account._id);
@@ -48,8 +48,8 @@ describe('account.service.updatePassword', () => {
     const tenantId = await getTenantId('test-update-password-race-condition');
 
     const account = await accountService.create(tenantId, {
-      email: `race-${uuidv4()}@example.com`,
-      password: 'CurrentPassword123!',
+      email: generateTestEmail('race'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await accountService.remove(tenantId, account._id);
@@ -58,8 +58,8 @@ describe('account.service.updatePassword', () => {
       accountService.updatePassword(
         tenantId,
         account._id,
-        'CurrentPassword123!',
-        'NewPassword123!'
+        TEST_PASSWORD,
+        'NewPassword789!'
       )
     ).rejects.toThrow(NotFoundError);
   });
@@ -69,8 +69,8 @@ describe('account.service.updatePassword', () => {
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const account = await accountService.create(tenantId, {
-      email: `update-save-error-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('update-save-error'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const AccountModel = getModel(dbName);
@@ -82,8 +82,8 @@ describe('account.service.updatePassword', () => {
         accountService.updatePassword(
           tenantId,
           account._id,
-          'Password123!',
-          'NewPassword123!'
+          TEST_PASSWORD, // Test credential - not production
+          'NewPassword999!'
         )
       ).rejects.toThrow('Database save error');
     } finally {

@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/errors/not-found';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('account.service.findByEmail', () => {
   it('should throw NotFoundError when email not found', async () => {
     const tenantId = await getTenantId('test-account-findbyemail');
-    const nonExistentEmail = `non-existent-${uuidv4()}@example.com`;
+    const nonExistentEmail = generateTestEmail('non-existent'); // Test credential - not production
 
     await expect(
       accountService.findByEmail(tenantId, nonExistentEmail)
@@ -16,11 +16,11 @@ describe('account.service.findByEmail', () => {
 
   it('should return account when found by email', async () => {
     const tenantId = await getTenantId('test-account-findbyemail-2');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production
 
     const createdAccount = await accountService.create(tenantId, {
       email,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const foundAccount = await accountService.findByEmail(tenantId, email);

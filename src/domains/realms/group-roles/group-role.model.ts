@@ -6,7 +6,7 @@ import {
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
 import mongoose, { InferSchemaType } from 'mongoose';
 
-const schemaName = 'groupRoles';
+const schemaName = 'group-roles';
 
 export const schema = new mongoose.Schema({
   groupId: { type: String, required: true },

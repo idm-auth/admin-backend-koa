@@ -4,6 +4,7 @@ import {
   extendZodWithOpenApi,
 } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
+import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 extendZodWithOpenApi(z);
 
 const registry = new OpenAPIRegistry();
@@ -21,7 +22,7 @@ export const getOpenAPIDocument = () => {
         'Multi-tenant API with role-based access control (RBAC) for managing accounts, groups, roles and policies',
       contact: {
         name: 'API Support',
-        email: 'support@example.com',
+        email: getEnvValue(EnvKey.API_SUPPORT_EMAIL),
       },
     },
     servers: [
@@ -30,7 +31,7 @@ export const getOpenAPIDocument = () => {
         description: 'Development server',
       },
       {
-        url: 'https://api.example.com',
+        url: getEnvValue(EnvKey.API_MAIN_URL),
         description: 'Production server',
       },
     ],

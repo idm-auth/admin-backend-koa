@@ -6,7 +6,7 @@ import {
 import { DBName, getRealmDb } from '@/plugins/mongo.plugin';
 import mongoose, { InferSchemaType } from 'mongoose';
 
-const schemaName = 'accountGroups';
+const schemaName = 'account-groups';
 
 export const schema = new mongoose.Schema({
   accountId: { type: String, required: true },

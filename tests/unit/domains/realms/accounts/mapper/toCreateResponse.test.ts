@@ -1,35 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import * as accountMapper from '@/domains/realms/accounts/account.mapper';
 import { AccountDocument } from '@/domains/realms/accounts/account.model';
+import { createTestEmail } from '@test/utils/test-constants';
 
 describe('account.mapper.toCreateResponse', () => {
-  const accountWithPrimary = {
+  const accountWithPrimary: AccountDocument = {
     _id: 'test-id',
     emails: [
-      { email: 'primary@example.com', isPrimary: true },
-      { email: 'secondary@example.com', isPrimary: false },
+      { email: createTestEmail('primary'), isPrimary: true }, // Test email - not production
+      { email: createTestEmail('secondary'), isPrimary: false }, // Test email - not production
     ],
-  } as AccountDocument;
+  };
 
-  const accountNoPrimary = {
+  const accountNoPrimary: AccountDocument = {
     _id: 'test-id',
     emails: [
-      { email: 'first@example.com', isPrimary: false },
-      { email: 'second@example.com', isPrimary: false },
+      { email: createTestEmail('first'), isPrimary: false }, // Test email - not production
+      { email: createTestEmail('second'), isPrimary: false }, // Test email - not production
     ],
-  } as AccountDocument;
+  };
 
-  const accountNoEmails = {
+  const accountNoEmails: AccountDocument = {
     _id: 'test-id',
     emails: [],
-  } as AccountDocument;
+  };
 
   it('should return primary email when exists', () => {
     const result = accountMapper.toCreateResponse(accountWithPrimary);
 
     expect(result).toEqual({
       _id: 'test-id',
-      email: 'primary@example.com',
+      email: createTestEmail('primary'),
       isPrimary: true,
     });
   });
@@ -39,7 +40,7 @@ describe('account.mapper.toCreateResponse', () => {
 
     expect(result).toEqual({
       _id: 'test-id',
-      email: 'first@example.com',
+      email: createTestEmail('first'),
       isPrimary: false,
     });
   });

@@ -107,14 +107,14 @@ Acesse `http://localhost:3000/docs` para a documentação Swagger interativa.
 curl -X POST http://localhost:3000/api/realm/{tenantId}/accounts \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "user@example.com",
+    "email": "admin@idm-auth.io",
     "password": "SecurePass123!"
   }'
 ```
 
 ### Buscar Conta por Email
 ```bash
-curl -X GET "http://localhost:3000/api/realm/{tenantId}/accounts/search?email=user@example.com"
+curl -X GET "http://localhost:3000/api/realm/{tenantId}/accounts/search?email=admin@idm-auth.io"
 ```
 
 ## Casos de Uso

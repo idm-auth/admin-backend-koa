@@ -21,7 +21,10 @@ export const create = async (
     },
     async (span) => {
       const logger = await getLogger();
-      logger.info({ tenantId, accountId: data.accountId, groupId: data.groupId }, 'Creating account-group relationship');
+      logger.info(
+        { tenantId, accountId: data.accountId, groupId: data.groupId },
+        'Creating account-group relationship'
+      );
 
       const dbName = await getDBName({ publicUUID: tenantId });
       const accountGroup = await getModel(dbName).create(data);
@@ -47,7 +50,10 @@ export const remove = async (
     },
     async () => {
       const logger = await getLogger();
-      logger.info({ tenantId, accountId, groupId }, 'Removing account from group');
+      logger.info(
+        { tenantId, accountId, groupId },
+        'Removing account from group'
+      );
 
       const dbName = await getDBName({ publicUUID: tenantId });
       const result = await getModel(dbName).findOneAndDelete({
@@ -128,7 +134,10 @@ export const updateRoles = async (
     },
     async (span) => {
       const logger = await getLogger();
-      logger.info({ tenantId, accountId, groupId, roles }, 'Updating account-group roles');
+      logger.info(
+        { tenantId, accountId, groupId, roles },
+        'Updating account-group roles'
+      );
 
       const dbName = await getDBName({ publicUUID: tenantId });
       const accountGroup = await getModel(dbName).findOneAndUpdate(

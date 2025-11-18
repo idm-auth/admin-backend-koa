@@ -3,6 +3,8 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
   let tenantId: string;
@@ -17,14 +19,13 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
   });
 
   beforeEach(async () => {
-    const uniqueId = uuidv4().substring(0, 8);
-    primaryEmail = `primary-${uniqueId}@example.com`;
-    secondaryEmail = `secondary-${uniqueId}@example.com`;
+    primaryEmail = generateTestEmail('primary'); // Test credential - not production
+    secondaryEmail = generateTestEmail('secondary'); // Test credential - not production
 
     // Criar conta com email primário
     const account = await accountService.create(tenantId, {
       email: primaryEmail,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id;
 
@@ -53,7 +54,8 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({})
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Email is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Email is required');
   });
 
   it('should return 400 for removing the only email', async () => {
@@ -65,21 +67,23 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: primaryEmail })
       .expect(400);
 
-    expect(response.body).toHaveProperty(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
       'error',
       'Cannot remove the only email from account'
     );
   });
 
   it('should return 404 for email not found in account', async () => {
-    const nonExistentEmail = `nonexistent-${uuidv4().substring(0, 8)}@example.com`;
+    const nonExistentEmail = generateTestEmail('nonexistent'); // Test credential - not production
 
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts/${accountId}/email/remove`)
       .send({ email: nonExistentEmail })
       .expect(404);
 
-    expect(response.body).toHaveProperty(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
       'error',
       'Email not found in this account'
     );
@@ -91,7 +95,11 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: 'invalid-email' })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
+      'error',
+      'Invalid email format, Email domain not allowed'
+    );
   });
 
   it('should return 404 for non-existent account', async () => {
@@ -102,7 +110,8 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: secondaryEmail })
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Account not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Account not found');
   });
 
   it('should return 400 for invalid account ID format', async () => {
@@ -111,6 +120,7 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: secondaryEmail })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

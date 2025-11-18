@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/group-roles', () => {
   let tenantId: string;
@@ -38,7 +39,7 @@ describe('POST /api/realm/:tenantId/group-roles', () => {
       .send(relationData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('_id');
     expect(response.body.groupId).toBe(groupId);
     expect(response.body.roleId).toBe(roleId);
   });
@@ -53,6 +54,7 @@ describe('POST /api/realm/:tenantId/group-roles', () => {
       .send(relationData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

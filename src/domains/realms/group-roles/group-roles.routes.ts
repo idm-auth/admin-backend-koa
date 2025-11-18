@@ -54,6 +54,7 @@ export const initialize = async () => {
     summary: 'Remove role from group',
     handlers: [groupRoleController.removeRoleFromGroup],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {

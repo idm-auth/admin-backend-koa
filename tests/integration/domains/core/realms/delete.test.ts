@@ -2,6 +2,8 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
+import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('DELETE /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -18,7 +20,7 @@ describe('DELETE /api/core/realms/:id', () => {
       },
     };
 
-    const realm = await realmService.create(realmData);
+    const realm: RealmDocument = await realmService.create(realmData);
     createdRealmId = realm._id;
   });
 
@@ -35,7 +37,8 @@ describe('DELETE /api/core/realms/:id', () => {
       .get(`/api/core/realms/${createdRealmId}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 404 for non-existent ID', async () => {
@@ -45,7 +48,8 @@ describe('DELETE /api/core/realms/:id', () => {
       .delete(`/api/core/realms/${nonExistentId}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 400 for invalid ID format', async () => {
@@ -55,7 +59,8 @@ describe('DELETE /api/core/realms/:id', () => {
       .delete(`/api/core/realms/${invalidId}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 404 when trying to delete already deleted realm', async () => {
@@ -66,7 +71,7 @@ describe('DELETE /api/core/realms/:id', () => {
       dbName: 'test-db-double-delete',
     };
 
-    const realm = await realmService.create(realmData);
+    const realm: RealmDocument = await realmService.create(realmData);
     const realmId = realm._id;
 
     // Delete it first time
@@ -79,6 +84,7 @@ describe('DELETE /api/core/realms/:id', () => {
       .delete(`/api/core/realms/${realmId}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 });

@@ -16,6 +16,7 @@ schema.add(baseDocumentSchema);
 
 export type GroupSchema = InferSchemaType<typeof schema>;
 export type Group = mongoose.Document & GroupSchema & BaseDocument;
+export type GroupDocument = Group;
 export type GroupCreate = Omit<GroupSchema, never> & {
   // Todos os campos são obrigatórios para Group
 };

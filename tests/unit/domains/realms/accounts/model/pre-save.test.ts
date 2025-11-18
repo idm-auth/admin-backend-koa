@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import bcrypt from 'bcrypt';
 import { getModel } from '@/domains/realms/accounts/account.model';
 import { getTenantId } from '@test/utils/tenant.util';
+import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
 import { getDBName } from '@/domains/core/realms/realm.service';
 
 describe('account.model pre-save hook', () => {
@@ -15,8 +16,8 @@ describe('account.model pre-save hook', () => {
     try {
       const AccountModel = getModel(dbName);
       const account = new AccountModel({
-        emails: [{ email: 'test@example.com', isPrimary: true }],
-        password: 'Password123!',
+        emails: [{ email: createTestEmail('test'), isPrimary: true }], // Test email - not production
+        password: TEST_PASSWORD, // Test credential - not production
       });
 
       await expect(account.save()).rejects.toThrow(
@@ -38,8 +39,8 @@ describe('account.model pre-save hook', () => {
     try {
       const AccountModel = getModel(dbName);
       const account = new AccountModel({
-        emails: [{ email: 'test2@example.com', isPrimary: true }],
-        password: 'Password123!',
+        emails: [{ email: createTestEmail('test2'), isPrimary: true }], // Test email - not production
+        password: TEST_PASSWORD, // Test credential - not production
       });
 
       await expect(account.save()).rejects.toThrow('bcrypt genSalt failed');
@@ -59,8 +60,8 @@ describe('account.model pre-save hook', () => {
     });
 
     const account = new AccountModel({
-      emails: [{ email: 'test@example.com', isPrimary: true }],
-      password: 'Password123!',
+      emails: [{ email: createTestEmail('test'), isPrimary: true }], // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await expect(account.save()).rejects.toThrow(

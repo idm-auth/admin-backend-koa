@@ -8,10 +8,10 @@ import {
   updateAccountGroupRolesSchema,
 } from './account-group.schema';
 import { errorResponseSchema } from '@/domains/commons/base/base.schema';
-import { 
+import {
   requestTenantIdParamsSchema,
   requestTenantIdAndAccountIdParamsSchema,
-  requestTenantIdAndGroupIdParamsSchema
+  requestTenantIdAndGroupIdParamsSchema,
 } from '@/domains/commons/base/request.schema';
 
 export const initialize = async () => {

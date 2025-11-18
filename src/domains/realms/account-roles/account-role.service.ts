@@ -1,66 +1,119 @@
 import { AccountRoleDocument, getModel } from './account-role.model';
-import { DocId } from '@/domains/commons/base/base.schema';
 import { AccountRoleCreate } from './account-role.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
+import { withSpanAsync } from '@/utils/tracing.util';
 
-export const addRoleToAccount = async (
+const SERVICE_NAME = 'account-role.service';
+
+export const create = async (
   tenantId: string,
   data: AccountRoleCreate
 ): Promise<AccountRoleDocument> => {
-  const logger = await getLogger();
-  logger.debug({ accountId: data.accountId, roleId: data.roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.create`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'create',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info(
+        { tenantId, accountId: data.accountId, roleId: data.roleId },
+        'Creating account-role relationship'
+      );
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const accountRole = await getModel(dbName).create(data);
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const accountRole = await getModel(dbName).create(data);
 
-  return accountRole;
+      span.setAttributes({ 'entity.id': accountRole._id });
+      return accountRole;
+    }
+  );
 };
 
-export const removeRoleFromAccount = async (
+export const remove = async (
   tenantId: string,
-  accountId: DocId,
-  roleId: DocId
+  accountId: string,
+  roleId: string
 ): Promise<void> => {
-  const logger = await getLogger();
-  logger.debug({ accountId, roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.remove`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'remove',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      logger.info(
+        { tenantId, accountId, roleId },
+        'Removing account from role'
+      );
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findOneAndDelete({
-    accountId,
-    roleId,
-  });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const result = await getModel(dbName).findOneAndDelete({
+        accountId,
+        roleId,
+      });
 
-  if (!result) {
-    throw new NotFoundError('Account-Role relationship not found');
-  }
+      if (!result) {
+        throw new NotFoundError('Account-Role relationship not found');
+      }
+    }
+  );
 };
 
-export const getAccountRoles = async (
+export const findByAccountId = async (
   tenantId: string,
-  accountId: DocId
+  accountId: string
 ): Promise<AccountRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ accountId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findByAccountId`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findByAccountId',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, accountId }, 'Finding roles for account');
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const accountRoles = await getModel(dbName).find({
-    accountId,
-  });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const accountRoles = await getModel(dbName).find({ accountId });
 
-  return accountRoles;
+      span.setAttributes({ 'result.count': accountRoles.length });
+      return accountRoles;
+    }
+  );
 };
 
-export const getRoleAccounts = async (
+export const findByRoleId = async (
   tenantId: string,
-  roleId: DocId
+  roleId: string
 ): Promise<AccountRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findByRoleId`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findByRoleId',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, roleId }, 'Finding accounts with role');
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const roleAccounts = await getModel(dbName).find({ roleId });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const roleAccounts = await getModel(dbName).find({ roleId });
 
-  return roleAccounts;
+      span.setAttributes({ 'result.count': roleAccounts.length });
+      return roleAccounts;
+    }
+  );
 };

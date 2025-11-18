@@ -1,3 +1,4 @@
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/errors/not-found';
 import * as accountService from '@/domains/realms/accounts/account.service';
@@ -16,11 +17,11 @@ describe('account.service.findById', () => {
 
   it('should return account when found', async () => {
     const tenantId = await getTenantId('test-account-findbyid-success');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {
       email,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const foundAccount = await accountService.findById(

@@ -103,7 +103,10 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Name contains invalid characters');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Name contains invalid characters'
+    );
   });
 
   it('should return 400 for name too long', async () => {
@@ -116,7 +119,10 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Name must be at most 100 characters');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Name must be at most 100 characters'
+    );
   });
 
   it('should return 400 for invalid description characters', async () => {
@@ -129,7 +135,10 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Description contains invalid characters');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Description contains invalid characters'
+    );
   });
 
   it('should return 400 for description too long', async () => {
@@ -142,6 +151,9 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Description must be at most 500 characters');
+    expect(response.body).toHaveProperty(
+      'error',
+      'Description must be at most 500 characters'
+    );
   });
 });

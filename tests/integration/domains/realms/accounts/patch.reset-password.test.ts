@@ -3,22 +3,24 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { AccountResponse } from '@/domains/realms/accounts/account.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   let tenantId: string;
   let accountId: string;
 
   const getApp = () => globalThis.testKoaApp;
-  const TEST_PASSWORD = 'Password123!';
-  const NEW_PASSWORD = 'NewPassword456!';
+  const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-reset-password');
 
     // Criar uma conta para testar o reset usando service
     const account = await accountService.create(tenantId, {
-      email: 'resettest@example.com',
-      password: TEST_PASSWORD,
+      email: createTestEmail('resettest'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id;
   });
@@ -33,9 +35,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', accountId);
-    expect(response.body).toHaveProperty('email', 'resettest@example.com');
-    expect(response.body).not.toHaveProperty('password');
+    const accountResponse: AccountResponse = response.body;
+    expect(accountResponse).toHaveProperty('_id', accountId);
+    expect(accountResponse).toHaveProperty(
+      'email',
+      createTestEmail('resettest')
+    );
+    expect(accountResponse).not.toHaveProperty('password');
   });
 
   it('should return 400 for missing password', async () => {
@@ -46,7 +52,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Password is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Password is required');
   });
 
   it('should return 400 for weak password', async () => {
@@ -59,7 +66,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body.error).toMatch(/Password must/);
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toMatch(/Password must/);
   });
 
   it('should return 400 for password without uppercase', async () => {
@@ -72,7 +80,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body.error).toBe(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toBe(
       'Password must contain at least one uppercase letter'
     );
   });
@@ -87,7 +96,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body.error).toBe(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toBe(
       'Password must contain at least one lowercase letter'
     );
   });
@@ -102,7 +112,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body.error).toBe(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toBe(
       'Password must contain at least one number'
     );
   });
@@ -117,7 +128,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body.error).toBe(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse.error).toBe(
       'Password must contain at least one special character'
     );
   });
@@ -133,7 +145,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Account not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Account not found');
   });
 
   it('should return 400 for invalid account ID format', async () => {
@@ -147,7 +160,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 400 for invalid tenant ID format', async () => {
@@ -163,6 +177,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
       .send(resetData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

@@ -58,4 +58,6 @@ export const groupPaginatedResponseSchema = createPaginatedResponseSchema(
 );
 
 export type GroupListQuery = z.infer<typeof groupListQuerySchema>;
-export type GroupPaginatedResponse = z.infer<typeof groupPaginatedResponseSchema>;
+export type GroupPaginatedResponse = z.infer<
+  typeof groupPaginatedResponseSchema
+>;

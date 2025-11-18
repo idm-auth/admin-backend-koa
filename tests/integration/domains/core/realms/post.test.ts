@@ -2,6 +2,11 @@ import request from 'supertest';
 import { describe, expect, it, beforeAll } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { getModel } from '@/domains/core/realms/realms.model';
+import { RealmResponse } from '@/domains/core/realms/realm.schema';
+import {
+  ErrorResponse,
+  ConflictErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('POST /api/core/realms', () => {
   const getApp = () => globalThis.testKoaApp;
@@ -26,14 +31,15 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body).toHaveProperty('publicUUID');
-    expect(response.body.name).toBe(realmData.name);
-    expect(response.body.description).toBe(realmData.description);
-    expect(response.body.dbName).toBe(realmData.dbName);
-    expect(response.body.jwtConfig).toHaveProperty('secret');
-    expect(typeof response.body.jwtConfig.secret).toBe('string');
-    expect(response.body.jwtConfig.expiresIn).toBe(
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse).toHaveProperty('_id');
+    expect(realmResponse).toHaveProperty('publicUUID');
+    expect(realmResponse.name).toBe(realmData.name);
+    expect(realmResponse.description).toBe(realmData.description);
+    expect(realmResponse.dbName).toBe(realmData.dbName);
+    expect(realmResponse.jwtConfig).toHaveProperty('secret');
+    expect(typeof realmResponse.jwtConfig?.secret).toBe('string');
+    expect(realmResponse.jwtConfig?.expiresIn).toBe(
       realmData.jwtConfig.expiresIn
     );
   });
@@ -50,14 +56,15 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body).toHaveProperty('publicUUID');
-    expect(response.body.name).toBe(realmData.name);
-    expect(response.body.description).toBe(realmData.description);
-    expect(response.body.dbName).toBe(realmData.dbName);
-    expect(response.body.jwtConfig).toHaveProperty('secret');
-    expect(typeof response.body.jwtConfig.secret).toBe('string');
-    expect(response.body.jwtConfig).toHaveProperty('expiresIn');
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse).toHaveProperty('_id');
+    expect(realmResponse).toHaveProperty('publicUUID');
+    expect(realmResponse.name).toBe(realmData.name);
+    expect(realmResponse.description).toBe(realmData.description);
+    expect(realmResponse.dbName).toBe(realmData.dbName);
+    expect(realmResponse.jwtConfig).toHaveProperty('secret');
+    expect(typeof realmResponse.jwtConfig?.secret).toBe('string');
+    expect(realmResponse.jwtConfig).toHaveProperty('expiresIn');
   });
 
   it('should return 400 for missing name', async () => {
@@ -71,7 +78,8 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Name is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Name is required');
   });
 
   it('should return 400 for missing dbName', async () => {
@@ -85,7 +93,8 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Database name is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Database name is required');
   });
 
   it('should create realm successfully without jwtConfig', async () => {
@@ -100,10 +109,11 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body).toHaveProperty('name', realmData.name);
-    expect(response.body).toHaveProperty('dbName', realmData.dbName);
-    expect(response.body).toHaveProperty('publicUUID');
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse).toHaveProperty('_id');
+    expect(realmResponse).toHaveProperty('name', realmData.name);
+    expect(realmResponse).toHaveProperty('dbName', realmData.dbName);
+    expect(realmResponse).toHaveProperty('publicUUID');
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {
@@ -131,9 +141,10 @@ describe('POST /api/core/realms', () => {
       .send(duplicateData)
       .expect(409);
 
-    expect(response.body).toHaveProperty('error', 'Resource already exists');
-    expect(response.body).toHaveProperty('field', 'name');
-    expect(response.body).toHaveProperty(
+    const conflictResponse: ConflictErrorResponse = response.body;
+    expect(conflictResponse).toHaveProperty('error', 'Resource already exists');
+    expect(conflictResponse).toHaveProperty('field', 'name');
+    expect(conflictResponse).toHaveProperty(
       'details',
       'A resource with this name already exists'
     );

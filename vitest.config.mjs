@@ -9,8 +9,8 @@ export default defineConfig({
     pool: 'threads', // Opções: 'threads' | 'forks' | 'vmThreads' | false
     poolOptions: {
       threads: {
-        minThreads: 6,
-        maxThreads: 10, // Recomendado: número de CPUs
+        minThreads: 10,
+        maxThreads: 20, // Recomendado: número de CPUs
         useAtomics: true, // Melhor performance
         isolate: true, // Isolamento entre testes
       },

@@ -1,9 +1,12 @@
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/realm/:tenantId/account-groups', () => {
   let tenantId: string;
@@ -14,11 +17,11 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-account-groups-put');
-    
+
     // Create test account using service
     const account = await accountService.create(tenantId, {
-      email: `test-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('test'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id.toString();
 
@@ -49,11 +52,12 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body.accountId).toBe(accountId);
-    expect(response.body.groupId).toBe(groupId);
-    expect(response.body.roles).toEqual(['admin', 'moderator']);
-    expect(response.body).toHaveProperty('updatedAt');
+    const accountGroupResponse: AccountGroupResponse = response.body;
+    expect(accountGroupResponse).toHaveProperty('_id');
+    expect(accountGroupResponse.accountId).toBe(accountId);
+    expect(accountGroupResponse.groupId).toBe(groupId);
+    expect(accountGroupResponse.roles).toEqual(['admin', 'moderator']);
+    expect(accountGroupResponse).toHaveProperty('updatedAt');
   });
 
   it('should update to empty roles array', async () => {
@@ -66,14 +70,15 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(200);
 
-    expect(response.body.roles).toEqual([]);
+    const accountGroupResponse: AccountGroupResponse = response.body;
+    expect(accountGroupResponse.roles).toEqual([]);
   });
 
   it('should return 404 for non-existent relationship', async () => {
     // Create new account that's not in the group
     const newAccount = await accountService.create(tenantId, {
-      email: `test-new-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('test-new'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const response = await request(getApp().callback())
@@ -85,8 +90,9 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(404);
 
-    expect(response.body).toHaveProperty('error');
-    expect(response.body.error).toContain('not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
+    expect(errorResponse.error).toContain('not found');
   });
 
   it('should return 400 for invalid accountId', async () => {
@@ -99,7 +105,8 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 400 for missing required fields', async () => {
@@ -111,6 +118,7 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 });

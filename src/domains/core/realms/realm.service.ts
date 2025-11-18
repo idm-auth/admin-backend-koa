@@ -285,10 +285,7 @@ export const initSetup = async () => {
       },
     },
     async (span) => {
-      const coreDBName = process.env.MONGODB_CORE_DBNAME;
-      if (!coreDBName) {
-        throw new Error('MONGODB_CORE_DBNAME is not set');
-      }
+      const coreDBName = 'idm-core-db';
 
       span.setAttributes({ 'realm.coreDBName': coreDBName });
 

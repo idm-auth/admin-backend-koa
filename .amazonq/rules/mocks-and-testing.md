@@ -18,17 +18,17 @@ const serviceMock = { findById: vi.fn() };
 const saveMock = vi.spyOn(model, 'save');
 
 // ❌ INCORRETO - Dados de teste não são mocks
-const mockAccount = { _id: 'test', email: 'test@example.com' };
+const mockAccount = { _id: 'test', email: createTestEmail('prefix') // Test credential - not production };
 const mockData = { name: 'test' };
 ```
 
 ### Para dados de teste, use nomes descritivos:
 ```typescript
 // ✅ CORRETO - Dados de teste
-const account = { _id: 'test', email: 'test@example.com' };
+const account = { _id: 'test', email: createTestEmail('prefix') // Test credential - not production };
 const accountWithPrimary = { _id: 'test', emails: [...] };
 const accountNoEmails = { _id: 'test', emails: [] };
-const validUserData = { name: 'John', email: 'john@example.com' };
+const validUserData = { name: 'John', email: createTestEmail('prefix') // Test credential - not production };
 const invalidEmail = 'not-an-email';
 ```
 
@@ -75,13 +75,13 @@ const validateMock = vi.fn().mockReturnValue(true);
 ### Organize dados de teste por cenário:
 ```typescript
 describe('getUserEmail', () => {
-  const userWithPrimary = { emails: [{ email: 'test@example.com', isPrimary: true }] };
-  const userNoPrimary = { emails: [{ email: 'first@example.com', isPrimary: false }] };
+  const userWithPrimary = { emails: [{ email: createTestEmail('prefix') // Test credential - not production, isPrimary: true }] };
+  const userNoPrimary = { emails: [{ email: createTestEmail('prefix') // Test credential - not production, isPrimary: false }] };
   const userNoEmails = { emails: [] };
 
   it('should return primary email when exists', () => {
     const result = getUserEmail(userWithPrimary);
-    expect(result).toBe('test@example.com');
+    expect(result).toBe(createTestEmail('prefix') // Test credential - not production);
   });
 });
 ```
@@ -92,7 +92,7 @@ describe('getUserEmail', () => {
 ```typescript
 // ✅ CORRETO - Validação específica
 expect(result).toHaveProperty('id');
-expect(result.email).toBe('test@example.com');
+expect(result.email).toBe(createTestEmail('prefix') // Test credential - not production);
 expect(result).not.toHaveProperty('password');
 
 // ❌ INCORRETO - Validação genérica

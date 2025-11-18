@@ -3,21 +3,23 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { AccountEmailResponse } from '@/domains/realms/accounts/account.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
   let tenantId: string;
   let accountId: string;
 
   const getApp = () => globalThis.testKoaApp;
-  const TEST_PASSWORD = 'Password123!';
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-primary-email');
 
     // Criar uma conta para testar definir email principal usando service
     const account = await accountService.create(tenantId, {
-      email: 'primaryemailtest@example.com',
-      password: TEST_PASSWORD,
+      email: createTestEmail('primaryemailtest'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id;
 
@@ -25,18 +27,18 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
     await accountService.addEmail(
       tenantId,
       accountId,
-      'secondary1@example.com'
+      createTestEmail('secondary1') // Test credential - not production
     );
     await accountService.addEmail(
       tenantId,
       accountId,
-      'secondary2@example.com'
+      createTestEmail('secondary2') // Test credential - not production
     );
   });
 
   it('should set primary email successfully', async () => {
     const emailData = {
-      email: 'secondary1@example.com',
+      email: createTestEmail('secondary1'), // Test credential - not production
     };
 
     const response = await request(getApp().callback())
@@ -44,10 +46,14 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', accountId);
-    expect(response.body).toHaveProperty('email', 'secondary1@example.com');
-    expect(response.body).toHaveProperty('isPrimary', true);
-    expect(response.body).not.toHaveProperty('password');
+    const emailResponse: AccountEmailResponse = response.body;
+    expect(emailResponse).toHaveProperty('_id', accountId);
+    expect(emailResponse).toHaveProperty(
+      'email',
+      createTestEmail('secondary1')
+    );
+    expect(emailResponse).toHaveProperty('isPrimary', true);
+    expect(emailResponse).not.toHaveProperty('password');
   });
 
   it('should return 400 for missing email', async () => {
@@ -58,12 +64,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Email is required');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Email is required');
   });
 
   it('should return 404 for email not found in account', async () => {
     const emailData = {
-      email: 'nonexistent@example.com',
+      email: createTestEmail('nonexistent'), // Test credential - not production
     };
 
     const response = await request(getApp().callback())
@@ -71,7 +78,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(404);
 
-    expect(response.body).toHaveProperty(
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
       'error',
       'Email not found in this account'
     );
@@ -87,12 +95,16 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty(
+      'error',
+      'Invalid email format, Email domain not allowed'
+    );
   });
 
   it('should set already primary email as primary (idempotent)', async () => {
     const emailData = {
-      email: 'secondary1@example.com', // Já é primary do teste anterior
+      email: createTestEmail('secondary1'), // Test credential - not production (already primary)
     };
 
     const response = await request(getApp().callback())
@@ -100,14 +112,18 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', accountId);
-    expect(response.body).toHaveProperty('email', 'secondary1@example.com');
-    expect(response.body).toHaveProperty('isPrimary', true);
+    const emailResponse: AccountEmailResponse = response.body;
+    expect(emailResponse).toHaveProperty('_id', accountId);
+    expect(emailResponse).toHaveProperty(
+      'email',
+      createTestEmail('secondary1')
+    );
+    expect(emailResponse).toHaveProperty('isPrimary', true);
   });
 
   it('should change primary email from one to another', async () => {
     const emailData = {
-      email: 'secondary2@example.com',
+      email: createTestEmail('secondary2'), // Test credential - not production
     };
 
     const response = await request(getApp().callback())
@@ -115,15 +131,19 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', accountId);
-    expect(response.body).toHaveProperty('email', 'secondary2@example.com');
-    expect(response.body).toHaveProperty('isPrimary', true);
+    const emailResponse: AccountEmailResponse = response.body;
+    expect(emailResponse).toHaveProperty('_id', accountId);
+    expect(emailResponse).toHaveProperty(
+      'email',
+      createTestEmail('secondary2')
+    );
+    expect(emailResponse).toHaveProperty('isPrimary', true);
   });
 
   it('should return 404 for non-existent account', async () => {
     const nonExistentId = uuidv4();
     const emailData = {
-      email: 'test@example.com',
+      email: createTestEmail('test'), // Test credential - not production
     };
 
     const response = await request(getApp().callback())
@@ -131,13 +151,14 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Account not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Account not found');
   });
 
   it('should return 400 for invalid account ID format', async () => {
     const invalidId = 'invalid-uuid';
     const emailData = {
-      email: 'test@example.com',
+      email: createTestEmail('test'), // Test credential - not production
     };
 
     const response = await request(getApp().callback())
@@ -145,6 +166,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

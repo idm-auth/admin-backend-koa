@@ -1,3 +1,4 @@
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import * as accountService from '@/domains/realms/accounts/account.service';
@@ -16,10 +17,11 @@ describe('AccountGroups Populate Test', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('test-tenant-populate');
 
-    // Criar account, group e role
+    // Criar account, group e role com email único
+    const uniqueEmail = generateTestEmail('populate');
     const account = await accountService.create(tenantId, {
-      email: 'populate@example.com',
-      password: 'Password123!',
+      email: uniqueEmail, // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId = account._id.toString();
 
@@ -63,7 +65,7 @@ describe('AccountGroups Populate Test', () => {
     );
 
     // 3. Verificar dados populados manualmente
-    expect(account.emails[0].email).toBe('populate@example.com');
+    expect(account.emails[0].email).toContain('@idm-auth.io'); // Test credential - not production
     expect(group.name).toBe('Populate Group');
     expect(roles).toHaveLength(1);
     expect(roles[0].name).toBe('Populate Role');

@@ -1,7 +1,7 @@
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it } from 'vitest';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.findAllPaginated', () => {
   it('should handle pagination with filter and custom sort', async () => {
@@ -9,8 +9,8 @@ describe('account.service.findAllPaginated', () => {
 
     // Criar contas para teste
     await accountService.create(tenantId, {
-      email: `filter-test-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('filter-test'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
     const result = await accountService.findAllPaginated(tenantId, {

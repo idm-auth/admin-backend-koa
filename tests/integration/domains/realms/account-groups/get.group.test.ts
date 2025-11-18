@@ -1,9 +1,13 @@
-import { describe, expect, it, beforeAll } from 'vitest';
-import request from 'supertest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
+import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { AccountDocument } from '@/domains/realms/accounts/account.model';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import { GroupDocument } from '@/domains/realms/groups/group.model';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { getTenantId } from '@test/utils/tenant.util';
+import { TEST_PASSWORD, generateTestEmail } from '@test/utils/test-constants';
+import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
   let tenantId: string;
@@ -15,22 +19,22 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('test-account-groups-get-group');
-    
+
     // Create test accounts using service
-    const account1 = await accountService.create(tenantId, {
-      email: `test-1-${uuidv4()}@example.com`,
-      password: 'Password123!',
+    const account1: AccountDocument = await accountService.create(tenantId, {
+      email: generateTestEmail('test-1', uuidv4()), // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId1 = account1._id.toString();
 
-    const account2 = await accountService.create(tenantId, {
-      email: `test-2-${uuidv4()}@example.com`,
-      password: 'Password123!',
+    const account2: AccountDocument = await accountService.create(tenantId, {
+      email: generateTestEmail('test-2', uuidv4()), // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
     accountId2 = account2._id.toString();
 
     // Create test group using service
-    const group = await groupService.create(tenantId, {
+    const group: GroupDocument = await groupService.create(tenantId, {
       name: `test-group-${uuidv4()}`,
       description: 'Test group',
     });
@@ -59,28 +63,36 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
       .get(`/api/realm/${tenantId}/account-groups/group/${groupId}`)
       .expect(200);
 
-    expect(Array.isArray(response.body)).toBe(true);
-    expect(response.body).toHaveLength(2);
-    
-    const account1Relation = response.body.find((ag: any) => ag.accountId === accountId1);
-    const account2Relation = response.body.find((ag: any) => ag.accountId === accountId2);
-    
+    const accountGroups: AccountGroupResponse[] = response.body;
+
+    expect(Array.isArray(accountGroups)).toBe(true);
+    expect(accountGroups).toHaveLength(2);
+
+    const account1Relation = accountGroups.find(
+      (ag) => ag.accountId === accountId1
+    );
+    const account2Relation = accountGroups.find(
+      (ag) => ag.accountId === accountId2
+    );
+
     expect(account1Relation).toBeDefined();
-    expect(account1Relation.roles).toEqual(['admin']);
-    
+    expect(account1Relation?.roles).toEqual(['admin']);
+
     expect(account2Relation).toBeDefined();
-    expect(account2Relation.roles).toEqual(['member']);
+    expect(account2Relation?.roles).toEqual(['member']);
   });
 
   it('should return empty array for group with no accounts', async () => {
     // Create new group using service
-    const newGroup = await groupService.create(tenantId, {
+    const newGroup: GroupDocument = await groupService.create(tenantId, {
       name: `test-group-empty-${uuidv4()}`,
       description: 'Empty test group',
     });
 
     const response = await request(getApp().callback())
-      .get(`/api/realm/${tenantId}/account-groups/group/${newGroup._id.toString()}`)
+      .get(
+        `/api/realm/${tenantId}/account-groups/group/${newGroup._id.toString()}`
+      )
       .expect(200);
 
     expect(Array.isArray(response.body)).toBe(true);

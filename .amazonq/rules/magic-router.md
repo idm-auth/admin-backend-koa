@@ -339,7 +339,7 @@ parentRouter.useMagic(childRouter);
 ### Schemas Base
 ```typescript
 import { publicUUIDSchema } from '@/domains/commons/base/latest/base.schema';
-import { requestTenantIdParamsSchema, requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/latest/request.schema';
+import { requestTenantIdParamsSchema, requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/request.schema';
 
 const errorResponseSchema = z.object({
   error: z.string(),

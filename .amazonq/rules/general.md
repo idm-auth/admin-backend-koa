@@ -4,6 +4,12 @@
 - Use português nos comentários e mensagens de commit
 - Prefira código explícito a código "inteligente"
 - Mantenha funções pequenas e com responsabilidade única
+- **Use type safety adequado** - evite type casts desnecessários
+
+### Type Safety
+- **Prefira declaração de tipo**: `const data: Type = { ... }`
+- **Evite casts desnecessários**: `const data = { ... } as Type`
+- **Use casts apenas quando necessário**: conversões, mocks complexos, unknown
 
 ## Arquitetura DDD
 - **SEMPRE organize código por domínios** em `src/domains/{contexto}/{dominio}/`

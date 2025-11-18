@@ -1,8 +1,15 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import {
   DocIdSchema,
   requestIDParamsSchema,
 } from '@/domains/commons/base/base.schema';
+import {
+  paginationQuerySchema,
+  createPaginatedResponseSchema,
+} from '@/domains/commons/base/pagination.schema';
+
+extendZodWithOpenApi(z);
 
 export const roleCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),
@@ -21,7 +28,8 @@ export const roleBaseResponseSchema = z.object({
 export const roleCreateResponseSchema = roleBaseResponseSchema;
 export const roleUpdateResponseSchema = roleBaseResponseSchema;
 export const roleReadResponseSchema = roleBaseResponseSchema;
-export const roleListResponseSchema = z.array(roleBaseResponseSchema);
+export const roleListItemResponseSchema = roleBaseResponseSchema;
+export const roleListResponseSchema = z.array(roleListItemResponseSchema);
 export const roleSearchResponseSchema = roleReadResponseSchema;
 
 export const roleUpdateSchema = z.object({
@@ -35,8 +43,18 @@ export type RoleBaseResponse = z.infer<typeof roleBaseResponseSchema>;
 export type RoleCreateResponse = z.infer<typeof roleCreateResponseSchema>;
 export type RoleUpdateResponse = z.infer<typeof roleUpdateResponseSchema>;
 export type RoleReadResponse = z.infer<typeof roleReadResponseSchema>;
+export type RoleListItemResponse = z.infer<typeof roleListItemResponseSchema>;
 export type RoleListResponse = z.infer<typeof roleListResponseSchema>;
 export type RoleSearchResponse = z.infer<typeof roleSearchResponseSchema>;
 export type RoleUpdate = z.infer<typeof roleUpdateSchema>;
 
 export type RoleParams = z.infer<typeof requestIDParamsSchema>;
+
+// Pagination schemas
+export const roleListQuerySchema = paginationQuerySchema;
+export const rolePaginatedResponseSchema = createPaginatedResponseSchema(
+  roleListItemResponseSchema
+);
+
+export type RoleListQuery = z.infer<typeof roleListQuerySchema>;
+export type RolePaginatedResponse = z.infer<typeof rolePaginatedResponseSchema>;

@@ -7,7 +7,10 @@ describe('pino.plugin.getLogger', () => {
     const logSpy = vi.spyOn(logger, 'info');
 
     // Log estruturado - formato correto
-    logger.info({ userId: '123', operation: 'create' }, 'User created successfully');
+    logger.info(
+      { userId: '123', operation: 'create' },
+      'User created successfully'
+    );
 
     expect(logSpy).toHaveBeenCalledWith(
       { userId: '123', operation: 'create' },
@@ -20,7 +23,7 @@ describe('pino.plugin.getLogger', () => {
     const logSpy = vi.spyOn(logger, 'error');
 
     const error = new Error('Test error');
-    
+
     // Log de erro estruturado
     logger.error({ error, userId: '123' }, 'Operation failed');
 

@@ -1,11 +1,12 @@
 import pino from 'pino';
 import pinoCaller from 'pino-caller';
+import { getEnvValue, EnvKey } from './dotenv.plugin';
 
 let logger: pino.Logger;
 
 export const initialize = async () => {
   const baseLogger = pino({
-    level: process.env.LOGGER_LEVEL || 'debug',
+    level: getEnvValue(EnvKey.LOGGER_LEVEL),
     transport: {
       target: 'pino-pretty', // opcional, para logs legíveis no console
       options: {

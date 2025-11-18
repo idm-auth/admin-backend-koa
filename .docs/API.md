@@ -37,7 +37,7 @@ curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "email": "account@example.com"
+  "email": "admin@idm-auth.io"
 }
 ```
 

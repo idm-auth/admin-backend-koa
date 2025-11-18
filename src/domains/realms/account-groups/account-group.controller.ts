@@ -58,7 +58,10 @@ export const findByAccountId = async (ctx: Context) => {
     async () => {
       const { tenantId, accountId } = ctx.validated.params;
 
-      const accountGroups = await accountGroupService.findByAccountId(tenantId, accountId);
+      const accountGroups = await accountGroupService.findByAccountId(
+        tenantId,
+        accountId
+      );
 
       ctx.body = accountGroupMapper.toListResponse(accountGroups);
     }
@@ -77,7 +80,10 @@ export const findByGroupId = async (ctx: Context) => {
     async () => {
       const { tenantId, groupId } = ctx.validated.params;
 
-      const groupAccounts = await accountGroupService.findByGroupId(tenantId, groupId);
+      const groupAccounts = await accountGroupService.findByGroupId(
+        tenantId,
+        groupId
+      );
 
       ctx.body = accountGroupMapper.toListResponse(groupAccounts);
     }
@@ -97,7 +103,12 @@ export const updateRoles = async (ctx: Context) => {
       const { tenantId } = ctx.validated.params;
       const { accountId, groupId, roles } = ctx.validated.body;
 
-      const accountGroup = await accountGroupService.updateRoles(tenantId, accountId, groupId, roles);
+      const accountGroup = await accountGroupService.updateRoles(
+        tenantId,
+        accountId,
+        groupId,
+        roles
+      );
 
       ctx.body = accountGroupMapper.toResponse(accountGroup);
     }

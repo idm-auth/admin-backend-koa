@@ -1,3 +1,4 @@
+import { createTestEmail } from '@test/utils/test-constants';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
 import { describe, expect, it } from 'vitest';
@@ -8,7 +9,7 @@ describe('account.service.comparePassword', () => {
     const plainPassword = 'test-password';
 
     const account = await accountService.create(tenantId, {
-      email: 'test@example.com',
+      email: createTestEmail('test'), // Test credential - not production
       password: plainPassword,
     });
 
@@ -22,7 +23,7 @@ describe('account.service.comparePassword', () => {
     const plainPassword = 'test-password';
 
     const account = await accountService.create(tenantId, {
-      email: 'test2@example.com',
+      email: createTestEmail('test2'), // Test credential - not production
       password: plainPassword,
     });
 

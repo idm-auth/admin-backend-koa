@@ -1,6 +1,7 @@
+import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
-import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { RoleResponse } from '@/domains/realms/roles/role.mapper';
 
 describe('POST /api/realm/:tenantId/roles', () => {
   let tenantId: string;
@@ -8,14 +9,14 @@ describe('POST /api/realm/:tenantId/roles', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-role-post');
+    tenantId = await getTenantId('test-roles-post');
   });
 
-  it('should create a new role successfully', async () => {
+  it('should create role successfully', async () => {
     const roleData = {
-      name: 'Test Role',
-      description: 'A test role',
-      permissions: ['read', 'write'],
+      name: 'admin',
+      description: 'Administrator role',
+      permissions: ['read', 'write', 'delete'],
     };
 
     const response = await request(getApp().callback())
@@ -23,22 +24,36 @@ describe('POST /api/realm/:tenantId/roles', () => {
       .send(roleData)
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
-    expect(response.body.name).toBe(roleData.name);
-    expect(response.body.description).toBe(roleData.description);
-    expect(response.body.permissions).toEqual(roleData.permissions);
+    const role: RoleResponse = response.body;
+
+    expect(role).toHaveProperty('_id');
+    expect(role.name).toBe(roleData.name);
+    expect(role.description).toBe(roleData.description);
+    expect(role.permissions).toEqual(roleData.permissions);
+    expect(role).toHaveProperty('createdAt');
+    expect(role).toHaveProperty('updatedAt');
   });
 
   it('should return 400 for missing name', async () => {
-    const roleData = {
-      description: 'A test role',
-    };
-
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/roles`)
-      .send(roleData)
+      .send({
+        description: 'Role without name',
+      })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Name is required');
+    expect(response.body).toHaveProperty('error');
+  });
+
+  it('should return 400 for invalid permissions type', async () => {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/roles`)
+      .send({
+        name: 'test-role',
+        permissions: 'invalid-type',
+      })
+      .expect(400);
+
+    expect(response.body).toHaveProperty('error');
   });
 });

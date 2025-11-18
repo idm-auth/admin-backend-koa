@@ -16,11 +16,14 @@ export const groupRoleResponseSchema = z.object({
 });
 
 export const groupRoleParamsSchema = z.object({
+  tenantId: DocIdSchema,
   groupId: DocIdSchema,
 });
 
 export const roleGroupParamsSchema = z.object({
+  tenantId: DocIdSchema,
   roleId: DocIdSchema,
 });
 
 export type GroupRoleCreate = z.infer<typeof groupRoleCreateSchema>;
+export type GroupRoleResponse = z.infer<typeof groupRoleResponseSchema>;

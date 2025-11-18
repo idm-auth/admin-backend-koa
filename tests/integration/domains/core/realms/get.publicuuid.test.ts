@@ -1,6 +1,9 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
+import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { RealmResponse } from '@/domains/core/realms/realm.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
   let createdRealmPublicUUID: string;
@@ -19,7 +22,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       },
     };
 
-    const realm = await realmService.create(realmData);
+    const realm: RealmDocument = await realmService.create(realmData);
     createdRealmPublicUUID = realm.publicUUID;
     if (!createdRealmPublicUUID) {
       throw new Error('Realm created but no publicUUID returned');
@@ -31,17 +34,19 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${createdRealmPublicUUID}`)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body).toHaveProperty('name', 'test-realm-publicuuid');
-    expect(response.body).toHaveProperty(
+    const realmResponse: RealmResponse = response.body;
+
+    expect(realmResponse).toHaveProperty('_id');
+    expect(realmResponse).toHaveProperty('name', 'test-realm-publicuuid');
+    expect(realmResponse).toHaveProperty(
       'description',
       'Test realm for publicUUID endpoint'
     );
-    expect(response.body).toHaveProperty('dbName', 'test-db-publicuuid');
-    expect(response.body).toHaveProperty('publicUUID', createdRealmPublicUUID);
-    expect(response.body).toHaveProperty('jwtConfig');
-    expect(response.body.jwtConfig).toHaveProperty('secret');
-    expect(response.body.jwtConfig).toHaveProperty('expiresIn', '24h');
+    expect(realmResponse).toHaveProperty('dbName', 'test-db-publicuuid');
+    expect(realmResponse).toHaveProperty('publicUUID', createdRealmPublicUUID);
+    expect(realmResponse).toHaveProperty('jwtConfig');
+    expect(realmResponse.jwtConfig).toHaveProperty('secret');
+    expect(realmResponse.jwtConfig).toHaveProperty('expiresIn', '24h');
   });
 
   it('should return 404 for non-existent publicUUID', async () => {
@@ -51,7 +56,8 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${nonExistentPublicUUID}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Realm not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Realm not found');
   });
 
   it('should return 400 for invalid publicUUID format', async () => {
@@ -61,6 +67,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${invalidPublicUUID}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

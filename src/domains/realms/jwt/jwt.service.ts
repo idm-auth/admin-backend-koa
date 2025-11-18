@@ -34,7 +34,8 @@ export const generateToken = async (
       span.setAttributes({ 'realm.id': realm._id });
 
       const payloadSign: string | Buffer | object = payload;
-      const secretOrPrivateKeySign: Secret | PrivateKey = realm.jwtConfig.secret;
+      const secretOrPrivateKeySign: Secret | PrivateKey =
+        realm.jwtConfig.secret;
       const optionsSign: SignOptions = {
         expiresIn: realm.jwtConfig.expiresIn as StringValue,
       };
@@ -43,7 +44,7 @@ export const generateToken = async (
 
       const token = jwt.sign(payloadSign, secretOrPrivateKeySign, optionsSign);
       span.setAttributes({ 'jwt.generated': true });
-      
+
       return token;
     }
   );

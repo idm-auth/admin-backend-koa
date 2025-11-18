@@ -3,6 +3,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { GroupResponse } from '@/domains/realms/groups/group.schema';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
@@ -26,9 +28,13 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
       .get(`/api/realm/${tenantId}/groups/${createdGroupId}`)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', createdGroupId);
-    expect(response.body).toHaveProperty('name', 'Find Test Group');
-    expect(response.body).toHaveProperty('description', 'Group for find by ID tests');
+    const groupResponse: GroupResponse = response.body;
+    expect(groupResponse).toHaveProperty('_id', createdGroupId);
+    expect(groupResponse).toHaveProperty('name', 'Find Test Group');
+    expect(groupResponse).toHaveProperty(
+      'description',
+      'Group for find by ID tests'
+    );
   });
 
   it('should return 404 for non-existent group', async () => {
@@ -38,7 +44,8 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
       .get(`/api/realm/${tenantId}/groups/${nonExistentId}`)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error', 'Group not found');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Group not found');
   });
 
   it('should return 400 for invalid group id format', async () => {
@@ -48,6 +55,7 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
       .get(`/api/realm/${tenantId}/groups/${invalidId}`)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 });

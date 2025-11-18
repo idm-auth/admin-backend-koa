@@ -1,6 +1,4 @@
-import {
-  DocId,
-} from '@/domains/commons/base/base.schema';
+import { DocId } from '@/domains/commons/base/base.schema';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -51,10 +49,7 @@ export const create = async (
   );
 };
 
-export const findById = async (
-  tenantId: string,
-  id: DocId
-): Promise<Group> => {
+export const findById = async (tenantId: string, id: DocId): Promise<Group> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.findById`,
@@ -78,10 +73,7 @@ export const findById = async (
       }
 
       span.setAttributes({ 'db.name': dbName });
-      logger.info(
-        { groupId: group._id, tenantId },
-        'Group found successfully'
-      );
+      logger.info({ groupId: group._id, tenantId }, 'Group found successfully');
 
       return group;
     }
@@ -228,7 +220,11 @@ export const findAllPaginated = async (
         );
 
         logger.info(
-          { tenantId, total: result.pagination.total, page: result.pagination.page },
+          {
+            tenantId,
+            total: result.pagination.total,
+            page: result.pagination.page,
+          },
           'Groups pagination completed successfully'
         );
 

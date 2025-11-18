@@ -25,6 +25,7 @@ schema.add(baseDocumentSchema);
 
 export type AccountSchema = InferSchemaType<typeof schema>;
 export type Account = mongoose.Document & AccountSchema & BaseDocument;
+export type AccountDocument = Account;
 export type AccountCreate = Omit<AccountSchema, never> & {
   // Todos os campos são obrigatórios para Account
 };

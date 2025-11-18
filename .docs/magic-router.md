@@ -408,9 +408,8 @@ import { publicUUIDSchema } from '@/domains/commons/base/latest/base.schema';
 import { z } from 'zod';
 import * as controller from './account.controller';
 
-const requestTenantIdParamsSchema = z.object({
-  tenantId: publicUUIDSchema,
-});
+// Import from commons/base
+import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.schema';
 
 const requestTenantIdAndIdParamsSchema = z.object({
   tenantId: publicUUIDSchema,

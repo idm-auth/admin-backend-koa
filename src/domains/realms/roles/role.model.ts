@@ -20,9 +20,7 @@ export type RoleSchema = InferSchemaType<typeof schema>;
 export type Role = RoleSchema & BaseDocument;
 export type RoleDocument = RoleSchema & BaseDocument;
 export type RoleDocumentID = RoleSchema & BaseDocumentID;
-export type RoleCreate = Omit<RoleSchema, never> & {
-  // Todos os campos são obrigatórios para Role
-};
+export type RoleCreate = Omit<RoleSchema, '_id' | 'createdAt' | 'updatedAt'>;
 
 schema.index({ name: 1 }, { unique: true });
 

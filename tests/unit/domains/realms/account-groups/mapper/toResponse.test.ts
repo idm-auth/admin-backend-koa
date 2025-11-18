@@ -4,14 +4,14 @@ import { AccountGroupDocument } from '@/domains/realms/account-groups/account-gr
 
 describe('account-group.mapper.toResponse', () => {
   it('should map account-group to response format', () => {
-    const accountGroup = {
+    const accountGroup: AccountGroupDocument = {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
       roles: ['admin', 'member'],
       createdAt: new Date('2023-01-01T00:00:00.000Z'),
       updatedAt: new Date('2023-01-02T00:00:00.000Z'),
-    } as AccountGroupDocument;
+    };
 
     const response = accountGroupMapper.toResponse(accountGroup);
 
@@ -26,13 +26,13 @@ describe('account-group.mapper.toResponse', () => {
   });
 
   it('should handle account-group without roles', () => {
-    const accountGroup = {
+    const accountGroup: AccountGroupDocument = {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
       createdAt: new Date('2023-01-01T00:00:00.000Z'),
       updatedAt: new Date('2023-01-02T00:00:00.000Z'),
-    } as AccountGroupDocument;
+    };
 
     const response = accountGroupMapper.toResponse(accountGroup);
 

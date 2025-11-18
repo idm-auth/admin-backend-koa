@@ -82,10 +82,7 @@ export const update = async (ctx: Context) => {
       try {
         const group = await groupService.update(tenantId, id, updateData);
 
-        logger.info(
-          { tenantId, groupId: id },
-          'Group updated successfully'
-        );
+        logger.info({ tenantId, groupId: id }, 'Group updated successfully');
 
         ctx.body = groupMapper.toUpdateResponse(group);
       } catch (error) {
@@ -163,10 +160,7 @@ export const remove = async (ctx: Context) => {
       try {
         await groupService.remove(tenantId, id);
 
-        logger.info(
-          { tenantId, groupId: id },
-          'Group removed successfully'
-        );
+        logger.info({ tenantId, groupId: id }, 'Group removed successfully');
 
         ctx.status = 204;
       } catch (error) {

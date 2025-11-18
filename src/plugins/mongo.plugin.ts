@@ -1,13 +1,14 @@
 import mongoose, { Connection } from 'mongoose';
 import { getLogger } from '@/plugins/pino.plugin';
+import { getEnvValue, EnvKey } from './dotenv.plugin';
 
 export type DBName = string;
 let mainConnection: Connection | null = null;
 
 // cria apenas uma conexão principal
 export const initMainConnection = async (mongodbUri?: string) => {
-  const mongodbUriCfg = mongodbUri || process.env.MONGODB_URI;
-  if (!mongodbUriCfg) throw new Error('process.env.MONGODB_URI é requerido');
+  const mongodbUriCfg = mongodbUri || getEnvValue(EnvKey.MONGODB_URI);
+  if (!mongodbUriCfg) throw new Error('MONGODB_URI é requerido');
   const logger = await getLogger();
   logger.info('Inicializando conexão principal com MongoDB...');
   const sanitizedUri = mongodbUriCfg.replace(
@@ -23,7 +24,7 @@ export const initMainConnection = async (mongodbUri?: string) => {
 
 // acesso fixo ao core
 export const getCoreDb = (): Connection => {
-  const mongodbCoreDBname = process.env.MONGODB_CORE_DBNAME || 'idm-core-db';
+  const mongodbCoreDBname = getEnvValue(EnvKey.MONGODB_CORE_DBNAME);
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
   return mainConnection.useDb(mongodbCoreDBname, { useCache: true });
 };

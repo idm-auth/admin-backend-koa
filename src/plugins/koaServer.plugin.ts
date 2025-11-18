@@ -4,6 +4,7 @@ import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
 import { initialize as api } from '@/domains/api.routes';
 import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';
 import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
+import { getEnvValue, EnvKey } from './dotenv.plugin';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Koa from 'koa';
@@ -27,26 +28,26 @@ export const initialize = async () => {
   app.use(apiRouter.routes());
 
   // Swagger routes apenas em desenvolvimento
-  if (process.env.NODE_ENV !== 'production') {
+  if (getEnvValue(EnvKey.NODE_ENV) !== 'production') {
     const swagger = await swaggerRoutes();
     apiRouter.registryAll();
     app.use(swagger.routes());
     swaggerPlugin(app);
     // Log das rotas registradas
-    if (process.env.NODE_ENV == 'development') {
+    if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
       logRoutesDetailed(swagger);
     }
   }
 
   // Log das rotas registradas
-  if (process.env.NODE_ENV == 'development') {
+  if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
     logRoutesDetailed(apiRouter.getInternalRouter());
   }
   return app;
 };
 
 export const listen = async () => {
-  const PORT = process.env.PORT || 3000;
+  const PORT = getEnvValue(EnvKey.PORT);
 
   app.listen(PORT, () => {
     console.log(`Koa server running on http://localhost:${PORT}`);

@@ -4,7 +4,7 @@ import { AccountGroupDocument } from '@/domains/realms/account-groups/account-gr
 
 describe('account-group.mapper.toListResponse', () => {
   it('should map array of account-groups to response format', () => {
-    const accountGroups = [
+    const accountGroups: AccountGroupDocument[] = [
       {
         _id: 'test-id-1',
         accountId: 'account-123',
@@ -21,7 +21,7 @@ describe('account-group.mapper.toListResponse', () => {
         createdAt: new Date('2023-01-03T00:00:00.000Z'),
         updatedAt: new Date('2023-01-04T00:00:00.000Z'),
       },
-    ] as AccountGroupDocument[];
+    ];
 
     const response = accountGroupMapper.toListResponse(accountGroups);
 

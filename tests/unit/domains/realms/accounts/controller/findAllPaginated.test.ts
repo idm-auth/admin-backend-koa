@@ -3,6 +3,7 @@ import { Context } from 'koa';
 import * as accountController from '@/domains/realms/accounts/account.controller';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
+import { TEST_PASSWORD, generateTestEmail } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('account.controller.findAllPaginated', () => {
@@ -10,8 +11,8 @@ describe('account.controller.findAllPaginated', () => {
     const tenantId = await getTenantId('test-controller-paginated');
 
     await accountService.create(tenantId, {
-      email: `controller-test-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('controller-test', uuidv4()), // Test email - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const ctx = {

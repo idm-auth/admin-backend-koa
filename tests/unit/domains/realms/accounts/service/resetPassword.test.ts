@@ -4,6 +4,7 @@ import * as accountService from '@/domains/realms/accounts/account.service';
 import { getModel } from '@/domains/realms/accounts/account.model';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getTenantId } from '@test/utils/tenant.util';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.resetPassword', () => {
@@ -21,11 +22,11 @@ describe('account.service.resetPassword', () => {
     const tenantId = await getTenantId('test-reset-password-success');
 
     const account = await accountService.create(tenantId, {
-      email: `reset-${uuidv4()}@example.com`,
-      password: 'OldPassword123!',
+      email: generateTestEmail('reset'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
-    const newPassword = 'NewPassword123!';
+    const newPassword = 'NewPassword456!';
     const updatedAccount = await accountService.resetPassword(
       tenantId,
       account._id,
@@ -41,8 +42,8 @@ describe('account.service.resetPassword', () => {
     const tenantId = await getTenantId('test-reset-password-validation-error');
 
     const account = await accountService.create(tenantId, {
-      email: `reset-validation-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('reset-validation'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await expect(
@@ -54,8 +55,8 @@ describe('account.service.resetPassword', () => {
     const tenantId = await getTenantId('test-reset-password-invalid-format');
 
     const account = await accountService.create(tenantId, {
-      email: `reset-invalid-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('reset-invalid'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     await expect(
@@ -68,8 +69,8 @@ describe('account.service.resetPassword', () => {
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const account = await accountService.create(tenantId, {
-      email: `reset-save-error-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('reset-save-error'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production
     });
 
     const AccountModel = getModel(dbName);
@@ -78,7 +79,11 @@ describe('account.service.resetPassword', () => {
 
     try {
       await expect(
-        accountService.resetPassword(tenantId, account._id, 'NewPassword123!')
+        accountService.resetPassword(
+          tenantId,
+          account._id,
+          'NewPassword789!'
+        )
       ).rejects.toThrow('Database save error');
     } finally {
       saveSpy.mockRestore();

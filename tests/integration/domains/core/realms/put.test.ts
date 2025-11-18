@@ -2,6 +2,11 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
+import { RealmResponse } from '@/domains/core/realms/realm.schema';
+import {
+  ErrorResponse,
+  ConflictErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -37,12 +42,13 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(200);
 
-    expect(response.body).toHaveProperty('_id', createdRealmId);
-    expect(response.body.name).toBe(updateData.name);
-    expect(response.body.description).toBe(updateData.description);
-    expect(response.body.jwtConfig).toHaveProperty('secret');
-    expect(typeof response.body.jwtConfig.secret).toBe('string');
-    expect(response.body.jwtConfig.expiresIn).toBe(
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse).toHaveProperty('_id', createdRealmId);
+    expect(realmResponse.name).toBe(updateData.name);
+    expect(realmResponse.description).toBe(updateData.description);
+    expect(realmResponse.jwtConfig).toHaveProperty('secret');
+    expect(typeof realmResponse.jwtConfig?.secret).toBe('string');
+    expect(realmResponse.jwtConfig?.expiresIn).toBe(
       updateData.jwtConfig.expiresIn
     );
   });
@@ -57,8 +63,9 @@ describe('PUT /api/core/realms/:id', () => {
       .send(partialUpdate)
       .expect(200);
 
-    expect(response.body.description).toBe(partialUpdate.description);
-    expect(response.body.name).toBe('updated-realm-name'); // Should remain from previous update
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse.description).toBe(partialUpdate.description);
+    expect(realmResponse.name).toBe('updated-realm-name'); // Should remain from previous update
   });
 
   it('should return 404 for non-existent ID', async () => {
@@ -72,7 +79,8 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(404);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 400 for invalid ID format', async () => {
@@ -86,7 +94,8 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {
@@ -109,9 +118,10 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(409); // 409 Conflict for duplicate resource
 
-    expect(response.body).toHaveProperty('error', 'Resource already exists');
-    expect(response.body).toHaveProperty('field', 'name');
-    expect(response.body).toHaveProperty(
+    const conflictResponse: ConflictErrorResponse = response.body;
+    expect(conflictResponse).toHaveProperty('error', 'Resource already exists');
+    expect(conflictResponse).toHaveProperty('field', 'name');
+    expect(conflictResponse).toHaveProperty(
       'details',
       'A resource with this name already exists'
     );
@@ -129,7 +139,8 @@ describe('PUT /api/core/realms/:id', () => {
       .send(jwtUpdate)
       .expect(200);
 
-    expect(response.body.jwtConfig.expiresIn).toBe('72h');
-    expect(response.body.jwtConfig).toHaveProperty('secret'); // Should still exist
+    const realmResponse: RealmResponse = response.body;
+    expect(realmResponse.jwtConfig?.expiresIn).toBe('72h');
+    expect(realmResponse.jwtConfig).toHaveProperty('secret'); // Should still exist
   });
 });

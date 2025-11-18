@@ -26,6 +26,12 @@
 - Referências entre modelos
 - Base schema e índices
 
+### **mongodb-naming.md** - Nomenclatura MongoDB (NOVO)
+- **Hífen obrigatório** para múltiplas palavras em collections
+- **NUNCA camelCase** - MongoDB ignora case sensitivity
+- **Correspondência** domínio → collection name
+- **Padrão kebab-case** para consistência
+
 ## Desenvolvimento
 
 ### **typescript.md** - Regras TypeScript
@@ -80,6 +86,13 @@
 - Estrutura de arquivos por método/endpoint
 - Setup com beforeAll e getTenantId
 - Cenários obrigatórios (200, 400, 404, 500)
+
+### **test-priorities.md** - Prioridades e Duplicação de Testes (CRÍTICO)
+- **PRIORIDADE ABSOLUTA**: Testes de integração sempre primeiro
+- **NUNCA assumir duplicação** apenas pelo nome do arquivo
+- **SEMPRE analisar conteúdo** antes de remover testes
+- **Unitários apenas** para lacunas não cobertas pela integração
+- **Processo obrigatório** para criação de novos testes
 
 ## Debugging e Resolução de Problemas
 

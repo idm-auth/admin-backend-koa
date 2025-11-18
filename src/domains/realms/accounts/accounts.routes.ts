@@ -1,5 +1,7 @@
-import { publicUUIDSchema } from '@/domains/commons/base/base.schema';
-import { requestTenantIdAndIdParamsSchema } from '@/domains/commons/base/request.schema';
+import {
+  requestTenantIdAndIdParamsSchema,
+  requestTenantIdParamsSchema,
+} from '@/domains/commons/base/request.schema';
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import { z } from 'zod';
@@ -19,10 +21,6 @@ import {
   accountRemoveEmailSchema,
   accountSetPrimaryEmailSchema,
 } from './account.schema';
-
-const requestTenantIdParamsSchema = z.object({
-  tenantId: publicUUIDSchema,
-});
 
 // Safe query schema that prevents SSRF by restricting filter values
 const safeAccountListQuerySchema = z.object({

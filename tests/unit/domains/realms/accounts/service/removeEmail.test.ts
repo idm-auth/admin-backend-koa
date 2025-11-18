@@ -1,17 +1,21 @@
+import {
+  createTestEmail,
+  generateTestEmail,
+  TEST_PASSWORD,
+} from '@test/utils/test-constants';
 import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/errors/not-found';
 import { ValidationError } from '@/errors/validation';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.removeEmail', () => {
   it('should throw ValidationError when trying to remove the only email', async () => {
     const tenantId = await getTenantId('test-remove-only-email');
 
     const account = await accountService.create(tenantId, {
-      email: `only-email-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('only-email'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
     const primaryEmail = account.emails[0].email;
@@ -25,21 +29,21 @@ describe('account.service.removeEmail', () => {
     const tenantId = await getTenantId('test-remove-nonexistent-email');
 
     const account = await accountService.create(tenantId, {
-      email: `main-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('main'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
     await accountService.addEmail(
       tenantId,
       account._id,
-      `second-${uuidv4()}@example.com`
+      generateTestEmail('second') // Test credential - not production
     );
 
     await expect(
       accountService.removeEmail(
         tenantId,
         account._id,
-        'nonexistent@example.com'
+        createTestEmail('nonexistent') // Test credential - not production
       )
     ).rejects.toThrow(NotFoundError);
   });
@@ -48,11 +52,11 @@ describe('account.service.removeEmail', () => {
     const tenantId = await getTenantId('test-remove-email-success');
 
     const account = await accountService.create(tenantId, {
-      email: `main-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('main'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
-    const secondEmail = `second-${uuidv4()}@example.com`;
+    const secondEmail = generateTestEmail('second'); // Test credential - not production;
     await accountService.addEmail(tenantId, account._id, secondEmail);
 
     const updatedAccount = await accountService.removeEmail(
@@ -71,11 +75,11 @@ describe('account.service.removeEmail', () => {
     const tenantId = await getTenantId('test-remove-email-not-found-after');
 
     const account = await accountService.create(tenantId, {
-      email: `remove-email-${uuidv4()}@example.com`,
-      password: 'Password123!',
+      email: generateTestEmail('remove-email'), // Test credential - not production
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
-    const secondEmail = `second-${uuidv4()}@example.com`;
+    const secondEmail = generateTestEmail('second'); // Test credential - not production;
     await accountService.addEmail(tenantId, account._id, secondEmail);
     await accountService.remove(tenantId, account._id);
 

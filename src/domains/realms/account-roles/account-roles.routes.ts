@@ -1,22 +1,33 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
+import { z } from 'zod';
 import * as accountRoleController from './account-role.controller';
 import {
   accountRoleCreateSchema,
+  accountRoleRemoveSchema,
   accountRoleResponseSchema,
-  accountRoleParamsSchema,
-  roleAccountParamsSchema,
+  accountRoleListResponseSchema,
 } from './account-role.schema';
-import { errorResponseSchema } from '@/domains/commons/base/base.schema';
-import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.schema';
+import {
+  requestTenantIdParamsSchema,
+  requestTenantIdAndAccountIdParamsSchema,
+  requestTenantIdAndRoleIdParamsSchema,
+} from '@/domains/commons/base/request.schema';
+
+// Error response schema
+const errorResponseSchema = z.object({
+  error: z.string(),
+  details: z.string().optional(),
+});
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-roles' });
 
+  // POST /account-roles - Create account-role relationship
   router.post({
-    name: 'addRoleToAccount',
+    name: 'createAccountRole',
     path: '/',
-    summary: 'Add role to account',
-    handlers: [accountRoleController.addRoleToAccount],
+    summary: 'Create account-role relationship',
+    handlers: [accountRoleController.create],
     request: {
       params: requestTenantIdParamsSchema,
       body: {
@@ -28,8 +39,8 @@ export const initialize = async () => {
       },
     },
     responses: {
-      200: {
-        description: 'Role added to account successfully',
+      201: {
+        description: 'Account-role relationship created successfully',
         content: {
           'application/json': {
             schema: accountRoleResponseSchema,
@@ -48,23 +59,25 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
+  // DELETE /account-roles - Remove account-role relationship
   router.delete({
-    name: 'removeRoleFromAccount',
+    name: 'removeAccountRole',
     path: '/',
-    summary: 'Remove role from account',
-    handlers: [accountRoleController.removeRoleFromAccount],
+    summary: 'Remove account-role relationship',
+    handlers: [accountRoleController.remove],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {
-            schema: accountRoleCreateSchema,
+            schema: accountRoleRemoveSchema,
           },
         },
       },
     },
     responses: {
-      200: {
-        description: 'Role removed from account successfully',
+      204: {
+        description: 'Account-role relationship removed successfully',
       },
       400: {
         description: 'Bad request',
@@ -75,7 +88,7 @@ export const initialize = async () => {
         },
       },
       404: {
-        description: 'Not found',
+        description: 'Account-role relationship not found',
         content: {
           'application/json': {
             schema: errorResponseSchema,
@@ -86,20 +99,21 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
+  // GET /account-roles/account/:accountId - Get roles for account
   router.get({
     name: 'getAccountRoles',
     path: '/account/:accountId',
-    summary: 'Get account roles',
-    handlers: [accountRoleController.getAccountRoles],
+    summary: 'Get roles for account',
+    handlers: [accountRoleController.findByAccountId],
     request: {
-      params: accountRoleParamsSchema,
+      params: requestTenantIdAndAccountIdParamsSchema,
     },
     responses: {
       200: {
-        description: 'List of account roles',
+        description: 'Account roles found',
         content: {
           'application/json': {
-            schema: accountRoleResponseSchema.array(),
+            schema: accountRoleListResponseSchema,
           },
         },
       },
@@ -115,20 +129,21 @@ export const initialize = async () => {
     tags: ['Account-Roles'],
   });
 
+  // GET /account-roles/role/:roleId - Get accounts with role
   router.get({
     name: 'getRoleAccounts',
-    path: '/roles/:roleId',
-    summary: 'Get role accounts',
-    handlers: [accountRoleController.getRoleAccounts],
+    path: '/role/:roleId',
+    summary: 'Get accounts with role',
+    handlers: [accountRoleController.findByRoleId],
     request: {
-      params: roleAccountParamsSchema,
+      params: requestTenantIdAndRoleIdParamsSchema,
     },
     responses: {
       200: {
-        description: 'List of role accounts',
+        description: 'Role accounts found',
         content: {
           'application/json': {
-            schema: accountRoleResponseSchema.array(),
+            schema: accountRoleListResponseSchema,
           },
         },
       },

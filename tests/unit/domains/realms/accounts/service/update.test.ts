@@ -1,3 +1,8 @@
+import {
+  createTestEmail,
+  generateTestEmail,
+  TEST_PASSWORD,
+} from '@test/utils/test-constants';
 import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/errors/not-found';
 import * as accountService from '@/domains/realms/accounts/account.service';
@@ -16,11 +21,11 @@ describe('account.service.update', () => {
 
   it('should return account when update with empty data', async () => {
     const tenantId = await getTenantId('test-account-update-2');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {
       email,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
     const updatedAccount = await accountService.update(
@@ -35,18 +40,18 @@ describe('account.service.update', () => {
 
   it('should exclude email and password from update', async () => {
     const tenantId = await getTenantId('test-account-update-3');
-    const email = `test-${uuidv4()}@example.com`;
+    const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {
       email,
-      password: 'Password123!',
+      password: TEST_PASSWORD, // Test credential - not production,
     });
 
     const updatedAccount = await accountService.update(
       tenantId,
       createdAccount._id,
       {
-        email: 'should-be-ignored@example.com',
+        email: createTestEmail('should-be-ignored'), // Test credential - not production
         password: 'should-be-ignored',
       }
     );

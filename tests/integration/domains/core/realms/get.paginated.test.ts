@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import type { RealmPaginatedResponse } from '@/domains/core/realms/latest/realm.schema';
+import { RealmPaginatedResponse } from '@/domains/core/realms/realm.schema';
+import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import * as realmService from '@/domains/core/realms/realm.service';
 
 describe('GET /api/core/realms (paginated)', () => {
@@ -20,7 +22,7 @@ describe('GET /api/core/realms (paginated)', () => {
         },
       };
 
-      const realm = await realmService.create(realmData);
+      const realm: RealmDocument = await realmService.create(realmData);
       createdRealmIds.push(realm._id);
     }
   });
@@ -164,7 +166,8 @@ describe('GET /api/core/realms (paginated)', () => {
       .get('/api/core/realms?page=0')
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 400 for invalid limit parameter', async () => {
@@ -172,7 +175,8 @@ describe('GET /api/core/realms (paginated)', () => {
       .get('/api/core/realms?limit=0')
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should return 400 for limit exceeding maximum', async () => {
@@ -180,7 +184,8 @@ describe('GET /api/core/realms (paginated)', () => {
       .get('/api/core/realms?limit=101')
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   // Tests for z.stringbool() descending parameter
@@ -244,7 +249,8 @@ describe('GET /api/core/realms (paginated)', () => {
       .get('/api/core/realms?descending=invalid')
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
   });
 
   it('should handle string numbers for page and limit parameters', async () => {
