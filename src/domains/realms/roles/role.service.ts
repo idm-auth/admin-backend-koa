@@ -12,7 +12,7 @@ export const create = async (
   const logger = await getLogger();
   logger.debug({ name: data.name });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).create(data);
 
   return role;
@@ -24,7 +24,7 @@ export const findById = async (
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId, id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).findById(id);
   if (!role) {
     throw new NotFoundError('Role not found');
@@ -38,7 +38,7 @@ export const findByName = async (
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
   logger.debug({ name });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).findOne({ name });
   if (!role) {
     throw new NotFoundError('Role not found');
@@ -57,7 +57,7 @@ export const update = async (
 ): Promise<RoleDocument> => {
   const logger = await getLogger();
   logger.debug({ id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const role = await getModel(dbName).findByIdAndUpdate(
     id,
     {
@@ -76,7 +76,7 @@ export const update = async (
 export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findByIdAndDelete(id);
   if (!result) {
     throw new NotFoundError('Role not found');

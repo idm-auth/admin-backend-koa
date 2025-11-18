@@ -34,3 +34,21 @@ export const requestPublicUUIDParamsSchema = z.object({
 export type RequestPublicUUIDParams = z.infer<
   typeof requestPublicUUIDParamsSchema
 >;
+
+export const requestTenantIdAndAccountIdParamsSchema = z.object({
+  tenantId: publicUUIDSchema,
+  accountId: DocIdSchema,
+});
+
+export type RequestTenantIdAndAccountIdParams = z.infer<
+  typeof requestTenantIdAndAccountIdParamsSchema
+>;
+
+export const requestTenantIdAndGroupIdParamsSchema = z.object({
+  tenantId: publicUUIDSchema,
+  groupId: DocIdSchema,
+});
+
+export type RequestTenantIdAndGroupIdParams = z.infer<
+  typeof requestTenantIdAndGroupIdParamsSchema
+>;

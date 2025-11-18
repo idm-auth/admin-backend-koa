@@ -36,7 +36,7 @@ describe('AccountGroups Populate Test', () => {
     roleId = role._id.toString();
 
     // Criar relação account-group com role
-    await accountGroupService.addAccountToGroup(tenantId, {
+    await accountGroupService.create(tenantId, {
       accountId,
       groupId,
       roles: [roleId],
@@ -44,7 +44,7 @@ describe('AccountGroups Populate Test', () => {
   });
 
   it('should do manual populate with UUIDs', async () => {
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
 
     // 1. Buscar AccountGroups
     const accountGroups = await getModel(dbName).find({ accountId });
@@ -70,7 +70,7 @@ describe('AccountGroups Populate Test', () => {
   });
 
   it('should work without populate (return UUIDs)', async () => {
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
 
     // Sem populate - deve retornar UUIDs
     const accountGroups = await getModel(dbName).find({ accountId });

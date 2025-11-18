@@ -13,7 +13,7 @@ export const create = async (
   const logger = await getLogger();
   logger.debug({ name: data.name });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).create(data);
 
   return policy;
@@ -25,7 +25,7 @@ export const findById = async (
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
   logger.debug({ tenantId, id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).findById(id);
   if (!policy) {
     throw new NotFoundError('Policy not found');
@@ -39,7 +39,7 @@ export const findByName = async (
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
   logger.debug({ name });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const sanitizedName = sanitizeRegexInputForFilter(name);
   const policy = await getModel(dbName).findOne({ name: sanitizedName });
   if (!policy) {
@@ -62,7 +62,7 @@ export const update = async (
 ): Promise<PolicyDocument> => {
   const logger = await getLogger();
   logger.debug({ id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const policy = await getModel(dbName).findByIdAndUpdate(
     id,
     {
@@ -84,7 +84,7 @@ export const update = async (
 export const remove = async (tenantId: string, id: string): Promise<void> => {
   const logger = await getLogger();
   logger.debug({ id });
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findByIdAndDelete(id);
   if (!result) {
     throw new NotFoundError('Policy not found');

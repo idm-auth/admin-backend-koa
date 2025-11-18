@@ -1,93 +1,148 @@
 import { AccountGroupDocument, getModel } from './account-group.model';
-import { DocId } from '@/domains/commons/base/base.schema';
 import { AccountGroupCreate } from './account-group.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
+import { withSpanAsync } from '@/utils/tracing.util';
 
-export const addAccountToGroup = async (
+const SERVICE_NAME = 'account-group.service';
+
+export const create = async (
   tenantId: string,
   data: AccountGroupCreate
 ): Promise<AccountGroupDocument> => {
-  const logger = await getLogger();
-  logger.debug({ accountId: data.accountId, groupId: data.groupId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.create`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'create',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, accountId: data.accountId, groupId: data.groupId }, 'Creating account-group relationship');
 
-  const dbName = await getDBName(tenantId);
-  const accountGroup = await getModel(dbName).create(data);
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const accountGroup = await getModel(dbName).create(data);
 
-  return accountGroup;
+      span.setAttributes({ 'entity.id': accountGroup._id });
+      return accountGroup;
+    }
+  );
 };
 
-export const removeAccountFromGroup = async (
+export const remove = async (
   tenantId: string,
   accountId: string,
   groupId: string
 ): Promise<void> => {
-  const logger = await getLogger();
-  logger.debug({ accountId, groupId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.remove`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'remove',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      logger.info({ tenantId, accountId, groupId }, 'Removing account from group');
 
-  const dbName = await getDBName(tenantId);
-  const result = await getModel(dbName).findOneAndDelete({
-    accountId,
-    groupId,
-  });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const result = await getModel(dbName).findOneAndDelete({
+        accountId,
+        groupId,
+      });
 
-  if (!result) {
-    throw new NotFoundError('Account-Group relationship not found');
-  }
+      if (!result) {
+        throw new NotFoundError('Account-Group relationship not found');
+      }
+    }
+  );
 };
 
-export const getAccountGroups = async (
+export const findByAccountId = async (
   tenantId: string,
-  accountId: DocId
+  accountId: string
 ): Promise<AccountGroupDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ accountId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findByAccountId`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findByAccountId',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, accountId }, 'Finding groups for account');
 
-  const dbName = await getDBName(tenantId);
-  const accountGroups = await getModel(dbName).find({
-    accountId,
-  });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const accountGroups = await getModel(dbName).find({ accountId });
 
-  return accountGroups;
+      span.setAttributes({ 'result.count': accountGroups.length });
+      return accountGroups;
+    }
+  );
 };
 
-export const getGroupAccounts = async (
+export const findByGroupId = async (
   tenantId: string,
-  groupId: DocId
+  groupId: string
 ): Promise<AccountGroupDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ groupId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findByGroupId`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findByGroupId',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, groupId }, 'Finding accounts in group');
 
-  const dbName = await getDBName(tenantId);
-  const groupAccounts = await getModel(dbName).find({ groupId });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const groupAccounts = await getModel(dbName).find({ groupId });
 
-  return groupAccounts;
+      span.setAttributes({ 'result.count': groupAccounts.length });
+      return groupAccounts;
+    }
+  );
 };
 
-export const updateAccountGroupRoles = async (
+export const updateRoles = async (
   tenantId: string,
   accountId: string,
   groupId: string,
   roles: string[]
 ): Promise<AccountGroupDocument> => {
-  const logger = await getLogger();
-  logger.debug({
-    accountId,
-    groupId,
-    roles,
-  });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.updateRoles`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'updateRoles',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, accountId, groupId, roles }, 'Updating account-group roles');
 
-  const dbName = await getDBName(tenantId);
-  const accountGroup = await getModel(dbName).findOneAndUpdate(
-    { accountId, groupId },
-    { roles },
-    { new: true }
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const accountGroup = await getModel(dbName).findOneAndUpdate(
+        { accountId, groupId },
+        { roles },
+        { new: true }
+      );
+
+      if (!accountGroup) {
+        throw new NotFoundError('Account-Group relationship not found');
+      }
+
+      span.setAttributes({ 'entity.id': accountGroup._id });
+      return accountGroup;
+    }
   );
-
-  if (!accountGroup) {
-    throw new NotFoundError('Account-Group relationship not found');
-  }
-
-  return accountGroup;
 };

@@ -12,7 +12,7 @@ export const addRoleToGroup = async (
   const logger = await getLogger();
   logger.debug({ groupId: data.groupId, roleId: data.roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const groupRole = await getModel(dbName).create(data);
 
   return groupRole;
@@ -26,7 +26,7 @@ export const removeRoleFromGroup = async (
   const logger = await getLogger();
   logger.debug({ groupId, roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findOneAndDelete({
     groupId,
     roleId,
@@ -44,7 +44,7 @@ export const getGroupRoles = async (
   const logger = await getLogger();
   logger.debug({ groupId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const groupRoles = await getModel(dbName).find({ groupId });
 
   return groupRoles;
@@ -57,7 +57,7 @@ export const getRoleGroups = async (
   const logger = await getLogger();
   logger.debug({ roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const roleGroups = await getModel(dbName).find({ roleId });
 
   return roleGroups;

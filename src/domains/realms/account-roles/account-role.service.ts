@@ -12,7 +12,7 @@ export const addRoleToAccount = async (
   const logger = await getLogger();
   logger.debug({ accountId: data.accountId, roleId: data.roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const accountRole = await getModel(dbName).create(data);
 
   return accountRole;
@@ -26,7 +26,7 @@ export const removeRoleFromAccount = async (
   const logger = await getLogger();
   logger.debug({ accountId, roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const result = await getModel(dbName).findOneAndDelete({
     accountId,
     roleId,
@@ -44,7 +44,7 @@ export const getAccountRoles = async (
   const logger = await getLogger();
   logger.debug({ accountId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const accountRoles = await getModel(dbName).find({
     accountId,
   });
@@ -59,7 +59,7 @@ export const getRoleAccounts = async (
   const logger = await getLogger();
   logger.debug({ roleId });
 
-  const dbName = await getDBName(tenantId);
+  const dbName = await getDBName({ publicUUID: tenantId });
   const roleAccounts = await getModel(dbName).find({ roleId });
 
   return roleAccounts;

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
 
-describe('POST /api/realm/:tenantId/account-groups', () => {
+describe('DELETE /api/realm/:tenantId/account-groups', () => {
   let tenantId: string;
   let accountId: string;
   let groupId: string;
@@ -13,8 +13,8 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-account-groups-post');
-
+    tenantId = await getTenantId('test-account-groups-delete');
+    
     // Create test account using service
     const account = await accountService.create(tenantId, {
       email: `test-${uuidv4()}@example.com`,
@@ -30,8 +30,9 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
     groupId = group._id.toString();
   });
 
-  it('should create account-group relationship successfully', async () => {
-    const response = await request(getApp().callback())
+  it('should remove account from group successfully', async () => {
+    // First create the relationship
+    await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
       .send({
         accountId,
@@ -40,36 +41,32 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
       })
       .expect(201);
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body.accountId).toBe(accountId);
-    expect(response.body.groupId).toBe(groupId);
-    expect(response.body.roles).toEqual(['member']);
-    expect(response.body).toHaveProperty('createdAt');
-    expect(response.body).toHaveProperty('updatedAt');
-  });
-
-  it('should create account-group relationship without roles', async () => {
-    const newAccount = await accountService.create(tenantId, {
-      email: `test-${uuidv4()}@example.com`,
-      password: 'Password123!',
-    });
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/account-groups`)
+    // Then remove it
+    await request(getApp().callback())
+      .delete(`/api/realm/${tenantId}/account-groups`)
       .send({
-        accountId: newAccount._id.toString(),
+        accountId,
         groupId,
       })
-      .expect(201);
+      .expect(204);
+  });
 
-    expect(response.body).toHaveProperty('_id');
-    expect(response.body.accountId).toBe(newAccount._id.toString());
-    expect(response.body.groupId).toBe(groupId);
+  it('should return 404 for non-existent relationship', async () => {
+    const response = await request(getApp().callback())
+      .delete(`/api/realm/${tenantId}/account-groups`)
+      .send({
+        accountId,
+        groupId,
+      })
+      .expect(404);
+
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toContain('not found');
   });
 
   it('should return 400 for invalid accountId', async () => {
     const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/account-groups`)
+      .delete(`/api/realm/${tenantId}/account-groups`)
       .send({
         accountId: 'invalid-id',
         groupId,
@@ -81,7 +78,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
 
   it('should return 400 for missing required fields', async () => {
     const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/account-groups`)
+      .delete(`/api/realm/${tenantId}/account-groups`)
       .send({
         accountId,
       })

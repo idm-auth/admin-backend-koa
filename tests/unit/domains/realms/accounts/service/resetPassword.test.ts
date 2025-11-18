@@ -65,7 +65,7 @@ describe('account.service.resetPassword', () => {
 
   it('should handle resetPassword save error', async () => {
     const tenantId = await getTenantId('test-reset-password-save-error');
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
 
     const account = await accountService.create(tenantId, {
       email: `reset-save-error-${uuidv4()}@example.com`,

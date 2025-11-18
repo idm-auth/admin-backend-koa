@@ -87,7 +87,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format');
+    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
   });
 
   it('should set already primary email as primary (idempotent)', async () => {

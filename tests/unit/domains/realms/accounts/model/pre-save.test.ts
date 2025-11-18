@@ -7,7 +7,7 @@ import { getDBName } from '@/domains/core/realms/realm.service';
 describe('account.model pre-save hook', () => {
   it('should handle non-Error exceptions in pre-save hook', async () => {
     const tenantId = await getTenantId('test-model-pre-save-error');
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
 
     const genSaltSpy = vi.spyOn(bcrypt, 'genSalt');
     genSaltSpy.mockRejectedValue('bcrypt string error');
@@ -29,7 +29,7 @@ describe('account.model pre-save hook', () => {
 
   it('should handle Error exceptions in pre-save hook', async () => {
     const tenantId = await getTenantId('test-model-pre-save-error-if');
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
 
     const genSaltSpy = vi.spyOn(bcrypt, 'genSalt');
     const originalError = new Error('bcrypt genSalt failed');
@@ -50,7 +50,7 @@ describe('account.model pre-save hook', () => {
 
   it('should handle unknown error during password hashing', async () => {
     const tenantId = await getTenantId('test-pre-save-unknown-error');
-    const dbName = await getDBName(tenantId);
+    const dbName = await getDBName({ publicUUID: tenantId });
     const AccountModel = getModel(dbName);
 
     const originalGenSalt = bcrypt.genSalt;

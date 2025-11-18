@@ -7,7 +7,7 @@ extendZodWithOpenApi(z);
 export const accountGroupCreateSchema = z.object({
   accountId: DocIdSchema,
   groupId: DocIdSchema,
-  roles: z.array(DocIdSchema).optional(),
+  roles: z.array(z.string()).optional(),
 });
 
 // Response schemas
@@ -15,7 +15,9 @@ export const accountGroupResponseSchema = z.object({
   _id: DocIdSchema,
   accountId: DocIdSchema,
   groupId: DocIdSchema,
-  roles: z.array(DocIdSchema).optional(),
+  roles: z.array(z.string()).optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 // Params schemas
@@ -36,7 +38,7 @@ export const removeAccountFromGroupSchema = z.object({
 export const updateAccountGroupRolesSchema = z.object({
   accountId: DocIdSchema,
   groupId: DocIdSchema,
-  roles: z.array(DocIdSchema),
+  roles: z.array(z.string()),
 });
 
 export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;

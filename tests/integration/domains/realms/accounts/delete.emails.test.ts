@@ -91,7 +91,7 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: 'invalid-email' })
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format');
+    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
   });
 
   it('should return 404 for non-existent account', async () => {

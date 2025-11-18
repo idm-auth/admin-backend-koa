@@ -33,7 +33,7 @@ export const create = async (
 
       logger.info({ tenantId, name: data.name }, 'Creating new group');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const group = await getModel(dbName).create(data);
 
       span.setAttributes({
@@ -69,7 +69,7 @@ export const findById = async (
 
       logger.info({ tenantId, id }, 'Finding group by ID');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const group = await getModel(dbName).findById(id);
 
       if (!group) {
@@ -105,7 +105,7 @@ export const findByName = async (
       const logger = await getLogger();
       logger.info({ tenantId, name }, 'Finding group by name');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const group = await getModel(dbName).findOne({ name });
       if (!group) {
         logger.warn({ tenantId, name }, 'Group not found by name');
@@ -176,7 +176,7 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
       const logger = await getLogger();
       logger.info({ tenantId, id }, 'Deleting group');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const result = await getModel(dbName).findByIdAndDelete(id);
       if (!result) {
         logger.warn({ tenantId, id }, 'Group not found for deletion');
@@ -208,7 +208,7 @@ export const findAllPaginated = async (
       logger.info({ tenantId, query }, 'Finding groups with pagination');
 
       try {
-        const dbName = await getDBName(tenantId);
+        const dbName = await getDBName({ publicUUID: tenantId });
         span.setAttributes({ 'db.name': dbName });
 
         const result = await executePagination(

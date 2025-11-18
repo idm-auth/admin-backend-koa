@@ -59,7 +59,7 @@ describe('POST /api/realm/:tenantId/accounts/:id/email', () => {
       .send(emailData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format');
+    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
   });
 
   it('should return 400 for duplicate email in same account', async () => {

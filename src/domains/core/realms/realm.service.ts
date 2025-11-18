@@ -15,6 +15,10 @@ import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { executePagination } from '@/utils/pagination.util';
 
+export type GetDBNameParams = {
+  publicUUID: PublicUUID;
+};
+
 const SERVICE_NAME = 'realm.service';
 
 const validateDBName = async (dbName: string): Promise<void> => {
@@ -242,7 +246,7 @@ export const remove = async (id: string): Promise<void> => {
   );
 };
 
-export const getDBName = async (publicUUID: PublicUUID) => {
+export const getDBName = async ({ publicUUID }: GetDBNameParams) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.getDBName`,

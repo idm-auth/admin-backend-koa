@@ -4,23 +4,25 @@ import * as accountGroupController from './account-group.controller';
 import {
   accountGroupCreateSchema,
   accountGroupResponseSchema,
-  accountParamsSchema,
-  groupParamsSchema,
   removeAccountFromGroupSchema,
   updateAccountGroupRolesSchema,
 } from './account-group.schema';
 import { errorResponseSchema } from '@/domains/commons/base/base.schema';
-import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.schema';
+import { 
+  requestTenantIdParamsSchema,
+  requestTenantIdAndAccountIdParamsSchema,
+  requestTenantIdAndGroupIdParamsSchema
+} from '@/domains/commons/base/request.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/account-groups' });
 
   // POST /account-groups - Add account to group
   router.post({
-    name: 'addAccountToGroup',
+    name: 'createAccountGroup',
     path: '/',
     summary: 'Add account to group',
-    handlers: [accountGroupController.addAccountToGroup],
+    handlers: [accountGroupController.create],
     request: {
       params: requestTenantIdParamsSchema,
       body: {
@@ -32,7 +34,7 @@ export const initialize = async () => {
       },
     },
     responses: {
-      200: {
+      201: {
         description: 'Account added to group successfully',
         content: {
           'application/json': {
@@ -57,8 +59,9 @@ export const initialize = async () => {
     name: 'removeAccountFromGroup',
     path: '/',
     summary: 'Remove account from group',
-    handlers: [accountGroupController.removeAccountFromGroup],
+    handlers: [accountGroupController.remove],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {
@@ -68,7 +71,7 @@ export const initialize = async () => {
       },
     },
     responses: {
-      200: {
+      204: {
         description: 'Account removed from group successfully',
       },
       400: {
@@ -80,7 +83,7 @@ export const initialize = async () => {
         },
       },
       404: {
-        description: 'Not found',
+        description: 'Account-Group relationship not found',
         content: {
           'application/json': {
             schema: errorResponseSchema,
@@ -96,8 +99,9 @@ export const initialize = async () => {
     name: 'updateAccountGroupRoles',
     path: '/',
     summary: 'Update account group roles',
-    handlers: [accountGroupController.updateAccountGroupRoles],
+    handlers: [accountGroupController.updateRoles],
     request: {
+      params: requestTenantIdParamsSchema,
       body: {
         content: {
           'application/json': {
@@ -124,7 +128,7 @@ export const initialize = async () => {
         },
       },
       404: {
-        description: 'Not found',
+        description: 'Account-Group relationship not found',
         content: {
           'application/json': {
             schema: errorResponseSchema,
@@ -135,14 +139,14 @@ export const initialize = async () => {
     tags: ['Account-Groups'],
   });
 
-  // GET /account-groups/account/:accountId - Get account groups
+  // GET /account-groups/account/{accountId} - Get account groups
   router.get({
     name: 'getAccountGroups',
     path: '/account/{accountId}',
     summary: 'Get account groups',
-    handlers: [accountGroupController.getAccountGroups],
+    handlers: [accountGroupController.findByAccountId],
     request: {
-      params: accountParamsSchema,
+      params: requestTenantIdAndAccountIdParamsSchema,
     },
     responses: {
       200: {
@@ -165,14 +169,14 @@ export const initialize = async () => {
     tags: ['Account-Groups'],
   });
 
-  // GET /account-groups/group/:groupId - Get group accounts
+  // GET /account-groups/group/{groupId} - Get group accounts
   router.get({
     name: 'getGroupAccounts',
     path: '/group/{groupId}',
     summary: 'Get group accounts',
-    handlers: [accountGroupController.getGroupAccounts],
+    handlers: [accountGroupController.findByGroupId],
     request: {
-      params: groupParamsSchema,
+      params: requestTenantIdAndGroupIdParamsSchema,
     },
     responses: {
       200: {

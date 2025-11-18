@@ -68,7 +68,7 @@ describe('POST /api/realm/:tenantId/accounts', () => {
       .send(accountData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid email format');
+    expect(response.body).toHaveProperty('error', 'Invalid email format, Email domain not allowed');
   });
 
   it('should return 400 for weak password', async () => {

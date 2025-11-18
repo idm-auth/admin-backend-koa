@@ -40,7 +40,7 @@ export const create = async (
       logger.info({ tenantId, email: data.email }, 'Creating new account');
 
       await validateEmailUnique(tenantId, data.email);
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
 
       const account = await getModel(dbName).create({
         emails: [{ email: data.email, isPrimary: true }],
@@ -80,7 +80,7 @@ export const findById = async (
 
       logger.info({ tenantId, id }, 'Finding account by ID');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const account = await getModel(dbName).findById(id);
 
       if (!account) {
@@ -116,7 +116,7 @@ export const findByEmail = async (
       const logger = await getLogger();
       logger.info({ tenantId, email }, 'Finding account by email');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const account = await getModel(dbName).findOne({
         'emails.email': email,
       });
@@ -201,7 +201,7 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
       const logger = await getLogger();
       logger.info({ tenantId, id }, 'Deleting account');
 
-      const dbName = await getDBName(tenantId);
+      const dbName = await getDBName({ publicUUID: tenantId });
       const result = await getModel(dbName).findByIdAndDelete(id);
       if (!result) {
         logger.warn({ tenantId, id }, 'Account not found for deletion');
@@ -233,7 +233,7 @@ export const findAllPaginated = async (
       logger.info({ tenantId, query }, 'Finding accounts with pagination');
 
       try {
-        const dbName = await getDBName(tenantId);
+        const dbName = await getDBName({ publicUUID: tenantId });
         span.setAttributes({ 'db.name': dbName });
 
         const result = await executePagination(

@@ -122,6 +122,13 @@
 - **Atributos padronizados** e hierarquia de spans
 - **Jaeger UI** e **Prometheus metrics** integrados
 
+### **crud-telemetry-mandatory.md** - CRUD Telemetria Obrigatória (CRÍTICO)
+- **Telemetria é código mínimo necessário** - não é opcional
+- **Precedência sobre instruções** de minimalismo
+- **Templates obrigatórios** para controller/service/mapper CRUD
+- **Checklist obrigatório** antes de considerar CRUD completo
+- **Zero exceções** para domínios com operações CRUD
+
 ### **general.md** - Regras Gerais
 - **Arquitetura simplificada** sem multiversão
 - **Versionamento via containers**
