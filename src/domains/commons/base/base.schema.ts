@@ -10,7 +10,9 @@ const validateXSS = (input: string): boolean => {
 };
 
 const validateSSRF = (email: string): boolean => {
-  const domain = email.split('@')[1];
+  const parts = email.split('@');
+  if (parts.length !== 2) return false;
+  const domain = parts[1];
   const blockedDomains = ['localhost', '127.0.0.1', '0.0.0.0', '::1'];
   const isPrivateIP = /^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)/.test(
     domain
@@ -56,6 +58,36 @@ export const passwordSchema = z
   });
 
 export type Password = z.infer<typeof passwordSchema>;
+
+// Common field schemas for reuse across domains
+export const nameSchema = z
+  .string({ error: 'Name is required' })
+  .regex(/^[a-zA-Z0-9\s_-]+$/, 'Name contains invalid characters')
+  .max(100, 'Name must be at most 100 characters')
+  .openapi({
+    description: 'Entity name (alphanumeric, spaces, underscore, hyphen)',
+  });
+
+export const descriptionSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9\s.,!?_-]*$/, 'Description contains invalid characters')
+  .max(500, 'Description must be at most 500 characters')
+  .openapi({
+    description: 'Entity description (alphanumeric, spaces, basic punctuation)',
+  });
+
+export const dbNameSchema = z
+  .string({ error: 'Database name is required' })
+  .regex(
+    /^[a-zA-Z0-9_-]+$/,
+    'Database name can only contain letters, numbers, underscores and hyphens'
+  )
+  .max(50, 'Database name must be at most 50 characters')
+  .openapi({ description: 'Database name (alphanumeric, underscore, hyphen)' });
+
+export type Name = z.infer<typeof nameSchema>;
+export type Description = z.infer<typeof descriptionSchema>;
+export type DbName = z.infer<typeof dbNameSchema>;
 
 export const errorResponseSchema = z.object({
   error: z.string(),

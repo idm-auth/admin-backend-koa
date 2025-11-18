@@ -8,6 +8,7 @@ services:
   backend:
     image: backend
     tty: true
+    hostname: backend-koa
     build:
       context: ..
       dockerfile: .devcontainer/containers/workspace/Dockerfile
@@ -18,6 +19,7 @@ services:
     volumes:
       - ..:/workspace:consistent
       - /var/run/docker.sock:/var/run/docker.sock:consistent
+      - ~/.aws:/home/dev-user/.aws:consistent
     ports:
       - 3000:3000
       - 9090:9090
@@ -43,9 +45,9 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
-      - "16686:16686"  # Jaeger UI
-      - "14268:14268"  # Jaeger collector HTTP
-      - "4318:4318"    # OTLP HTTP collector
+      - '16686:16686' # Jaeger UI
+      - '14268:14268' # Jaeger collector HTTP
+      - '4318:4318' # OTLP HTTP collector
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
