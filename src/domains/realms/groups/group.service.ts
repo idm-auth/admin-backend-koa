@@ -80,39 +80,7 @@ export const findById = async (tenantId: string, id: DocId): Promise<Group> => {
   );
 };
 
-export const findByName = async (
-  tenantId: string,
-  name: string
-): Promise<Group> => {
-  return withSpanAsync(
-    {
-      name: `${SERVICE_NAME}.service.findByName`,
-      attributes: {
-        'tenant.id': tenantId,
-        'group.name': name,
-        operation: 'findByName',
-      },
-    },
-    async (span) => {
-      const logger = await getLogger();
-      logger.info({ tenantId, name }, 'Finding group by name');
 
-      const dbName = await getDBName({ publicUUID: tenantId });
-      const group = await getModel(dbName).findOne({ name });
-      if (!group) {
-        logger.warn({ tenantId, name }, 'Group not found by name');
-        throw new NotFoundError('Group not found');
-      }
-
-      span.setAttributes({ 'db.name': dbName, 'group.id': group._id });
-      logger.info(
-        { groupId: group._id, tenantId },
-        'Group found by name successfully'
-      );
-      return group;
-    }
-  );
-};
 
 export const update = async (
   tenantId: string,
@@ -199,40 +167,35 @@ export const findAllPaginated = async (
       const logger = await getLogger();
       logger.info({ tenantId, query }, 'Finding groups with pagination');
 
-      try {
-        const dbName = await getDBName({ publicUUID: tenantId });
-        span.setAttributes({ 'db.name': dbName });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      span.setAttributes({ 'db.name': dbName });
 
-        const result = await executePagination(
-          {
-            model: getModel(dbName),
-            query,
-            defaultSortField: 'name',
-            span,
-          },
-          (sanitizedFilter: string) => ({
-            $or: [
-              { name: { $regex: sanitizedFilter, $options: 'i' } },
-              { description: { $regex: sanitizedFilter, $options: 'i' } },
-              { _id: { $regex: sanitizedFilter, $options: 'i' } },
-            ],
-          })
-        );
+      const result = await executePagination(
+        {
+          model: getModel(dbName),
+          query,
+          defaultSortField: 'name',
+          span,
+        },
+        (sanitizedFilter: string) => ({
+          $or: [
+            { name: { $regex: sanitizedFilter, $options: 'i' } },
+            { description: { $regex: sanitizedFilter, $options: 'i' } },
+            { _id: { $regex: sanitizedFilter, $options: 'i' } },
+          ],
+        })
+      );
 
-        logger.info(
-          {
-            tenantId,
-            total: result.pagination.total,
-            page: result.pagination.page,
-          },
-          'Groups pagination completed successfully'
-        );
+      logger.info(
+        {
+          tenantId,
+          total: result.pagination.total,
+          page: result.pagination.page,
+        },
+        'Groups pagination completed successfully'
+      );
 
-        return result;
-      } catch (error) {
-        logger.error(error, 'Failed to find paginated groups');
-        throw new Error('Failed to retrieve groups');
-      }
+      return result;
     }
   );
 };

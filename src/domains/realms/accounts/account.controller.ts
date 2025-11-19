@@ -79,22 +79,14 @@ export const update = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const updateData = ctx.validated.body;
 
-      try {
-        const account = await accountService.update(tenantId, id, updateData);
+      const account = await accountService.update(tenantId, id, updateData);
 
-        logger.info(
-          { tenantId, accountId: id },
-          'Account updated successfully'
-        );
+      logger.info(
+        { tenantId, accountId: id },
+        'Account updated successfully'
+      );
 
-        ctx.body = accountMapper.toUpdateResponse(account);
-      } catch (error) {
-        logger.error(
-          { error, tenantId, accountId: id },
-          'Failed to update account'
-        );
-        throw error;
-      }
+      ctx.body = accountMapper.toUpdateResponse(account);
     }
   );
 };
@@ -160,22 +152,14 @@ export const remove = async (ctx: Context) => {
       const logger = await getLogger();
       const { tenantId, id } = ctx.validated.params;
 
-      try {
-        await accountService.remove(tenantId, id);
+      await accountService.remove(tenantId, id);
 
-        logger.info(
-          { tenantId, accountId: id },
-          'Account removed successfully'
-        );
+      logger.info(
+        { tenantId, accountId: id },
+        'Account removed successfully'
+      );
 
-        ctx.status = 204;
-      } catch (error) {
-        logger.error(
-          { error, tenantId, accountId: id },
-          'Failed to remove account'
-        );
-        throw error;
-      }
+      ctx.status = 204;
     }
   );
 };
@@ -197,26 +181,18 @@ export const resetPassword = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const { password } = ctx.validated.body;
 
-      try {
-        const account = await accountService.resetPassword(
-          tenantId,
-          id,
-          password
-        );
+      const account = await accountService.resetPassword(
+        tenantId,
+        id,
+        password
+      );
 
-        logger.info(
-          { tenantId, accountId: id },
-          'Account password reset successfully'
-        );
+      logger.info(
+        { tenantId, accountId: id },
+        'Account password reset successfully'
+      );
 
-        ctx.body = accountMapper.toUpdateResponse(account);
-      } catch (error) {
-        logger.error(
-          { error, tenantId, accountId: id },
-          'Failed to reset account password'
-        );
-        throw error;
-      }
+      ctx.body = accountMapper.toUpdateResponse(account);
     }
   );
 };
@@ -238,27 +214,19 @@ export const updatePassword = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const { currentPassword, newPassword } = ctx.validated.body;
 
-      try {
-        const account = await accountService.updatePassword(
-          tenantId,
-          id,
-          currentPassword,
-          newPassword
-        );
+      const account = await accountService.updatePassword(
+        tenantId,
+        id,
+        currentPassword,
+        newPassword
+      );
 
-        logger.info(
-          { tenantId, accountId: id },
-          'Account password updated successfully'
-        );
+      logger.info(
+        { tenantId, accountId: id },
+        'Account password updated successfully'
+      );
 
-        ctx.body = accountMapper.toUpdateResponse(account);
-      } catch (error) {
-        logger.error(
-          { error, tenantId, accountId: id },
-          'Failed to update account password'
-        );
-        throw error;
-      }
+      ctx.body = accountMapper.toUpdateResponse(account);
     }
   );
 };
@@ -281,22 +249,14 @@ export const addEmail = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const { email } = ctx.validated.body;
 
-      try {
-        const account = await accountService.addEmail(tenantId, id, email);
+      const account = await accountService.addEmail(tenantId, id, email);
 
-        logger.info(
-          { tenantId, accountId: id, email },
-          'Email added to account successfully'
-        );
+      logger.info(
+        { tenantId, accountId: id, email },
+        'Email added to account successfully'
+      );
 
-        ctx.body = accountMapper.toUpdateResponse(account);
-      } catch (error) {
-        logger.error(
-          { error, tenantId, accountId: id, email },
-          'Failed to add email to account'
-        );
-        throw error;
-      }
+      ctx.body = accountMapper.toUpdateResponse(account);
     }
   );
 };

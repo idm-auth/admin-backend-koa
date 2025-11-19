@@ -64,32 +64,6 @@ export const findById = async (
   );
 };
 
-export const findByName = async (
-  tenantId: string,
-  name: string
-): Promise<RoleDocument> => {
-  return withSpanAsync(
-    {
-      name: `${SERVICE_NAME}.findByName`,
-      attributes: {
-        'tenant.id': tenantId,
-        operation: 'findByName',
-      },
-    },
-    async (span) => {
-      const logger = await getLogger();
-      logger.debug({ name });
-      const dbName = await getDBName({ publicUUID: tenantId });
-      const role = await getModel(dbName).findOne({ name });
-      if (!role) {
-        throw new NotFoundError('Role not found');
-      }
-      span.setAttributes({ 'entity.id': role._id });
-      return role;
-    }
-  );
-};
-
 export const update = async (
   tenantId: string,
   id: string,
@@ -168,40 +142,35 @@ export const findAllPaginated = async (
       const logger = await getLogger();
       logger.info({ tenantId, query }, 'Finding roles with pagination');
 
-      try {
-        const dbName = await getDBName({ publicUUID: tenantId });
-        span.setAttributes({ 'db.name': dbName });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      span.setAttributes({ 'db.name': dbName });
 
-        const result = await executePagination(
-          {
-            model: getModel(dbName),
-            query,
-            defaultSortField: 'name',
-            span,
-          },
-          (sanitizedFilter: string) => ({
-            $or: [
-              { name: { $regex: sanitizedFilter, $options: 'i' } },
-              { description: { $regex: sanitizedFilter, $options: 'i' } },
-              { _id: { $regex: sanitizedFilter, $options: 'i' } },
-            ],
-          })
-        );
+      const result = await executePagination(
+        {
+          model: getModel(dbName),
+          query,
+          defaultSortField: 'name',
+          span,
+        },
+        (sanitizedFilter: string) => ({
+          $or: [
+            { name: { $regex: sanitizedFilter, $options: 'i' } },
+            { description: { $regex: sanitizedFilter, $options: 'i' } },
+            { _id: { $regex: sanitizedFilter, $options: 'i' } },
+          ],
+        })
+      );
 
-        logger.info(
-          {
-            tenantId,
-            total: result.pagination.total,
-            page: result.pagination.page,
-          },
-          'Roles pagination completed successfully'
-        );
+      logger.info(
+        {
+          tenantId,
+          total: result.pagination.total,
+          page: result.pagination.page,
+        },
+        'Roles pagination completed successfully'
+      );
 
-        return result;
-      } catch (error) {
-        logger.error(error, 'Failed to find paginated roles');
-        throw new Error('Failed to retrieve roles');
-      }
+      return result;
     }
   );
 };

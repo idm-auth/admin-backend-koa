@@ -118,5 +118,43 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
       expect(response.body).toHaveProperty('error', 'Invalid filter format');
     });
+
+    it('should handle database error in pagination gracefully', async () => {
+      // Usar tenant inválido para forçar erro no getDBName (linha 87-112)
+      const invalidTenantId = 'invalid-format-tenant';
+      
+      const response = await request(getApp().callback())
+        .get(`/api/realm/${invalidTenantId}/groups`)
+        .query({ page: 1, limit: 10 })
+        .expect(400);
+
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('should handle pagination with all sort options', async () => {
+      // Testar diferentes campos de ordenação para cobrir todas as linhas
+      const sortFields = ['name', 'description', 'createdAt', 'updatedAt'];
+      
+      for (const sortBy of sortFields) {
+        const response = await request(getApp().callback())
+          .get(`/api/realm/${tenantId}/groups`)
+          .query({ sortBy, descending: false, limit: 5 })
+          .expect(200);
+
+        expect(response.body).toHaveProperty('data');
+        expect(Array.isArray(response.body.data)).toBe(true);
+      }
+    });
+
+    it('should handle pagination with regex filter on all fields', async () => {
+      // Testar filtro que exercita todas as condições $or (linhas 200-204)
+      const response = await request(getApp().callback())
+        .get(`/api/realm/${tenantId}/groups`)
+        .query({ filter: 'Group', limit: 10 })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+    });
   });
 });

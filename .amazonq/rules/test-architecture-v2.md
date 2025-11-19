@@ -124,6 +124,13 @@
 - **100% Lines** - todas as linhas cobertas
 - **Comandos**: `npm run test:coverage`, `npm run test:coverage:ui`
 
+### Execução eficiente de cobertura
+- **NUNCA use**: `npm run test:coverage` (output visual não é legível)
+- **SEMPRE use**: `npm run test:coverage-json` (gera JSON silencioso)
+- **Leitura do JSON**: `cat coverage/coverage-final.json | jq 'keys | map(select(contains("service.ts")))'`
+- **Comparação específica**: `cat coverage/coverage-final.json | jq '.["/workspace/src/path/file.ts"].s'`
+- **Verificar não cobertos**: `cat coverage/coverage-final.json | jq '.["path"].s | to_entries | map(select(.value == 0)) | length'`
+
 ## GUARDRAILS OBRIGATÓRIOS
 
 ### Duplicação
@@ -152,6 +159,7 @@
 - **"Quase perfeito" não é perfeito** - busque a perfeição
 - **Imprecisões do tool não são desculpa** - investigue e corrija
 - **Se não é 100%, não está pronto** - perfeição é o único padrão
+- **NUNCA rode coverage múltiplas vezes** - use `test:coverage-json` + `jq` para análise
 
 ## PADRÕES DE RECONHECIMENTO
 

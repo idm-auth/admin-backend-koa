@@ -31,6 +31,6 @@ describe('realm.service findAllPaginated', () => {
         limit: 10,
         descending: false,
       })
-    ).rejects.toThrow('Failed to retrieve realms');
+    ).rejects.toThrow('Database connection failed');
   });
 });

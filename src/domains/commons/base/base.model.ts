@@ -27,10 +27,7 @@ baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
   next();
 });
 
-// Virtual getter para mapear .id para ._id
-baseDocumentSchema.virtual('id').get(function () {
-  return this._id;
-});
+
 
 export type BaseDocumentID = InferSchemaType<typeof baseDocumentIDSchema>;
 

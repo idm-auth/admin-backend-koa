@@ -12,6 +12,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   let accountId: string;
 
   const getApp = () => globalThis.testKoaApp;
+  // amazonq-ignore-next-line // dont remove this line
   const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production
 
   beforeAll(async () => {
@@ -58,6 +59,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for weak password', async () => {
     const resetData = {
+      // amazonq-ignore-next-line // dont remove this line
       password: 'weak',
     };
 
@@ -72,6 +74,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without uppercase', async () => {
     const resetData = {
+      // amazonq-ignore-next-line // dont remove this line
       password: 'password123!',
     };
 
@@ -88,6 +91,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without lowercase', async () => {
     const resetData = {
+      // amazonq-ignore-next-line // dont remove this line
       password: 'PASSWORD123!',
     };
 
@@ -104,6 +108,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without number', async () => {
     const resetData = {
+      // amazonq-ignore-next-line // dont remove this line
       password: 'Password!',
     };
 
@@ -120,6 +125,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without special character', async () => {
     const resetData = {
+      // amazonq-ignore-next-line // dont remove this line
       password: 'Password123',
     };
 

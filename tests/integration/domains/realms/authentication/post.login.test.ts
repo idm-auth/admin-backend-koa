@@ -42,11 +42,32 @@ describe('POST /api/realm/:tenantId/authentication/login', () => {
     expect(loginResponse.account).toHaveProperty('emails');
   });
 
-  it('should return 404 for invalid credentials', async () => {
+  it('should return 401 for nonexistent account', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/authentication/login`)
       .send({
         email: createTestEmail('nonexistent'), // Test credential - not production
+        password: 'WrongPassword123!', // Test credential - not production
+      });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('should return 401 for wrong password', async () => {
+    // Create account first
+    await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/accounts`)
+      .send({
+        email: createTestEmail('wrongpass'), // Test credential - not production
+        password: TEST_PASSWORD, // Test credential - not production
+      })
+      .expect(201);
+
+    // Try to login with wrong password
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/authentication/login`)
+      .send({
+        email: createTestEmail('wrongpass'), // Test credential - not production
         password: 'WrongPassword123!', // Test credential - not production
       });
 

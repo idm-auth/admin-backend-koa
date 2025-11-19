@@ -60,32 +60,7 @@ export const findById = async (
   );
 };
 
-export const findByName = async (
-  tenantId: string,
-  name: string
-): Promise<PolicyDocument> => {
-  return withSpanAsync(
-    {
-      name: `${SERVICE_NAME}.findByName`,
-      attributes: {
-        'tenant.id': tenantId,
-        operation: 'findByName',
-      },
-    },
-    async (span) => {
-      const logger = await getLogger();
-      logger.debug({ name });
-      const dbName = await getDBName({ publicUUID: tenantId });
-      const sanitizedName = sanitizeRegexInputForFilter(name);
-      const policy = await getModel(dbName).findOne({ name: sanitizedName });
-      if (!policy) {
-        throw new NotFoundError('Policy not found');
-      }
-      span.setAttributes({ 'entity.id': policy._id });
-      return policy;
-    }
-  );
-};
+
 
 export const update = async (
   tenantId: string,

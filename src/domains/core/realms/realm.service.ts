@@ -197,28 +197,23 @@ export const findAllPaginated = async (
         'Finding realms with pagination'
       );
 
-      try {
-        return await executePagination(
-          {
-            model: getModel(),
-            query,
-            defaultSortField: 'name',
-            span,
-          },
-          (sanitizedFilter: string) => ({
-            $or: [
-              { name: { $regex: sanitizedFilter, $options: 'i' } },
-              { description: { $regex: sanitizedFilter, $options: 'i' } },
-              { dbName: { $regex: sanitizedFilter, $options: 'i' } },
-              { _id: { $regex: sanitizedFilter, $options: 'i' } },
-              { publicUUID: { $regex: sanitizedFilter, $options: 'i' } },
-            ],
-          })
-        );
-      } catch (error) {
-        logger.error(error, 'Failed to find paginated realms');
-        throw new Error('Failed to retrieve realms');
-      }
+      return await executePagination(
+        {
+          model: getModel(),
+          query,
+          defaultSortField: 'name',
+          span,
+        },
+        (sanitizedFilter: string) => ({
+          $or: [
+            { name: { $regex: sanitizedFilter, $options: 'i' } },
+            { description: { $regex: sanitizedFilter, $options: 'i' } },
+            { dbName: { $regex: sanitizedFilter, $options: 'i' } },
+            { _id: { $regex: sanitizedFilter, $options: 'i' } },
+            { publicUUID: { $regex: sanitizedFilter, $options: 'i' } },
+          ],
+        })
+      );
     }
   );
 };

@@ -44,11 +44,6 @@ export const initKoa = async () => {
     logRoutesDetailed(apiRouter.getInternalRouter());
   }
 
-  const PORT = getEnvValue(EnvKey.PORT);
-  app.listen(PORT, () => {
-    console.log(`Koa server running on http://localhost:${PORT}`);
-  });
-
   return app;
 };
 

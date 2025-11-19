@@ -232,39 +232,34 @@ export const findAllPaginated = async (
       const logger = await getLogger();
       logger.info({ tenantId, query }, 'Finding accounts with pagination');
 
-      try {
-        const dbName = await getDBName({ publicUUID: tenantId });
-        span.setAttributes({ 'db.name': dbName });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      span.setAttributes({ 'db.name': dbName });
 
-        const result = await executePagination(
-          {
-            model: getModel(dbName),
-            query,
-            defaultSortField: 'emails.email',
-            span,
-          },
-          (sanitizedFilter: string) => ({
-            $or: [
-              { 'emails.email': { $regex: sanitizedFilter, $options: 'i' } },
-              { _id: { $regex: sanitizedFilter, $options: 'i' } },
-            ],
-          })
-        );
+      const result = await executePagination(
+        {
+          model: getModel(dbName),
+          query,
+          defaultSortField: 'emails.email',
+          span,
+        },
+        (sanitizedFilter: string) => ({
+          $or: [
+            { 'emails.email': { $regex: sanitizedFilter, $options: 'i' } },
+            { _id: { $regex: sanitizedFilter, $options: 'i' } },
+          ],
+        })
+      );
 
-        logger.info(
-          {
-            tenantId,
-            total: result.pagination.total,
-            page: result.pagination.page,
-          },
-          'Accounts pagination completed successfully'
-        );
+      logger.info(
+        {
+          tenantId,
+          total: result.pagination.total,
+          page: result.pagination.page,
+        },
+        'Accounts pagination completed successfully'
+      );
 
-        return result;
-      } catch (error) {
-        logger.error(error, 'Failed to find paginated accounts');
-        throw new Error('Failed to retrieve accounts');
-      }
+      return result;
     }
   );
 };
