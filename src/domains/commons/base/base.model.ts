@@ -1,5 +1,6 @@
 import { InferSchemaType, Schema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import { updatedAtMiddleware } from './baseDocumentSchema.util';
 
 export const baseDocumentIDSchema = new Schema({
   _id: {
@@ -19,15 +20,7 @@ baseDocumentSchema.pre('save', function (next) {
   next();
 });
 
-baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], function (next) {
-  const update = this.getUpdate();
-  if (update && typeof update === 'object' && !Array.isArray(update)) {
-    (update as Record<string, unknown>).updatedAt = new Date();
-  }
-  next();
-});
-
-
+baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], updatedAtMiddleware);
 
 export type BaseDocumentID = InferSchemaType<typeof baseDocumentIDSchema>;
 

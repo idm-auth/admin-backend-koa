@@ -6,6 +6,7 @@ export const envConfigZSchema = z.enum([
   'development',
   'production',
   'staging',
+  'test',
 ]);
 
 export type EnvConfig = z.infer<typeof envConfigZSchema>;

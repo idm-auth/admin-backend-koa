@@ -124,12 +124,14 @@
 - **100% Lines** - todas as linhas cobertas
 - **Comandos**: `npm run test:coverage`, `npm run test:coverage:ui`
 
-### Execução eficiente de cobertura
-- **NUNCA use**: `npm run test:coverage` (output visual não é legível)
-- **SEMPRE use**: `npm run test:coverage-json` (gera JSON silencioso)
-- **Leitura do JSON**: `cat coverage/coverage-final.json | jq 'keys | map(select(contains("service.ts")))'`
-- **Comparação específica**: `cat coverage/coverage-final.json | jq '.["/workspace/src/path/file.ts"].s'`
-- **Verificar não cobertos**: `cat coverage/coverage-final.json | jq '.["path"].s | to_entries | map(select(.value == 0)) | length'`
+### Execução eficiente de cobertura (CRÍTICO)
+- **GERE JSON UMA VEZ**: `npm run test:coverage-json` no início da sessão
+- **USE APENAS O JSON**: Todas as análises via `cat coverage/coverage-final.json | jq`
+- **NUNCA rode coverage múltiplas vezes**: JSON tem todas as informações
+- **REGERE JSON apenas**: Quando criar novos testes ou modificar código
+- **Coverage geral**: `cat coverage/coverage-final.json | jq '.total | {statements: .statements.pct, branches: .branches.pct, functions: .functions.pct, lines: .lines.pct}'`
+- **Arquivos não cobertos**: `cat coverage/coverage-final.json | jq -r 'to_entries[] | select(.value.s | to_entries | map(select(.value == 0)) | length > 0) | .key'`
+- **Linhas específicas**: `cat coverage/coverage-final.json | jq '.["/workspace/src/path/file.ts"].s | to_entries | map(select(.value == 0)) | .[].key'`
 
 ## GUARDRAILS OBRIGATÓRIOS
 
