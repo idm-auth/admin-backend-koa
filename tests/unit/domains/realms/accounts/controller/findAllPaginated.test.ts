@@ -27,8 +27,8 @@ describe('account.controller.findAllPaginated', () => {
 
     expect(ctx.body).toHaveProperty('data');
     expect(ctx.body).toHaveProperty('pagination');
-    expect(Array.isArray(ctx.body.data)).toBe(true);
-    expect(ctx.body.data.length).toBeGreaterThanOrEqual(1);
+    expect(Array.isArray((ctx.body as any).data)).toBe(true);
+    expect((ctx.body as any).data.length).toBeGreaterThanOrEqual(1);
   });
 
   it('should handle error in findAllPaginated and log it', async () => {

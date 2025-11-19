@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { Realm } from '@/domains/core/realms/realm.model';
 import {
-  RealmBaseResponse,
+  RealmReadResponse,
   RealmPaginatedResponse,
 } from '@/domains/core/realms/realm.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
@@ -33,7 +33,7 @@ describe('GET /api/core/realms/:id', () => {
       .get(`/api/core/realms/${createdRealmId}`)
       .expect(200);
 
-    const realmResponse: RealmBaseResponse = response.body;
+    const realmResponse: RealmReadResponse = response.body;
 
     expect(realmResponse).toHaveProperty('_id', createdRealmId);
     expect(realmResponse).toHaveProperty('name', 'test-realm-findbyid');

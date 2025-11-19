@@ -32,6 +32,7 @@ describe('account.service.findAllPaginated', () => {
     const result = await accountService.findAllPaginated(tenantId, {
       page: 1,
       limit: 5,
+      descending: false,
     });
 
     expect(result.data).toBeDefined();

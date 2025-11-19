@@ -1,62 +1,112 @@
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
+import { withSpanAsync } from '@/utils/tracing.util';
 import { GroupRoleDocument, getModel } from './group-role.model';
 import { GroupRoleCreate } from './group-role.schema';
+
+const SERVICE_NAME = 'group-role.service';
 
 export const addRoleToGroup = async (
   tenantId: string,
   data: GroupRoleCreate
 ): Promise<GroupRoleDocument> => {
-  const logger = await getLogger();
-  logger.debug({ groupId: data.groupId, roleId: data.roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.addRoleToGroup`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'addRoleToGroup',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ groupId: data.groupId, roleId: data.roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const groupRole = await getModel(dbName).create(data);
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const groupRole = await getModel(dbName).create(data);
 
-  return groupRole;
+      span.setAttributes({ 'entity.id': groupRole._id });
+      return groupRole;
+    }
+  );
 };
 
 export const removeRoleFromGroup = async (
   tenantId: string,
   data: { groupId: string; roleId: string }
 ): Promise<void> => {
-  const logger = await getLogger();
-  logger.debug({ groupId: data.groupId, roleId: data.roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.removeRoleFromGroup`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'removeRoleFromGroup',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      logger.debug({ groupId: data.groupId, roleId: data.roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findOneAndDelete({
-    groupId: data.groupId,
-    roleId: data.roleId,
-  });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const result = await getModel(dbName).findOneAndDelete({
+        groupId: data.groupId,
+        roleId: data.roleId,
+      });
 
-  if (!result) {
-    throw new NotFoundError('Group-Role relationship not found');
-  }
+      if (!result) {
+        throw new NotFoundError('Group-Role relationship not found');
+      }
+    }
+  );
 };
 
 export const getGroupRoles = async (
   tenantId: string,
   data: { groupId: string }
 ): Promise<GroupRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ groupId: data.groupId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.getGroupRoles`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'getGroupRoles',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ groupId: data.groupId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const groupRoles = await getModel(dbName).find({ groupId: data.groupId });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const groupRoles = await getModel(dbName).find({ groupId: data.groupId });
 
-  return groupRoles;
+      span.setAttributes({ 'result.count': groupRoles.length });
+      return groupRoles;
+    }
+  );
 };
 
 export const getRoleGroups = async (
   tenantId: string,
   data: { roleId: string }
 ): Promise<GroupRoleDocument[]> => {
-  const logger = await getLogger();
-  logger.debug({ roleId: data.roleId });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.getRoleGroups`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'getRoleGroups',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ roleId: data.roleId });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const roleGroups = await getModel(dbName).find({ roleId: data.roleId });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const roleGroups = await getModel(dbName).find({ roleId: data.roleId });
 
-  return roleGroups;
+      span.setAttributes({ 'result.count': roleGroups.length });
+      return roleGroups;
+    }
+  );
 };

@@ -2,6 +2,8 @@ import { RoleDocument } from './role.model';
 import { RoleBaseResponse } from './role.schema';
 import { withSpan } from '@/utils/tracing.util';
 
+export { RoleBaseResponse };
+
 const MAPPER_NAME = 'role.mapper';
 
 export const toResponse = (role: RoleDocument): RoleBaseResponse =>

@@ -30,6 +30,7 @@ describe('account-group.mapper.toResponse', () => {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
+      roles: [],
       createdAt: new Date('2023-01-01T00:00:00.000Z'),
       updatedAt: new Date('2023-01-02T00:00:00.000Z'),
     };
@@ -40,7 +41,7 @@ describe('account-group.mapper.toResponse', () => {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
-      roles: undefined,
+      roles: [],
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-02T00:00:00.000Z',
     });

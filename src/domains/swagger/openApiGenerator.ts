@@ -73,16 +73,6 @@ export const getOpenAPIDocument = () => {
         description: 'Tenant realm management',
       },
     ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'JWT token obtained from login endpoint',
-        },
-      },
-    },
     security: [
       {
         bearerAuth: [],

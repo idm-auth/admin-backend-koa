@@ -2,7 +2,7 @@ import request from 'supertest';
 import { describe, expect, it, beforeAll } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { getModel } from '@/domains/core/realms/realm.model';
-import { RealmBaseResponse } from '@/domains/core/realms/realm.schema';
+import { RealmCreateResponse } from '@/domains/core/realms/realm.schema';
 import { ErrorResponse, ConflictErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/core/realms', () => {
@@ -28,7 +28,7 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    const realmResponse: RealmBaseResponse = response.body;
+    const realmResponse: RealmCreateResponse = response.body;
     expect(realmResponse).toHaveProperty('_id');
     expect(realmResponse).toHaveProperty('publicUUID');
     expect(realmResponse.name).toBe(realmData.name);
@@ -53,7 +53,7 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    const realmResponse: RealmBaseResponse = response.body;
+    const realmResponse: RealmCreateResponse = response.body;
     expect(realmResponse).toHaveProperty('_id');
     expect(realmResponse).toHaveProperty('publicUUID');
     expect(realmResponse.name).toBe(realmData.name);
@@ -106,7 +106,7 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(201);
 
-    const realmResponse: RealmBaseResponse = response.body;
+    const realmResponse: RealmCreateResponse = response.body;
     expect(realmResponse).toHaveProperty('_id');
     expect(realmResponse).toHaveProperty('name', realmData.name);
     expect(realmResponse).toHaveProperty('dbName', realmData.dbName);

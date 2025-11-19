@@ -4,13 +4,13 @@ import { AccountDocument } from '@/domains/realms/accounts/account.model';
 import { createTestEmail } from '@test/utils/test-constants';
 
 describe('account.mapper.toListItemResponse', () => {
-  const accountWithPrimary: AccountDocument = {
+  const accountWithPrimary = {
     _id: 'test-id',
     emails: [
       { email: createTestEmail('primary'), isPrimary: true }, // Test email - not production
       { email: createTestEmail('secondary'), isPrimary: false }, // Test email - not production
     ],
-  };
+  } as AccountDocument;
 
   it('should return primary email when exists', () => {
     const result = accountMapper.toListItemResponse(accountWithPrimary);
@@ -26,7 +26,7 @@ describe('account.mapper.toListItemResponse', () => {
     const accountWithUndefinedEmail = {
       _id: 'test-id',
       emails: [{ email: undefined, isPrimary: true }],
-    } as { _id: string; emails: { email: undefined; isPrimary: boolean }[] };
+    } as any;
 
     expect(() =>
       accountMapper.toListItemResponse(accountWithUndefinedEmail)

@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { Realm } from '@/domains/core/realms/realm.model';
-import { RealmBaseResponse } from '@/domains/core/realms/realm.schema';
+import { RealmReadResponse } from '@/domains/core/realms/realm.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
@@ -34,7 +34,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${createdRealmPublicUUID}`)
       .expect(200);
 
-    const realmResponse: RealmBaseResponse = response.body;
+    const realmResponse: RealmReadResponse = response.body;
 
     expect(realmResponse).toHaveProperty('_id');
     expect(realmResponse).toHaveProperty('name', 'test-realm-publicuuid');

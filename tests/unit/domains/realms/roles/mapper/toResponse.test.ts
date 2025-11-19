@@ -29,6 +29,7 @@ describe('role.mapper.toResponse', () => {
     const role: RoleDocument = {
       _id: 'test-id',
       name: 'basic-role',
+      permissions: [],
       createdAt: new Date('2023-01-01'),
       updatedAt: new Date('2023-01-01'),
     };
@@ -39,7 +40,7 @@ describe('role.mapper.toResponse', () => {
       _id: 'test-id',
       name: 'basic-role',
       description: undefined,
-      permissions: undefined,
+      permissions: [],
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-01T00:00:00.000Z',
     });

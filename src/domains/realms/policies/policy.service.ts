@@ -5,47 +5,86 @@ import { getDBName } from '@/domains/core/realms/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
 import { sanitizeRegexInputForFilter } from '@/utils/pagination.util';
+import { withSpanAsync } from '@/utils/tracing.util';
+
+const SERVICE_NAME = 'policy.service';
 
 export const create = async (
   tenantId: string,
   data: PolicyCreate
 ): Promise<PolicyDocument> => {
-  const logger = await getLogger();
-  logger.debug({ name: data.name });
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.create`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'create',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ name: data.name });
 
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const policy = await getModel(dbName).create(data);
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const policy = await getModel(dbName).create(data);
 
-  return policy;
+      span.setAttributes({ 'entity.id': policy._id });
+      return policy;
+    }
+  );
 };
 
 export const findById = async (
   tenantId: string,
   id: DocId
 ): Promise<PolicyDocument> => {
-  const logger = await getLogger();
-  logger.debug({ tenantId, id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const policy = await getModel(dbName).findById(id);
-  if (!policy) {
-    throw new NotFoundError('Policy not found');
-  }
-  return policy;
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findById`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findById',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ tenantId, id });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const policy = await getModel(dbName).findById(id);
+      if (!policy) {
+        throw new NotFoundError('Policy not found');
+      }
+      span.setAttributes({ 'entity.id': policy._id });
+      return policy;
+    }
+  );
 };
 
 export const findByName = async (
   tenantId: string,
   name: string
 ): Promise<PolicyDocument> => {
-  const logger = await getLogger();
-  logger.debug({ name });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const sanitizedName = sanitizeRegexInputForFilter(name);
-  const policy = await getModel(dbName).findOne({ name: sanitizedName });
-  if (!policy) {
-    throw new NotFoundError('Policy not found');
-  }
-  return policy;
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findByName`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findByName',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ name });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const sanitizedName = sanitizeRegexInputForFilter(name);
+      const policy = await getModel(dbName).findOne({ name: sanitizedName });
+      if (!policy) {
+        throw new NotFoundError('Policy not found');
+      }
+      span.setAttributes({ 'entity.id': policy._id });
+      return policy;
+    }
+  );
 };
 
 export const update = async (
@@ -60,33 +99,56 @@ export const update = async (
     conditions?: Record<string, string>;
   }
 ): Promise<PolicyDocument> => {
-  const logger = await getLogger();
-  logger.debug({ id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const policy = await getModel(dbName).findByIdAndUpdate(
-    id,
+  return withSpanAsync(
     {
-      name: data.name,
-      description: data.description,
-      effect: data.effect,
-      actions: data.actions,
-      resources: data.resources,
-      conditions: data.conditions,
+      name: `${SERVICE_NAME}.update`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'update',
+      },
     },
-    { new: true, runValidators: true }
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ id });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const policy = await getModel(dbName).findByIdAndUpdate(
+        id,
+        {
+          name: data.name,
+          description: data.description,
+          effect: data.effect,
+          actions: data.actions,
+          resources: data.resources,
+          conditions: data.conditions,
+        },
+        { new: true, runValidators: true }
+      );
+      if (!policy) {
+        throw new NotFoundError('Policy not found');
+      }
+      span.setAttributes({ 'entity.id': policy._id });
+      return policy;
+    }
   );
-  if (!policy) {
-    throw new NotFoundError('Policy not found');
-  }
-  return policy;
 };
 
 export const remove = async (tenantId: string, id: string): Promise<void> => {
-  const logger = await getLogger();
-  logger.debug({ id });
-  const dbName = await getDBName({ publicUUID: tenantId });
-  const result = await getModel(dbName).findByIdAndDelete(id);
-  if (!result) {
-    throw new NotFoundError('Policy not found');
-  }
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.remove`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'remove',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      logger.debug({ id });
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const result = await getModel(dbName).findByIdAndDelete(id);
+      if (!result) {
+        throw new NotFoundError('Policy not found');
+      }
+    }
+  );
 };
