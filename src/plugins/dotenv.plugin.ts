@@ -2,7 +2,7 @@ import * as dotenvLib from 'dotenv';
 import path from 'path';
 
 // cria apenas uma conexão principal
-const init = async () => {
+export const initDotenv = async () => {
   // sempre carrega o .env padrão
   dotenvLib.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -59,5 +59,3 @@ export const clearDbCache = (): void => {
 export const getEnvValue = (key: EnvKey): string => {
   return process.env[key] || dbCache[key] || defaults[key];
 };
-
-export const dotenv = { init };

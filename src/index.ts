@@ -1,16 +1,15 @@
-import { initTelemetry } from './telemetry';
-import * as koa from '@/plugins/koaServer.plugin';
-import * as pino from '@/plugins/pino.plugin';
-import { dotenv } from './plugins/dotenv.plugin';
-
-import * as mongo from './plugins/mongo.plugin';
+import { initDotenv } from './plugins/dotenv.plugin';
+import { initPino } from './plugins/pino.plugin';
+import { initMongo } from './plugins/mongo.plugin';
+import { initTelemetry } from './plugins/telemetry.plugin';
+import { initKoa, listenKoa } from './plugins/koaServer.plugin';
 
 // amazonq-ignore-next-line
 (async () => {
-  initTelemetry();
-  await dotenv.init();
-  await pino.initialize();
-  await mongo.initMainConnection();
-  await koa.initialize();
-  await koa.listen();
+  await initDotenv();
+  await initPino();
+  await initMongo();
+  await initTelemetry();
+  await initKoa();
+  await listenKoa();
 })();

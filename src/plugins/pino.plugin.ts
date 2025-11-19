@@ -4,7 +4,7 @@ import { getEnvValue, EnvKey } from './dotenv.plugin';
 
 let logger: pino.Logger;
 
-export const initialize = async () => {
+export const initPino = async () => {
   const baseLogger = pino({
     level: getEnvValue(EnvKey.LOGGER_LEVEL),
     transport: {
@@ -22,8 +22,9 @@ export const initialize = async () => {
   });
   return logger;
 };
+
 export const getLogger = async () => {
-  if (!logger) await initialize();
+  if (!logger) await initPino();
   return logger;
 };
 

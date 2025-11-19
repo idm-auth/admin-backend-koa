@@ -11,7 +11,7 @@ import Koa from 'koa';
 
 const app = new Koa();
 
-export const initialize = async () => {
+export const initKoa = async () => {
   // Error handler deve ser o primeiro middleware
   app.use(errorHandler);
 
@@ -43,12 +43,17 @@ export const initialize = async () => {
   if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
     logRoutesDetailed(apiRouter.getInternalRouter());
   }
+
+  const PORT = getEnvValue(EnvKey.PORT);
+  app.listen(PORT, () => {
+    console.log(`Koa server running on http://localhost:${PORT}`);
+  });
+
   return app;
 };
 
-export const listen = async () => {
+export const listenKoa = async () => {
   const PORT = getEnvValue(EnvKey.PORT);
-
   app.listen(PORT, () => {
     console.log(`Koa server running on http://localhost:${PORT}`);
   });

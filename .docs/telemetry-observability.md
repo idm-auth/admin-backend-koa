@@ -43,7 +43,7 @@ backend:
 
 ### Inicialização
 ```typescript
-// src/telemetry.ts
+// src/plugins/telemetry.plugin.ts
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 

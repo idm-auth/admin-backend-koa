@@ -22,6 +22,10 @@ export const initMainConnection = async (mongodbUri?: string) => {
   return mainConnection;
 };
 
+export const initMongo = async () => {
+  return initMainConnection();
+};
+
 // acesso fixo ao core
 export const getCoreDb = (): Connection => {
   const mongodbCoreDBname = getEnvValue(EnvKey.MONGODB_CORE_DBNAME);

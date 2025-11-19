@@ -5,7 +5,7 @@ import {
   SpanKind,
   context,
 } from '@opentelemetry/api';
-import { SERVICE_NAME, SERVICE_VERSION } from '@/telemetry';
+import { SERVICE_NAME, SERVICE_VERSION } from '@/plugins/telemetry.plugin';
 
 const tracer = trace.getTracer(SERVICE_NAME, SERVICE_VERSION);
 
