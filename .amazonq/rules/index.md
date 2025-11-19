@@ -142,6 +142,27 @@
 - **Checklist obrigatório** antes de considerar CRUD completo
 - **Zero exceções** para domínios com operações CRUD
 
+### **type-checking.md** - Validação de Tipos TypeScript (CRÍTICO)
+- **ZERO ERROS PERMITIDOS** - Tolerância absoluta zero
+- **Script obrigatório**: `npm run type-check` (tsc --noEmit --strict)
+- **Integração obrigatória** com lint:fix e testes
+- **Validação rigorosa** com --strict habilitado
+- **Processo obrigatório** antes de considerar código pronto
+
+### **database-types-priority.md** - Prioridade de Tipos do Banco (FUNDAMENTAL)
+- **BANCO DEFINE TODOS OS TIPOS** - Fonte da verdade absoluta
+- **EVITAR conversões** desnecessárias ao máximo
+- **MANTER null como null** se o banco retorna null
+- **CONVERTER apenas** quando impossível não converter
+- **DOCUMENTAR** qualquer conversão obrigatória
+
+### **mapper-no-types.md** - Mappers Sem Tipos Próprios (OBRIGATÓRIO)
+- **MAPPERS NÃO DEVEM DEFINIR TIPOS** - Apenas transformar dados
+- **IMPORTAR tipos do schema** correspondente
+- **SCHEMAS definem todos os tipos** de request/response
+- **RESPONSABILIDADES claras** - mapper transforma, schema define
+- **ZERO exceções** - regra inviolável
+
 ### **general.md** - Regras Gerais
 - **Arquitetura simplificada** sem multiversão
 - **Versionamento via containers**

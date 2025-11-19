@@ -3,9 +3,9 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
-import { AccountResponse } from '@/domains/realms/accounts/account.schema';
-import { RoleResponse } from '@/domains/realms/roles/role.schema';
-import { AccountRoleResponse } from '@/domains/realms/account-roles/account-role.schema';
+import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
+import { RoleBaseResponse } from '@/domains/realms/roles/role.schema';
+import { AccountRoleBaseResponse } from '@/domains/realms/account-roles/account-role.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
@@ -27,7 +27,7 @@ describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
         description: 'Test role',
       })
       .expect(201);
-    const role: RoleResponse = roleResponse.body;
+    const role: RoleBaseResponse = roleResponse.body;
     roleId = role._id;
 
     // Create accounts
@@ -38,7 +38,7 @@ describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
         password: TEST_PASSWORD, // Test credential - not production,
       })
       .expect(201);
-    const account1: AccountResponse = account1Response.body;
+    const account1: AccountBaseResponse = account1Response.body;
     accountId1 = account1._id;
 
     const account2Response = await request(getApp().callback())
@@ -48,7 +48,7 @@ describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
         password: TEST_PASSWORD, // Test credential - not production,
       })
       .expect(201);
-    const account2: AccountResponse = account2Response.body;
+    const account2: AccountBaseResponse = account2Response.body;
     accountId2 = account2._id;
 
     // Create relationships
@@ -74,7 +74,7 @@ describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
       .get(`/api/realm/${tenantId}/account-roles/role/${roleId}`)
       .expect(200);
 
-    const accountRoles: AccountRoleResponse[] = response.body;
+    const accountRoles: AccountRoleBaseResponse[] = response.body;
     expect(Array.isArray(accountRoles)).toBe(true);
     expect(accountRoles).toHaveLength(2);
 
@@ -92,14 +92,14 @@ describe('GET /api/realm/:tenantId/account-roles/role/:roleId', () => {
 
   it('should return empty array for role with no accounts', async () => {
     // Create new role without accounts
-    const newRoleResponse = await request(getApp().callback())
+    const newRoleBaseResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/roles`)
       .send({
         name: `no-accounts-${uuidv4()}`,
         description: 'Role with no accounts',
       })
       .expect(201);
-    const newRole: RoleResponse = newRoleResponse.body;
+    const newRole: RoleBaseResponse = newRoleBaseResponse.body;
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/account-roles/role/${newRole._id}`)

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { getModel } from '@/domains/core/realms/realms.model';
-import * as realmsModel from '@/domains/core/realms/realms.model';
-import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { getModel } from '@/domains/core/realms/realm.model';
+import * as realmsModel from '@/domains/core/realms/realm.model';
+import { Realm } from '@/domains/core/realms/realm.model';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('realm.service.create', () => {
@@ -10,7 +10,7 @@ describe('realm.service.create', () => {
     const uniqueName = `test-realm-success-${uuidv4()}`;
     const uniqueDbName = `test-db-success-${uuidv4()}`;
 
-    const result: RealmDocument = await realmService.create({
+    const result: Realm = await realmService.create({
       name: uniqueName,
       dbName: uniqueDbName,
       description: 'Test realm success',
@@ -29,7 +29,7 @@ describe('realm.service.create', () => {
     // Garantir que os índices estão criados
     await getModel().createIndexes();
 
-    const first: RealmDocument = await realmService.create({
+    const first: Realm = await realmService.create({
       name: uniqueName,
       dbName: `test-db-${uuidv4()}`,
       description: 'First realm',
@@ -51,7 +51,7 @@ describe('realm.service.create', () => {
 
     await getModel().createIndexes();
 
-    const first: RealmDocument = await realmService.create({
+    const first: Realm = await realmService.create({
       name: `test-realm-${uuidv4()}`,
       dbName: `test-db-${uuidv4()}`,
       publicUUID,

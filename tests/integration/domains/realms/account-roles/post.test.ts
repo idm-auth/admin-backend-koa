@@ -3,9 +3,9 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
-import { AccountResponse } from '@/domains/realms/accounts/account.schema';
-import { RoleResponse } from '@/domains/realms/roles/role.schema';
-import { AccountRoleResponse } from '@/domains/realms/account-roles/account-role.schema';
+import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
+import { RoleBaseResponse } from '@/domains/realms/roles/role.schema';
+import { AccountRoleBaseResponse } from '@/domains/realms/account-roles/account-role.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/account-roles', () => {
@@ -26,7 +26,7 @@ describe('POST /api/realm/:tenantId/account-roles', () => {
         password: TEST_PASSWORD, // Test credential - not production,
       })
       .expect(201);
-    const account: AccountResponse = accountResponse.body;
+    const account: AccountBaseResponse = accountResponse.body;
     accountId = account._id;
 
     // Create role
@@ -37,7 +37,7 @@ describe('POST /api/realm/:tenantId/account-roles', () => {
         description: 'Test role',
       })
       .expect(201);
-    const role: RoleResponse = roleResponse.body;
+    const role: RoleBaseResponse = roleResponse.body;
     roleId = role._id;
   });
 
@@ -52,7 +52,7 @@ describe('POST /api/realm/:tenantId/account-roles', () => {
       .send(relationshipData)
       .expect(201);
 
-    const accountRole: AccountRoleResponse = response.body;
+    const accountRole: AccountRoleBaseResponse = response.body;
 
     expect(accountRole).toHaveProperty('_id');
     expect(accountRole.accountId).toBe(accountId);

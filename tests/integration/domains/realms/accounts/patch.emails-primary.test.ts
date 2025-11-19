@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
-import { AccountEmailResponse } from '@/domains/realms/accounts/account.schema';
+import { AccountReadResponse } from '@/domains/realms/accounts/account.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
@@ -46,7 +46,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    const emailResponse: AccountEmailResponse = response.body;
+    const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
     expect(emailResponse).toHaveProperty(
       'email',
@@ -112,7 +112,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    const emailResponse: AccountEmailResponse = response.body;
+    const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
     expect(emailResponse).toHaveProperty(
       'email',
@@ -131,7 +131,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(200);
 
-    const emailResponse: AccountEmailResponse = response.body;
+    const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
     expect(emailResponse).toHaveProperty(
       'email',

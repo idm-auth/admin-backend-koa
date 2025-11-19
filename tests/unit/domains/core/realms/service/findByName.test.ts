@@ -1,7 +1,7 @@
 import { NotFoundError } from '@/errors/not-found';
 import { describe, expect, it } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { getModel } from '@/domains/core/realms/realms.model';
+import { getModel } from '@/domains/core/realms/realm.model';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('realm.service.findByName', () => {

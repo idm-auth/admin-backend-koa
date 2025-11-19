@@ -3,7 +3,7 @@ import {
   RealmUpdateResponse,
   RealmListItemResponse,
 } from './realm.schema';
-import { Realm } from './realms.model';
+import { Realm } from './realm.model';
 import { withSpan } from '@/utils/tracing.util';
 
 const MAPPER_NAME = 'realm.mapper';

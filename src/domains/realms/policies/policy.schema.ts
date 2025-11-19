@@ -1,8 +1,6 @@
 import { z } from 'zod';
-import {
-  DocIdSchema,
-  requestIDParamsSchema,
-} from '@/domains/commons/base/base.schema';
+import { DocIdSchema } from '@/domains/commons/base/base.schema';
+import { requestIDParamsSchema } from '@/domains/commons/base/request.schema';
 
 export const policyCreateSchema = z.object({
   name: z.string({ error: 'Name is required' }),

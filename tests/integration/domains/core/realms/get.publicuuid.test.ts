@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { RealmDocument } from '@/domains/core/realms/realm.model';
-import { RealmResponse } from '@/domains/core/realms/realm.schema';
+import { Realm } from '@/domains/core/realms/realm.model';
+import { RealmBaseResponse } from '@/domains/core/realms/realm.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
@@ -22,7 +22,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       },
     };
 
-    const realm: RealmDocument = await realmService.create(realmData);
+    const realm: Realm = await realmService.create(realmData);
     createdRealmPublicUUID = realm.publicUUID;
     if (!createdRealmPublicUUID) {
       throw new Error('Realm created but no publicUUID returned');
@@ -34,7 +34,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${createdRealmPublicUUID}`)
       .expect(200);
 
-    const realmResponse: RealmResponse = response.body;
+    const realmResponse: RealmBaseResponse = response.body;
 
     expect(realmResponse).toHaveProperty('_id');
     expect(realmResponse).toHaveProperty('name', 'test-realm-publicuuid');

@@ -1,20 +1,12 @@
 import { AccountGroupDocument } from './account-group.model';
+import { AccountGroupBaseResponse } from './account-group.schema';
 import { withSpan } from '@/utils/tracing.util';
 
 const MAPPER_NAME = 'account-group.mapper';
 
-export interface AccountGroupResponse {
-  _id: string;
-  accountId: string;
-  groupId: string;
-  roles?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 export const toResponse = (
   accountGroup: AccountGroupDocument
-): AccountGroupResponse =>
+): AccountGroupBaseResponse =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toResponse`,
@@ -35,7 +27,7 @@ export const toResponse = (
 
 export const toListResponse = (
   accountGroups: AccountGroupDocument[]
-): AccountGroupResponse[] =>
+): AccountGroupBaseResponse[] =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toListResponse`,

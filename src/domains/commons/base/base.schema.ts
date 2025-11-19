@@ -94,4 +94,11 @@ export const errorResponseSchema = z.object({
   details: z.string().optional(),
 });
 
+export const conflictErrorResponseSchema = z.object({
+  error: z.string(),
+  field: z.string().optional(),
+  details: z.string().optional(),
+});
+
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;
+export type ConflictErrorResponse = z.infer<typeof conflictErrorResponseSchema>;

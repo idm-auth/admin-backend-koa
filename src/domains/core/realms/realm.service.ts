@@ -8,7 +8,7 @@ import {
 } from '@/domains/commons/base/pagination.schema';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
 import { validateZod } from '@/domains/commons/validations/validation.service';
-import { getModel, Realm, RealmCreate } from './realms.model';
+import { getModel, Realm, RealmCreate } from './realm.model';
 import { ConflictError } from '@/errors/conflict';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
@@ -265,9 +265,9 @@ export const getDBName = async ({ publicUUID }: GetDBNameParams) => {
       const realm = await getModel().findOne({ publicUUID });
 
       if (!realm || !realm.dbName) {
-        throw new NotFoundError('DBName not found for publicUUID', {
-          publicUUID,
-        });
+        throw new NotFoundError(
+          `DBName not found for publicUUID: ${publicUUID}`
+        );
       }
 
       span.setAttributes({ 'realm.dbName': realm.dbName });

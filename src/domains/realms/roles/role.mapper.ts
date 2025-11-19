@@ -1,18 +1,10 @@
 import { RoleDocument } from './role.model';
+import { RoleBaseResponse } from './role.schema';
 import { withSpan } from '@/utils/tracing.util';
 
 const MAPPER_NAME = 'role.mapper';
 
-export interface RoleResponse {
-  _id: string;
-  name: string;
-  description?: string;
-  permissions?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const toResponse = (role: RoleDocument): RoleResponse =>
+export const toResponse = (role: RoleDocument): RoleBaseResponse =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toResponse`,
@@ -31,7 +23,7 @@ export const toResponse = (role: RoleDocument): RoleResponse =>
     })
   );
 
-export const toListItemResponse = (role: RoleDocument): RoleResponse =>
+export const toListItemResponse = (role: RoleDocument): RoleBaseResponse =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toListItemResponse`,
@@ -50,7 +42,7 @@ export const toListItemResponse = (role: RoleDocument): RoleResponse =>
     })
   );
 
-export const toListResponse = (roles: RoleDocument[]): RoleResponse[] =>
+export const toListResponse = (roles: RoleDocument[]): RoleBaseResponse[] =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toListResponse`,

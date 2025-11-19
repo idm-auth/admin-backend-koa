@@ -5,7 +5,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
-import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { AccountGroupBaseResponse } from '@/domains/realms/account-groups/account-group.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/realm/:tenantId/account-groups', () => {
@@ -52,12 +52,12 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(200);
 
-    const accountGroupResponse: AccountGroupResponse = response.body;
-    expect(accountGroupResponse).toHaveProperty('_id');
-    expect(accountGroupResponse.accountId).toBe(accountId);
-    expect(accountGroupResponse.groupId).toBe(groupId);
-    expect(accountGroupResponse.roles).toEqual(['admin', 'moderator']);
-    expect(accountGroupResponse).toHaveProperty('updatedAt');
+    const accountGroupBaseResponse: AccountGroupBaseResponse = response.body;
+    expect(accountGroupBaseResponse).toHaveProperty('_id');
+    expect(accountGroupBaseResponse.accountId).toBe(accountId);
+    expect(accountGroupBaseResponse.groupId).toBe(groupId);
+    expect(accountGroupBaseResponse.roles).toEqual(['admin', 'moderator']);
+    expect(accountGroupBaseResponse).toHaveProperty('updatedAt');
   });
 
   it('should update to empty roles array', async () => {
@@ -70,8 +70,8 @@ describe('PUT /api/realm/:tenantId/account-groups', () => {
       })
       .expect(200);
 
-    const accountGroupResponse: AccountGroupResponse = response.body;
-    expect(accountGroupResponse.roles).toEqual([]);
+    const accountGroupBaseResponse: AccountGroupBaseResponse = response.body;
+    expect(accountGroupBaseResponse.roles).toEqual([]);
   });
 
   it('should return 404 for non-existent relationship', async () => {

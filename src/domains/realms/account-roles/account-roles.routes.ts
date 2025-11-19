@@ -4,7 +4,7 @@ import * as accountRoleController from './account-role.controller';
 import {
   accountRoleCreateSchema,
   accountRoleRemoveSchema,
-  accountRoleResponseSchema,
+  accountRoleBaseResponseSchema,
   accountRoleListResponseSchema,
 } from './account-role.schema';
 import {
@@ -43,7 +43,7 @@ export const initialize = async () => {
         description: 'Account-role relationship created successfully',
         content: {
           'application/json': {
-            schema: accountRoleResponseSchema,
+            schema: accountRoleBaseResponseSchema,
           },
         },
       },

@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { Realm } from '@/domains/core/realms/realm.model';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('DELETE /api/core/realms/:id', () => {
@@ -20,7 +20,7 @@ describe('DELETE /api/core/realms/:id', () => {
       },
     };
 
-    const realm: RealmDocument = await realmService.create(realmData);
+    const realm: Realm = await realmService.create(realmData);
     createdRealmId = realm._id;
   });
 
@@ -71,7 +71,7 @@ describe('DELETE /api/core/realms/:id', () => {
       dbName: 'test-db-double-delete',
     };
 
-    const realm: RealmDocument = await realmService.create(realmData);
+    const realm: Realm = await realmService.create(realmData);
     const realmId = realm._id;
 
     // Delete it first time

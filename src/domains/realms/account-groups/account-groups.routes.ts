@@ -3,7 +3,7 @@ import { z } from 'zod';
 import * as accountGroupController from './account-group.controller';
 import {
   accountGroupCreateSchema,
-  accountGroupResponseSchema,
+  accountGroupBaseResponseSchema,
   removeAccountFromGroupSchema,
   updateAccountGroupRolesSchema,
 } from './account-group.schema';
@@ -38,7 +38,7 @@ export const initialize = async () => {
         description: 'Account added to group successfully',
         content: {
           'application/json': {
-            schema: accountGroupResponseSchema,
+            schema: accountGroupBaseResponseSchema,
           },
         },
       },
@@ -115,7 +115,7 @@ export const initialize = async () => {
         description: 'Account group roles updated successfully',
         content: {
           'application/json': {
-            schema: accountGroupResponseSchema,
+            schema: accountGroupBaseResponseSchema,
           },
         },
       },
@@ -153,7 +153,7 @@ export const initialize = async () => {
         description: 'List of account groups',
         content: {
           'application/json': {
-            schema: z.array(accountGroupResponseSchema),
+            schema: z.array(accountGroupBaseResponseSchema),
           },
         },
       },
@@ -183,7 +183,7 @@ export const initialize = async () => {
         description: 'List of group accounts',
         content: {
           'application/json': {
-            schema: z.array(accountGroupResponseSchema),
+            schema: z.array(accountGroupBaseResponseSchema),
           },
         },
       },

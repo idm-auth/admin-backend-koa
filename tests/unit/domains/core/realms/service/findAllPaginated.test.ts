@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
-import * as realmsModel from '@/domains/core/realms/realms.model';
+import * as realmsModel from '@/domains/core/realms/realm.model';
 
 describe('realm.service findAllPaginated', () => {
   beforeEach(() => {

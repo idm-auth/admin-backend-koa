@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { RealmPaginatedResponse } from '@/domains/core/realms/realm.schema';
-import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { Realm } from '@/domains/core/realms/realm.model';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import * as realmService from '@/domains/core/realms/realm.service';
 
@@ -22,7 +22,7 @@ describe('GET /api/core/realms (paginated)', () => {
         },
       };
 
-      const realm: RealmDocument = await realmService.create(realmData);
+      const realm: Realm = await realmService.create(realmData);
       createdRealmIds.push(realm._id);
     }
   });

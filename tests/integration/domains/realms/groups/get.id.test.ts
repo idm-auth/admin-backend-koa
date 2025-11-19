@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
-import { GroupResponse } from '@/domains/realms/groups/group.schema';
+import { GroupBaseResponse } from '@/domains/realms/groups/group.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/groups/:id', () => {
@@ -28,7 +28,7 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
       .get(`/api/realm/${tenantId}/groups/${createdGroupId}`)
       .expect(200);
 
-    const groupResponse: GroupResponse = response.body;
+    const groupResponse: GroupBaseResponse = response.body;
     expect(groupResponse).toHaveProperty('_id', createdGroupId);
     expect(groupResponse).toHaveProperty('name', 'Find Test Group');
     expect(groupResponse).toHaveProperty(

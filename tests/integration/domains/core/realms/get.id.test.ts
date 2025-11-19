@@ -2,9 +2,9 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { RealmDocument } from '@/domains/core/realms/realm.model';
+import { Realm } from '@/domains/core/realms/realm.model';
 import {
-  RealmResponse,
+  RealmBaseResponse,
   RealmPaginatedResponse,
 } from '@/domains/core/realms/realm.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
@@ -24,7 +24,7 @@ describe('GET /api/core/realms/:id', () => {
       },
     };
 
-    const realm: RealmDocument = await realmService.create(realmData);
+    const realm: Realm = await realmService.create(realmData);
     createdRealmId = realm._id;
   });
 
@@ -33,7 +33,7 @@ describe('GET /api/core/realms/:id', () => {
       .get(`/api/core/realms/${createdRealmId}`)
       .expect(200);
 
-    const realmResponse: RealmResponse = response.body;
+    const realmResponse: RealmBaseResponse = response.body;
 
     expect(realmResponse).toHaveProperty('_id', createdRealmId);
     expect(realmResponse).toHaveProperty('name', 'test-realm-findbyid');

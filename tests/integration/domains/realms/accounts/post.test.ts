@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
-import { AccountResponse } from '@/domains/realms/accounts/account.schema';
+import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/accounts', () => {
@@ -25,7 +25,7 @@ describe('POST /api/realm/:tenantId/accounts', () => {
       .send(accountData)
       .expect(201);
 
-    const account: AccountResponse = response.body;
+    const account: AccountBaseResponse = response.body;
 
     expect(account).toHaveProperty('_id');
     expect(account.email).toBe(accountData.email);

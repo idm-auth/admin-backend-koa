@@ -1,9 +1,7 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import {
-  DocIdSchema,
-  requestIDParamsSchema,
-} from '@/domains/commons/base/base.schema';
+import { DocIdSchema } from '@/domains/commons/base/base.schema';
+import { requestIDParamsSchema } from '@/domains/commons/base/request.schema';
 import {
   paginationQuerySchema,
   createPaginatedResponseSchema,
@@ -21,8 +19,10 @@ export const roleCreateSchema = z.object({
 export const roleBaseResponseSchema = z.object({
   _id: DocIdSchema,
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   permissions: z.array(z.string()).optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const roleCreateResponseSchema = roleBaseResponseSchema;

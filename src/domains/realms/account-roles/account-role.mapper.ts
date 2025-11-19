@@ -1,19 +1,12 @@
 import { AccountRoleDocument } from './account-role.model';
+import { AccountRoleBaseResponse } from './account-role.schema';
 import { withSpan } from '@/utils/tracing.util';
 
 const MAPPER_NAME = 'account-role.mapper';
 
-export interface AccountRoleResponse {
-  _id: string;
-  accountId: string;
-  roleId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export const toResponse = (
   accountRole: AccountRoleDocument
-): AccountRoleResponse =>
+): AccountRoleBaseResponse =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toResponse`,
@@ -33,7 +26,7 @@ export const toResponse = (
 
 export const toListResponse = (
   accountRoles: AccountRoleDocument[]
-): AccountRoleResponse[] =>
+): AccountRoleBaseResponse[] =>
   withSpan(
     {
       name: `${MAPPER_NAME}.toListResponse`,

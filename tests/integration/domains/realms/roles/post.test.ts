@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
-import { RoleResponse } from '@/domains/realms/roles/role.mapper';
+import { RoleBaseResponse } from '@/domains/realms/roles/role.mapper';
 
 describe('POST /api/realm/:tenantId/roles', () => {
   let tenantId: string;
@@ -24,7 +24,7 @@ describe('POST /api/realm/:tenantId/roles', () => {
       .send(roleData)
       .expect(201);
 
-    const role: RoleResponse = response.body;
+    const role: RoleBaseResponse = response.body;
 
     expect(role).toHaveProperty('_id');
     expect(role.name).toBe(roleData.name);

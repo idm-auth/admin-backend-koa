@@ -2,11 +2,8 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
-import { RealmResponse } from '@/domains/core/realms/realm.schema';
-import {
-  ErrorResponse,
-  ConflictErrorResponse,
-} from '@/domains/commons/base/base.schema';
+import { RealmBaseResponse } from '@/domains/core/realms/realm.schema';
+import { ErrorResponse, ConflictErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -42,7 +39,7 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(200);
 
-    const realmResponse: RealmResponse = response.body;
+    const realmResponse: RealmBaseResponse = response.body;
     expect(realmResponse).toHaveProperty('_id', createdRealmId);
     expect(realmResponse.name).toBe(updateData.name);
     expect(realmResponse.description).toBe(updateData.description);
@@ -63,7 +60,7 @@ describe('PUT /api/core/realms/:id', () => {
       .send(partialUpdate)
       .expect(200);
 
-    const realmResponse: RealmResponse = response.body;
+    const realmResponse: RealmBaseResponse = response.body;
     expect(realmResponse.description).toBe(partialUpdate.description);
     expect(realmResponse.name).toBe('updated-realm-name'); // Should remain from previous update
   });
@@ -139,7 +136,7 @@ describe('PUT /api/core/realms/:id', () => {
       .send(jwtUpdate)
       .expect(200);
 
-    const realmResponse: RealmResponse = response.body;
+    const realmResponse: RealmBaseResponse = response.body;
     expect(realmResponse.jwtConfig?.expiresIn).toBe('72h');
     expect(realmResponse.jwtConfig).toHaveProperty('secret'); // Should still exist
   });

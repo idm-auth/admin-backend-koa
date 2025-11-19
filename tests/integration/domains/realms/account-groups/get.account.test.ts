@@ -5,7 +5,7 @@ import { TEST_PASSWORD, generateTestEmail } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
-import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { AccountGroupBaseResponse } from '@/domains/realms/account-groups/account-group.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
@@ -63,7 +63,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
       .expect(200);
 
     // Type safety com o schema definido
-    const accountGroups: AccountGroupResponse[] = response.body;
+    const accountGroups: AccountGroupBaseResponse[] = response.body;
 
     expect(Array.isArray(accountGroups)).toBe(true);
     expect(accountGroups).toHaveLength(2);

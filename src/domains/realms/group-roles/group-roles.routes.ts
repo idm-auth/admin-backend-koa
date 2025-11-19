@@ -2,7 +2,7 @@ import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as groupRoleController from './group-role.controller';
 import {
   groupRoleCreateSchema,
-  groupRoleResponseSchema,
+  groupRoleBaseResponseSchema,
   groupRoleParamsSchema,
   roleGroupParamsSchema,
 } from './group-role.schema';
@@ -32,7 +32,7 @@ export const initialize = async () => {
         description: 'Role added to group successfully',
         content: {
           'application/json': {
-            schema: groupRoleResponseSchema,
+            schema: groupRoleBaseResponseSchema,
           },
         },
       },
@@ -100,7 +100,7 @@ export const initialize = async () => {
         description: 'List of group roles',
         content: {
           'application/json': {
-            schema: groupRoleResponseSchema.array(),
+            schema: groupRoleBaseResponseSchema.array(),
           },
         },
       },
@@ -129,7 +129,7 @@ export const initialize = async () => {
         description: 'List of role groups',
         content: {
           'application/json': {
-            schema: groupRoleResponseSchema.array(),
+            schema: groupRoleBaseResponseSchema.array(),
           },
         },
       },

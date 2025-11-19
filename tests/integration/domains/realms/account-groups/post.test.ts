@@ -5,7 +5,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
-import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { AccountGroupBaseResponse } from '@/domains/realms/account-groups/account-group.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/account-groups', () => {
@@ -44,13 +44,13 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
       })
       .expect(201);
 
-    const accountGroupResponse: AccountGroupResponse = response.body;
-    expect(accountGroupResponse).toHaveProperty('_id');
-    expect(accountGroupResponse.accountId).toBe(accountId);
-    expect(accountGroupResponse.groupId).toBe(groupId);
-    expect(accountGroupResponse.roles).toEqual(['member']);
-    expect(accountGroupResponse).toHaveProperty('createdAt');
-    expect(accountGroupResponse).toHaveProperty('updatedAt');
+    const accountGroupBaseResponse: AccountGroupBaseResponse = response.body;
+    expect(accountGroupBaseResponse).toHaveProperty('_id');
+    expect(accountGroupBaseResponse.accountId).toBe(accountId);
+    expect(accountGroupBaseResponse.groupId).toBe(groupId);
+    expect(accountGroupBaseResponse.roles).toEqual(['member']);
+    expect(accountGroupBaseResponse).toHaveProperty('createdAt');
+    expect(accountGroupBaseResponse).toHaveProperty('updatedAt');
   });
 
   it('should create account-group relationship without roles', async () => {
@@ -67,10 +67,10 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
       })
       .expect(201);
 
-    const accountGroupResponse: AccountGroupResponse = response.body;
-    expect(accountGroupResponse).toHaveProperty('_id');
-    expect(accountGroupResponse.accountId).toBe(newAccount._id.toString());
-    expect(accountGroupResponse.groupId).toBe(groupId);
+    const accountGroupBaseResponse: AccountGroupBaseResponse = response.body;
+    expect(accountGroupBaseResponse).toHaveProperty('_id');
+    expect(accountGroupBaseResponse.accountId).toBe(newAccount._id.toString());
+    expect(accountGroupBaseResponse.groupId).toBe(groupId);
   });
 
   it('should return 400 for invalid accountId', async () => {

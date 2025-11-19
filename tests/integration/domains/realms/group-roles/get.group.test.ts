@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
-import { GroupRoleResponse } from '@/domains/realms/group-roles/group-role.schema';
+import { GroupRoleBaseResponse } from '@/domains/realms/group-roles/group-role.schema';
 
 describe('GET /api/realm/:tenantId/group-roles/group/:groupId', () => {
   let tenantId: string;
@@ -49,7 +49,7 @@ describe('GET /api/realm/:tenantId/group-roles/group/:groupId', () => {
       .get(`/api/realm/${tenantId}/group-roles/group/${groupId}`)
       .expect(200);
 
-    const groupRoles: GroupRoleResponse[] = response.body;
+    const groupRoles: GroupRoleBaseResponse[] = response.body;
     expect(Array.isArray(groupRoles)).toBe(true);
     expect(groupRoles).toHaveLength(2);
     expect(groupRoles[0]).toHaveProperty('_id');

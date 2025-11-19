@@ -9,7 +9,7 @@ export const groupRoleCreateSchema = z.object({
   roleId: DocIdSchema,
 });
 
-export const groupRoleResponseSchema = z.object({
+export const groupRoleBaseResponseSchema = z.object({
   _id: DocIdSchema,
   groupId: DocIdSchema,
   roleId: DocIdSchema,
@@ -26,4 +26,4 @@ export const roleGroupParamsSchema = z.object({
 });
 
 export type GroupRoleCreate = z.infer<typeof groupRoleCreateSchema>;
-export type GroupRoleResponse = z.infer<typeof groupRoleResponseSchema>;
+export type GroupRoleBaseResponse = z.infer<typeof groupRoleBaseResponseSchema>;

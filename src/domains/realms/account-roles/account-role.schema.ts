@@ -14,7 +14,7 @@ export const accountRoleRemoveSchema = z.object({
   roleId: DocIdSchema,
 });
 
-export const accountRoleResponseSchema = z.object({
+export const accountRoleBaseResponseSchema = z.object({
   _id: DocIdSchema,
   accountId: DocIdSchema,
   roleId: DocIdSchema,
@@ -22,11 +22,11 @@ export const accountRoleResponseSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const accountRoleListResponseSchema = z.array(accountRoleResponseSchema);
+export const accountRoleListResponseSchema = z.array(accountRoleBaseResponseSchema);
 
 export type AccountRoleCreate = z.infer<typeof accountRoleCreateSchema>;
 export type AccountRoleRemove = z.infer<typeof accountRoleRemoveSchema>;
-export type AccountRoleResponse = z.infer<typeof accountRoleResponseSchema>;
+export type AccountRoleBaseResponse = z.infer<typeof accountRoleBaseResponseSchema>;
 export type AccountRoleListResponse = z.infer<
   typeof accountRoleListResponseSchema
 >;

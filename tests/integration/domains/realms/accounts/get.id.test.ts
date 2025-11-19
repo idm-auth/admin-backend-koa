@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
-import { AccountResponse } from '@/domains/realms/accounts/account.schema';
+import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
 
@@ -29,7 +29,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
       .get(`/api/realm/${tenantId}/accounts/${createdAccountId}`)
       .expect(200);
 
-    const accountResponse: AccountResponse = response.body;
+    const accountResponse: AccountBaseResponse = response.body;
     expect(accountResponse).toHaveProperty('_id', createdAccountId);
     expect(accountResponse).toHaveProperty('email');
     expect(accountResponse).not.toHaveProperty('password');

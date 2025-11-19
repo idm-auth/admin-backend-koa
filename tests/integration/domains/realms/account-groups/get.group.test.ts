@@ -1,4 +1,4 @@
-import { AccountGroupResponse } from '@/domains/realms/account-groups/account-group.schema';
+import { AccountGroupBaseResponse } from '@/domains/realms/account-groups/account-group.schema';
 import { AccountDocument } from '@/domains/realms/accounts/account.model';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { GroupDocument } from '@/domains/realms/groups/group.model';
@@ -63,7 +63,7 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
       .get(`/api/realm/${tenantId}/account-groups/group/${groupId}`)
       .expect(200);
 
-    const accountGroups: AccountGroupResponse[] = response.body;
+    const accountGroups: AccountGroupBaseResponse[] = response.body;
 
     expect(Array.isArray(accountGroups)).toBe(true);
     expect(accountGroups).toHaveLength(2);
