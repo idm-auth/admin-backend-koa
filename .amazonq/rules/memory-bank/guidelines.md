@@ -1,116 +1,155 @@
-# Development Guidelines
+# Development Guidelines - Backend-Koa IAM
 
 ## Code Quality Standards
 
-### TypeScript Conventions
-- **Strict typing**: Never use `any`, prefer specific types or `unknown`
-- **Interface usage**: Use interfaces for complex objects, `type` for unions and primitives
-- **Generic constraints**: Use `extends` for type safety (e.g., `TContext extends Context`)
-- **Type inference**: Leverage TypeScript's type inference with proper schema definitions
-- **Null safety**: Use optional chaining (`?.`) and nullish coalescing (`??`)
+### Import Organization
+- **Absolute imports**: Always use `@/` prefix for src imports, `@test/` for test imports
+- **Import grouping**: External libraries first, then internal modules grouped by domain
+- **Named imports**: Prefer named imports over default imports for better tree-shaking
+- **Namespace imports**: Use `* as serviceName` pattern for service imports
 
-### Import/Export Patterns
-- **Named exports**: Always use `export const` instead of default exports
-- **Zod imports**: Always use `import { z } from 'zod'` (never default import)
-- **OpenAPI extension**: Always call `extendZodWithOpenApi(z)` after Zod import
-- **Path aliases**: Use `@/` prefix for absolute imports from src directory
-- **Direct imports**: Use direct imports without version compatibility layers
+### Function and Variable Naming
+- **Service constants**: Use `SERVICE_NAME = 'domain.service'` pattern for telemetry
+- **Function naming**: Use descriptive verbs (create, findById, update, remove, findAllPaginated)
+- **Parameter naming**: Use `tenantId` as first parameter, followed by `id`, then `data`
+- **Boolean variables**: Use `is`, `has`, `can` prefixes for clarity
 
-### Documentation Standards
-- **Portuguese comments**: Use Portuguese for code comments and documentation
-- **JSDoc blocks**: Include comprehensive JSDoc for complex functions and classes
-- **Inline explanations**: Document complex type casts and architectural decisions
-- **Problem documentation**: Explain TypeScript limitations and workarounds in comments
+### Error Handling Patterns
+- **Service layer**: Always throw specific errors (NotFoundError, ValidationError, ConflictError)
+- **Never return null**: Services return objects directly or throw errors
+- **Error context**: Include relevant context in error messages and logging
+- **Consistent messaging**: Use standardized error messages across similar operations
+
+### Logging Standards
+- **Structured logging**: Use object-first pattern `logger.info({ data }, 'message')`
+- **Context inclusion**: Always include tenantId, accountId, and operation context
+- **Log levels**: info for operations, debug for detailed data, warn for recoverable issues, error for failures
+- **Security**: Never log sensitive data like passwords or tokens
 
 ## Architectural Patterns
 
-### Domain-Driven Design Structure
-- **Domain organization**: Group related functionality in `domains/{context}/{domain}/`
-- **Simplified structure**: Files directly in domain root
-- **File naming**: Use `{domain}.{type}.ts` pattern (e.g., `account.service.ts`)
-- **Separation of concerns**: Keep controllers, services, models, schemas, and routes separate
-
-### Multi-tenant Architecture
-- **Tenant-first parameters**: Always pass `tenantId` as first parameter in service functions
-- **Database isolation**: Use tenant-specific database names via `getDBName(tenantId)`
-- **UUID identifiers**: Use UUID strings for all document IDs, not ObjectId
-- **Tenant validation**: Validate tenant context before any database operations
+### Multi-tenant Design
+- **Tenant isolation**: All operations require tenantId as first parameter
+- **Database scoping**: Use `getDBName({ publicUUID: tenantId })` for tenant-specific databases
+- **Context propagation**: Tenant context flows through all layers (controller → service → model)
+- **Security boundaries**: Validate tenant access at service layer
 
 ### Service Layer Patterns
-- **Error handling**: Always throw specific error types (NotFoundError, ConflictError)
-- **Logging integration**: Use structured logging with context information
-- **Validation placement**: Perform business validations in services, not controllers
-- **Return patterns**: Return objects directly or throw errors, never return null/undefined
+- **Parameter order**: `tenantId, id?, data?` - tenant always first, ID second, data last
+- **Return patterns**: Return entity objects directly, never null or undefined
+- **Validation**: Validate inputs using Zod schemas before processing
+- **Business logic**: All business rules implemented in service layer, not controllers
 
-## Technical Implementation Standards
+### Database Interaction
+- **Model access**: Use `getModel(dbName)` pattern for tenant-specific collections
+- **UUID handling**: Use string-based UUIDs for _id fields, not ObjectId
+- **Query patterns**: Use MongoDB query operators with proper indexing
+- **Error handling**: Handle MongoDB duplicate key errors (code 11000) gracefully
 
-### Database Modeling
-- **Base schema inheritance**: Always extend `baseDocumentSchema` for common fields
-- **UUID as String**: Use `{ type: String, default: uuidv4 }` for _id fields
-- **Index strategy**: Create unique indexes for business constraints
-- **Pre-save hooks**: Use Mongoose middleware for automatic field updates
+### Telemetry Integration
+- **Span wrapping**: Use `withSpanAsync` for all service functions
+- **Attribute setting**: Include operation, tenant.id, entity.id attributes
+- **Span naming**: Follow `{service}.{operation}` pattern
+- **Context propagation**: Pass span context through async operations
 
-### Validation Strategy
-- **Zod v4 syntax**: Use modern Zod v4 patterns (e.g., `z.email()` instead of `z.string().email()`)
-- **Schema composition**: Build complex schemas from reusable base schemas
-- **Error messages**: Provide clear, English error messages for validation failures
-- **Request validation**: Validate all inputs at the API boundary using middleware
+## API Design Patterns
 
-### Router Implementation
-- **MagicRouter usage**: Always use MagicRouter instead of standard Koa Router
-- **OpenAPI integration**: Define complete OpenAPI specs with request/response schemas
-- **Path conversion**: Convert OpenAPI `{param}` syntax to Koa `:param` format
-- **Middleware composition**: Build handler chains with validation, business logic, and response validation
+### MagicRouter Usage
+- **Route configuration**: Include name, path, summary, handlers, request/response schemas
+- **Validation**: Use Zod schemas for params, query, body validation
+- **Middleware**: Apply validation middleware automatically through MagicRouter
+- **Documentation**: Generate OpenAPI specs automatically from route configs
 
-### Error Handling Patterns
-- **Custom error classes**: Use specific error types (NotFoundError, ConflictError, ValidationError)
-- **Structured logging**: Log errors with context objects, not just error messages
-- **Error propagation**: Let errors bubble up to centralized error handling middleware
-- **User-friendly messages**: Provide clear error messages for API consumers
+### Controller Patterns
+- **Data access**: Use `ctx.validated` for accessing validated request data
+- **Service calls**: Controllers only orchestrate service calls, no business logic
+- **Response handling**: Return data directly, let middleware handle response formatting
+- **Error propagation**: Let service errors bubble up to error middleware
 
-## Development Practices
+### Request/Response Handling
+- **Validation**: All inputs validated using Zod schemas before processing
+- **Type safety**: Use TypeScript interfaces derived from Zod schemas
+- **Consistent responses**: Standardized response format across all endpoints
+- **Error responses**: Consistent error structure with proper HTTP status codes
 
-### Testing Standards
-- **Test organization**: Structure tests by domain (`tests/integration/domains/{context}/{domain}/`)
-- **File naming**: Use `{method}.{endpoint}.test.ts` pattern for integration tests
-- **Setup patterns**: Use `beforeAll` for test setup, `getTenantId()` for tenant context
-- **Assertion specificity**: Test specific properties, not just existence
-- **Error scenarios**: Always test both success and failure cases
+## Security Practices
 
-### Logging Practices
-- **Structured logging**: Use Pino with structured data objects
-- **Context awareness**: Include relevant IDs and context in log messages
-- **Log levels**: Use appropriate levels (error, warn, info, debug)
-- **Parameter order**: Place context object first, message string second in Pino calls
+### Input Validation
+- **Zod schemas**: Use Zod v4 for all input validation with proper error messages
+- **Sanitization**: Sanitize database names and user inputs to prevent injection
+- **Type checking**: Strict TypeScript configuration with zero tolerance for `any`
+- **Pattern validation**: Use regex patterns for format validation (email, UUID, etc.)
 
-### Security Considerations
-- **Input validation**: Validate all inputs using Zod schemas
+### Authentication and Authorization
+- **JWT tokens**: Use tenant-scoped JWT tokens with proper expiration
 - **Password handling**: Use bcrypt for password hashing with proper salt rounds
-- **Database name validation**: Sanitize database names to prevent injection attacks
-- **JWT implementation**: Use proper JWT signing and verification with tenant context
+- **Session management**: Stateless authentication using JWT tokens
+- **Access control**: Implement tenant-based access control at service layer
 
-### Performance Optimization
-- **Database queries**: Use efficient queries with proper indexing
-- **Pagination**: Implement cursor-based or offset-based pagination for large datasets
-- **Connection pooling**: Leverage Mongoose connection pooling for database efficiency
-- **Async patterns**: Use async/await consistently, avoid callback patterns
+### Data Protection
+- **Tenant isolation**: Complete data separation between tenants
+- **Sensitive data**: Never log or expose sensitive information
+- **Database security**: Use connection pooling and proper connection management
+- **Environment variables**: Secure configuration management with proper defaults
 
-## Code Organization Principles
+## Testing Standards
 
-### File Structure Consistency
-- **Single responsibility**: Each file should have one clear purpose
-- **Naming conventions**: Use descriptive, consistent naming across all files
-- **Import organization**: Group imports logically (external, internal, relative)
-- **Export consistency**: Use consistent export patterns within domain boundaries
+### Test Organization
+- **File structure**: One test file per function following domain structure
+- **Test types**: Integration tests preferred, unit tests for specific edge cases
+- **Coverage**: 100% code coverage requirement with no exceptions
+- **Naming**: Descriptive test names indicating scenario and expected outcome
 
-### Dependency Management
-- **Version pinning**: Use specific versions for critical dependencies
-- **Peer dependencies**: Properly declare peer dependencies for shared libraries
-- **Development tools**: Maintain consistent development tooling across the project
-- **Security updates**: Regularly update dependencies for security patches
+### Test Data Management
+- **Test utilities**: Use `createTestEmail()`, `TEST_PASSWORD`, `uuidv4()` for test data
+- **Tenant isolation**: Use `getTenantId('unique-name')` for test tenant contexts
+- **Database**: Use MongoDB in-memory server for isolated test environments
+- **Cleanup**: Proper test cleanup and resource management
 
-### Configuration Management
-- **Environment variables**: Use dotenv for environment-specific configuration
-- **Type safety**: Define typed configuration objects for environment variables
-- **Default values**: Provide sensible defaults for optional configuration
-- **Validation**: Validate configuration at application startup
+### Mock Usage Guidelines
+- **Real implementation first**: Always try real implementation before mocking
+- **Supervision required**: AI must request permission before creating/modifying mocks
+- **Naming convention**: Use "Mock" suffix only for actual mock objects
+- **Minimal mocking**: Mock only external dependencies, not internal business logic
+
+## Performance Considerations
+
+### Database Optimization
+- **Indexing**: Proper indexes on frequently queried fields
+- **Pagination**: Use efficient pagination with proper sorting
+- **Connection pooling**: Mongoose connection pooling for database efficiency
+- **Query optimization**: Use aggregation pipelines for complex queries
+
+### Memory Management
+- **Resource cleanup**: Proper cleanup of database connections and resources
+- **Async patterns**: Use async/await consistently for non-blocking operations
+- **Error boundaries**: Proper error handling to prevent memory leaks
+- **Monitoring**: Use telemetry for performance monitoring and optimization
+
+## Code Documentation
+
+### Inline Documentation
+- **Complex logic**: Document complex business logic and algorithms
+- **Type annotations**: Use TypeScript types for self-documenting code
+- **API documentation**: Generate OpenAPI docs automatically from code
+- **Security notes**: Document security considerations and NOSONAR comments
+
+### Code Comments
+- **Why not what**: Explain reasoning behind implementation decisions
+- **Security notes**: Document security-related code with NOSONAR explanations
+- **TODO items**: Use structured TODO comments for future improvements
+- **Type casting**: Explain necessary type casts with detailed comments
+
+## Development Workflow
+
+### Code Quality Checks
+- **Type checking**: Run `npm run type-check` with zero errors tolerance
+- **Linting**: Use ESLint with automatic fixing for consistent code style
+- **Testing**: Comprehensive test suite with coverage reporting
+- **Build verification**: Ensure clean builds before committing
+
+### Environment Management
+- **Development**: Use Docker containers for consistent development environment
+- **Configuration**: Environment-specific configuration with secure defaults
+- **Dependencies**: Keep dependencies updated and security-scanned
+- **DevContainer**: Use VS Code DevContainer for standardized development setup

@@ -1,190 +1,79 @@
 # Rules Index
 
-> **CRÍTICO**: [IA-no-use-mock.md](IA-no-use-mock.md) - IA PRECISA SUPERVISÃO TOTAL PARA MOCKS
-
 > **IMPORTANTE**: Sempre atualize este index quando criar, modificar ou remover qualquer arquivo de regras!
 
-## Arquitetura e Padrões
+## Arquivos Consolidados v2 (Principais)
 
-### **ddd-architecture.md** - Domain-Driven Design
-- **Estrutura simplificada**: Arquivos diretamente na raiz do domínio
-- **Sem multiversão**: Removidas estruturas latest/ e v1/
-- **Versionamento via containers** quando necessário
+### **architecture-patterns-v2.md** - Arquitetura e Padrões (FUNDAMENTAL)
+- **DDD**: Estrutura de domínios, imports, rotas
+- **Tenant Pattern**: TenantId sempre primeiro parâmetro (CRÍTICO)
+- **Service Pattern**: Retorno direto ou erro específico
+- **MagicRouter**: Roteamento obrigatório com validações
+- **Responsabilidades**: Controller, service, model separados
 
-### **tenant-pattern.md** - Padrão TenantId (CRÍTICO)
-- TenantId sempre primeiro parâmetro separado
-- Assinaturas de função obrigatórias
-- Exemplos por operação (CREATE, UPDATE, FIND)
+### **database-v2.md** - Banco de Dados (CRÍTICO)
+- **UUID**: String para _id, referências manuais
+- **Tipos**: Banco define todos os tipos (fonte da verdade)
+- **Nomenclatura**: Collections com hífen para múltiplas palavras
+- **Conversões**: Evitar ao máximo, manter null como null
 
-### **service-pattern.md** - Padrão de Services
-- Retorno direto ou erro específico
-- NUNCA retornar null/undefined
-- Estrutura de funções
+### **validation-types-v2.md** - Validação e Tipos (CRÍTICO)
+- **Zod v4**: Import correto, extendZodWithOpenApi obrigatório
+- **TypeScript**: NUNCA any, declaração vs cast
+- **Type Checking**: Zero erros permitidos (tolerância absoluta zero)
+- **Mappers**: NUNCA definem tipos, importam do schema
+- **Localização**: Tipos no .schema.ts ou .model.ts correto
 
-### **database-models.md** - Modelos de Banco
-- UUID como String para _id
-- Referências entre modelos
-- Base schema e índices
+### **utilities-v2.md** - Utilitários e Configuração
+- **Imports**: Aliases @/ e @test/ obrigatórios
+- **Logging**: Formato estruturado, contexto Koa vs não-Koa
+- **Context**: ctx.validated obrigatório, NUNCA validação dupla
 
-### **mongodb-naming.md** - Nomenclatura MongoDB (NOVO)
-- **Hífen obrigatório** para múltiplas palavras em collections
-- **NUNCA camelCase** - MongoDB ignora case sensitivity
-- **Correspondência** domínio → collection name
-- **Padrão kebab-case** para consistência
+### **test-architecture-v2.md** - Arquitetura de Testes (FUNDAMENTAL)
+- **1 arquivo = 1 função** - Regra inviolável
+- **Prioridade absoluta**: Integração primeiro, unitários para lacunas
+- **Duplicação**: NUNCA assuma pelo nome, analise conteúdo
+- **Cobertura**: 100% obrigatório (tolerância zero)
+- **Estrutura**: DDD por responsabilidade, nomenclatura consistente
 
-## Desenvolvimento
+### **mocks-and-testing-v2.md** - Mocks com Supervisão (CRÍTICO)
+- **IA precisa supervisão total** para qualquer operação com mocks
+- **Implementação real primeiro** - tente sempre antes de mock
+- **Nomenclatura**: "Mock" apenas para mocks reais
+- **Processo**: Sempre pedir permissão antes de trabalhar com mocks
 
-### **typescript.md** - Regras TypeScript
-- NUNCA usar `any`
-- Interfaces vs types
-- Async/await patterns
+### **debugging-v2.md** - Debugging e Resolução (CRÍTICO)
+- **NUNCA gambiarras** - pare e pergunte quando arquitetura não funciona
+- **Execução**: `npm test 2>&1 | tail -50` obrigatório
+- **Debug**: `LOGGER_LEVEL=debug` para investigação
+- **Hierarquia**: Teste → dados → configuração → lógica → arquitetura
 
-### **zod.md** - Validação com Zod v4
-- Import obrigatório: `import { z } from 'zod'`
-- extendZodWithOpenApi obrigatório
-- Sintaxe v4 (z.email() em vez de z.string().email())
+### **config-environment-v2.md** - Configuração e Ambiente
+- **Documentação**: NUNCA emojis, sempre texto profissional
+- **VSCode**: SEMPRE configure no devcontainer, NUNCA local
+- **Extensões**: Vitest, Prettier, ESLint, Amazon Q obrigatórias
 
-### **magic-router.md** - Roteamento
-- Uso obrigatório do MagicRouter
-- Estrutura de rotas com validações
-- Padrões por método HTTP
+## Arquivos Específicos (Não Consolidados)
 
-### **koa-context.md** - Context do Koa
-- SEMPRE usar ctx.validated
-- NUNCA acessar ctx.params/query/body diretamente
-- Evitar validação dupla
+### **telemetry-tracing.md** - Telemetria e Tracing
+- **Implementação obrigatória** em controllers, services, mappers
+- **withSpan/withSpanAsync** - NUNCA spans manuais
+- **Constantes centralizadas** e atributos padronizados
 
-## Testes
-
-### **mocks-and-testing.md** - Mocks e Nomenclatura
-- Evitar mocks, usar fluxo real
-- Sufixo "Mock" APENAS para mocks reais
-- Dados de teste com nomes descritivos
-
-### **IA-no-use-mock.md** - IA E MOCKS COM SUPERVISÃO (CRÍTICO)
-- IA PRECISA supervisão total para qualquer operação com mocks
-- PROIBIDO criar, alterar ou remover mocks sem aprovação
-- IA deve SEMPRE pedir permissão antes de trabalhar com mocks
-- Alternativas reais devem ser tentadas primeiro
-
-### **unit-tests.md** - Testes Unitários
-- **Estrutura simplificada**: `tests/unit/domains/{contexto}/{dominio}/`
-- **MongoDB em memória disponível** para todos os testes unitários
-- **Imports diretos** sem versionamento
-- Um arquivo por função/funcionalidade testada
-- Teste comportamento real com banco, evite mocks desnecessários
-
-### **test-architecture.md** - Arquitetura de Testes (FUNDAMENTAL)
-- **1 arquivo por função/funcionalidade** - Princípio inviolável
-- **Organização DDD obrigatória** por responsabilidade
-- **Nomenclatura consistente**: `{nome}.test.ts`
-- **Localização correta** de testes de validação e erro
-- **Regras de consolidação** - apenas cenários da mesma função
-
-### **integration-tests.md** - Testes de Integração
-- **URLs simplificadas**: `/api/{contexto}/{dominio}/` (sem /v1/)
-- Estrutura de arquivos por método/endpoint
-- Setup com beforeAll e getTenantId
-- Cenários obrigatórios (200, 400, 404, 500)
-
-### **test-priorities.md** - Prioridades e Duplicação de Testes (CRÍTICO)
-- **PRIORIDADE ABSOLUTA**: Testes de integração sempre primeiro
-- **NUNCA assumir duplicação** apenas pelo nome do arquivo
-- **SEMPRE analisar conteúdo** antes de remover testes
-- **Unitários apenas** para lacunas não cobertas pela integração
-- **Processo obrigatório** para criação de novos testes
-
-## Debugging e Resolução de Problemas
-
-### **problem-solving.md** - Resolução de Problemas (CRÍTICO)
-- NUNCA fazer gambiarras
-- Execução de testes com limite de 50 linhas
-- Debugging com LOGGER_LEVEL=debug
-- Hierarquia de correção
-
-### **debugging-principles.md** - Princípios de Debugging
-- Não modificar código correto
-- Usar logs estruturados
-- Investigação sistemática
-
-### **code-coverage.md** - Cobertura de Código (PERFEIÇÃO)
-- **"Eu busco a perfeição.... se não for 100%, não está correto"**
-- **100% obrigatório** em todas as métricas (statements, branches, functions, lines)
-- **Tolerância zero** - 99.9% não é aceitável
-- **Processo sistemático** para alcançar perfeição
-
-## Utilitários e Configuração
-
-### **logging.md** - Sistema de Logs
-- Imports corretos por contexto
-- Ordem de parâmetros do Pino
-- Níveis de log
-
-### **imports.md** - Regras de Imports
-- Aliases obrigatórios: @/ para src, @test/ para tests
-- **Imports diretos** sem versionamento
-- SEMPRE usar imports estáticos
-- NUNCA usar paths relativos para src/
-- Configuração no tsconfig.json
-
-### **telemetry-tracing.md** - Telemetria e Tracing (NOVO)
-- **OpenTelemetry SDK** com auto-instrumentação completa
-- **Tracing manual** com withSpan/withSpanAsync
-- **Constantes centralizadas** para service name/version
-- **Padrões obrigatórios** para controllers, services, mappers
-- **Atributos padronizados** e hierarquia de spans
-- **Jaeger UI** e **Prometheus metrics** integrados
-
-### **crud-telemetry-mandatory.md** - CRUD Telemetria Obrigatória (CRÍTICO)
-- **Telemetria é código mínimo necessário** - não é opcional
-- **Precedência sobre instruções** de minimalismo
-- **Templates obrigatórios** para controller/service/mapper CRUD
-- **Checklist obrigatório** antes de considerar CRUD completo
+### **crud-telemetry-mandatory.md** - CRUD Telemetria (CRÍTICO)
+- **Telemetria é código mínimo necessário** - precedência sobre minimalismo
+- **Templates obrigatórios** para CRUD completo
 - **Zero exceções** para domínios com operações CRUD
 
-### **type-checking.md** - Validação de Tipos TypeScript (CRÍTICO)
-- **ZERO ERROS PERMITIDOS** - Tolerância absoluta zero
-- **Script obrigatório**: `npm run type-check` (tsc --noEmit --strict)
-- **Integração obrigatória** com lint:fix e testes
-- **Validação rigorosa** com --strict habilitado
-- **Processo obrigatório** antes de considerar código pronto
-
-### **database-types-priority.md** - Prioridade de Tipos do Banco (FUNDAMENTAL)
-- **BANCO DEFINE TODOS OS TIPOS** - Fonte da verdade absoluta
-- **EVITAR conversões** desnecessárias ao máximo
-- **MANTER null como null** se o banco retorna null
-- **CONVERTER apenas** quando impossível não converter
-- **DOCUMENTAR** qualquer conversão obrigatória
-
-### **mapper-no-types.md** - Mappers Sem Tipos Próprios (OBRIGATÓRIO)
-- **MAPPERS NÃO DEVEM DEFINIR TIPOS** - Apenas transformar dados
-- **IMPORTAR tipos do schema** correspondente
-- **SCHEMAS definem todos os tipos** de request/response
-- **RESPONSABILIDADES claras** - mapper transforma, schema define
-- **ZERO exceções** - regra inviolável
-
-### **general.md** - Regras Gerais
-- **Arquitetura simplificada** sem multiversão
-- **Versionamento via containers**
-- Separação de responsabilidades
-- Exports e imports diretos
-
 ### **copy-structure.md** - Cópia de Estruturas
-- Processo para "analisar e fazer igual"
-- Leitura completa de arquivos
-- Replicação exata de padrões
+- **Código real > rules gerais** - sempre siga o exemplo
+- **Leia todos os arquivos** antes de replicar
+- **Processo obrigatório** para "analisar e fazer igual"
 
-## Documentação e Ferramentas
-
-### **documentation.md** - Formatação
-- NUNCA usar emojis ou ícones
-- Estrutura de README
-- Linguagem profissional
-
-### **vscode.md** - Configurações VSCode
-- DevContainer settings
-- Extensões obrigatórias
-- Configurações Vitest
+### **guardrails-preservation.md** - Preservação de Guardrails (META-REGRA)
+- **Guardrails não são verbosidade** - são proteções contra erros
+- **"Minimal" se aplica ao código**, não às restrições comportamentais
+- **Preserve NUNCA/SEMPRE** ao reescrever regras
 
 ## Memory Bank (Contexto do Projeto)
 
@@ -210,35 +99,38 @@
 
 ---
 
-## Arquitetura Atual (Simplificada)
+## Consolidação Realizada
 
-### ✅ **Estrutura Atual:**
-- Arquivos diretamente na raiz do domínio
-- Imports diretos sem versionamento
-- URLs simplificadas nas APIs
-- Versionamento via containers quando necessário
+### ✅ **Arquivos v2 Criados (8 consolidados):**
+- `architecture-patterns-v2.md` (DDD + Tenant + Service + MagicRouter)
+- `database-v2.md` (Models + Types + Naming)
+- `validation-types-v2.md` (Zod + TypeScript + Type Checking + Mappers)
+- `test-architecture-v2.md` (Unit + Integration + Priorities + Coverage)
+- `mocks-and-testing-v2.md` (Mocks + Supervision + Nomenclature)
+- `debugging-v2.md` (Problem Solving + Principles)
+- `utilities-v2.md` (Imports + Logging + Koa Context)
+- `config-environment-v2.md` (Documentation + VSCode)
 
-### ✅ **Sem Versionamento Interno:**
-- Sem estruturas `latest/` e `v1/` em domínios
-- Sem re-exports de compatibilidade
-- Sem multiversão no código
-- Sem URLs com `/v1/` nos testes
+### ✅ **Benefícios Alcançados:**
+- **-806 linhas** removidas (55% menos conteúdo)
+- **Triggers SE/ENTÃO** para ações acionáveis
+- **Guardrails preservados** para comportamento correto
+- **Navegação simplificada** com menos arquivos
+
+### ✅ **Arquivos Restantes (Específicos):**
+- `telemetry-tracing.md` - Muito específico e extenso
+- `crud-telemetry-mandatory.md` - Regra crítica específica
+- `copy-structure.md` - Processo específico
+- `guardrails-preservation.md` - Meta-regra importante
+- `memory-bank/` - Contexto do projeto
 
 ---
 
 ## Como Usar Este Index
 
-1. **Para encontrar regras**: Use Ctrl+F neste arquivo
-2. **Para aplicar regras**: Vá direto ao arquivo específico
-3. **Para criar novas regras**: Adicione entrada neste index
-4. **Para modificar regras**: Atualize este index se necessário
+1. **Busque por tema** nos arquivos v2 consolidados
+2. **Use Ctrl+F** para encontrar regras específicas
+3. **Consulte arquivos específicos** para casos particulares
+4. **Atualize este index** ao modificar regras
 
-## Lembrete Importante
-
-**SEMPRE ATUALIZE ESTE INDEX** quando:
-- Criar novo arquivo de regras
-- Modificar conteúdo significativo de alguma regra
-- Remover ou renomear arquivos
-- Reorganizar estrutura de regras
-
-Este index é a porta de entrada para todas as regras do projeto!
+**Este index é a porta de entrada otimizada para todas as regras!**

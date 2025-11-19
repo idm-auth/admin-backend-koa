@@ -1,74 +1,41 @@
-# Regras para Copiar Estrutura de Código
+# Copiar Estrutura - IA Rules
 
-## Quando o usuário pedir para "analisar e fazer igual" ou "copiar estrutura"
+## TRIGGERS AUTOMÁTICOS - PROCESSO
 
-### Processo Obrigatório
+### SE usuário pede "analisar e fazer igual" ou "copiar estrutura"
+→ **ENTÃO** leia TODOS os arquivos do exemplo primeiro
 
-1. **LER TODOS OS ARQUIVOS** do exemplo
-   - Não assuma nada baseado apenas nas rules gerais
-   - Leia cada tipo de arquivo: controller, service, model, schema, routes
-   - Analise a estrutura atual do domínio
+### SE analisando exemplo
+→ **ENTÃO** identifique padrões reais, NUNCA assuma baseado em rules gerais
 
-2. **IDENTIFICAR PADRÕES REAIS**
-   - Qual a estrutura de cada arquivo?
-   - Quais imports são usados?
-   - Qual a estrutura de cada função?
-   - Quais validações são aplicadas?
-   - Como as rotas são organizadas?
+### SE replicando estrutura
+→ **ENTÃO** copie exatamente: imports, validações, organização, nomenclatura
 
-3. **REPLICAR EXATAMENTE**
-   - Mantenha a mesma estrutura de código
-   - Use os mesmos imports
-   - Siga o mesmo padrão de validações
-   - Preserve a mesma organização de funções
-   - Copie o estilo de nomenclatura
+### SE há conflito entre rules e código exemplo
+→ **ENTÃO** SEMPRE siga o código exemplo - é a fonte da verdade
 
-4. **VERIFICAR ANTES DE CRIAR**
-   - Confirme que entendeu a estrutura
-   - Liste mentalmente o que será criado
-   - Garanta que cada arquivo segue o padrão correto
+## AÇÕES OBRIGATÓRIAS
 
-## Estrutura Atual dos Domínios
+### Processo de análise
+1. **Leia TODOS os arquivos** do exemplo (controller, service, model, schema, routes)
+2. **Identifique padrões reais** de cada tipo de arquivo
+3. **Replique exatamente** estrutura, imports, validações, nomenclatura
+4. **Verifique antes de criar** se entendeu corretamente
 
-### Arquivos .routes.ts
-- Define rotas com MagicRouter e prefix do recurso
-- Implementação direta sem camadas de compatibilidade
-
-```typescript
-// accounts.routes.ts
-export const initialize = async () => {
-  const router = new MagicRouter({ prefix: '/accounts' });
-  // ... define rotas
-  return router;
-};
-```
-
-### Outros arquivos (controller, service, model, schema)
-- Implementação direta na raiz do domínio
-- Sem estruturas de re-export
-
-```typescript
-// account.service.ts
-export const create = async (tenantId: string, data: AccountCreate) => {
-  // implementação direta
-};
-```
-
-## Checklist de Verificação
-
-Antes de criar arquivos, confirme:
-
+### Checklist obrigatório
 - [ ] Li TODOS os arquivos do exemplo?
-- [ ] Identifiquei a estrutura atual do domínio?
-- [ ] Entendi qual padrão cada tipo de arquivo segue?
+- [ ] Identifiquei estrutura de cada tipo de arquivo?
 - [ ] Verifiquei imports e dependências?
-- [ ] Confirmei estrutura de validações?
-- [ ] Entendi como as rotas são organizadas?
+- [ ] Confirmei padrões de validação e rotas?
 
-## Princípio Fundamental
+## GUARDRAILS OBRIGATÓRIOS
 
-**CÓDIGO REAL > RULES GERAIS**
+### Precedência absoluta
+- **CÓDIGO REAL > RULES GERAIS**
+- **SEMPRE** siga o código exemplo quando houver conflito
+- **NUNCA** assuma baseado apenas em rules gerais
+- **Código existente é a fonte da verdade** do projeto
 
-Quando houver conflito entre o que as rules dizem e o que o código de exemplo mostra, SEMPRE siga o código de exemplo.
+## REGRA DE OURO
 
-As rules são guias gerais, mas o código existente é a fonte da verdade do projeto.
+**"Leia tudo, copie exato, código real sempre vence rules gerais."**

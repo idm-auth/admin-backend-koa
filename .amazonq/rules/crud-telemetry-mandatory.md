@@ -1,161 +1,74 @@
-# CRUD Telemetry - Regra Obrigatória
+# CRUD Telemetry - IA Rules
 
-## Princípio Fundamental
+## TRIGGERS AUTOMÁTICOS - CRUD OBRIGATÓRIO
 
-**TELEMETRIA É PARTE DO CÓDIGO MÍNIMO NECESSÁRIO**
+### SE implementando CRUD
+→ **ENTÃO** telemetria é código mínimo necessário, NUNCA opcional
 
-Para qualquer implementação de CRUD (Create, Read, Update, Delete), telemetria NÃO é opcional - é **requisito arquitetural obrigatório**.
+### SE criando controller CRUD
+→ **ENTÃO** adicione telemetria em TODAS as funções (create, findById, update, remove)
 
-## Quando Aplicar Esta Regra
+### SE criando service CRUD
+→ **ENTÃO** adicione telemetria em TODAS as funções com tenant.id
 
-### SEMPRE implementar telemetria em:
-- **Novos domínios** com operações CRUD
-- **Controllers** com endpoints padrão (POST, GET, PUT, DELETE)
-- **Services** com funções padrão (create, findById, update, remove)
-- **Mappers** com transformações de dados
+### SE criando mapper CRUD
+→ **ENTÃO** adicione telemetria em TODAS as transformações
 
-### Cenários Obrigatórios:
-- ✅ Implementação de novo domínio
-- ✅ Criação de controller/service/mapper
-- ✅ Operações que seguem padrões CRUD
-- ✅ Qualquer função que processa dados de negócio
+### SE considerando "código mínimo"
+→ **ENTÃO** telemetria TEM PRECEDÊNCIA sobre instruções de minimalismo
 
-## Template Obrigatório
+## AÇÕES OBRIGATÓRIAS
 
-### Controller CRUD
+### Templates CRUD obrigatórios
 ```typescript
-import { withSpanAsync } from '@/utils/tracing.util';
-
+// Controller - withSpanAsync + http.method
 const CONTROLLER_NAME = '{domain}.controller';
-
 export const create = async (ctx: Context) => {
-  return withSpanAsync(
-    {
-      name: `${CONTROLLER_NAME}.create`,
-      attributes: {
-        operation: 'create',
-        'http.method': 'POST',
-      },
-    },
-    async () => {
-      const { tenantId } = ctx.validated.params;
-      const data = ctx.validated.body;
-      
-      const entity = await service.create(tenantId, data);
-      
-      ctx.status = 201;
-      ctx.body = mapper.toResponse(entity);
-    }
-  );
+  return withSpanAsync({
+    name: `${CONTROLLER_NAME}.create`,
+    attributes: { operation: 'create', 'http.method': 'POST' },
+  }, async () => {
+    // lógica
+  });
 };
-```
 
-### Service CRUD
-```typescript
-import { withSpanAsync } from '@/utils/tracing.util';
-
+// Service - withSpanAsync + tenant.id + entity.id
 const SERVICE_NAME = '{domain}.service';
-
-export const create = async (
-  tenantId: string,
-  data: EntityCreate
-): Promise<EntityDocument> => {
-  return withSpanAsync(
-    {
-      name: `${SERVICE_NAME}.create`,
-      attributes: {
-        'tenant.id': tenantId,
-        operation: 'create',
-      },
-    },
-    async (span) => {
-      const dbName = await getDBName({ publicUUID: tenantId });
-      const entity = await getModel(dbName).create(data);
-      
-      span.setAttributes({ 'entity.id': entity._id });
-      return entity;
-    }
-  );
+export const create = async (tenantId: string, data: EntityCreate) => {
+  return withSpanAsync({
+    name: `${SERVICE_NAME}.create`,
+    attributes: { 'tenant.id': tenantId, operation: 'create' },
+  }, async (span) => {
+    // lógica
+    span.setAttributes({ 'entity.id': entity._id });
+    return entity;
+  });
 };
-```
 
-### Mapper CRUD
-```typescript
-import { withSpan } from '@/utils/tracing.util';
-
+// Mapper - withSpan + entity.id
 const MAPPER_NAME = '{domain}.mapper';
-
 export const toResponse = (entity: Entity) =>
-  withSpan(
-    {
-      name: `${MAPPER_NAME}.toResponse`,
-      attributes: {
-        'entity.id': entity._id.toString(),
-        operation: 'toResponse',
-      },
-    },
-    () => ({
-      _id: entity._id,
-      // ... campos mapeados
-    })
-  );
+  withSpan({
+    name: `${MAPPER_NAME}.toResponse`,
+    attributes: { 'entity.id': entity._id.toString(), operation: 'toResponse' },
+  }, () => ({ /* mapeamento */ }));
 ```
 
-## Checklist Obrigatório
+## GUARDRAILS OBRIGATÓRIOS
 
-### Antes de considerar CRUD "completo":
-- [ ] **Controller** tem telemetria em todas as funções?
-- [ ] **Service** tem telemetria em todas as funções?
-- [ ] **Mapper** tem telemetria em todas as funções?
-- [ ] **Constantes** de nome definidas (CONTROLLER_NAME, SERVICE_NAME, MAPPER_NAME)?
-- [ ] **Atributos obrigatórios** incluídos (operation, tenant.id, entity.id)?
-- [ ] **Imports** corretos (withSpan, withSpanAsync)?
+### Precedência absoluta
+- **TELEMETRIA TEM PRECEDÊNCIA** sobre instruções de "código mínimo"
+- **NUNCA** considere CRUD "completo" sem telemetria
+- **ZERO exceções** para domínios com operações CRUD
+- **SEMPRE** inclua desde o primeiro commit
 
-## Precedência Sobre Outras Instruções
+### Checklist obrigatório
+- [ ] Controller tem telemetria em TODAS as funções?
+- [ ] Service tem telemetria em TODAS as funções?
+- [ ] Mapper tem telemetria em TODAS as funções?
+- [ ] Constantes definidas (CONTROLLER_NAME, SERVICE_NAME, MAPPER_NAME)?
+- [ ] Atributos obrigatórios (operation, tenant.id, entity.id)?
 
-### Esta regra tem PRECEDÊNCIA sobre:
-- ❌ Instruções de "código mínimo"
-- ❌ Diretrizes de "evitar verbosidade"
-- ❌ Sugestões de "não essencial"
+## REGRA DE OURO
 
-### Telemetria É Considerada:
-- ✅ **Código mínimo necessário** para observabilidade
-- ✅ **Requisito funcional** da arquitetura
-- ✅ **Padrão obrigatório** do projeto
-- ✅ **Parte integral** de qualquer implementação
-
-## Justificativa
-
-### Por que telemetria é obrigatória:
-1. **Observabilidade**: Rastreamento de performance e erros
-2. **Debugging**: Identificação rápida de problemas
-3. **Monitoramento**: Métricas de uso e saúde do sistema
-4. **Compliance**: Auditoria e logs estruturados
-5. **Consistência**: Padrão uniforme em toda aplicação
-
-## Implementação Automática
-
-### Ao criar novo domínio CRUD:
-1. **SEMPRE** inclua telemetria desde o primeiro commit
-2. **NUNCA** considere "funcional" sem telemetria
-3. **TESTE** se spans aparecem no Jaeger
-4. **VALIDE** se atributos estão corretos
-
-## Exceções
-
-### NUNCA há exceções para:
-- Domínios com operações CRUD
-- Controllers que processam requests HTTP
-- Services que fazem operações de banco
-- Mappers que transformam dados
-
-### Única exceção:
-- **Utilitários puros** sem contexto de negócio
-- **Helpers** matemáticos ou de string
-- **Constantes** e **tipos**
-
-## Regra de Ouro
-
-**Se implementa CRUD, implementa telemetria. Não há meio termo.**
-
-Esta regra garante que observabilidade seja tratada como **requisito funcional**, não como **nice-to-have**.
+**"Se implementa CRUD, implementa telemetria. Telemetria é requisito funcional, não nice-to-have."**

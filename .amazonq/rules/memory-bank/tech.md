@@ -1,135 +1,185 @@
-# Technology Stack
+# Technology Stack - Backend-Koa IAM
 
-## Core Technologies
+## Programming Languages and Runtime
 
-### Runtime & Language
-- **Node.js**: JavaScript runtime (v22+ recommended)
-- **TypeScript**: Type-safe JavaScript development (v5.9.3)
-- **Koa.js**: Modern web framework for Node.js (v3.0.3)
+### Primary Language
+- **TypeScript 5.9.3**: Full type safety with modern JavaScript features
+- **Node.js 22+**: Latest LTS runtime with performance optimizations
+- **Target**: ES2022 with strict type checking
 
-### Database & ODM
-- **MongoDB**: NoSQL document database
-- **Mongoose**: MongoDB object modeling (v8.19.2)
-- **MongoDB Memory Server**: In-memory testing database (v10.2.3)
+### Configuration
+- **tsconfig.json**: Strict TypeScript configuration with path mapping
+- **@tsconfig/node22**: Base configuration for Node.js 22
+- **Path Aliases**: `@/` for src, `@test/` for tests
 
-## Key Dependencies
+## Core Framework and Server
 
-### Web Framework & Middleware
-- **@koa/router**: HTTP routing (v14.0.0)
-- **@koa/bodyparser**: Request body parsing (v6.0.0)
-- **@koa/cors**: Cross-origin resource sharing (v5.0.0)
-- **koa-mount**: Application mounting (v4.2.0)
-- **koa-static**: Static file serving (v5.0.0)
+### Web Framework
+- **Koa.js 3.0.3**: Lightweight, modern Node.js web framework
+- **@koa/router 14.0.0**: Advanced routing with middleware support
+- **@koa/bodyparser 6.0.0**: Request body parsing
+- **@koa/cors 5.0.0**: Cross-origin resource sharing
 
-### Validation & Documentation
-- **zod**: Schema validation and type inference (v4.1.12)
-- **@asteasolutions/zod-to-openapi**: OpenAPI generation from Zod (v8.1.0)
-- **swagger-ui-dist**: API documentation UI (v5.29.5)
+### Server Enhancements
+- **koa-logger 4.0.0**: HTTP request logging
+- **koa-mount 4.2.0**: Application mounting
+- **koa-static 5.0.0**: Static file serving
 
-### Security & Authentication
-- **jsonwebtoken**: JWT token handling (v9.0.2)
-- **bcrypt**: Password hashing (v6.0.0)
-- **uuid**: UUID generation (v13.0.0)
+## Database and Data Management
 
-### Logging & Monitoring
-- **pino**: High-performance logging (v10.1.0)
-- **pino-caller**: Enhanced logging context (v4.0.0)
-- **pino-pretty**: Development log formatting (v13.1.2)
+### Database System
+- **MongoDB**: Document-based NoSQL database
+- **Mongoose 8.19.2**: MongoDB object modeling with TypeScript support
+- **mongodb-memory-server 10.2.3**: In-memory MongoDB for testing
+
+### Data Validation
+- **Zod 4.1.12**: Runtime type validation and schema definition
+- **@asteasolutions/zod-to-openapi 8.1.0**: OpenAPI generation from Zod schemas
+
+## Authentication and Security
+
+### Authentication
+- **jsonwebtoken 9.0.2**: JWT token generation and verification
+- **@types/jsonwebtoken 9.0.10**: TypeScript definitions
+- **bcrypt 6.0.0**: Password hashing and verification
+- **@types/bcrypt 6.0.0**: TypeScript definitions
+
+### Security Features
+- **uuid 13.0.0**: Secure unique identifier generation
+- **@types/uuid 11.0.0**: TypeScript definitions
+- **OWASP-compliant**: Password policies and security practices
+
+## Observability and Monitoring
+
+### Logging
+- **pino 10.1.0**: High-performance structured logging
+- **pino-caller 4.0.0**: Caller information in logs
+- **pino-pretty 13.1.2**: Pretty-printed logs for development
+
+### Tracing and Telemetry
+- **@opentelemetry/api 1.9.0**: OpenTelemetry API
+- **@opentelemetry/sdk-node 0.208.0**: Node.js SDK
+- **@opentelemetry/auto-instrumentations-node 0.67.0**: Automatic instrumentation
+- **@opentelemetry/resources 2.2.0**: Resource management
+- **@opentelemetry/semantic-conventions 1.38.0**: Standard conventions
+
+### Exporters
+- **@opentelemetry/exporter-jaeger 2.2.0**: Jaeger tracing export
+- **@opentelemetry/exporter-prometheus 0.208.0**: Prometheus metrics export
+
+## API Documentation
+
+### Documentation Generation
+- **swagger-ui-dist 5.29.5**: Interactive API documentation
+- **@types/swagger-ui-dist 3.30.6**: TypeScript definitions
+- **OpenAPI 3.0**: Standard API specification format
 
 ## Development Tools
 
-### Testing Framework
-- **vitest**: Fast unit test runner (v4.0.1)
-- **@vitest/coverage-v8**: Code coverage reporting (v4.0.1)
-- **supertest**: HTTP assertion testing (v7.1.4)
+### Build and Development
+- **nodemon 3.1.10**: Development server with hot reload
+- **ts-node 10.9.2**: TypeScript execution for Node.js
+- **ts-node-dev 2.0.0**: Development server with TypeScript
+- **tsc-alias 1.8.16**: Path alias resolution
+- **tsconfig-paths 4.2.0**: Runtime path mapping
 
 ### Code Quality
-- **eslint**: JavaScript/TypeScript linting (v9.38.0)
-- **@typescript-eslint/**: TypeScript-specific linting rules
-- **prettier**: Code formatting (v3.6.2)
-- **eslint-config-prettier**: ESLint-Prettier integration
+- **ESLint 9.38.0**: JavaScript/TypeScript linting
+- **@typescript-eslint/eslint-plugin 8.46.2**: TypeScript-specific rules
+- **@typescript-eslint/parser 8.46.2**: TypeScript parser for ESLint
+- **eslint-config-prettier 10.1.8**: Prettier integration
+- **eslint-plugin-prettier 5.5.4**: Prettier as ESLint rule
+- **eslint-import-resolver-typescript 4.4.4**: TypeScript import resolution
 
-### Development Environment
-- **nodemon**: Development server with hot reload (v3.1.10)
-- **ts-node**: TypeScript execution (v10.9.2)
-- **tsconfig-paths**: Path mapping support (v4.2.0)
-- **vite-tsconfig-paths**: Vitest path resolution (v5.1.4)
+### Code Formatting
+- **Prettier 3.6.2**: Opinionated code formatter
+- **prettier.config.mjs**: Project-specific formatting rules
 
-## Build & Configuration
+## Testing Framework
 
-### TypeScript Configuration
-- **@tsconfig/node22**: Node.js 22 TypeScript config (v22.0.2)
-- **tsc-alias**: Path alias resolution (v1.8.16)
-- Target: ES2022
-- Module: CommonJS
-- Strict type checking enabled
+### Test Runner
+- **Vitest 4.0.1**: Fast unit test framework with Vite integration
+- **@vitest/coverage-v8 4.0.1**: Code coverage reporting
+- **vite-tsconfig-paths 5.1.4**: Path mapping for Vite
+
+### Testing Utilities
+- **supertest 7.1.4**: HTTP assertion library
+- **@types/supertest 6.0.3**: TypeScript definitions
+- **mongodb-memory-server 10.2.3**: In-memory database for tests
+
+## Configuration and Environment
 
 ### Environment Management
-- **dotenv**: Environment variable loading (v17.2.3)
-- Development and production configurations
-- Docker-based development environment
+- **dotenv 17.2.3**: Environment variable loading
+- **Multi-environment**: Development, testing, production configs
+
+### Package Management
+- **npm-check-updates 19.1.1**: Dependency update management
+- **package-lock.json**: Exact dependency versions
 
 ## Development Commands
 
-### Primary Commands
+### Core Development
 ```bash
-npm run dev          # Start development server with hot reload
-npm run test         # Run all tests
-npm run test:watch   # Run tests in watch mode
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint issues automatically
+npm run dev              # Start development server with hot reload
+npm run type-check       # TypeScript type checking
+npm run lint             # Run ESLint
+npm run lint:fix         # Fix ESLint issues automatically
 ```
 
-### Testing Commands
+### Testing
 ```bash
-npm run test:unit           # Run unit tests only
-npm run test:int            # Run integration tests only
-npm run test:coverage       # Run tests with coverage report
-npm run test:coverage:ui    # Run tests with coverage UI
+npm run test             # Run all tests
+npm run test:unit        # Run unit tests only
+npm run test:int         # Run integration tests only
+npm run test:coverage    # Run tests with coverage report
+npm run test:coverage:ui # Interactive coverage report
+npm run test:watch       # Watch mode for tests
 ```
 
-### Utility Commands
+### Specialized Testing
 ```bash
-npm run ncu         # Check for dependency updates
+npm run test:parallel    # Parallel test execution
+npm run test:unit:coverage    # Unit test coverage
+npm run test:int:coverage     # Integration test coverage
+npm run test:int:parallel     # Parallel integration tests
 ```
 
-## Architecture Patterns
+### Maintenance
+```bash
+npm run ncu              # Check for dependency updates
+```
 
-### Validation Strategy
-- Zod schemas for runtime type validation
-- OpenAPI generation from schemas
-- Type-safe request/response handling
+## Build Configuration
 
-### Database Strategy
-- UUID-based document identifiers
-- Soft delete implementation
-- Multi-tenant data isolation
-- Mongoose schema inheritance
+### TypeScript Configuration
+- **Strict Mode**: Enabled for maximum type safety
+- **Path Mapping**: Absolute imports with `@/` and `@test/` aliases
+- **Target**: ES2022 with Node.js 22 compatibility
+- **Module**: CommonJS for Node.js compatibility
 
-### Error Handling
-- Custom error classes
-- Centralized error middleware
-- Structured error responses
+### Vitest Configuration
+- **Coverage**: V8 provider for accurate coverage reporting
+- **Path Resolution**: TypeScript path mapping support
+- **Test Environment**: Node.js environment
+- **Parallel Execution**: Optimized for CI/CD pipelines
 
-### Logging Strategy
-- Structured logging with Pino
-- Request ID tracking
-- Context-aware logging
-- Development-friendly formatting
+### ESLint Configuration
+- **TypeScript Integration**: Full TypeScript support
+- **Prettier Integration**: Automatic code formatting
+- **Import Resolution**: TypeScript-aware import checking
+- **Modern JavaScript**: ES2022+ feature support
 
-## Performance Considerations
+## Container and Deployment
 
-### Database Optimization
-- Indexed queries for tenant isolation
-- Efficient UUID-based lookups
-- Connection pooling with Mongoose
+### Development Environment
+- **Docker**: Containerized development environment
+- **Docker Compose**: Multi-service orchestration
+- **DevContainer**: VS Code development container support
+- **MongoDB**: Containerized database for development
 
-### API Performance
-- Lightweight Koa.js framework
-- Efficient middleware pipeline
-- Structured validation with Zod
-
-### Development Performance
-- Fast test execution with Vitest
-- Hot reload for rapid development
-- Efficient TypeScript compilation
+### Production Considerations
+- **Node.js 22**: LTS runtime for stability
+- **Environment Variables**: Secure configuration management
+- **Health Checks**: Application health monitoring
+- **Graceful Shutdown**: Proper resource cleanup
