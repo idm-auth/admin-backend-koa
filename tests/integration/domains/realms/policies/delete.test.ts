@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import { getTenantId } from '@test/utils/tenant.util';
 import * as policyService from '@/domains/realms/policies/policy.service';

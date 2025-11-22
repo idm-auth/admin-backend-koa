@@ -8,34 +8,16 @@ import {
 
 const MAPPER_NAME = 'account';
 
-const getPrimaryEmail = (account: Account) => {
-  if (!account.emails || account.emails.length === 0) {
-    throw new Error('Account must have at least one email');
-  }
-  const primaryEmail = account.emails.find((e) => e.isPrimary);
-  const selectedEmail = primaryEmail || account.emails[0];
-
-  if (!selectedEmail || !selectedEmail.email) {
-    throw new Error('Invalid email data in account');
-  }
-
-  return selectedEmail;
-};
-
 export const toCreateResponse = (account: Account): AccountCreateResponse => {
   return withSpan(
     {
       name: `${MAPPER_NAME}.mapper.toCreateResponse`,
       attributes: { 'account.id': account._id.toString() },
     },
-    () => {
-      const email = getPrimaryEmail(account);
-      return {
-        _id: account._id.toString(),
-        email: email.email,
-        isPrimary: email.isPrimary,
-      };
-    }
+    () => ({
+      _id: account._id.toString(),
+      emails: account.emails,
+    })
   );
 };
 
@@ -45,14 +27,10 @@ export const toUpdateResponse = (account: Account): AccountUpdateResponse => {
       name: `${MAPPER_NAME}.mapper.toUpdateResponse`,
       attributes: { 'account.id': account._id.toString() },
     },
-    () => {
-      const email = getPrimaryEmail(account);
-      return {
-        _id: account._id.toString(),
-        email: email.email,
-        isPrimary: email.isPrimary,
-      };
-    }
+    () => ({
+      _id: account._id.toString(),
+      emails: account.emails,
+    })
   );
 };
 
@@ -64,13 +42,9 @@ export const toListItemResponse = (
       name: `${MAPPER_NAME}.mapper.toListItemResponse`,
       attributes: { 'account.id': account._id.toString() },
     },
-    () => {
-      const email = getPrimaryEmail(account);
-      return {
-        _id: account._id.toString(),
-        email: email.email,
-        isPrimary: email.isPrimary,
-      };
-    }
+    () => ({
+      _id: account._id.toString(),
+      emails: account.emails,
+    })
   );
 };

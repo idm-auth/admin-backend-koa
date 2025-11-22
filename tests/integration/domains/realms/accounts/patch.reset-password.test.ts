@@ -38,10 +38,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
     const accountResponse: AccountBaseResponse = response.body;
     expect(accountResponse).toHaveProperty('_id', accountId);
-    expect(accountResponse).toHaveProperty(
-      'email',
-      createTestEmail('resettest')
-    );
+    expect(accountResponse.emails).toHaveLength(1);
+    expect(accountResponse.emails[0].email).toBe(createTestEmail('resettest'));
     expect(accountResponse).not.toHaveProperty('password');
   });
 

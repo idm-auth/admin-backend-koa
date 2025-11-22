@@ -31,7 +31,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
 
     const accountResponse: AccountBaseResponse = response.body;
     expect(accountResponse).toHaveProperty('_id', createdAccountId);
-    expect(accountResponse).toHaveProperty('email');
+    expect(accountResponse.emails).toHaveLength(1);
     expect(accountResponse).not.toHaveProperty('password');
   });
 

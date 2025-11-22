@@ -18,10 +18,14 @@ export const accountCreateSchema = z.object({
 });
 
 // Response schemas
-export const accountBaseResponseSchema = z.strictObject({
-  _id: DocIdSchema,
+export const accountEmailSchema = z.object({
   email: emailSchema,
   isPrimary: z.boolean(),
+});
+
+export const accountBaseResponseSchema = z.strictObject({
+  _id: DocIdSchema,
+  emails: z.array(accountEmailSchema),
 });
 
 export const accountCreateResponseSchema = accountBaseResponseSchema;

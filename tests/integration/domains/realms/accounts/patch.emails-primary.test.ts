@@ -48,11 +48,9 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
 
     const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
-    expect(emailResponse).toHaveProperty(
-      'email',
-      createTestEmail('secondary1')
-    );
-    expect(emailResponse).toHaveProperty('isPrimary', true);
+    expect(emailResponse.emails).toHaveLength(3);
+    const primaryEmail = emailResponse.emails.find((e) => e.isPrimary);
+    expect(primaryEmail?.email).toBe(createTestEmail('secondary1'));
     expect(emailResponse).not.toHaveProperty('password');
   });
 
@@ -114,11 +112,9 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
 
     const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
-    expect(emailResponse).toHaveProperty(
-      'email',
-      createTestEmail('secondary1')
-    );
-    expect(emailResponse).toHaveProperty('isPrimary', true);
+    expect(emailResponse.emails).toHaveLength(3);
+    const primaryEmail = emailResponse.emails.find((e) => e.isPrimary);
+    expect(primaryEmail?.email).toBe(createTestEmail('secondary1'));
   });
 
   it('should change primary email from one to another', async () => {
@@ -133,11 +129,9 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
 
     const emailResponse: AccountReadResponse = response.body;
     expect(emailResponse).toHaveProperty('_id', accountId);
-    expect(emailResponse).toHaveProperty(
-      'email',
-      createTestEmail('secondary2')
-    );
-    expect(emailResponse).toHaveProperty('isPrimary', true);
+    expect(emailResponse.emails).toHaveLength(3);
+    const primaryEmail = emailResponse.emails.find((e) => e.isPrimary);
+    expect(primaryEmail?.email).toBe(createTestEmail('secondary2'));
   });
 
   it('should return 404 for non-existent account', async () => {

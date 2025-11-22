@@ -4,7 +4,6 @@ import { PolicyCreate } from './policy.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { getLogger } from '@/utils/localStorage.util';
 import { NotFoundError } from '@/errors/not-found';
-import { sanitizeRegexInputForFilter } from '@/utils/pagination.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 
 const SERVICE_NAME = 'policy.service';

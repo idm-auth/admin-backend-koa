@@ -37,7 +37,7 @@ describe('PUT /api/realm/:tenantId/accounts/:id', () => {
 
     const accountResponse: AccountBaseResponse = response.body;
     expect(accountResponse).toHaveProperty('_id', createdAccountId);
-    expect(accountResponse).toHaveProperty('email');
+    expect(accountResponse.emails).toHaveLength(1);
     expect(accountResponse).not.toHaveProperty('password');
   });
 
@@ -69,7 +69,7 @@ describe('PUT /api/realm/:tenantId/accounts/:id', () => {
 
     const accountResponse: AccountBaseResponse = response.body;
     expect(accountResponse).toHaveProperty('_id', createdAccountId);
-    expect(accountResponse).toHaveProperty('email'); // Email original mantido
+    expect(accountResponse.emails).toHaveLength(1); // Email original mantido
     expect(accountResponse).not.toHaveProperty('password');
   });
 

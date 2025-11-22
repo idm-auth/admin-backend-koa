@@ -28,7 +28,9 @@ describe('POST /api/realm/:tenantId/accounts', () => {
     const account: AccountBaseResponse = response.body;
 
     expect(account).toHaveProperty('_id');
-    expect(account.email).toBe(accountData.email);
+    expect(account.emails).toHaveLength(1);
+    expect(account.emails[0].email).toBe(accountData.email);
+    expect(account.emails[0].isPrimary).toBe(true);
     expect(account).not.toHaveProperty('password');
   });
 

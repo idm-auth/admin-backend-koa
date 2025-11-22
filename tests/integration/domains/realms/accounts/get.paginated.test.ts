@@ -40,7 +40,8 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
       // Verificar estrutura dos objetos retornados
       paginatedResponse.data.forEach((account) => {
         expect(account).toHaveProperty('_id');
-        expect(account).toHaveProperty('email');
+        expect(account).toHaveProperty('emails');
+        expect(Array.isArray(account.emails)).toBe(true);
         expect(account).not.toHaveProperty('password');
       });
     });
