@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.remove', () => {
   it('should throw NotFoundError when account not found', async () => {
-    const tenantId = await getTenantId('test-account-remove');
+    const tenantId = await getTenantId('vi-test-db-account-remove');
     const nonExistentId = uuidv4();
 
     await expect(
@@ -17,7 +17,7 @@ describe('account.service.remove', () => {
   });
 
   it('should remove account successfully', async () => {
-    const tenantId = await getTenantId('test-account-remove-2');
+    const tenantId = await getTenantId('vi-test-db-account-remove-2');
     const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount: AccountDocument = await accountService.create(

@@ -12,4 +12,12 @@ describe('GET /api/config/init-setup', () => {
     expect(response.body).toHaveProperty('status');
     expect([200, 201]).toContain(response.body.status);
   });
+
+  it('should return 200 when config already exists', async () => {
+    const response = await request(getApp().callback())
+      .get('/api/config/init-setup')
+      .expect(200);
+
+    expect(response.body.status).toBe(200);
+  });
 });

@@ -9,7 +9,7 @@ describe('config.service getWebAdminConfig', () => {
   it('should get web admin config', async () => {
     const config = await getWebAdminConfig({
       app: 'web-admin',
-      env: 'test'
+      env: 'test',
     });
 
     expect(config).toHaveProperty('app', 'web-admin');

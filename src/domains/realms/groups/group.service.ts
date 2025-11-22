@@ -80,8 +80,6 @@ export const findById = async (tenantId: string, id: DocId): Promise<Group> => {
   );
 };
 
-
-
 export const update = async (
   tenantId: string,
   id: string,

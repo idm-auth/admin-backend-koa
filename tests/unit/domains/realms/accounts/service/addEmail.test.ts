@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.addEmail', () => {
   it('should throw NotFoundError when account not found', async () => {
-    const tenantId = await getTenantId('test-account-addemail');
+    const tenantId = await getTenantId('vi-test-db-account-addemail');
     const nonExistentId = uuidv4();
     const email = generateTestEmail('test'); // Test credential - not production
 
@@ -18,7 +18,7 @@ describe('account.service.addEmail', () => {
   });
 
   it('should add email successfully', async () => {
-    const tenantId = await getTenantId('test-account-addemail-2');
+    const tenantId = await getTenantId('vi-test-db-account-addemail-2');
     const primaryEmail = generateTestEmail('primary'); // Test credential - not production
     const secondaryEmail = generateTestEmail('secondary'); // Test credential - not production
 
@@ -43,7 +43,7 @@ describe('account.service.addEmail', () => {
   });
 
   it('should throw error for duplicate email in same account', async () => {
-    const tenantId = await getTenantId('test-account-addemail-3');
+    const tenantId = await getTenantId('vi-test-db-account-addemail-3');
     const email = generateTestEmail('test'); // Test credential - not production
 
     const createdAccount = await accountService.create(tenantId, {
@@ -57,7 +57,7 @@ describe('account.service.addEmail', () => {
   });
 
   it('should throw NotFoundError when account deleted after validation', async () => {
-    const tenantId = await getTenantId('test-add-email-not-found-after');
+    const tenantId = await getTenantId('vi-test-db-add-email-not-found-after');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('add-email'), // Test credential - not production
@@ -76,7 +76,9 @@ describe('account.service.addEmail', () => {
   });
 
   it('should handle addEmail with duplicate email validation', async () => {
-    const tenantId = await getTenantId('test-add-email-duplicate-validation');
+    const tenantId = await getTenantId(
+      'vi-test-db-add-email-duplicate-validation'
+    );
     const primaryEmail = generateTestEmail('primary'); // Test credential - not production
     const secondaryEmail = generateTestEmail('secondary'); // Test credential - not production
 

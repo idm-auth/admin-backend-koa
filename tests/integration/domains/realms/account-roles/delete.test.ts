@@ -15,7 +15,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-account-roles-delete');
+    tenantId = await getTenantId('vi-test-db-account-roles-delete');
 
     // Create account
     const accountResponse = await request(getApp().callback())

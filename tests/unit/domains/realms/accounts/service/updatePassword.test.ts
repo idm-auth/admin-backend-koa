@@ -8,7 +8,9 @@ import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('account.service.updatePassword', () => {
   it('should throw NotFoundError when current password is incorrect', async () => {
-    const tenantId = await getTenantId('test-update-password-wrong-current');
+    const tenantId = await getTenantId(
+      'vi-test-db-update-password-wrong-current'
+    );
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('update-pwd'), // Test credential - not production
@@ -26,7 +28,7 @@ describe('account.service.updatePassword', () => {
   });
 
   it('should update password successfully', async () => {
-    const tenantId = await getTenantId('test-update-password-success');
+    const tenantId = await getTenantId('vi-test-db-update-password-success');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('update-pwd-success'), // Test credential - not production
@@ -45,7 +47,9 @@ describe('account.service.updatePassword', () => {
   });
 
   it('should throw NotFoundError when account deleted between validation and update', async () => {
-    const tenantId = await getTenantId('test-update-password-race-condition');
+    const tenantId = await getTenantId(
+      'vi-test-db-update-password-race-condition'
+    );
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('race'), // Test credential - not production
@@ -65,7 +69,7 @@ describe('account.service.updatePassword', () => {
   });
 
   it('should handle updatePassword save error', async () => {
-    const tenantId = await getTenantId('test-update-password-save-error');
+    const tenantId = await getTenantId('vi-test-db-update-password-save-error');
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const account = await accountService.create(tenantId, {

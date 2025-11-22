@@ -81,10 +81,7 @@ export const update = async (ctx: Context) => {
 
       const account = await accountService.update(tenantId, id, updateData);
 
-      logger.info(
-        { tenantId, accountId: id },
-        'Account updated successfully'
-      );
+      logger.info({ tenantId, accountId: id }, 'Account updated successfully');
 
       ctx.body = accountMapper.toUpdateResponse(account);
     }
@@ -154,10 +151,7 @@ export const remove = async (ctx: Context) => {
 
       await accountService.remove(tenantId, id);
 
-      logger.info(
-        { tenantId, accountId: id },
-        'Account removed successfully'
-      );
+      logger.info({ tenantId, accountId: id }, 'Account removed successfully');
 
       ctx.status = 204;
     }

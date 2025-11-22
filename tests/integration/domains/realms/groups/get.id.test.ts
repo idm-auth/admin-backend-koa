@@ -13,7 +13,7 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-get-id');
+    tenantId = await getTenantId('vi-test-db-tenant-group-get-id');
 
     // Criar um grupo para os testes usando service
     const group = await groupService.create(tenantId, {

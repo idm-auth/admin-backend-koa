@@ -13,7 +13,7 @@ describe('DELETE /api/realm/:tenantId/accounts/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-account-delete');
+    tenantId = await getTenantId('vi-test-db-tenant-account-delete');
 
     // Criar uma conta para os testes usando service
     const account = await accountService.create(tenantId, {

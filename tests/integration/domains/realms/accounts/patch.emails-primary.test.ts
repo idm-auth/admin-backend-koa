@@ -14,7 +14,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-primary-email');
+    tenantId = await getTenantId('vi-test-db-tenant-primary-email');
 
     // Criar uma conta para testar definir email principal usando service
     const account = await accountService.create(tenantId, {

@@ -11,8 +11,8 @@ describe('PUT /api/realm/:tenantId/policies/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-policy-put');
-    
+    tenantId = await getTenantId('vi-test-db-tenant-policy-put');
+
     const policy = await policyService.create(tenantId, {
       name: 'Test Policy Update',
       description: 'Policy for PUT test',

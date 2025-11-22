@@ -11,7 +11,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 
 describe('account.service.removeEmail', () => {
   it('should throw ValidationError when trying to remove the only email', async () => {
-    const tenantId = await getTenantId('test-remove-only-email');
+    const tenantId = await getTenantId('vi-test-db-remove-only-email');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('only-email'), // Test credential - not production
@@ -26,7 +26,7 @@ describe('account.service.removeEmail', () => {
   });
 
   it('should throw NotFoundError when email does not exist in account', async () => {
-    const tenantId = await getTenantId('test-remove-nonexistent-email');
+    const tenantId = await getTenantId('vi-test-db-remove-nonexistent-email');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('main'), // Test credential - not production
@@ -49,7 +49,7 @@ describe('account.service.removeEmail', () => {
   });
 
   it('should remove email successfully', async () => {
-    const tenantId = await getTenantId('test-remove-email-success');
+    const tenantId = await getTenantId('vi-test-db-remove-email-success');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('main'), // Test credential - not production
@@ -72,7 +72,9 @@ describe('account.service.removeEmail', () => {
   });
 
   it('should throw NotFoundError when account deleted after validation', async () => {
-    const tenantId = await getTenantId('test-remove-email-not-found-after');
+    const tenantId = await getTenantId(
+      'vi-test-db-remove-email-not-found-after'
+    );
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('remove-email'), // Test credential - not production

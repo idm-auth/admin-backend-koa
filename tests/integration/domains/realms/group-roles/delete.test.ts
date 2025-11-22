@@ -13,7 +13,7 @@ describe('DELETE /api/realm/:tenantId/group-roles', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-roles-delete');
+    tenantId = await getTenantId('vi-test-db-tenant-group-roles-delete');
 
     const group = await groupService.create(tenantId, {
       name: 'Test Group Delete',

@@ -14,7 +14,7 @@ describe('role.mapper.toListResponse', () => {
         updatedAt: new Date('2023-01-02'),
       } as RoleDocument,
       {
-        _id: 'role-2', 
+        _id: 'role-2',
         name: 'User Role',
         description: 'Standard user role',
         permissions: ['read'],
@@ -27,7 +27,7 @@ describe('role.mapper.toListResponse', () => {
 
     expect(Array.isArray(response)).toBe(true);
     expect(response.length).toBe(2);
-    
+
     expect(response[0]).toEqual({
       _id: 'role-1',
       name: 'Admin Role',
@@ -39,7 +39,7 @@ describe('role.mapper.toListResponse', () => {
 
     expect(response[1]).toEqual({
       _id: 'role-2',
-      name: 'User Role', 
+      name: 'User Role',
       description: 'Standard user role',
       permissions: ['read'],
       createdAt: '2023-01-03T00:00:00.000Z',

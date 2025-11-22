@@ -6,7 +6,7 @@ import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('account.service.findByEmail', () => {
   it('should throw NotFoundError when email not found', async () => {
-    const tenantId = await getTenantId('test-account-findbyemail');
+    const tenantId = await getTenantId('vi-test-db-account-findbyemail');
     const nonExistentEmail = generateTestEmail('non-existent'); // Test credential - not production
 
     await expect(
@@ -15,7 +15,7 @@ describe('account.service.findByEmail', () => {
   });
 
   it('should return account when found by email', async () => {
-    const tenantId = await getTenantId('test-account-findbyemail-2');
+    const tenantId = await getTenantId('vi-test-db-account-findbyemail-2');
     const email = generateTestEmail('test'); // Test credential - not production
 
     const createdAccount = await accountService.create(tenantId, {

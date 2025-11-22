@@ -9,13 +9,25 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-role-paginated');
+    tenantId = await getTenantId('vi-test-db-tenant-role-paginated');
 
     // Criar alguns roles para os testes usando service
     const rolesData = [
-      { name: 'Admin Role', description: 'Administrator role', permissions: ['read', 'write', 'delete'] },
-      { name: 'User Role', description: 'Standard user role', permissions: ['read'] },
-      { name: 'Editor Role', description: 'Content editor role', permissions: ['read', 'write'] },
+      {
+        name: 'Admin Role',
+        description: 'Administrator role',
+        permissions: ['read', 'write', 'delete'],
+      },
+      {
+        name: 'User Role',
+        description: 'Standard user role',
+        permissions: ['read'],
+      },
+      {
+        name: 'Editor Role',
+        description: 'Content editor role',
+        permissions: ['read', 'write'],
+      },
     ];
 
     for (const roleData of rolesData) {
@@ -46,7 +58,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     });
 
     it('should return empty array when no roles exist', async () => {
-      const emptyTenantId = await getTenantId('test-tenant-empty-roles');
+      const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-roles');
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/roles/`)
@@ -79,7 +91,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
 
       expect(response.body).toHaveProperty('data');
       expect(Array.isArray(response.body.data)).toBe(true);
-      
+
       if (response.body.data.length > 1) {
         const firstRole = response.body.data[0].name;
         const secondRole = response.body.data[1].name;

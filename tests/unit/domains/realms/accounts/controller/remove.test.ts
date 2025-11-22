@@ -6,7 +6,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 
 describe('account.controller.remove error handling', () => {
   it('should handle service error and log it', async () => {
-    const tenantId = await getTenantId('test-controller-remove-error');
+    const tenantId = await getTenantId('vi-test-db-controller-remove-error');
     const nonExistentAccountId = uuidv4();
 
     const ctx = {

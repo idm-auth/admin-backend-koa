@@ -16,7 +16,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-reset-password');
+    tenantId = await getTenantId('vi-test-db-tenant-reset-password');
 
     // Criar uma conta para testar o reset usando service
     const account = await accountService.create(tenantId, {

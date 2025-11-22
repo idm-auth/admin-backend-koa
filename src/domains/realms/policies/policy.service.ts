@@ -60,8 +60,6 @@ export const findById = async (
   );
 };
 
-
-
 export const update = async (
   tenantId: string,
   id: string,

@@ -15,7 +15,7 @@ describe('GET /api/core/realms (paginated)', () => {
       const realmData = {
         name: `test-realm-${i.toString().padStart(2, '0')}`,
         description: `Test realm ${i} for pagination`,
-        dbName: `test_db_${i}`,
+        dbName: `vi-test-db-${i}`,
         jwtConfig: {
           secret: 'test-secret',
           expiresIn: '24h',

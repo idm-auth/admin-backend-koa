@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('group-role.service.removeRoleFromGroup', () => {
   it('should throw NotFoundError when group-role relationship not found', async () => {
-    const tenantId = await getTenantId('test-service-remove-not-found');
+    const tenantId = await getTenantId('vi-test-db-service-remove-not-found');
     const groupId = uuidv4();
     const roleId = uuidv4();
 

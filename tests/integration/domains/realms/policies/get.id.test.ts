@@ -11,8 +11,8 @@ describe('GET /api/realm/:tenantId/policies/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-policy-get');
-    
+    tenantId = await getTenantId('vi-test-db-tenant-policy-get');
+
     const policy = await policyService.create(tenantId, {
       name: 'Test Policy Get',
       description: 'Policy for GET test',

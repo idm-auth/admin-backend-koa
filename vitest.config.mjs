@@ -9,17 +9,11 @@ export default defineConfig({
     pool: 'threads', // Opções: 'threads' | 'forks' | 'vmThreads' | false
     poolOptions: {
       threads: {
-        minThreads: 10,
-        maxThreads: 20, // Recomendado: número de CPUs
-        useAtomics: true, // Melhor performance
-        isolate: true, // Isolamento entre testes
+        minThreads: 1,
+        maxThreads: 24,
+        useAtomics: true,
+        isolate: false,
       },
-      // Para pool: 'forks'
-      // forks: {
-      //   minForks: 1,
-      //   maxForks: 4,
-      //   isolate: true,
-      // },
     },
     env: {
       NODE_ENV: 'test',
@@ -29,6 +23,8 @@ export default defineConfig({
       'tests/setup/base.setup.ts',
       'tests/setup/integration.setup.ts',
     ],
+    globalSetup: './tests/setup/globalSetup.ts',
+    globalTeardown: './tests/setup/globalTeardown.ts',
 
     include: ['tests/**/*.test.ts'],
     // Configurações de performance

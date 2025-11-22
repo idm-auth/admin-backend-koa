@@ -28,7 +28,9 @@ describe('GET /api-docs endpoints', () => {
       .get('/api-docs/swagger-initializer.js')
       .expect(200);
 
-    expect(response.headers['content-type']).toContain('application/javascript');
+    expect(response.headers['content-type']).toContain(
+      'application/javascript'
+    );
     expect(response.text).toContain('/api-docs/swagger.json');
   });
 });

@@ -8,7 +8,7 @@ describe('POST /api/realm/:tenantId/policies', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-policy-post');
+    tenantId = await getTenantId('vi-test-db-tenant-policy-post');
   });
 
   it('should create a new policy successfully', async () => {

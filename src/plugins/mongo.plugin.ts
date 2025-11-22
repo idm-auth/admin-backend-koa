@@ -17,7 +17,8 @@ export const initMainConnection = async (mongodbUri?: string) => {
   );
   logger.info({ mongodbUri: sanitizedUri }, 'MongoDB URI configured');
   if (!mainConnection) {
-    mainConnection = await mongoose.createConnection(mongodbUriCfg);
+    const pconn = mongoose.createConnection(mongodbUriCfg).asPromise();
+    mainConnection = await pconn;
   }
   return mainConnection;
 };
@@ -37,6 +38,11 @@ export const getCoreDb = (): Connection => {
 export const getRealmDb = (dbName: DBName): Connection => {
   if (!mainConnection) throw new Error('Conexão principal não inicializada');
   return mainConnection.useDb(dbName, { useCache: true });
+};
+
+export const getMainConnection = (): Connection => {
+  if (!mainConnection) throw new Error('Conexão principal não inicializada');
+  return mainConnection;
 };
 
 export const closeMainConnection = async () => {

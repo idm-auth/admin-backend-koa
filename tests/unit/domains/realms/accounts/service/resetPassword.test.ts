@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.resetPassword', () => {
   it('should throw NotFoundError when account does not exist', async () => {
-    const tenantId = await getTenantId('test-reset-password-not-found');
+    const tenantId = await getTenantId('vi-test-db-reset-password-not-found');
     const nonExistentId = uuidv4();
     const newPassword = 'NewPassword123!';
 
@@ -19,7 +19,7 @@ describe('account.service.resetPassword', () => {
   });
 
   it('should reset password successfully', async () => {
-    const tenantId = await getTenantId('test-reset-password-success');
+    const tenantId = await getTenantId('vi-test-db-reset-password-success');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('reset'), // Test credential - not production
@@ -39,7 +39,9 @@ describe('account.service.resetPassword', () => {
   });
 
   it('should handle validation error and throw ZodError', async () => {
-    const tenantId = await getTenantId('test-reset-password-validation-error');
+    const tenantId = await getTenantId(
+      'vi-test-db-reset-password-validation-error'
+    );
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('reset-validation'), // Test credential - not production
@@ -52,7 +54,9 @@ describe('account.service.resetPassword', () => {
   });
 
   it('should handle invalid password format', async () => {
-    const tenantId = await getTenantId('test-reset-password-invalid-format');
+    const tenantId = await getTenantId(
+      'vi-test-db-reset-password-invalid-format'
+    );
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('reset-invalid'), // Test credential - not production
@@ -65,7 +69,7 @@ describe('account.service.resetPassword', () => {
   });
 
   it('should handle resetPassword save error', async () => {
-    const tenantId = await getTenantId('test-reset-password-save-error');
+    const tenantId = await getTenantId('vi-test-db-reset-password-save-error');
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const account = await accountService.create(tenantId, {
@@ -79,11 +83,7 @@ describe('account.service.resetPassword', () => {
 
     try {
       await expect(
-        accountService.resetPassword(
-          tenantId,
-          account._id,
-          'NewPassword789!'
-        )
+        accountService.resetPassword(tenantId, account._id, 'NewPassword789!')
       ).rejects.toThrow('Database save error');
     } finally {
       saveSpy.mockRestore();

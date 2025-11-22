@@ -30,4 +30,10 @@ describe('GET /api/config/app/:appName/env/:env', () => {
     expect(response.body).toHaveProperty('api');
     expect(response.body).toHaveProperty('coreRealm');
   });
+
+  it('should return 404 for nonexistent config', async () => {
+    await request(getApp().callback())
+      .get('/api/config/app/nonexistent/env/test')
+      .expect(404);
+  });
 });

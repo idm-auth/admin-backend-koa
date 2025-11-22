@@ -88,7 +88,7 @@ export const login = async (
           {
             tenantId,
             email: args.email,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error,
           },
           'Login process failed with unexpected error'
         );

@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.create', () => {
   it('should throw ValidationError for duplicate email', async () => {
-    const tenantId = await getTenantId('test-account-create-duplicate');
+    const tenantId = await getTenantId('vi-test-db-account-create-duplicate');
     const email = generateTestEmail('test', uuidv4()); // Test email - not production
 
     await accountService.create(tenantId, {
@@ -24,7 +24,7 @@ describe('account.service.create', () => {
   });
 
   it('should create account successfully', async () => {
-    const tenantId = await getTenantId('test-account-create-success');
+    const tenantId = await getTenantId('vi-test-db-account-create-success');
     const email = generateTestEmail('test', uuidv4()); // Test email - not production
 
     const account = await accountService.create(tenantId, {

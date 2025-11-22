@@ -11,7 +11,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-put-id');
+    tenantId = await getTenantId('vi-test-db-tenant-group-put-id');
 
     // Criar um grupo para os testes usando service
     const group = await groupService.create(tenantId, {

@@ -16,7 +16,7 @@ describe('POST /api/realm/:tenantId/account-roles', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-account-roles-post');
+    tenantId = await getTenantId('vi-test-db-account-roles-post');
 
     // Create account
     const accountResponse = await request(getApp().callback())

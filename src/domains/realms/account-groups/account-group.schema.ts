@@ -42,7 +42,9 @@ export const updateAccountGroupRolesSchema = z.object({
 });
 
 export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;
-export type AccountGroupBaseResponse = z.infer<typeof accountGroupBaseResponseSchema>;
+export type AccountGroupBaseResponse = z.infer<
+  typeof accountGroupBaseResponseSchema
+>;
 export type AccountParams = z.infer<typeof accountParamsSchema>;
 export type GroupParams = z.infer<typeof groupParamsSchema>;
 export type RemoveAccountFromGroup = z.infer<

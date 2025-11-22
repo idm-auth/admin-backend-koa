@@ -13,7 +13,7 @@ describe('DELETE /api/core/realms/:id', () => {
     const realmData = {
       name: 'test-realm-delete',
       description: 'Test realm for deletion',
-      dbName: 'test-db-delete',
+      dbName: 'vi-test-db-delete',
       jwtConfig: {
         secret: 'test-secret-delete',
         expiresIn: '24h',
@@ -68,7 +68,7 @@ describe('DELETE /api/core/realms/:id', () => {
     const realmData = {
       name: 'test-realm-double-delete',
       description: 'Test realm for double deletion',
-      dbName: 'test-db-double-delete',
+      dbName: 'vi-test-db-double-delete',
     };
 
     const realm: Realm = await realmService.create(realmData);

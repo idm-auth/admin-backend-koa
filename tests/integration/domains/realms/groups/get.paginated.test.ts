@@ -9,7 +9,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-paginated');
+    tenantId = await getTenantId('vi-test-db-tenant-group-paginated');
 
     // Criar alguns grupos para os testes usando service
     const groupsData = [
@@ -43,7 +43,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     });
 
     it('should return empty array when no groups exist', async () => {
-      const emptyTenantId = await getTenantId('test-tenant-empty-groups');
+      const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-groups');
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/groups/`)
@@ -122,7 +122,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should handle database error in pagination gracefully', async () => {
       // Usar tenant inválido para forçar erro no getDBName (linha 87-112)
       const invalidTenantId = 'invalid-format-tenant';
-      
+
       const response = await request(getApp().callback())
         .get(`/api/realm/${invalidTenantId}/groups`)
         .query({ page: 1, limit: 10 })
@@ -134,7 +134,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should handle pagination with all sort options', async () => {
       // Testar diferentes campos de ordenação para cobrir todas as linhas
       const sortFields = ['name', 'description', 'createdAt', 'updatedAt'];
-      
+
       for (const sortBy of sortFields) {
         const response = await request(getApp().callback())
           .get(`/api/realm/${tenantId}/groups`)

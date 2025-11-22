@@ -5,7 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account-role.service.create', () => {
   it('should create account-role relationship successfully', async () => {
-    const tenantId = await getTenantId('test-account-role-service-create');
+    const tenantId = await getTenantId(
+      'vi-test-db-account-role-service-create'
+    );
     const relationshipData = {
       accountId: uuidv4(),
       roleId: uuidv4(),

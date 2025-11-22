@@ -14,7 +14,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-account-get-id');
+    tenantId = await getTenantId('vi-test-db-tenant-account-get-id');
 
     // Criar uma conta para os testes usando service
     const account = await accountService.create(tenantId, {

@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.update', () => {
   it('should throw NotFoundError when account not found', async () => {
-    const tenantId = await getTenantId('test-account-update');
+    const tenantId = await getTenantId('vi-test-db-account-update');
     const nonExistentId = uuidv4();
 
     await expect(
@@ -20,7 +20,7 @@ describe('account.service.update', () => {
   });
 
   it('should return account when update with empty data', async () => {
-    const tenantId = await getTenantId('test-account-update-2');
+    const tenantId = await getTenantId('vi-test-db-account-update-2');
     const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {
@@ -39,7 +39,7 @@ describe('account.service.update', () => {
   });
 
   it('should exclude email and password from update', async () => {
-    const tenantId = await getTenantId('test-account-update-3');
+    const tenantId = await getTenantId('vi-test-db-account-update-3');
     const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {

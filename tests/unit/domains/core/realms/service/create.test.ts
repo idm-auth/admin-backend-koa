@@ -31,14 +31,14 @@ describe('realm.service.create', () => {
 
     const first: Realm = await realmService.create({
       name: uniqueName,
-      dbName: `test-db-${uuidv4()}`,
+      dbName: `vi-test-db-${uuidv4()}`,
       description: 'First realm',
     });
 
     await expect(
       realmService.create({
         name: uniqueName,
-        dbName: `test-db-${uuidv4()}`,
+        dbName: `vi-test-db-${uuidv4()}`,
         description: 'Second realm',
       })
     ).rejects.toThrow('Resource already exists');
@@ -53,7 +53,7 @@ describe('realm.service.create', () => {
 
     const first: Realm = await realmService.create({
       name: `test-realm-${uuidv4()}`,
-      dbName: `test-db-${uuidv4()}`,
+      dbName: `vi-test-db-${uuidv4()}`,
       publicUUID,
       description: 'First realm',
     });
@@ -61,7 +61,7 @@ describe('realm.service.create', () => {
     await expect(
       realmService.create({
         name: `test-realm-${uuidv4()}`,
-        dbName: `test-db-${uuidv4()}`,
+        dbName: `vi-test-db-${uuidv4()}`,
         publicUUID,
         description: 'Second realm',
       })
@@ -79,7 +79,7 @@ describe('realm.service.create', () => {
     await expect(
       realmService.create({
         name: 'test',
-        dbName: 'test',
+        dbName: 'vi-test-db-test',
       })
     ).rejects.toBe('string error');
 

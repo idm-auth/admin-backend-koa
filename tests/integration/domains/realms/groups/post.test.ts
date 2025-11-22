@@ -9,7 +9,7 @@ describe('POST /api/realm/:tenantId/groups', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-post');
+    tenantId = await getTenantId('vi-test-db-tenant-group-post');
   });
 
   it('should create a new group successfully', async () => {

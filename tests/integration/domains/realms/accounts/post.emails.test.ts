@@ -18,7 +18,7 @@ describe('POST /api/realm/:tenantId/accounts/:id/email', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-add-email');
+    tenantId = await getTenantId('vi-test-db-tenant-add-email');
 
     // Criar uma conta para testar adicionar email usando service
     const account = await accountService.create(tenantId, {

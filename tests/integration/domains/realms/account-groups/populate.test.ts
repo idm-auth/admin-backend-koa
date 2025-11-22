@@ -15,7 +15,7 @@ describe('AccountGroups Populate Test', () => {
   let roleId: string;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-populate');
+    tenantId = await getTenantId('vi-test-db-tenant-populate');
 
     // Criar account, group e role com email único
     const uniqueEmail = generateTestEmail('populate');

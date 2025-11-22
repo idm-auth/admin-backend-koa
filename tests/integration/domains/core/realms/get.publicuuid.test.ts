@@ -15,7 +15,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
     const realmData = {
       name: 'test-realm-publicuuid',
       description: 'Test realm for publicUUID endpoint',
-      dbName: 'test-db-publicuuid',
+      dbName: 'vi-test-db-publicuuid',
       jwtConfig: {
         secret: 'test-secret-publicuuid',
         expiresIn: '24h',
@@ -42,7 +42,7 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       'description',
       'Test realm for publicUUID endpoint'
     );
-    expect(realmResponse).toHaveProperty('dbName', 'test-db-publicuuid');
+    expect(realmResponse).toHaveProperty('dbName', 'vi-test-db-publicuuid');
     expect(realmResponse).toHaveProperty('publicUUID', createdRealmPublicUUID);
     expect(realmResponse).toHaveProperty('jwtConfig');
     expect(realmResponse.jwtConfig).toHaveProperty('secret');

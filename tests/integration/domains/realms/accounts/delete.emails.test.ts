@@ -15,7 +15,7 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-remove-email');
+    tenantId = await getTenantId('vi-test-db-tenant-remove-email');
   });
 
   beforeEach(async () => {

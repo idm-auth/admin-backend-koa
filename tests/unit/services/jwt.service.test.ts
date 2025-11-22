@@ -14,7 +14,7 @@ describe('JWT Service', () => {
   };
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-jwt-service');
+    tenantId = await getTenantId('vi-test-db-jwt-service');
   });
 
   describe('generateToken', () => {

@@ -15,7 +15,7 @@ describe('DELETE /api/realm/:tenantId/account-groups', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-account-groups-delete');
+    tenantId = await getTenantId('vi-test-db-account-groups-delete');
 
     // Create test account using service
     const account = await accountService.create(tenantId, {

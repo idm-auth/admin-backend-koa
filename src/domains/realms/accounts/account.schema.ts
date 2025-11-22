@@ -39,7 +39,10 @@ export const accountSearchResponseSchema = accountReadResponseSchema;
 // Account update schema - Email e password não podem ser alterados aqui
 // Email e password devem ter métodos específicos para alteração
 // Ainda não tem outros campos
-export const accountUpdateSchema = z.record(z.string(), z.any()).optional().default({});
+export const accountUpdateSchema = z
+  .record(z.string(), z.any())
+  .optional()
+  .default({});
 
 export const accountResetPasswordSchema = z.object({
   password: passwordSchema,

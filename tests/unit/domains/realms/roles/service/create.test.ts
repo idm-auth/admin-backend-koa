@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('role.service.create', () => {
   it('should create role successfully', async () => {
-    const tenantId = await getTenantId('test-role-service-create');
+    const tenantId = await getTenantId('vi-test-db-role-service-create');
     const roleData = {
       name: `test-role-${uuidv4()}`,
       description: 'Test role',
@@ -24,7 +24,9 @@ describe('role.service.create', () => {
   });
 
   it('should create role with minimal data', async () => {
-    const tenantId = await getTenantId('test-role-service-create-minimal');
+    const tenantId = await getTenantId(
+      'vi-test-db-role-service-create-minimal'
+    );
     const roleData = {
       name: `minimal-role-${uuidv4()}`,
     };

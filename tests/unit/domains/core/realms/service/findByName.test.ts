@@ -19,7 +19,7 @@ describe('realm.service.findByName', () => {
     // Criar um realm para testar
     const createdRealm = await getModel().create({
       name: uniqueName,
-      dbName: `test-db-${uuidv4()}`,
+      dbName: `vi-test-db-${uuidv4()}`,
       description: 'Test realm',
     });
 

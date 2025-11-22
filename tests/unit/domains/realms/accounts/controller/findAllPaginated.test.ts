@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.controller.findAllPaginated', () => {
   it('should handle findAllPaginated successfully', async () => {
-    const tenantId = await getTenantId('test-controller-paginated');
+    const tenantId = await getTenantId('vi-test-db-controller-paginated');
 
     await accountService.create(tenantId, {
       email: generateTestEmail('controller-test', uuidv4()), // Test email - not production

@@ -10,7 +10,7 @@ describe('DELETE /api/realm/:tenantId/roles/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-roles-delete');
+    tenantId = await getTenantId('vi-test-db-roles-delete');
 
     const roleData = {
       name: 'role-to-delete',

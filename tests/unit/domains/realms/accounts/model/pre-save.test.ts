@@ -7,7 +7,7 @@ import { getDBName } from '@/domains/core/realms/realm.service';
 
 describe('account.model pre-save hook', () => {
   it('should handle non-Error exceptions in pre-save hook', async () => {
-    const tenantId = await getTenantId('test-model-pre-save-error');
+    const tenantId = await getTenantId('vi-test-db-model-pre-save-error');
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const genSaltSpy = vi.spyOn(bcrypt, 'genSalt');
@@ -29,7 +29,7 @@ describe('account.model pre-save hook', () => {
   });
 
   it('should handle Error exceptions in pre-save hook', async () => {
-    const tenantId = await getTenantId('test-model-pre-save-error-if');
+    const tenantId = await getTenantId('vi-test-db-model-pre-save-error-if');
     const dbName = await getDBName({ publicUUID: tenantId });
 
     const genSaltSpy = vi.spyOn(bcrypt, 'genSalt');
@@ -50,7 +50,7 @@ describe('account.model pre-save hook', () => {
   });
 
   it('should handle unknown error during password hashing', async () => {
-    const tenantId = await getTenantId('test-pre-save-unknown-error');
+    const tenantId = await getTenantId('vi-test-db-pre-save-unknown-error');
     const dbName = await getDBName({ publicUUID: tenantId });
     const AccountModel = getModel(dbName);
 

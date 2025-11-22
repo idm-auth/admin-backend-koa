@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('account.service.findById', () => {
   it('should throw NotFoundError when account not found', async () => {
-    const tenantId = await getTenantId('test-account-findbyid');
+    const tenantId = await getTenantId('vi-test-db-account-findbyid');
     const nonExistentId = uuidv4();
 
     await expect(
@@ -16,7 +16,7 @@ describe('account.service.findById', () => {
   });
 
   it('should return account when found', async () => {
-    const tenantId = await getTenantId('test-account-findbyid-success');
+    const tenantId = await getTenantId('vi-test-db-account-findbyid-success');
     const email = generateTestEmail('test'); // Test credential - not production;
 
     const createdAccount = await accountService.create(tenantId, {

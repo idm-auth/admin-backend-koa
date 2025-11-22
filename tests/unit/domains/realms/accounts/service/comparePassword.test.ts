@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('account.service.comparePassword', () => {
   it('should return true for matching password', async () => {
-    const tenantId = await getTenantId('test-compare-password-true');
+    const tenantId = await getTenantId('vi-test-db-compare-password-true');
     const plainPassword = 'test-password';
 
     const account = await accountService.create(tenantId, {
@@ -19,7 +19,7 @@ describe('account.service.comparePassword', () => {
   });
 
   it('should return false for non-matching password', async () => {
-    const tenantId = await getTenantId('test-compare-password-false');
+    const tenantId = await getTenantId('vi-test-db-compare-password-false');
     const plainPassword = 'test-password';
 
     const account = await accountService.create(tenantId, {

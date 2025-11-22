@@ -14,7 +14,7 @@ describe('GET /api/realm/:tenantId/group-roles/role/:roleId', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-group-roles-get-role');
+    tenantId = await getTenantId('vi-test-db-tenant-group-roles-get-role');
 
     const group1 = await groupService.create(tenantId, {
       name: 'Test Group Role 1',

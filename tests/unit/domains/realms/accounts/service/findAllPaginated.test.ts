@@ -5,7 +5,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 
 describe('account.service.findAllPaginated', () => {
   it('should handle pagination with filter and custom sort', async () => {
-    const tenantId = await getTenantId('test-paginated-filter-sort');
+    const tenantId = await getTenantId('vi-test-db-paginated-filter-sort');
 
     // Criar contas para teste
     await accountService.create(tenantId, {
@@ -27,7 +27,7 @@ describe('account.service.findAllPaginated', () => {
   });
 
   it('should handle pagination without filter and default sort', async () => {
-    const tenantId = await getTenantId('test-paginated-no-filter');
+    const tenantId = await getTenantId('vi-test-db-paginated-no-filter');
 
     const result = await accountService.findAllPaginated(tenantId, {
       page: 1,
@@ -40,7 +40,7 @@ describe('account.service.findAllPaginated', () => {
   });
 
   it('should handle pagination with ascending sort', async () => {
-    const tenantId = await getTenantId('test-paginated-ascending');
+    const tenantId = await getTenantId('vi-test-db-paginated-ascending');
 
     const result = await accountService.findAllPaginated(tenantId, {
       page: 1,
@@ -54,7 +54,7 @@ describe('account.service.findAllPaginated', () => {
   });
 
   it('should handle pagination with descending sort', async () => {
-    const tenantId = await getTenantId('test-paginated-descending');
+    const tenantId = await getTenantId('vi-test-db-paginated-descending');
 
     const result = await accountService.findAllPaginated(tenantId, {
       page: 1,

@@ -22,11 +22,15 @@ export const accountRoleBaseResponseSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const accountRoleListResponseSchema = z.array(accountRoleBaseResponseSchema);
+export const accountRoleListResponseSchema = z.array(
+  accountRoleBaseResponseSchema
+);
 
 export type AccountRoleCreate = z.infer<typeof accountRoleCreateSchema>;
 export type AccountRoleRemove = z.infer<typeof accountRoleRemoveSchema>;
-export type AccountRoleBaseResponse = z.infer<typeof accountRoleBaseResponseSchema>;
+export type AccountRoleBaseResponse = z.infer<
+  typeof accountRoleBaseResponseSchema
+>;
 export type AccountRoleListResponse = z.infer<
   typeof accountRoleListResponseSchema
 >;

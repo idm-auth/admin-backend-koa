@@ -12,7 +12,7 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-account-paginated');
+    tenantId = await getTenantId('vi-test-db-tenant-account-paginated');
 
     // Criar algumas contas para os testes usando service
     const accountsData = [
@@ -46,7 +46,9 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
     });
 
     it('should return empty array when no accounts exist', async () => {
-      const emptyTenantId = await getTenantId('test-tenant-empty-accounts');
+      const emptyTenantId = await getTenantId(
+        'vi-test-db-tenant-empty-accounts'
+      );
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/accounts/`)

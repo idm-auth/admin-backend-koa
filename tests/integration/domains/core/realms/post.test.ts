@@ -3,7 +3,10 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { getModel } from '@/domains/core/realms/realm.model';
 import { RealmCreateResponse } from '@/domains/core/realms/realm.schema';
-import { ErrorResponse, ConflictErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ConflictErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('POST /api/core/realms', () => {
   const getApp = () => globalThis.testKoaApp;
@@ -17,7 +20,7 @@ describe('POST /api/core/realms', () => {
     const realmData = {
       name: 'test-realm-create',
       description: 'Test realm for creation',
-      dbName: 'test-db-create',
+      dbName: 'vi-test-db-create',
       jwtConfig: {
         expiresIn: '24h',
       },
@@ -45,7 +48,7 @@ describe('POST /api/core/realms', () => {
     const realmData = {
       name: 'test-realm-create-default',
       description: 'Test realm for creation with defaults',
-      dbName: 'test-db-create-default',
+      dbName: 'vi-test-db-create-default',
     };
 
     const response = await request(getApp().callback())
@@ -98,7 +101,7 @@ describe('POST /api/core/realms', () => {
     const realmData = {
       name: 'test-realm-no-jwt',
       description: 'Test realm without JWT config',
-      dbName: 'test-db-no-jwt',
+      dbName: 'vi-test-db-no-jwt',
     };
 
     const response = await request(getApp().callback())
@@ -117,7 +120,7 @@ describe('POST /api/core/realms', () => {
     const realmData = {
       name: 'duplicate-test-realm',
       description: 'First realm',
-      dbName: 'first-db',
+      dbName: 'vi-test-db-first',
     };
 
     // Create first realm using service (pré-configuração)
@@ -130,7 +133,7 @@ describe('POST /api/core/realms', () => {
     const duplicateData = {
       name: 'duplicate-test-realm', // Same name
       description: 'Second realm',
-      dbName: 'second-db',
+      dbName: 'vi-test-db-second',
     };
 
     const response = await request(getApp().callback())

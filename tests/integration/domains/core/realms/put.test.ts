@@ -3,7 +3,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { RealmUpdateResponse } from '@/domains/core/realms/realm.schema';
-import { ErrorResponse, ConflictErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ConflictErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -13,7 +16,7 @@ describe('PUT /api/core/realms/:id', () => {
     const realmData = {
       name: 'test-realm-update',
       description: 'Test realm for update',
-      dbName: 'test-db-update',
+      dbName: 'vi-test-db-update',
       jwtConfig: {
         secret: 'original-secret',
         expiresIn: '24h',
@@ -100,7 +103,7 @@ describe('PUT /api/core/realms/:id', () => {
     const anotherRealmData = {
       name: 'another-realm-for-duplicate-test',
       description: 'Another realm',
-      dbName: 'another-db',
+      dbName: 'vi-test-db-another',
     };
 
     await realmService.create(anotherRealmData);

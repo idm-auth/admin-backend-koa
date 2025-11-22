@@ -10,7 +10,7 @@ describe('DELETE /api/realm/:tenantId/policies/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-policy-delete');
+    tenantId = await getTenantId('vi-test-db-tenant-policy-delete');
   });
 
   it('should delete policy successfully', async () => {

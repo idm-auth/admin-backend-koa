@@ -10,7 +10,7 @@ describe('PUT /api/realm/:tenantId/roles/:id', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-roles-put');
+    tenantId = await getTenantId('vi-test-db-roles-put');
 
     const roleData = {
       name: 'original-role',

@@ -13,6 +13,12 @@ db.createUser({
   roles: ['readWriteAnyDatabase'],
 });
 
+db.createUser({
+  user: 'test',
+  pwd: 'test',
+  roles: ['readWriteAnyDatabase', 'dbAdminAnyDatabase'],
+});
+
 // const databaseSingleTenant = 'singleTenant';
 // const collectionSingleTenant = 'singleTenant';
 // const userSingleTenant = 'singleTenant';

@@ -9,7 +9,7 @@ describe('POST /api/realm/:tenantId/roles', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-roles-post');
+    tenantId = await getTenantId('vi-test-db-roles-post');
   });
 
   it('should create role successfully', async () => {

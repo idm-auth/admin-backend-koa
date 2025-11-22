@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 describe('role.service.findById', () => {
   it('should find role by id successfully', async () => {
-    const tenantId = await getTenantId('test-role-service-findById');
+    const tenantId = await getTenantId('vi-test-db-role-service-findById');
     const roleData = {
       name: `find-role-${uuidv4()}`,
       description: 'Role to find',
@@ -21,7 +21,9 @@ describe('role.service.findById', () => {
   });
 
   it('should throw NotFoundError for non-existent role', async () => {
-    const tenantId = await getTenantId('test-role-service-findById-notfound');
+    const tenantId = await getTenantId(
+      'vi-test-db-role-service-findById-notfound'
+    );
     const nonExistentId = uuidv4();
 
     await expect(roleService.findById(tenantId, nonExistentId)).rejects.toThrow(

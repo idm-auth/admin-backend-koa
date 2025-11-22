@@ -16,7 +16,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-account-groups-post');
+    tenantId = await getTenantId('vi-test-db-account-groups-post');
 
     // Create test account using service
     // amazonq-ignore-next-line

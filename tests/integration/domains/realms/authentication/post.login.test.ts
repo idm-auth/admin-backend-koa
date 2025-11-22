@@ -10,7 +10,7 @@ describe('POST /api/realm/:tenantId/authentication/login', () => {
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
-    tenantId = await getTenantId('test-tenant-auth');
+    tenantId = await getTenantId('vi-test-db-tenant-auth');
     console.log('TenantId for auth test:', tenantId);
   });
 

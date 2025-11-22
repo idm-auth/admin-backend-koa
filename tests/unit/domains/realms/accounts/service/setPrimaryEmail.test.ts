@@ -10,7 +10,7 @@ import {
 
 describe('account.service.setPrimaryEmail', () => {
   it('should throw NotFoundError when email does not exist in account', async () => {
-    const tenantId = await getTenantId('test-set-primary-nonexistent');
+    const tenantId = await getTenantId('vi-test-db-set-primary-nonexistent');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('main'), // Test credential - not production
@@ -27,7 +27,7 @@ describe('account.service.setPrimaryEmail', () => {
   });
 
   it('should set primary email successfully', async () => {
-    const tenantId = await getTenantId('test-set-primary-success');
+    const tenantId = await getTenantId('vi-test-db-set-primary-success');
 
     const account = await accountService.create(tenantId, {
       email: generateTestEmail('main'), // Test credential - not production
@@ -53,7 +53,7 @@ describe('account.service.setPrimaryEmail', () => {
   });
 
   it('should throw NotFoundError when account deleted between validation and update', async () => {
-    const tenantId = await getTenantId('test-set-primary-race-condition');
+    const tenantId = await getTenantId('vi-test-db-set-primary-race-condition');
     const email1 = generateTestEmail('primary1'); // Test credential - not production
     const email2 = generateTestEmail('primary2'); // Test credential - not production
 
