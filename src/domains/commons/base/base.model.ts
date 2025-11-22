@@ -15,9 +15,8 @@ export const baseDocumentSchema = new Schema({
 });
 baseDocumentSchema.add(baseDocumentIDSchema);
 
-baseDocumentSchema.pre('save', function (next) {
+baseDocumentSchema.pre('save', async function () {
   this.updatedAt = new Date();
-  next();
 });
 
 baseDocumentSchema.pre(['updateOne', 'findOneAndUpdate'], updatedAtMiddleware);

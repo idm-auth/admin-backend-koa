@@ -35,20 +35,19 @@ export type AccountUpdate = Omit<AccountSchema, never> & {
 
 schema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 
-schema.pre('save', async function (next) {
+schema.pre('save', async function () {
   try {
     if ((this.isNew || this.isModified('password')) && this.password) {
       this.salt = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, this.salt);
     }
-    next();
   } catch (error) {
     // Usa if/else em vez de ternário para melhor cobertura de código
     // Cada branch fica em linha separada para análise de cobertura
     if (error instanceof Error) {
-      next(error);
+      throw error;
     } else {
-      next(new Error('Unknown error during password hashing'));
+      throw new Error('Unknown error during password hashing');
     }
   }
 });

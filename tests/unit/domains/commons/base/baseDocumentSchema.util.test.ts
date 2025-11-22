@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Import middleware BEFORE mongoose loads schema
 import { updatedAtMiddleware } from '@/domains/commons/base/baseDocumentSchema.util';
 
@@ -7,49 +7,41 @@ describe('updatedAtMiddleware', () => {
     vi.clearAllMocks();
     vi.restoreAllMocks();
   });
-  it('should handle null update', () => {
+  it('should handle null update', async () => {
     const context = { getUpdate: () => null };
     const spy = vi.spyOn(context, 'getUpdate');
-    const next = vi.fn();
 
-    updatedAtMiddleware.call(context, next);
+    await updatedAtMiddleware.call(context);
 
     expect(spy).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
-  it('should handle array update', () => {
+  it('should handle array update', async () => {
     const context = { getUpdate: () => [] };
     const spy = vi.spyOn(context, 'getUpdate');
-    const next = vi.fn();
 
-    updatedAtMiddleware.call(context, next);
+    await updatedAtMiddleware.call(context);
 
     expect(spy).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
-  it('should handle string update', () => {
+  it('should handle string update', async () => {
     const context = { getUpdate: () => 'string' };
     const spy = vi.spyOn(context, 'getUpdate');
-    const next = vi.fn();
 
-    updatedAtMiddleware.call(context, next);
+    await updatedAtMiddleware.call(context);
 
     expect(spy).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
   });
 
-  it('should handle valid object update', () => {
+  it('should handle valid object update', async () => {
     const updateObj = { name: 'test' };
     const context = { getUpdate: () => updateObj };
     const spy = vi.spyOn(context, 'getUpdate');
-    const next = vi.fn();
 
-    updatedAtMiddleware.call(context, next);
+    await updatedAtMiddleware.call(context);
 
     expect(spy).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
     expect(updateObj).toHaveProperty('updatedAt');
   });
 });
