@@ -9,7 +9,6 @@ describe('account-group.mapper.toListResponse', () => {
         _id: 'test-id-1',
         accountId: 'account-123',
         groupId: 'group-456',
-        roles: ['admin'],
         createdAt: new Date('2023-01-01T00:00:00.000Z'),
         updatedAt: new Date('2023-01-02T00:00:00.000Z'),
       },
@@ -17,7 +16,6 @@ describe('account-group.mapper.toListResponse', () => {
         _id: 'test-id-2',
         accountId: 'account-789',
         groupId: 'group-456',
-        roles: ['member'],
         createdAt: new Date('2023-01-03T00:00:00.000Z'),
         updatedAt: new Date('2023-01-04T00:00:00.000Z'),
       },
@@ -30,7 +28,6 @@ describe('account-group.mapper.toListResponse', () => {
       _id: 'test-id-1',
       accountId: 'account-123',
       groupId: 'group-456',
-      roles: ['admin'],
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-02T00:00:00.000Z',
     });
@@ -38,7 +35,6 @@ describe('account-group.mapper.toListResponse', () => {
       _id: 'test-id-2',
       accountId: 'account-789',
       groupId: 'group-456',
-      roles: ['member'],
       createdAt: '2023-01-03T00:00:00.000Z',
       updatedAt: '2023-01-04T00:00:00.000Z',
     });

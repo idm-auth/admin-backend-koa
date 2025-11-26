@@ -17,6 +17,7 @@ export const toCreateResponse = (account: Account): AccountCreateResponse => {
     () => ({
       _id: account._id.toString(),
       emails: account.emails,
+      isActive: account.isActive,
     })
   );
 };
@@ -30,6 +31,7 @@ export const toUpdateResponse = (account: Account): AccountUpdateResponse => {
     () => ({
       _id: account._id.toString(),
       emails: account.emails,
+      isActive: account.isActive,
     })
   );
 };
@@ -45,6 +47,7 @@ export const toListItemResponse = (
     () => ({
       _id: account._id.toString(),
       emails: account.emails,
+      isActive: account.isActive,
     })
   );
 };

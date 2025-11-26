@@ -1,202 +1,171 @@
-# Project Structure - Backend-Koa IAM
+# Project Structure
 
 ## Directory Organization
 
 ### Root Structure
 ```
 /workspace/
-├── src/                    # Source code
-├── tests/                  # Test suites
-├── .devcontainer/         # Development environment
-├── .docs/                 # Documentation
-├── scripts/               # Build and utility scripts
-├── coverage/              # Test coverage reports
-└── .amazonq/              # AI assistant rules and memory
+├── .amazonq/          # AI assistant rules and memory bank
+├── .devcontainer/     # Development container configuration
+├── .docs/             # Project documentation
+├── .mongodata/        # MongoDB data directory (local development)
+├── scripts/           # Utility scripts for testing and coverage
+├── src/               # Application source code
+├── tests/             # Test suites (unit, integration, labs)
+└── [config files]     # TypeScript, ESLint, Prettier, Vitest configs
 ```
 
-## Source Code Architecture (`src/`)
+## Source Code Structure (`src/`)
 
-### Domain-Driven Design (DDD) Structure
-```
-src/domains/
-├── commons/               # Shared components
-├── config/                # Configuration management
-├── core/                  # Core system functionality
-├── realms/                # Multi-tenant realm management
-└── swagger/               # API documentation
-```
-
-### Core Components (`src/`)
+### Domain-Driven Design Architecture
 ```
 src/
-├── errors/                # Custom error classes
-├── middlewares/           # Koa middleware functions
-├── plugins/               # System plugins and integrations
-├── utils/                 # Utility functions and helpers
-└── index.ts              # Application entry point
+├── domains/           # Business domains (DDD structure)
+│   ├── commons/       # Shared components across domains
+│   ├── config/        # Configuration domain
+│   ├── core/          # Core functionality
+│   ├── realms/        # Multi-tenant management domain
+│   ├── swagger/       # API documentation domain
+│   └── api.routes.ts  # Root API router composition
+├── errors/            # Custom error classes
+├── middlewares/       # Koa middleware functions
+├── plugins/           # Infrastructure plugins
+├── utils/             # Utility functions and helpers
+└── index.ts           # Application entry point
 ```
 
-## Domain Structure Patterns
-
-### Standard Domain Layout
-Each domain follows a consistent structure:
+### Domain Structure Pattern
+Each domain follows a consistent flat structure:
 ```
-domain-name/
-├── {entity}.controller.ts  # HTTP request handling
-├── {entity}.service.ts     # Business logic
-├── {entity}.model.ts       # Database schema
-├── {entity}.schema.ts      # Validation schemas
-├── {entity}.mapper.ts      # Data transformation
-└── {entity}.routes.ts      # Route definitions
+domains/{context}/{domain}/
+├── {domain}.controller.ts    # HTTP request handlers
+├── {domain}.service.ts       # Business logic layer
+├── {domain}.model.ts         # MongoDB schema and types
+├── {domain}.schema.ts        # Zod validation schemas
+├── {domain}.mapper.ts        # Data transformation layer
+└── {domain}.routes.ts        # MagicRouter route definitions
 ```
 
-### Multi-tenant Realms Domain (`src/domains/realms/`)
-```
-realms/
-├── accounts/              # User account management
-├── groups/                # User group organization
-├── roles/                 # Permission role definitions
-├── policies/              # Access control policies
-├── account-groups/        # Account-Group relationships
-├── account-roles/         # Account-Role relationships
-├── group-roles/           # Group-Role relationships
-├── authentication/        # Login and JWT handling
-├── jwt/                   # JWT token services
-└── realms.routes.ts       # Realm routing aggregation
-```
+### Key Domains
 
-### Commons Domain (`src/domains/commons/`)
-```
-commons/
-├── base/                  # Base classes and schemas
-│   ├── base.model.ts      # Common database fields
-│   ├── base.schema.ts     # Shared validation schemas
-│   ├── base.service.ts    # Common service patterns
-│   ├── pagination.schema.ts # Pagination validation
-│   ├── request.schema.ts  # Request validation
-│   └── webAdminConfig.schema.ts # Admin configuration
-└── validations/           # Shared validation services
-```
+#### `realms/` - Multi-Tenant Management
+- **accounts/**: User account management (authentication)
+- **groups/**: User group organization
+- **roles/**: Role definitions for RBAC
+- **policies/**: Permission policies (IAM-style)
+- **account-groups/**: Account-to-Group associations
+- **account-roles/**: Account-to-Role assignments
+- **group-roles/**: Group-to-Role mappings
 
-### Core Domain (`src/domains/core/`)
-```
-core/
-├── realms/                # Realm management (tenant contexts)
-└── core.routes.ts         # Core routing aggregation
-```
+#### `core/` - Core Functionality
+- **realm/**: Tenant/realm management and context
 
-## Infrastructure Components
+#### `commons/` - Shared Components
+- **base/**: Base schemas and utilities
+- **validations/**: Common validation patterns
 
-### Plugins (`src/plugins/`)
-```
-plugins/
-├── asyncLocalStorage.plugin.ts  # Request context storage
-├── dotenv.plugin.ts            # Environment configuration
-├── koaServer.plugin.ts         # Koa server setup
-├── mongo.plugin.ts             # MongoDB connection
-├── pino.plugin.ts              # Logging configuration
-├── swagger.plugin.ts           # API documentation
-└── telemetry.plugin.ts         # Observability and tracing
-```
-
-### Middlewares (`src/middlewares/`)
-```
-middlewares/
-├── errorHandler.middleware.ts   # Global error handling
-├── requestId.middleware.ts      # Request ID generation
-└── validation.middleware.ts     # Input validation
-```
-
-### Utilities (`src/utils/`)
-```
-utils/
-├── core/
-│   └── MagicRouter.ts          # Enhanced routing system
-├── crudSwagger.util.ts         # CRUD API documentation
-├── localStorage.util.ts        # Context storage utilities
-├── pagination.util.ts          # Pagination helpers
-├── routeLogger.util.ts         # Route logging
-├── routeLoggerDetailed.util.ts # Detailed route logging
-└── tracing.util.ts            # Distributed tracing
-```
-
-## Test Architecture (`tests/`)
+## Test Structure (`tests/`)
 
 ### Test Organization
 ```
 tests/
-├── integration/           # End-to-end API tests
-│   ├── domains/          # Domain-specific integration tests
-│   └── routes/           # Route-level integration tests
-├── unit/                 # Isolated unit tests
-│   ├── domains/          # Domain unit tests
-│   ├── middlewares/      # Middleware unit tests
-│   ├── plugins/          # Plugin unit tests
-│   └── schemas/          # Schema validation tests
-├── setup/                # Test configuration
-├── utils/                # Test utilities
-└── types/                # Test type definitions
+├── integration/       # Integration tests (API endpoints)
+│   ├── domains/       # Domain-specific integration tests
+│   └── routes/        # Route-level integration tests
+├── unit/              # Unit tests (isolated functions)
+│   ├── domains/       # Domain layer unit tests
+│   ├── middlewares/   # Middleware unit tests
+│   ├── plugins/       # Plugin unit tests
+│   ├── schemas/       # Schema validation tests
+│   ├── services/      # Service layer tests
+│   └── utils/         # Utility function tests
+├── labs/              # Experimental and simulation tests
+├── setup/             # Test configuration and setup
+├── types/             # TypeScript type definitions for tests
+└── utils/             # Test utilities and helpers
 ```
 
-## Development Environment
+### Test File Naming Conventions
+- **Unit tests**: `{functionName}.test.ts` (one file per function)
+- **Integration tests**: `{method}.{endpoint}.test.ts` (e.g., `post.accounts.test.ts`)
 
-### DevContainer Configuration (`.devcontainer/`)
-```
-.devcontainer/
-├── containers/           # Container definitions
-├── scripts/              # Setup and lifecycle scripts
-├── devcontainer.json     # VS Code dev container config
-└── docker-compose.yml    # Multi-service setup
-```
+## Infrastructure Components
 
-### Documentation (`.docs/`)
-```
-.docs/
-├── docker/               # Docker setup guides
-├── API.md               # API documentation
-├── architecture-simplified.md # Architecture overview
-├── ddd-migration-accounts.md # DDD migration guide
-└── [various guides]      # Technical documentation
-```
+### Plugins (`src/plugins/`)
+- **asyncLocalStorage.plugin.ts**: Request context management
+- **dotenv.plugin.ts**: Environment variable loading
+- **koaServer.plugin.ts**: Koa application setup
+- **mongo.plugin.ts**: MongoDB connection management
+- **pino.plugin.ts**: Structured logging configuration
+- **swagger.plugin.ts**: OpenAPI documentation generation
+- **telemetry.plugin.ts**: OpenTelemetry tracing setup
+
+### Middlewares (`src/middlewares/`)
+- **errorHandler.middleware.ts**: Global error handling
+- **requestId.middleware.ts**: Request ID generation and tracking
+- **validation.middleware.ts**: Zod schema validation
+
+### Utilities (`src/utils/`)
+- **core/**: Core utility functions
+- **crudSwagger.util.ts**: CRUD operation Swagger helpers
+- **localStorage.util.ts**: AsyncLocalStorage context access
+- **pagination.util.ts**: Pagination helpers
+- **routeLogger.util.ts**: Route logging utilities
+- **tracing.util.ts**: OpenTelemetry tracing wrappers
+
+## Configuration Files
+
+### Development Environment
+- **.devcontainer/**: VS Code dev container with MongoDB
+- **docker-compose.yml**: Local development services
+- **nodemon.json**: Development server auto-reload
+
+### Build & Quality
+- **tsconfig.json**: TypeScript configuration with path aliases
+- **eslint.config.mjs**: ESLint rules and plugins
+- **prettier.config.mjs**: Code formatting rules
+- **vitest.config.mjs**: Test runner configuration
+
+### Environment
+- **.env**: Base environment variables
+- **.env.development.local**: Local development overrides
+- **.env.test**: Test environment configuration
 
 ## Architectural Patterns
 
 ### Layered Architecture
-1. **Controllers**: HTTP request/response handling
-2. **Services**: Business logic and data processing
-3. **Models**: Database schema and data access
-4. **Schemas**: Input/output validation
-5. **Mappers**: Data transformation between layers
+1. **Routes Layer**: MagicRouter definitions with OpenAPI specs
+2. **Controller Layer**: HTTP request/response handling
+3. **Service Layer**: Business logic and orchestration
+4. **Model Layer**: Data persistence and schemas
+5. **Mapper Layer**: Data transformation between layers
 
-### Multi-tenant Design
-- **Realm-scoped**: All operations are tenant-aware
-- **Data Isolation**: Complete separation per tenant
-- **Context Propagation**: Tenant context flows through all layers
-- **Security Boundaries**: Tenant-specific authentication and authorization
+### Separation of Concerns
+- **Controllers**: Extract validated data from `ctx.validated`, call services
+- **Services**: Implement business logic, throw domain errors
+- **Models**: Define data structure and database operations
+- **Schemas**: Validate input/output with Zod
+- **Mappers**: Transform between internal and external representations
 
-### Route Organization
-- **Hierarchical**: Routes organized by domain and context
-- **MagicRouter**: Enhanced routing with automatic validation
-- **API Versioning**: Structured API paths (`/api/{context}/{domain}`)
-- **Documentation**: Automatic OpenAPI generation
+### Multi-Tenant Pattern
+- **Tenant ID**: Always first parameter in service functions
+- **Database Isolation**: Separate MongoDB database per tenant
+- **Context Propagation**: AsyncLocalStorage for request-scoped tenant context
 
 ### Error Handling
-- **Centralized**: Global error middleware
-- **Typed Errors**: Custom error classes for different scenarios
-- **Consistent Responses**: Standardized error response format
-- **Logging Integration**: Structured error logging
+- **Custom Errors**: Domain-specific error classes (NotFoundError, ConflictError, etc.)
+- **Service Layer**: Throws errors, never returns null
+- **Controller Layer**: Catches errors via global error handler
+- **HTTP Mapping**: Automatic status code mapping in error middleware
 
-## Configuration Management
+### Type Safety
+- **Zod v4**: Runtime validation with TypeScript type inference
+- **Schema-First**: Types derived from Zod schemas
+- **No `any`**: Strict TypeScript with zero tolerance for `any` types
+- **Type Checking**: `npm run type-check` enforces zero errors
 
-### Environment Configuration
-- **Multi-environment**: Development, testing, production
-- **Docker Integration**: Container-based development
-- **Secret Management**: Secure credential handling
-- **Feature Flags**: Configurable system behavior
-
-### Build and Development
-- **TypeScript**: Full type safety and modern JavaScript features
-- **Hot Reload**: Development server with automatic restart
-- **Linting**: ESLint with TypeScript support
-- **Testing**: Vitest with coverage reporting
-- **Type Checking**: Strict TypeScript compilation
+### Testing Strategy
+- **Integration First**: Prioritize integration tests for API endpoints
+- **Unit Tests**: Only for gaps not covered by integration tests
+- **100% Coverage**: Zero tolerance for incomplete coverage
+- **Real Implementations**: Avoid mocks unless absolutely necessary

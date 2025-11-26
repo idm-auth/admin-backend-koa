@@ -334,3 +334,37 @@ export const setPrimaryEmail = async (ctx: Context) => {
     }
   );
 };
+
+export const setActiveStatus = async (ctx: Context) => {
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.controller.setActiveStatus`,
+      attributes: {
+        'tenant.id': ctx.validated.params.tenantId,
+        'account.id': ctx.validated.params.id,
+        'account.isActive': ctx.validated.body?.isActive,
+        'http.method': 'PATCH',
+        controller: CONTROLLER_NAME,
+        operation: 'setActiveStatus',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      const { tenantId, id } = ctx.validated.params;
+      const { isActive } = ctx.validated.body;
+
+      const account = await accountService.setActiveStatus(
+        tenantId,
+        id,
+        isActive
+      );
+
+      logger.info(
+        { tenantId, accountId: id, isActive },
+        'Account active status set successfully'
+      );
+
+      ctx.body = accountMapper.toUpdateResponse(account);
+    }
+  );
+};

@@ -90,27 +90,4 @@ export const findByGroupId = async (ctx: Context) => {
   );
 };
 
-export const updateRoles = async (ctx: Context) => {
-  return withSpanAsync(
-    {
-      name: `${CONTROLLER_NAME}.updateRoles`,
-      attributes: {
-        operation: 'updateRoles',
-        'http.method': 'PUT',
-      },
-    },
-    async () => {
-      const { tenantId } = ctx.validated.params;
-      const { accountId, groupId, roles } = ctx.validated.body;
 
-      const accountGroup = await accountGroupService.updateRoles(
-        tenantId,
-        accountId,
-        groupId,
-        roles
-      );
-
-      ctx.body = accountGroupMapper.toResponse(accountGroup);
-    }
-  );
-};

@@ -19,6 +19,7 @@ export const schema = new mongoose.Schema({
   ],
   password: { type: String, required: true },
   salt: { type: String },
+  isActive: { type: Boolean, default: true },
 });
 
 schema.add(baseDocumentSchema);

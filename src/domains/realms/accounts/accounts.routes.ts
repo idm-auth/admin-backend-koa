@@ -20,6 +20,7 @@ import {
   accountAddEmailSchema,
   accountRemoveEmailSchema,
   accountSetPrimaryEmailSchema,
+  accountSetActiveStatusSchema,
 } from './account.schema';
 
 // Safe query schema that prevents SSRF by restricting filter values
@@ -361,6 +362,57 @@ export const initialize = async () => {
       },
       404: {
         description: 'Account not found or email not found',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    tags: ['Accounts'],
+  });
+
+  // PATCH /accounts/:id/active-status - Set account active status
+  router.patch({
+    name: 'setAccountActiveStatus',
+    path: '/:id/active-status',
+    summary: 'Set account active status',
+    handlers: [accountController.setActiveStatus],
+    request: {
+      params: requestTenantIdAndIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountSetActiveStatusSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account active status set successfully',
+        content: {
+          'application/json': {
+            schema: accountUpdateResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+              details: z.string().optional(),
+            }),
+          },
+        },
+      },
+      404: {
+        description: 'Account not found',
         content: {
           'application/json': {
             schema: z.object({

@@ -40,7 +40,6 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
       .send({
         accountId,
         groupId,
-        roles: ['member'],
       })
       .expect(201);
 
@@ -48,12 +47,11 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
     expect(accountGroupBaseResponse).toHaveProperty('_id');
     expect(accountGroupBaseResponse.accountId).toBe(accountId);
     expect(accountGroupBaseResponse.groupId).toBe(groupId);
-    expect(accountGroupBaseResponse.roles).toEqual(['member']);
     expect(accountGroupBaseResponse).toHaveProperty('createdAt');
     expect(accountGroupBaseResponse).toHaveProperty('updatedAt');
   });
 
-  it('should create account-group relationship without roles', async () => {
+  it('should create second account-group relationship', async () => {
     const newAccount = await accountService.create(tenantId, {
       email: generateTestEmail('test'), // Test credential - not production
       password: TEST_PASSWORD, // Test credential - not production

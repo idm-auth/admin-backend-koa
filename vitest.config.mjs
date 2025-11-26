@@ -9,7 +9,7 @@ export default defineConfig({
     pool: 'threads', // Opções: 'threads' | 'forks' | 'vmThreads' | false
     poolOptions: {
       threads: {
-        minThreads: 1,
+        minThreads: 10,
         maxThreads: 24,
         useAtomics: true,
         isolate: false,
@@ -23,9 +23,10 @@ export default defineConfig({
       'tests/setup/base.setup.ts',
       'tests/setup/integration.setup.ts',
     ],
-    globalSetup: './tests/setup/globalSetup.ts',
-    globalTeardown: './tests/setup/globalTeardown.ts',
-
+    globalSetup: [
+      './tests/setup/globalSetup.ts',
+      './tests/setup/globalTeardown.ts',
+    ],
     include: ['tests/**/*.test.ts'],
     // Configurações de performance
     testTimeout: 30000, // 30s timeout

@@ -5,7 +5,6 @@ import {
   accountGroupCreateSchema,
   accountGroupBaseResponseSchema,
   removeAccountFromGroupSchema,
-  updateAccountGroupRolesSchema,
 } from './account-group.schema';
 import { errorResponseSchema } from '@/domains/commons/base/base.schema';
 import {
@@ -94,50 +93,7 @@ export const initialize = async () => {
     tags: ['Account-Groups'],
   });
 
-  // PUT /account-groups - Update account group roles
-  router.put({
-    name: 'updateAccountGroupRoles',
-    path: '/',
-    summary: 'Update account group roles',
-    handlers: [accountGroupController.updateRoles],
-    request: {
-      params: requestTenantIdParamsSchema,
-      body: {
-        content: {
-          'application/json': {
-            schema: updateAccountGroupRolesSchema,
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Account group roles updated successfully',
-        content: {
-          'application/json': {
-            schema: accountGroupBaseResponseSchema,
-          },
-        },
-      },
-      400: {
-        description: 'Bad request',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-      404: {
-        description: 'Account-Group relationship not found',
-        content: {
-          'application/json': {
-            schema: errorResponseSchema,
-          },
-        },
-      },
-    },
-    tags: ['Account-Groups'],
-  });
+
 
   // GET /account-groups/account/{accountId} - Get account groups
   router.get({

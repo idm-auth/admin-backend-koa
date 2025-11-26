@@ -1,185 +1,208 @@
-# Technology Stack - Backend-Koa IAM
+# Technology Stack
 
-## Programming Languages and Runtime
+## Programming Languages
 
-### Primary Language
-- **TypeScript 5.9.3**: Full type safety with modern JavaScript features
-- **Node.js 22+**: Latest LTS runtime with performance optimizations
-- **Target**: ES2022 with strict type checking
+### TypeScript 5.9.3
+- **Configuration**: Extends `@tsconfig/node22` for Node.js 22 compatibility
+- **Strict Mode**: Enabled for maximum type safety
+- **Path Aliases**: `@/*` for src, `@test/*` for tests
+- **Target**: ES2022 with Node.js 22 runtime
 
-### Configuration
-- **tsconfig.json**: Strict TypeScript configuration with path mapping
-- **@tsconfig/node22**: Base configuration for Node.js 22
-- **Path Aliases**: `@/` for src, `@test/` for tests
+## Core Framework & Runtime
 
-## Core Framework and Server
+### Node.js 22
+- **Runtime**: Latest LTS with modern JavaScript features
+- **Package Manager**: npm with package-lock.json
 
-### Web Framework
-- **Koa.js 3.0.3**: Lightweight, modern Node.js web framework
-- **@koa/router 14.0.0**: Advanced routing with middleware support
-- **@koa/bodyparser 6.0.0**: Request body parsing
-- **@koa/cors 5.0.0**: Cross-origin resource sharing
+### Koa.js 3.1.1
+- **Web Framework**: Lightweight, middleware-based HTTP server
+- **Middleware Stack**:
+  - `@koa/bodyparser`: Request body parsing
+  - `@koa/cors`: Cross-origin resource sharing
+  - `@koa/router`: HTTP routing (base for MagicRouter)
+  - `koa-logger`: HTTP request logging
+  - `koa-mount`: Application mounting
+  - `koa-static`: Static file serving
 
-### Server Enhancements
-- **koa-logger 4.0.0**: HTTP request logging
-- **koa-mount 4.2.0**: Application mounting
-- **koa-static 5.0.0**: Static file serving
+## Database & ODM
 
-## Database and Data Management
+### MongoDB
+- **Version**: Compatible with Mongoose 9.0.0
+- **Development**: MongoDB Memory Server for testing
+- **Connection**: Mongoose connection pooling
+- **Multi-Tenancy**: Separate databases per tenant
 
-### Database System
-- **MongoDB**: Document-based NoSQL database
-- **Mongoose 8.19.2**: MongoDB object modeling with TypeScript support
-- **mongodb-memory-server 10.2.3**: In-memory MongoDB for testing
+### Mongoose 9.0.0
+- **ODM**: Object-Document Mapping for MongoDB
+- **Schema Definition**: TypeScript-integrated schemas
+- **UUID Support**: String-based UUIDs as primary keys
+- **Validation**: Schema-level validation
 
-### Data Validation
-- **Zod 4.1.12**: Runtime type validation and schema definition
-- **@asteasolutions/zod-to-openapi 8.1.0**: OpenAPI generation from Zod schemas
+## Validation & Type Safety
 
-## Authentication and Security
+### Zod 4.1.12
+- **Runtime Validation**: Type-safe schema validation
+- **OpenAPI Integration**: `@asteasolutions/zod-to-openapi` for API docs
+- **Email Validation**: RFC 5322 compliant patterns
+- **Password Validation**: OWASP-compliant rules
 
-### Authentication
-- **jsonwebtoken 9.0.2**: JWT token generation and verification
-- **@types/jsonwebtoken 9.0.10**: TypeScript definitions
-- **bcrypt 6.0.0**: Password hashing and verification
-- **@types/bcrypt 6.0.0**: TypeScript definitions
+### TypeScript Strict Mode
+- **Zero `any` Tolerance**: All types must be explicit
+- **Type Checking**: `npm run type-check` enforces zero errors
+- **Inference**: Types derived from Zod schemas
 
-### Security Features
-- **uuid 13.0.0**: Secure unique identifier generation
-- **@types/uuid 11.0.0**: TypeScript definitions
-- **OWASP-compliant**: Password policies and security practices
+## Authentication & Security
 
-## Observability and Monitoring
+### JWT (jsonwebtoken 9.0.2)
+- **Token Generation**: Tenant-scoped JWT tokens
+- **Signature**: HS256 algorithm
+- **Claims**: Custom tenant and user context
 
-### Logging
-- **pino 10.1.0**: High-performance structured logging
-- **pino-caller 4.0.0**: Caller information in logs
-- **pino-pretty 13.1.2**: Pretty-printed logs for development
-
-### Tracing and Telemetry
-- **@opentelemetry/api 1.9.0**: OpenTelemetry API
-- **@opentelemetry/sdk-node 0.208.0**: Node.js SDK
-- **@opentelemetry/auto-instrumentations-node 0.67.0**: Automatic instrumentation
-- **@opentelemetry/resources 2.2.0**: Resource management
-- **@opentelemetry/semantic-conventions 1.38.0**: Standard conventions
-
-### Exporters
-- **@opentelemetry/exporter-jaeger 2.2.0**: Jaeger tracing export
-- **@opentelemetry/exporter-prometheus 0.208.0**: Prometheus metrics export
+### bcrypt 6.0.0
+- **Password Hashing**: Industry-standard bcrypt algorithm
+- **Salt Rounds**: Configurable for security/performance balance
 
 ## API Documentation
 
-### Documentation Generation
-- **swagger-ui-dist 5.29.5**: Interactive API documentation
-- **@types/swagger-ui-dist 3.30.6**: TypeScript definitions
-- **OpenAPI 3.0**: Standard API specification format
+### Swagger/OpenAPI 3.0
+- **Generator**: Custom MagicRouter integration
+- **UI**: swagger-ui-dist 5.30.2
+- **Specification**: Auto-generated from Zod schemas
+- **Endpoint**: `/docs` for interactive documentation
 
-## Development Tools
+## Observability & Monitoring
 
-### Build and Development
-- **nodemon 3.1.10**: Development server with hot reload
-- **ts-node 10.9.2**: TypeScript execution for Node.js
-- **ts-node-dev 2.0.0**: Development server with TypeScript
-- **tsc-alias 1.8.16**: Path alias resolution
-- **tsconfig-paths 4.2.0**: Runtime path mapping
+### OpenTelemetry
+- **API**: `@opentelemetry/api` 1.9.0
+- **SDK**: `@opentelemetry/sdk-node` 0.208.0
+- **Auto-Instrumentation**: `@opentelemetry/auto-instrumentations-node` 0.67.0
+- **Exporters**:
+  - Jaeger 2.2.0 (distributed tracing)
+  - Prometheus 0.208.0 (metrics)
+- **Semantic Conventions**: 1.38.0
 
-### Code Quality
-- **ESLint 9.38.0**: JavaScript/TypeScript linting
-- **@typescript-eslint/eslint-plugin 8.46.2**: TypeScript-specific rules
-- **@typescript-eslint/parser 8.46.2**: TypeScript parser for ESLint
-- **eslint-config-prettier 10.1.8**: Prettier integration
-- **eslint-plugin-prettier 5.5.4**: Prettier as ESLint rule
-- **eslint-import-resolver-typescript 4.4.4**: TypeScript import resolution
-
-### Code Formatting
-- **Prettier 3.6.2**: Opinionated code formatter
-- **prettier.config.mjs**: Project-specific formatting rules
+### Pino 10.1.0
+- **Structured Logging**: JSON-formatted logs
+- **Caller Info**: `pino-caller` 4.0.0 for source location
+- **Pretty Print**: `pino-pretty` 13.1.2 for development
+- **Context**: AsyncLocalStorage integration
 
 ## Testing Framework
 
-### Test Runner
-- **Vitest 4.0.1**: Fast unit test framework with Vite integration
-- **@vitest/coverage-v8 4.0.1**: Code coverage reporting
-- **vite-tsconfig-paths 5.1.4**: Path mapping for Vite
+### Vitest 4.0.13
+- **Test Runner**: Fast, Vite-powered test framework
+- **Coverage**: `@vitest/coverage-v8` 4.0.13
+- **UI**: Interactive coverage viewer
+- **Configuration**: `vitest.config.mjs` with path aliases
 
 ### Testing Utilities
-- **supertest 7.1.4**: HTTP assertion library
-- **@types/supertest 6.0.3**: TypeScript definitions
-- **mongodb-memory-server 10.2.3**: In-memory database for tests
+- **Supertest 7.1.4**: HTTP assertion library
+- **MongoDB Memory Server 10.3.0**: In-memory MongoDB for tests
+- **Test Types**: Custom TypeScript definitions in `tests/types/`
 
-## Configuration and Environment
+## Code Quality Tools
 
-### Environment Management
-- **dotenv 17.2.3**: Environment variable loading
-- **Multi-environment**: Development, testing, production configs
+### ESLint 9.39.1
+- **Parser**: `@typescript-eslint/parser` 8.47.0
+- **Plugin**: `@typescript-eslint/eslint-plugin` 8.47.0
+- **Prettier Integration**: `eslint-plugin-prettier` 5.5.4
+- **Import Resolution**: `eslint-import-resolver-typescript` 4.4.4
 
-### Package Management
-- **npm-check-updates 19.1.1**: Dependency update management
-- **package-lock.json**: Exact dependency versions
+### Prettier 3.6.2
+- **Code Formatting**: Consistent code style
+- **Config**: `prettier.config.mjs`
+- **Integration**: ESLint plugin for unified workflow
+
+## Development Tools
+
+### Nodemon 3.1.11
+- **Auto-Reload**: Development server with hot reload
+- **Configuration**: `nodemon.json` for TypeScript support
+
+### ts-node 10.9.2
+- **TypeScript Execution**: Direct TypeScript execution
+- **Dev Mode**: Used by nodemon for development
+
+### npm-check-updates 19.1.2
+- **Dependency Management**: Check for package updates
+- **Command**: `npm run ncu` to update dependencies
+
+## Utilities
+
+### uuid 13.0.0
+- **UUID Generation**: v4 UUIDs for entity IDs
+- **Type Support**: `@types/uuid` 11.0.0
+
+### dotenv 17.2.3
+- **Environment Variables**: Load from .env files
+- **Multi-Environment**: Support for .env.development.local, .env.test
 
 ## Development Commands
 
-### Core Development
+### Running the Application
 ```bash
 npm run dev              # Start development server with hot reload
-npm run type-check       # TypeScript type checking
-npm run lint             # Run ESLint
-npm run lint:fix         # Fix ESLint issues automatically
 ```
 
 ### Testing
 ```bash
-npm run test             # Run all tests
+npm test                 # Run all tests
 npm run test:unit        # Run unit tests only
 npm run test:int         # Run integration tests only
-npm run test:coverage    # Run tests with coverage report
-npm run test:coverage:ui # Interactive coverage report
-npm run test:watch       # Watch mode for tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Generate coverage report
+npm run test:coverage:ui # Interactive coverage viewer
+npm run test:coverage-json # Generate JSON coverage for analysis
 ```
 
-### Specialized Testing
+### Code Quality
 ```bash
-npm run test:parallel    # Parallel test execution
-npm run test:unit:coverage    # Unit test coverage
-npm run test:int:coverage     # Integration test coverage
-npm run test:int:parallel     # Parallel integration tests
+npm run lint             # Check code with ESLint
+npm run lint:fix         # Fix ESLint issues automatically
+npm run type-check       # TypeScript type checking (zero errors required)
 ```
 
-### Maintenance
+### Dependency Management
 ```bash
-npm run ncu              # Check for dependency updates
+npm run ncu              # Check for package updates
 ```
 
 ## Build Configuration
 
-### TypeScript Configuration
-- **Strict Mode**: Enabled for maximum type safety
-- **Path Mapping**: Absolute imports with `@/` and `@test/` aliases
-- **Target**: ES2022 with Node.js 22 compatibility
-- **Module**: CommonJS for Node.js compatibility
+### TypeScript Compilation
+- **No Build Step**: Direct execution via ts-node in development
+- **Type Checking**: Separate from runtime via `tsc --noEmit`
+- **Path Resolution**: `tsconfig-paths` for alias resolution
 
-### Vitest Configuration
-- **Coverage**: V8 provider for accurate coverage reporting
-- **Path Resolution**: TypeScript path mapping support
-- **Test Environment**: Node.js environment
-- **Parallel Execution**: Optimized for CI/CD pipelines
+### Module Resolution
+- **ES Modules**: Modern import/export syntax
+- **Path Aliases**: Configured in tsconfig.json and vitest.config.mjs
+- **Import Strategy**: Absolute imports with `@/` prefix
 
-### ESLint Configuration
-- **TypeScript Integration**: Full TypeScript support
-- **Prettier Integration**: Automatic code formatting
-- **Import Resolution**: TypeScript-aware import checking
-- **Modern JavaScript**: ES2022+ feature support
+## Container Environment
 
-## Container and Deployment
+### Docker Development
+- **Dev Container**: VS Code devcontainer configuration
+- **Services**: MongoDB, application workspace
+- **Volumes**: Persistent MongoDB data in `.mongodata/`
+- **Scripts**: Pre-create, post-start, post-attach hooks
 
-### Development Environment
-- **Docker**: Containerized development environment
-- **Docker Compose**: Multi-service orchestration
-- **DevContainer**: VS Code development container support
-- **MongoDB**: Containerized database for development
+### VS Code Extensions (Required)
+- **vitest.explorer**: Vitest test explorer
+- **esbenp.prettier-vscode**: Prettier formatter
+- **dbaeumer.vscode-eslint**: ESLint integration
+- **AmazonWebServices.amazon-q-vscode**: Amazon Q AI assistant
 
-### Production Considerations
-- **Node.js 22**: LTS runtime for stability
-- **Environment Variables**: Secure configuration management
-- **Health Checks**: Application health monitoring
-- **Graceful Shutdown**: Proper resource cleanup
+## Environment Variables
+
+### Required Configuration
+- **MONGODB_URI**: MongoDB connection string
+- **JWT_SECRET**: Secret key for JWT signing
+- **PORT**: HTTP server port (default: 3000)
+- **NODE_ENV**: Environment (development, test, production)
+- **LOGGER_LEVEL**: Pino log level (debug, info, warn, error)
+
+### Multi-Environment Support
+- **.env**: Base configuration
+- **.env.development.local**: Local development overrides
+- **.env.test**: Test environment (used by Vitest)

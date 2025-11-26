@@ -8,7 +8,6 @@ describe('account-group.mapper.toResponse', () => {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
-      roles: ['admin', 'member'],
       createdAt: new Date('2023-01-01T00:00:00.000Z'),
       updatedAt: new Date('2023-01-02T00:00:00.000Z'),
     };
@@ -19,18 +18,16 @@ describe('account-group.mapper.toResponse', () => {
       _id: 'test-id',
       accountId: 'account-123',
       groupId: 'group-456',
-      roles: ['admin', 'member'],
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-02T00:00:00.000Z',
     });
   });
 
-  it('should handle account-group without roles', () => {
+  it('should handle different account-group data', () => {
     const accountGroup: AccountGroupDocument = {
-      _id: 'test-id',
-      accountId: 'account-123',
-      groupId: 'group-456',
-      roles: [],
+      _id: 'test-id-2',
+      accountId: 'account-789',
+      groupId: 'group-012',
       createdAt: new Date('2023-01-01T00:00:00.000Z'),
       updatedAt: new Date('2023-01-02T00:00:00.000Z'),
     };
@@ -38,10 +35,9 @@ describe('account-group.mapper.toResponse', () => {
     const response = accountGroupMapper.toResponse(accountGroup);
 
     expect(response).toEqual({
-      _id: 'test-id',
-      accountId: 'account-123',
-      groupId: 'group-456',
-      roles: [],
+      _id: 'test-id-2',
+      accountId: 'account-789',
+      groupId: 'group-012',
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-02T00:00:00.000Z',
     });

@@ -1,99 +1,94 @@
-# Product Overview - Backend-Koa IAM
+# Product Overview
 
 ## Project Purpose
 
-Backend-Koa IAM is a comprehensive Identity and Access Management (IAM) system that combines the functionality of AWS IAM and AWS Cognito into a unified, multi-tenant solution. It provides enterprise-grade authentication, authorization, and user management capabilities for modern applications.
+Backend-Koa IAM is a comprehensive Identity and Access Management (IAM) system that combines the functionality of AWS IAM and AWS Cognito into a unified multi-tenant solution. It provides enterprise-grade authentication, authorization, and access control for modern applications.
 
-## Core Value Proposition
+## Value Proposition
 
 - **Unified IAM Solution**: Combines user authentication (Cognito-like) with permission management (IAM-like) in a single system
-- **Multi-tenant Architecture**: Complete data isolation per tenant/realm with secure context switching
-- **Enterprise Security**: OWASP-compliant password policies, JWT authentication, and bcrypt hashing
-- **Developer-Friendly**: RESTful APIs with comprehensive OpenAPI/Swagger documentation
-- **Self-Hosted Alternative**: Provides AWS IAM/Cognito functionality without vendor lock-in
+- **Multi-Tenant Architecture**: Complete data isolation per tenant/realm with separate database contexts
+- **Production-Ready**: Built with enterprise patterns including DDD architecture, comprehensive testing, and observability
+- **Developer-Friendly**: RESTful APIs with OpenAPI/Swagger documentation, type-safe validation, and clear error handling
 
-## Key Features and Capabilities
+## Key Features
 
-### Authentication System (Cognito-like)
-- User account creation and management
-- JWT-based authentication with tenant-specific tokens
-- OWASP-compliant password policies
-- Secure password hashing with bcrypt
-- Email-based user identification
+### Authentication & User Management
+- User account creation and management (CRUD operations)
+- JWT-based authentication with tenant-scoped tokens
+- OWASP-compliant password policies with bcrypt hashing
+- Email-based user identification with RFC 5322 validation
+- Secure credential management with test credential annotations
 
-### Authorization System (IAM-like)
-- Role-Based Access Control (RBAC)
-- Granular permission policies
-- User groups for organizational structure
-- Flexible relationship management (Account-Group, Account-Role, Group-Role)
-- Policy-based access control
+### Authorization & Access Control
+- Role-Based Access Control (RBAC) system
+- Granular permission policies (IAM-style)
+- User groups for organizational hierarchy
+- Flexible relationship management:
+  - Account-to-Group associations
+  - Account-to-Role assignments
+  - Group-to-Role mappings
 
-### Multi-tenancy Features
-- Complete data isolation per tenant/realm
-- Separate database contexts per tenant
-- Tenant-scoped security contexts
-- Isolated API operations per realm
-- Secure tenant switching and management
+### Multi-Tenancy
+- Realm-based tenant isolation (equivalent to Cognito User Pools)
+- Separate MongoDB databases per tenant
+- Tenant-scoped API operations
+- Secure tenant context propagation via AsyncLocalStorage
 
-### API and Integration
-- Comprehensive RESTful API endpoints
-- Full CRUD operations for all entities
-- Advanced search and pagination capabilities
-- Interactive Swagger/OpenAPI documentation
-- Standardized error handling and responses
+### API & Integration
+- RESTful API design with consistent patterns
+- Comprehensive OpenAPI 3.0 documentation via Swagger
+- MagicRouter for type-safe routing with automatic validation
+- Structured error responses with proper HTTP status codes
+- Request/response validation using Zod v4 schemas
 
-## Target Users and Use Cases
+### Observability & Monitoring
+- Distributed tracing with OpenTelemetry
+- Structured logging with Pino
+- Request ID tracking across service boundaries
+- Telemetry integration in controllers, services, and mappers
+- Jaeger and Prometheus exporters for metrics
 
-### For Application Developers
-- **SaaS Applications**: Multi-tenant applications requiring user management
-- **Microservices**: Authentication and authorization for distributed systems
-- **API Security**: Granular access control for REST APIs
-- **Enterprise Applications**: Complex permission systems with roles and policies
+### Data Management
+- MongoDB with Mongoose ODM
+- UUID-based entity identification
+- Efficient pagination for large datasets
+- Optimized indexes for multi-tenant queries
+- Database name sanitization for security
 
-### for System Administrators
-- **User Management**: Centralized control of user accounts and permissions
-- **Security Policies**: Definition and enforcement of access control rules
-- **Audit and Compliance**: Tracking of user access and permission changes
-- **Organizational Structure**: Management of user groups and role hierarchies
+## Target Users
 
-### Business Scenarios
-- **Multi-tenant SaaS Platforms**: Each customer gets isolated data and user management
-- **Enterprise Applications**: Complex organizational structures with departments and roles
-- **API Marketplaces**: Fine-grained access control for different API consumers
-- **Compliance-Heavy Industries**: Audit trails and permission management for regulated sectors
+### Application Developers
+- Building SaaS applications requiring multi-tenant authentication
+- Implementing microservices with centralized access control
+- Creating APIs with granular permission requirements
+- Developing applications needing AWS IAM/Cognito alternatives
 
-## System Entities
+### System Administrators
+- Managing user accounts across multiple tenants
+- Defining and enforcing security policies
+- Organizing users into groups and roles
+- Auditing access patterns and permissions
 
-### Core Entities
-- **Realms**: Multi-tenant contexts (equivalent to Cognito User Pools)
-- **Accounts**: User identities with authentication credentials
-- **Groups**: Organizational units for user management
-- **Roles**: Permission definitions and access levels
-- **Policies**: Granular access control rules
+### DevOps Engineers
+- Deploying containerized IAM solutions
+- Integrating authentication into CI/CD pipelines
+- Monitoring system health and performance
+- Managing multi-environment configurations
 
-### Relationships
-- Account-Group associations for organizational structure
-- Account-Role assignments for direct permissions
-- Group-Role assignments for inherited permissions
-- Policy attachments to roles for granular control
+## Use Cases
 
-## Technical Advantages
+### SaaS Platform Authentication
+Multi-tenant SaaS applications can use realms to isolate customer data while providing each tenant with complete user management, role definitions, and permission policies.
 
-### Security First
-- Industry-standard security practices
-- Comprehensive input validation
-- Secure token management
-- Data isolation guarantees
+### Microservices Authorization
+Microservices architectures can leverage the centralized IAM for consistent authentication and authorization across all services, with JWT tokens carrying tenant and permission context.
 
-### Performance Optimized
-- Efficient database queries with proper indexing
-- Connection pooling for database operations
-- Optimized pagination for large datasets
-- Structured logging for monitoring
+### Enterprise Access Management
+Organizations can implement fine-grained access control with groups representing departments, roles defining job functions, and policies controlling resource access.
 
-### Developer Experience
-- Type-safe TypeScript implementation
-- Comprehensive test coverage
-- Clear API documentation
-- Consistent error handling
-- Development environment with Docker
+### API Gateway Integration
+API gateways can validate JWT tokens and enforce permissions before routing requests to backend services, using the IAM as the source of truth for access decisions.
+
+### Development & Testing
+The system includes comprehensive test utilities, in-memory MongoDB support, and test credential management for safe development and automated testing workflows.

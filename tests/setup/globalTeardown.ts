@@ -5,7 +5,13 @@ import {
 } from '@/plugins/mongo.plugin';
 import { initDotenv, getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 
-export default async function globalTeardown() {
+let teardownHappened = false;
+
+export async function teardown() {
+  if (teardownHappened) {
+    throw new Error('[Global Teardown] teardown called twice');
+  }
+
   await initDotenv();
   const mongoUri = getEnvValue(EnvKey.MONGODB_URI);
   await initMainConnection(mongoUri);
@@ -13,26 +19,18 @@ export default async function globalTeardown() {
   const connection = getMainConnection();
   if (!connection.db) {
     throw new Error(
-      'connection.db is undefined - connection not properly initialized'
+      '[Global Teardown] connection.db is undefined - connection not properly initialized'
     );
   }
 
   const admin = connection.db.admin();
   const { databases } = await admin.listDatabases();
-
-  console.log('\n[Global Teardown] Cleaning test databases...');
-  console.log(
-    'Databases found:',
-    databases.map((d) => d.name)
-  );
-
+  console.log('[Global Teardown] Cleaning test databases...');
   for (const db of databases) {
     if (db.name.startsWith('vi-test-db')) {
-      console.log('Dropping database:', db.name);
       await connection.useDb(db.name).dropDatabase();
     }
   }
-
   await closeMainConnection();
   console.log('[Global Teardown] Cleanup completed\n');
 }

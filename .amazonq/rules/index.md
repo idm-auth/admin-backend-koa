@@ -75,6 +75,11 @@
 - **"Minimal" se aplica ao código**, não às restrições comportamentais
 - **Preserve NUNCA/SEMPRE** ao reescrever regras
 
+### **minimal-vs-guardrails.md** - Minimal vs Guardrails (CRÍTICO)
+- **Guardrails têm precedência absoluta** sobre instruções de código minimal
+- **Telemetria/validações/estrutura** são requisitos funcionais, não verbosidade
+- **Minimal = menos código desnecessário**, não menos restrições comportamentais
+
 ## Memory Bank (Contexto do Projeto)
 
 ### **memory-bank/product.md** - Visão do Produto

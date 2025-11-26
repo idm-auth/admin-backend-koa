@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 describe('account-role.service.findByAccountId', () => {
   it('should find roles for account successfully', async () => {
     const tenantId = await getTenantId(
-      'test-account-role-service-findByAccountId'
+      'vi-test-db-account-role-service-findByAccountId'
     );
     const accountId = uuidv4();
     const roleId1 = uuidv4();
@@ -32,7 +32,7 @@ describe('account-role.service.findByAccountId', () => {
 
   it('should return empty array for account with no roles', async () => {
     const tenantId = await getTenantId(
-      'test-account-role-service-findByAccountId-empty'
+      'vi-test-db-account-role-service-findByAccountId-empty'
     );
     const accountId = uuidv4();
 

@@ -26,6 +26,7 @@ export const accountEmailSchema = z.object({
 export const accountBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   emails: z.array(accountEmailSchema),
+  isActive: z.boolean(),
 });
 
 export const accountCreateResponseSchema = accountBaseResponseSchema;
@@ -69,6 +70,10 @@ export const accountSetPrimaryEmailSchema = z.object({
   email: emailSchema,
 });
 
+export const accountSetActiveStatusSchema = z.object({
+  isActive: z.boolean(),
+});
+
 export type AccountCreate = z.infer<typeof accountCreateSchema>;
 export type AccountBaseResponse = z.infer<typeof accountBaseResponseSchema>;
 export type AccountCreateResponse = z.infer<typeof accountCreateResponseSchema>;
@@ -86,6 +91,9 @@ export type AccountAddEmail = z.infer<typeof accountAddEmailSchema>;
 export type AccountRemoveEmail = z.infer<typeof accountRemoveEmailSchema>;
 export type AccountSetPrimaryEmail = z.infer<
   typeof accountSetPrimaryEmailSchema
+>;
+export type AccountSetActiveStatus = z.infer<
+  typeof accountSetActiveStatusSchema
 >;
 
 // Pagination schemas

@@ -11,7 +11,6 @@ const schemaName = 'account-groups';
 export const schema = new mongoose.Schema({
   accountId: { type: String, required: true },
   groupId: { type: String, required: true },
-  roles: [{ type: String }],
 });
 
 schema.add(baseDocumentSchema);

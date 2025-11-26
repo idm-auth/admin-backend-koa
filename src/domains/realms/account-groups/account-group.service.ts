@@ -118,40 +118,4 @@ export const findByGroupId = async (
   );
 };
 
-export const updateRoles = async (
-  tenantId: string,
-  accountId: string,
-  groupId: string,
-  roles: string[]
-): Promise<AccountGroupDocument> => {
-  return withSpanAsync(
-    {
-      name: `${SERVICE_NAME}.updateRoles`,
-      attributes: {
-        'tenant.id': tenantId,
-        operation: 'updateRoles',
-      },
-    },
-    async (span) => {
-      const logger = await getLogger();
-      logger.info(
-        { tenantId, accountId, groupId, roles },
-        'Updating account-group roles'
-      );
 
-      const dbName = await getDBName({ publicUUID: tenantId });
-      const accountGroup = await getModel(dbName).findOneAndUpdate(
-        { accountId, groupId },
-        { roles },
-        { new: true }
-      );
-
-      if (!accountGroup) {
-        throw new NotFoundError('Account-Group relationship not found');
-      }
-
-      span.setAttributes({ 'entity.id': accountGroup._id });
-      return accountGroup;
-    }
-  );
-};

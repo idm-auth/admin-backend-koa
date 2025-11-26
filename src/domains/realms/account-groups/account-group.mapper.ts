@@ -19,7 +19,6 @@ export const toResponse = (
       _id: accountGroup._id.toString(),
       accountId: accountGroup.accountId,
       groupId: accountGroup.groupId,
-      roles: accountGroup.roles,
       createdAt: accountGroup.createdAt.toISOString(),
       updatedAt: accountGroup.updatedAt.toISOString(),
     })

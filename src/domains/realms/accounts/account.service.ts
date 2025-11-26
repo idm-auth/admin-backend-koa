@@ -89,6 +89,10 @@ export const findById = async (
       }
 
       span.setAttributes({ 'db.name': dbName });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, salt, ...accountSafe } = account.toObject();
+      logger.debug({ account: accountSafe }, 'Account found successfully');
+      span.setAttributes({ 'account.data': JSON.stringify(accountSafe) });
       logger.info(
         { accountId: account._id, tenantId },
         'Account found successfully'
@@ -496,6 +500,39 @@ export const setPrimaryEmail = async (
       logger.info(
         { accountId: updatedAccount._id, tenantId, email },
         'Primary email set successfully'
+      );
+      return updatedAccount;
+    }
+  );
+};
+
+export const setActiveStatus = async (
+  tenantId: string,
+  id: string,
+  isActive: boolean
+): Promise<Account> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.service.setActiveStatus`,
+      attributes: {
+        'tenant.id': tenantId,
+        'account.id': id,
+        'account.isActive': isActive,
+        operation: 'setActiveStatus',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, id, isActive }, 'Setting account active status');
+
+      const account = await findById(tenantId, id);
+      account.isActive = isActive;
+      const updatedAccount = await account.save();
+
+      span.setAttributes({ 'account.id': updatedAccount._id });
+      logger.info(
+        { accountId: updatedAccount._id, tenantId, isActive },
+        'Account active status set successfully'
       );
       return updatedAccount;
     }
