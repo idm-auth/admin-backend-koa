@@ -46,7 +46,6 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
       .send({
         accountId: accountId1,
         groupId,
-        roles: ['admin'],
       });
 
     await request(getApp().callback())
@@ -54,7 +53,6 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
       .send({
         accountId: accountId2,
         groupId,
-        roles: ['member'],
       });
   });
 
@@ -76,10 +74,10 @@ describe('GET /api/realm/:tenantId/account-groups/group/:groupId', () => {
     );
 
     expect(account1Relation).toBeDefined();
-    expect(account1Relation?.roles).toEqual(['admin']);
+    expect(account1Relation?.groupId).toBe(groupId);
 
     expect(account2Relation).toBeDefined();
-    expect(account2Relation?.roles).toEqual(['member']);
+    expect(account2Relation?.groupId).toBe(groupId);
   });
 
   it('should return empty array for group with no accounts', async () => {

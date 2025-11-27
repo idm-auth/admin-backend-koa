@@ -6,7 +6,7 @@ let logger: pino.Logger;
 
 export const initPino = async () => {
   if (logger) return logger;
-  
+
   const baseLogger = pino({
     level: getEnvValue(EnvKey.LOGGER_LEVEL),
     transport: {

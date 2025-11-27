@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { expectValidationError } from '@test/utils/validation-helpers';
 
 describe('POST /api/realm/:tenantId/policies', () => {
   let tenantId: string;
@@ -33,16 +34,9 @@ describe('POST /api/realm/:tenantId/policies', () => {
   });
 
   it('should return 400 for missing required fields', async () => {
-    const policyData = {
-      name: 'Test Policy',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/policies`)
-      .send(policyData)
-      .expect(400);
-
-    expect(response.body.error).toMatch(
+    await expectValidationError(
+      `/api/realm/${tenantId}/policies`,
+      { name: 'Test Policy' },
       /Effect must be Allow or Deny|Invalid input|expected array/
     );
   });

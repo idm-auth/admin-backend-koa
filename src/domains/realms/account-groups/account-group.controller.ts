@@ -89,5 +89,3 @@ export const findByGroupId = async (ctx: Context) => {
     }
   );
 };
-
-

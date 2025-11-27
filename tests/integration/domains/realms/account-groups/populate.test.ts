@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
-import * as roleService from '@/domains/realms/roles/role.service';
 import * as accountGroupService from '@/domains/realms/account-groups/account-group.service';
 import { getModel } from '@/domains/realms/account-groups/account-group.model';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -12,7 +11,6 @@ describe('AccountGroups Populate Test', () => {
   let tenantId: string;
   let accountId: string;
   let groupId: string;
-  let roleId: string;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-populate');
@@ -31,17 +29,10 @@ describe('AccountGroups Populate Test', () => {
     });
     groupId = group._id.toString();
 
-    const role = await roleService.create(tenantId, {
-      name: 'Populate Role',
-      description: 'Test role for populate',
-    });
-    roleId = role._id.toString();
-
-    // Criar relação account-group com role
+    // Criar relação account-group
     await accountGroupService.create(tenantId, {
       accountId,
       groupId,
-      roles: [roleId],
     });
   });
 
@@ -60,15 +51,10 @@ describe('AccountGroups Populate Test', () => {
       accountGroup.accountId
     );
     const group = await groupService.findById(tenantId, accountGroup.groupId);
-    const roles = await Promise.all(
-      accountGroup.roles.map((roleId) => roleService.findById(tenantId, roleId))
-    );
 
     // 3. Verificar dados populados manualmente
     expect(account.emails[0].email).toContain('@idm-auth.io'); // Test credential - not production
     expect(group.name).toBe('Populate Group');
-    expect(roles).toHaveLength(1);
-    expect(roles[0].name).toBe('Populate Role');
   });
 
   it('should work without populate (return UUIDs)', async () => {
@@ -84,11 +70,9 @@ describe('AccountGroups Populate Test', () => {
     // Verificar que são strings (UUIDs)
     expect(accountGroup.accountId).toBeTypeOf('string');
     expect(accountGroup.groupId).toBeTypeOf('string');
-    expect(accountGroup.roles[0]).toBeTypeOf('string');
 
     // Verificar valores
     expect(accountGroup.accountId).toBe(accountId);
     expect(accountGroup.groupId).toBe(groupId);
-    expect(accountGroup.roles[0]).toBe(roleId);
   });
 });

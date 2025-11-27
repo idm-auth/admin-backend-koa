@@ -33,8 +33,6 @@ export const removeAccountFromGroupSchema = z.object({
   groupId: DocIdSchema,
 });
 
-
-
 export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;
 export type AccountGroupBaseResponse = z.infer<
   typeof accountGroupBaseResponseSchema
@@ -44,4 +42,3 @@ export type GroupParams = z.infer<typeof groupParamsSchema>;
 export type RemoveAccountFromGroup = z.infer<
   typeof removeAccountFromGroupSchema
 >;
-

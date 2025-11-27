@@ -117,5 +117,3 @@ export const findByGroupId = async (
     }
   );
 };
-
-

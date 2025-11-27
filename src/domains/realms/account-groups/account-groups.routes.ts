@@ -93,8 +93,6 @@ export const initialize = async () => {
     tags: ['Account-Groups'],
   });
 
-
-
   // GET /account-groups/account/{accountId} - Get account groups
   router.get({
     name: 'getAccountGroups',

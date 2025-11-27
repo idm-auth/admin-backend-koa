@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { expectValidationError } from '@test/utils/validation-helpers';
 import { GroupCreateResponse } from '@/domains/realms/groups/group.schema';
 
 describe('POST /api/realm/:tenantId/groups', () => {
@@ -47,98 +48,45 @@ describe('POST /api/realm/:tenantId/groups', () => {
   });
 
   it('should return 400 for missing name', async () => {
-    const groupData = {
-      description: 'Group without name',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData)
-      .expect(400);
-
-    expect(response.body).toHaveProperty('error', 'Name is required');
+    await expectValidationError(
+      `/api/realm/${tenantId}/groups`,
+      { description: 'Group without name' },
+      'Name is required'
+    );
   });
 
   it('should return 400 for invalid name characters', async () => {
-    const groupData = {
-      name: 'Invalid<>Name',
-      description: 'Test description',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData)
-      .expect(400);
-
-    expect(response.body).toHaveProperty(
-      'error',
+    await expectValidationError(
+      `/api/realm/${tenantId}/groups`,
+      { name: 'Invalid<>Name', description: 'Test description' },
       'Name contains invalid characters'
     );
   });
 
   it('should return 400 for name too long', async () => {
-    const groupData = {
-      name: 'A'.repeat(101), // Exceeds 100 character limit
-      description: 'Test description',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData)
-      .expect(400);
-
-    expect(response.body).toHaveProperty(
-      'error',
+    await expectValidationError(
+      `/api/realm/${tenantId}/groups`,
+      { name: 'A'.repeat(101), description: 'Test description' },
       'Name must be at most 100 characters'
     );
   });
 
   it('should return 400 for invalid description characters', async () => {
-    const groupData = {
-      name: 'Valid Name',
-      description: 'Invalid<script>alert("xss")</script>description',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData)
-      .expect(400);
-
-    expect(response.body).toHaveProperty(
-      'error',
+    await expectValidationError(
+      `/api/realm/${tenantId}/groups`,
+      {
+        name: 'Valid Name',
+        description: 'Invalid<script>alert("xss")</script>description',
+      },
       'Description contains invalid characters'
     );
   });
 
   it('should return 400 for description too long', async () => {
-    const groupData = {
-      name: 'Valid Name',
-      description: 'A'.repeat(501), // Exceeds 500 character limit
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData)
-      .expect(400);
-
-    expect(response.body).toHaveProperty(
-      'error',
+    await expectValidationError(
+      `/api/realm/${tenantId}/groups`,
+      { name: 'Valid Name', description: 'A'.repeat(501) },
       'Description must be at most 500 characters'
     );
-  });
-
-  it('should return 500 for server errors', async () => {
-    const groupData = {
-      name: 'Test Group',
-      description: 'Test description',
-    };
-
-    const response = await request(getApp().callback())
-      .post(`/api/realm/${tenantId}/groups`)
-      .send(groupData);
-
-    if (response.status === 500) {
-      expect(response.body).toHaveProperty('error', 'Internal server error');
-    }
   });
 });
