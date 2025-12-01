@@ -8,11 +8,11 @@ export const expectValidationError = async (
   authToken?: string
 ) => {
   const req = request(globalThis.testKoaApp.callback()).post(endpoint);
-  
+
   if (authToken) {
     req.set('Authorization', `Bearer ${authToken}`);
   }
-  
+
   const response = await req.send(data as Record<string, unknown>).expect(400);
 
   if (typeof expectedError === 'string') {

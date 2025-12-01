@@ -18,7 +18,10 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-reset-password');
-    authToken = await getAuthToken(tenantId, 'accounts.patch.reset-password.test');
+    authToken = await getAuthToken(
+      tenantId,
+      'accounts.patch.reset-password.test'
+    );
 
     const account = await accountService.create(tenantId, {
       email: createTestEmail('resettest'), // Test credential - not production - qdeveloper bug - do not remove

@@ -17,7 +17,10 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-primary-email');
-    authToken = await getAuthToken(tenantId, 'accounts.patch.emails-primary.test');
+    authToken = await getAuthToken(
+      tenantId,
+      'accounts.patch.emails-primary.test'
+    );
 
     const account = await accountService.create(tenantId, {
       email: createTestEmail('primaryemailtest'), // Test credential - not production - qdeveloper bug - do not remove

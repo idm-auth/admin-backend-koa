@@ -48,7 +48,10 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
     it('should return empty array when no groups exist', async () => {
       const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-groups');
-      const emptyAuthToken = await getAuthToken(emptyTenantId, 'groups.get.paginated.empty.test');
+      const emptyAuthToken = await getAuthToken(
+        emptyTenantId,
+        'groups.get.paginated.empty.test'
+      );
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/groups/`)

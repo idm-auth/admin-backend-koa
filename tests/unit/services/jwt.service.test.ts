@@ -3,14 +3,12 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
 import * as jwtService from '@/domains/realms/jwt/jwt.service';
 import { getTenantId } from '@test/utils/tenant.util';
-import { createTestEmail } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('JWT Service', () => {
   let tenantId: string;
   const mockPayload: JwtPayload = {
     accountId: uuidv4(),
-    email: createTestEmail('test'), // Test email - not production
   };
 
   beforeAll(async () => {
@@ -25,7 +23,7 @@ describe('JWT Service', () => {
     });
 
     it('deve lançar erro para payload inválido', async () => {
-      const invalidPayload: JwtPayload = { accountId: '', email: '' };
+      const invalidPayload: JwtPayload = { accountId: '' };
 
       await expect(
         jwtService.generateToken(tenantId, invalidPayload)
@@ -40,7 +38,6 @@ describe('JWT Service', () => {
 
       expect(result).toBeDefined();
       expect(result).toHaveProperty('accountId', mockPayload.accountId);
-      expect(result).toHaveProperty('email', mockPayload.email);
     });
 
     it('deve lançar erro para token inválido', async () => {

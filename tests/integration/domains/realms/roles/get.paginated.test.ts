@@ -63,7 +63,10 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
 
     it('should return empty array when no roles exist', async () => {
       const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-roles');
-      const emptyAuthToken = await getAuthToken(emptyTenantId, 'roles.get.paginated.empty.test');
+      const emptyAuthToken = await getAuthToken(
+        emptyTenantId,
+        'roles.get.paginated.empty.test'
+      );
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/roles/`)

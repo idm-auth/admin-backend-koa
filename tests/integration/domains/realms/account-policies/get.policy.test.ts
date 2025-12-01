@@ -19,7 +19,10 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-policies-get-policy');
-    authToken = await getAuthToken(tenantId, 'account-policies.get.policy.test');
+    authToken = await getAuthToken(
+      tenantId,
+      'account-policies.get.policy.test'
+    );
 
     const policyResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)

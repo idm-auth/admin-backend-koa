@@ -1,4 +1,9 @@
-import { LoginRequest, LoginResponse, AssumeRoleRequest, AssumeRoleResponse } from './authentication.schema';
+import {
+  LoginRequest,
+  LoginResponse,
+  AssumeRoleRequest,
+  AssumeRoleResponse,
+} from './authentication.schema';
 import * as jwtService from '@/domains/realms/jwt/jwt.service';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as roleService from '@/domains/realms/roles/role.service';
@@ -132,7 +137,9 @@ export const assumeRole = async (
       );
 
       // Validate target realm exists
-      const targetRealm = await realmService.findByPublicUUID(data.targetRealmId);
+      const targetRealm = await realmService.findByPublicUUID(
+        data.targetRealmId
+      );
       span.setAttributes({ 'target.realm.internal.id': targetRealm._id });
 
       // Validate role exists in target realm

@@ -16,7 +16,10 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-account-active-status');
-    authToken = await getAuthToken(tenantId, 'accounts.patch.id.active-status.test');
+    authToken = await getAuthToken(
+      tenantId,
+      'accounts.patch.id.active-status.test'
+    );
 
     const accountData = {
       email: createTestEmail('active-status'), // Test credential - not production - qdeveloper bug - do not remove

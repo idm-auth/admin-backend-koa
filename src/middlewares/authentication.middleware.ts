@@ -1,9 +1,9 @@
-import { Context, Next } from 'koa';
-import { UnauthorizedError } from '@/errors/unauthorized';
-import * as jwtService from '@/domains/realms/jwt/jwt.service';
 import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
+import * as jwtService from '@/domains/realms/jwt/jwt.service';
+import { UnauthorizedError } from '@/errors/unauthorized';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
+import { Context, Next } from 'koa';
 
 const MIDDLEWARE_NAME = 'authentication.middleware';
 
@@ -126,7 +126,7 @@ const tryJwtAuth = async (ctx: Context) => {
       });
 
       logger.debug(
-        { tenantId, accountId: payload.accountId, email: payload.email },
+        { tenantId, accountId: payload.accountId },
         'JWT authentication successful'
       );
     }
@@ -155,6 +155,7 @@ const extractBearerToken = (ctx: Context): string => {
   return token;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tryApiKeyAuth = async (ctx: Context) => {
   // TODO: Implementar validação API Key
   throw new Error('API Key authentication not implemented yet');
