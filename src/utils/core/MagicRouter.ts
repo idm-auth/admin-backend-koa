@@ -114,7 +114,6 @@ export class MagicRouter<TContext extends Context = Context> {
     router?: MagicRouter<TContext>
   ): this {
     if (typeof pathPrefixOrRouter === 'string' && router) {
-      // useMagic('/path', router)
       this.router.use(
         pathPrefixOrRouter,
         router.routes(),
@@ -122,7 +121,6 @@ export class MagicRouter<TContext extends Context = Context> {
       );
       this.childRouters.push({ pathPrefix: pathPrefixOrRouter, router });
     } else if (pathPrefixOrRouter instanceof MagicRouter) {
-      // useMagic(router)
       this.router.use(
         pathPrefixOrRouter.routes(),
         pathPrefixOrRouter.allowedMethods()
@@ -202,6 +200,7 @@ export class MagicRouter<TContext extends Context = Context> {
     return this.router.allowedMethods();
   }
 
+  // Usado em: koaServer.plugin.ts (logRoutesDetailed)
   getInternalRouter() {
     return this.router;
   }

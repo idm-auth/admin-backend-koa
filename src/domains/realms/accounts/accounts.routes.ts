@@ -52,6 +52,9 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all accounts with pagination',
     handlers: [accountController.findAllPaginated],
+    authentication: {
+      jwt: true,
+    },
     request: {
       params: requestTenantIdParamsSchema,
       query: safeAccountListQuerySchema,

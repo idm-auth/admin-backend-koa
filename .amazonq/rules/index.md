@@ -55,6 +55,12 @@
 
 ## Arquivos Específicos (Não Consolidados)
 
+### **jwt-authentication.md** - JWT Authentication (CRÍTICO)
+- **authentication: { jwt: true }** - Proteção de rotas no MagicRouter
+- **Middleware automático** - NUNCA implemente verificação manual
+- **ctx.state.user** - Acesso ao usuário autenticado
+- **jwtService** - Geração e verificação de tokens
+
 ### **telemetry-tracing.md** - Telemetria e Tracing
 - **Implementação obrigatória** em controllers, services, mappers
 - **withSpan/withSpanAsync** - NUNCA spans manuais
