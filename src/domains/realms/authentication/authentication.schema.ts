@@ -24,3 +24,16 @@ export const loginResponseSchema = z.object({
 
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
+export const assumeRoleRequestSchema = z.object({
+  targetRealmId: DocIdSchema,
+  assumedRoleId: DocIdSchema,
+});
+
+export const assumeRoleResponseSchema = z.object({
+  token: z.string(),
+  expiresIn: z.number(),
+});
+
+export type AssumeRoleRequest = z.infer<typeof assumeRoleRequestSchema>;
+export type AssumeRoleResponse = z.infer<typeof assumeRoleResponseSchema>;

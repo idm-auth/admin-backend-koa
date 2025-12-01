@@ -37,3 +37,50 @@ export const login = async (ctx: Context) => {
     }
   );
 };
+
+export const assumeRole = async (ctx: Context) => {
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.assumeRole`,
+      attributes: {
+        'tenant.id': ctx.validated.params.tenantId,
+        'http.method': 'POST',
+        operation: 'assumeRole',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      const { tenantId } = ctx.validated.params;
+      const sourceAccountId = ctx.state.user!.accountId;
+
+      span.setAttributes({ 'account.id': sourceAccountId });
+
+      logger.info(
+        {
+          tenantId,
+          sourceAccountId,
+          targetRealmId: ctx.validated.body.targetRealmId,
+        },
+        'Processing assume role request'
+      );
+
+      const result = await authenticationService.assumeRole(
+        tenantId,
+        sourceAccountId,
+        ctx.validated.body
+      );
+
+      logger.info(
+        {
+          tenantId,
+          sourceAccountId,
+          targetRealmId: ctx.validated.body.targetRealmId,
+        },
+        'Assume role completed successfully'
+      );
+
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  );
+};

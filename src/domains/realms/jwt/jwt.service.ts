@@ -19,7 +19,6 @@ export const generateToken = async (
       attributes: {
         'tenant.id': tenantId,
         'account.id': payload.accountId,
-        'account.email': payload.email,
         operation: 'generateToken',
       },
     },

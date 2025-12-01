@@ -3,6 +3,8 @@ import * as authenticationController from './authentication.controller';
 import {
   loginRequestSchema,
   loginResponseSchema,
+  assumeRoleRequestSchema,
+  assumeRoleResponseSchema,
 } from './authentication.schema';
 import { errorResponseSchema } from '@/domains/commons/base/base.schema';
 import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.schema';
@@ -44,6 +46,59 @@ export const initialize = async () => {
       },
       401: {
         description: 'Unauthorized - Invalid credentials',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+    tags: ['Authentication'],
+  });
+
+  router.post({
+    name: 'assumeRole',
+    path: '/assume-role',
+    summary: 'Assume role in target realm',
+    authentication: { onlyMethods: { jwt: true } },
+    handlers: [authenticationController.assumeRole],
+    request: {
+      params: requestTenantIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: assumeRoleRequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Role assumed successfully',
+        content: {
+          'application/json': {
+            schema: assumeRoleResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      401: {
+        description: 'Unauthorized',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Target realm or role not found',
         content: {
           'application/json': {
             schema: errorResponseSchema,

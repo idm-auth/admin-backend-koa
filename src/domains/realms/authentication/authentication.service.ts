@@ -1,11 +1,13 @@
-import { LoginRequest } from './authentication.schema';
-import { LoginResponse } from './authentication.schema';
+import { LoginRequest, LoginResponse, AssumeRoleRequest, AssumeRoleResponse } from './authentication.schema';
 import * as jwtService from '@/domains/realms/jwt/jwt.service';
 import * as accountService from '@/domains/realms/accounts/account.service';
+import * as roleService from '@/domains/realms/roles/role.service';
+import * as realmService from '@/domains/core/realms/realm.service';
 import { UnauthorizedError } from '@/errors/unauthorized';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
+import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
 
 const SERVICE_NAME = 'authentication.service';
 
@@ -55,7 +57,6 @@ export const login = async (
 
         const token = await jwtService.generateToken(tenantId, {
           accountId: account._id,
-          email: args.email,
         });
 
         logger.debug(
@@ -100,4 +101,88 @@ export const login = async (
       }
     }
   );
+};
+
+export const assumeRole = async (
+  sourceRealmId: string,
+  sourceAccountId: string,
+  data: AssumeRoleRequest
+): Promise<AssumeRoleResponse> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.assumeRole`,
+      attributes: {
+        'tenant.id': sourceRealmId,
+        'account.id': sourceAccountId,
+        'target.realm.id': data.targetRealmId,
+        'assumed.role.id': data.assumedRoleId,
+        operation: 'assumeRole',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info(
+        {
+          sourceRealmId,
+          sourceAccountId,
+          targetRealmId: data.targetRealmId,
+          assumedRoleId: data.assumedRoleId,
+        },
+        'Assuming role in target realm'
+      );
+
+      // Validate target realm exists
+      const targetRealm = await realmService.findByPublicUUID(data.targetRealmId);
+      span.setAttributes({ 'target.realm.internal.id': targetRealm._id });
+
+      // Validate role exists in target realm
+      await roleService.findById(data.targetRealmId, data.assumedRoleId);
+
+      // TODO: Validate permissions (MVP: allow all)
+      // Future: Check if sourceAccount has policy to assume this role
+
+      // Generate JWT for target realm with cross-realm context
+      const payload: JwtPayload = {
+        accountId: sourceAccountId,
+        sourceRealmId,
+        targetRealmId: data.targetRealmId,
+        assumedRoleId: data.assumedRoleId,
+      };
+
+      const token = await jwtService.generateToken(data.targetRealmId, payload);
+
+      // Get expiration from target realm config
+      const expiresIn = parseExpiresIn(targetRealm.jwtConfig.expiresIn);
+
+      logger.info(
+        {
+          sourceRealmId,
+          sourceAccountId,
+          targetRealmId: data.targetRealmId,
+          assumedRoleId: data.assumedRoleId,
+        },
+        'Role assumed successfully'
+      );
+
+      return { token, expiresIn };
+    }
+  );
+};
+
+const parseExpiresIn = (expiresIn: string): number => {
+  // Parse strings like "24h", "7d", "1h" to seconds
+  const match = expiresIn.match(/^(\d+)([smhd])$/);
+  if (!match) return 3600; // Default 1 hour
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+
+  const multipliers: Record<string, number> = {
+    s: 1,
+    m: 60,
+    h: 3600,
+    d: 86400,
+  };
+
+  return value * (multipliers[unit] || 3600);
 };

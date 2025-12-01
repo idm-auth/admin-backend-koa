@@ -107,9 +107,22 @@ const tryJwtAuth = async (ctx: Context) => {
         accountId: payload.accountId,
       };
 
+      // Cross-realm context (when assumed role)
+      if (payload.sourceRealmId) {
+        ctx.state.assumedRole = {
+          sourceRealmId: payload.sourceRealmId,
+          targetRealmId: payload.targetRealmId,
+          assumedRoleId: payload.assumedRoleId,
+        };
+        span.setAttributes({
+          'assumed.role.source.realm.id': payload.sourceRealmId,
+          'assumed.role.target.realm.id': payload.targetRealmId,
+          'assumed.role.id': payload.assumedRoleId,
+        });
+      }
+
       span.setAttributes({
         'account.id': payload.accountId,
-        'account.email': payload.email,
       });
 
       logger.debug(
