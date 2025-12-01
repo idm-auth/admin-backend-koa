@@ -1,17 +1,20 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
 
 describe('PUT /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
   let createdGroupId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-group-put-id');
+    authToken = await getAuthToken(tenantId, 'groups.put.id.test');
 
     // Criar um grupo para os testes usando service
     const group = await groupService.create(tenantId, {
@@ -29,6 +32,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(200);
 
@@ -44,6 +48,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(200);
 
@@ -58,6 +63,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(200);
 
@@ -73,6 +79,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${nonExistentId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(404);
 
@@ -87,6 +94,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${invalidId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(400);
 
@@ -100,6 +108,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(400);
 
@@ -116,6 +125,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(400);
 
@@ -132,6 +142,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(400);
 
@@ -148,6 +159,7 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .put(`/api/realm/${tenantId}/groups/${createdGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(updateData)
       .expect(400);
 

@@ -1,16 +1,19 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('GET /api/realm/:tenantId/roles/:id', () => {
   let tenantId: string;
   let roleId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-roles-get-id');
+    authToken = await getAuthToken(tenantId, 'roles.get.id.test');
 
     const roleData = {
       name: 'test-role',
@@ -20,6 +23,7 @@ describe('GET /api/realm/:tenantId/roles/:id', () => {
 
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(roleData)
       .expect(201);
 
@@ -29,6 +33,7 @@ describe('GET /api/realm/:tenantId/roles/:id', () => {
   it('should get role by id successfully', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/roles/${roleId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     expect(response.body).toHaveProperty('_id', roleId);
@@ -41,6 +46,7 @@ describe('GET /api/realm/:tenantId/roles/:id', () => {
     const nonExistentId = uuidv4();
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/roles/${nonExistentId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(404);
 
     expect(response.body).toHaveProperty('error');
@@ -49,6 +55,7 @@ describe('GET /api/realm/:tenantId/roles/:id', () => {
   it('should return 400 for invalid id format', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/roles/invalid-id`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
     expect(response.body).toHaveProperty('error');

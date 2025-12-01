@@ -1,16 +1,19 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
 
 describe('DELETE /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-group-delete-id');
+    authToken = await getAuthToken(tenantId, 'groups.delete.id.test');
   });
 
   it('should delete group successfully', async () => {
@@ -22,6 +25,7 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/groups/${group._id}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(204);
 
     expect(response.body).toEqual({});
@@ -32,6 +36,7 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/groups/${nonExistentId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(404);
 
     expect(response.body).toHaveProperty('error', 'Group not found');
@@ -42,6 +47,7 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/groups/${invalidId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
     expect(response.body).toHaveProperty('error', 'Invalid ID');
@@ -53,6 +59,7 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
 
     const response = await request(getApp().callback())
       .delete(`/api/realm/${invalidTenantId}/groups/${validGroupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
     expect(response.body).toHaveProperty('error');

@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
@@ -9,6 +10,7 @@ import { AccountPolicyListResponse } from '@/domains/realms/account-policies/acc
 
 describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
   let tenantId: string;
+  let authToken: string;
   let policyId: string;
   let accountId1: string;
   let accountId2: string;
@@ -17,9 +19,11 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-policies-get-policy');
+    authToken = await getAuthToken(tenantId, 'account-policies.get.policy.test');
 
     const policyResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-${uuidv4()}`,
@@ -33,9 +37,10 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
 
     const account1Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: generateTestEmail('test1'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: generateTestEmail('test1'), // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
     const account1: AccountBaseResponse = account1Response.body;
@@ -43,9 +48,10 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
 
     const account2Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: generateTestEmail('test2'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: generateTestEmail('test2'), // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
     const account2: AccountBaseResponse = account2Response.body;
@@ -53,11 +59,13 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId: accountId1, policyId })
       .expect(201);
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId: accountId2, policyId })
       .expect(201);
   });
@@ -65,6 +73,7 @@ describe('GET /api/realm/:tenantId/account-policies/policy/:policyId', () => {
   it('should get all accounts with a policy', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/account-policies/policy/${policyId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const policyAccounts: AccountPolicyListResponse = response.body;

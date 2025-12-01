@@ -2,6 +2,7 @@ import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as groupService from '@/domains/realms/groups/group.service';
@@ -12,11 +13,13 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   let tenantId: string;
   let accountId: string;
   let groupId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-groups-post');
+    authToken = await getAuthToken(tenantId, 'account-groups.post.test');
 
     // Create test account using service
     // amazonq-ignore-next-line
@@ -37,6 +40,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   it('should create account-group relationship successfully', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
         groupId,
@@ -59,6 +63,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
 
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId: newAccount._id.toString(),
         groupId,
@@ -74,6 +79,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   it('should return 400 for invalid accountId', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId: 'invalid-id',
         groupId,
@@ -87,6 +93,7 @@ describe('POST /api/realm/:tenantId/account-groups', () => {
   it('should return 400 for missing required fields', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
       })

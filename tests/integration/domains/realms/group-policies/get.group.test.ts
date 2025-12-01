@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { GroupBaseResponse } from '@/domains/realms/groups/group.schema';
 import { PolicyBaseResponse } from '@/domains/realms/policies/policy.schema';
@@ -11,14 +12,17 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
   let groupId: string;
   let policyId1: string;
   let policyId2: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-group-policies-get-group');
+    authToken = await getAuthToken(tenantId, 'group-policies.get.group.test');
 
     const groupResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ name: `test-group-${uuidv4()}` })
       .expect(201);
     const group: GroupBaseResponse = groupResponse.body;
@@ -26,6 +30,7 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
 
     const policy1Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-1-${uuidv4()}`,
@@ -39,6 +44,7 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
 
     const policy2Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-2-${uuidv4()}`,
@@ -52,11 +58,13 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, policyId: policyId1 })
       .expect(201);
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, policyId: policyId2 })
       .expect(201);
   });
@@ -64,6 +72,7 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
   it('should get all policies for a group', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/group-policies/group/${groupId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const groupPolicies: GroupPolicyListResponse = response.body;
@@ -78,12 +87,14 @@ describe('GET /api/realm/:tenantId/group-policies/group/:groupId', () => {
   it('should return empty array for group with no policies', async () => {
     const emptyGroupResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ name: `empty-group-${uuidv4()}` })
       .expect(201);
     const emptyGroup: GroupBaseResponse = emptyGroupResponse.body;
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/group-policies/group/${emptyGroup._id}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const groupPolicies: GroupPolicyListResponse = response.body;

@@ -1,15 +1,18 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 
 describe('GET /api/realm/:tenantId/groups - Paginated', () => {
   let tenantId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-group-paginated');
+    authToken = await getAuthToken(tenantId, 'groups.get.paginated.test');
 
     // Criar alguns grupos para os testes usando service
     const groupsData = [
@@ -26,6 +29,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should list all groups successfully', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .expect(200);
 
       expect(response.body).toHaveProperty('data');
@@ -44,9 +48,11 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
     it('should return empty array when no groups exist', async () => {
       const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-groups');
+      const emptyAuthToken = await getAuthToken(emptyTenantId, 'groups.get.paginated.empty.test');
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/groups/`)
+        .set('Authorization', `Bearer ${emptyAuthToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .expect(200);
 
       expect(response.body).toHaveProperty('data');
@@ -57,6 +63,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should filter groups by name', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'Paginated Group 1' })
         .expect(200);
 
@@ -71,6 +78,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should sort groups by name', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ sortBy: 'name', descending: false })
         .expect(200);
 
@@ -85,6 +93,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${invalidTenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 10 })
         .expect(400);
 
@@ -95,6 +104,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should return 400 for invalid pagination parameters', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: -1, limit: 0 })
         .expect(400);
 
@@ -104,6 +114,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should return 400 for limit exceeding maximum', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 1000 })
         .expect(400);
 
@@ -113,6 +124,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
     it('should return 400 for invalid filter format', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'invalid<>filter' })
         .expect(400);
 
@@ -125,6 +137,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${invalidTenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 10 })
         .expect(400);
 
@@ -138,6 +151,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
       for (const sortBy of sortFields) {
         const response = await request(getApp().callback())
           .get(`/api/realm/${tenantId}/groups`)
+          .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
           .query({ sortBy, descending: false, limit: 5 })
           .expect(200);
 
@@ -150,6 +164,7 @@ describe('GET /api/realm/:tenantId/groups - Paginated', () => {
       // Testar filtro que exercita todas as condições $or (linhas 200-204)
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/groups`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'Group', limit: 10 })
         .expect(200);
 

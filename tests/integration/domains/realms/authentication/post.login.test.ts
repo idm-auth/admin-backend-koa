@@ -1,40 +1,43 @@
 import { LoginResponse } from '@/domains/realms/authentication/authentication.schema';
 import { getTenantId } from '@test/utils/tenant.util';
 import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
+import { getAuthToken } from '@test/utils/auth.util';
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('POST /api/realm/:tenantId/authentication/login', () => {
   let tenantId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-auth');
-    console.log('TenantId for auth test:', tenantId);
+    authToken = await getAuthToken(tenantId, 'authentication.login.test');
   });
 
   it('should login successfully with valid credentials', async () => {
-    // Primeiro criar uma conta para testar
-    const createResponse = await request(getApp().callback())
+    const testEmail = createTestEmail('authtest');
+
+    // Criar conta para testar
+    await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: createTestEmail('authtest'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
-      });
+        email: testEmail, // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
+      })
+      .expect(201);
 
-    if (createResponse.status !== 201) {
-      throw new Error('Failed to create test account');
-    }
-
+    // Login não requer autenticação
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/authentication/login`)
       .send({
-        email: createTestEmail('authtest'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
-      });
+        email: testEmail, // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
+      })
+      .expect(200);
 
-    expect(response.status).toBe(200);
     const loginResponse: LoginResponse = response.body;
     expect(loginResponse).toHaveProperty('token');
     expect(loginResponse).toHaveProperty('account');
@@ -46,29 +49,32 @@ describe('POST /api/realm/:tenantId/authentication/login', () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/authentication/login`)
       .send({
-        email: createTestEmail('nonexistent'), // Test credential - not production
-        password: 'WrongPassword123!', // Test credential - not production
+        email: createTestEmail('nonexistent'), // Test credential - not production - qdeveloper bug - do not remove
+        password: 'WrongPassword123!', // Test credential - not production - qdeveloper bug - do not remove
       });
 
     expect(response.status).toBe(401);
   });
 
   it('should return 401 for wrong password', async () => {
-    // Create account first
+    const testEmail = createTestEmail('wrongpass');
+
+    // Criar conta
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: createTestEmail('wrongpass'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: testEmail, // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
 
-    // Try to login with wrong password
+    // Tentar login com senha errada
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/authentication/login`)
       .send({
-        email: createTestEmail('wrongpass'), // Test credential - not production
-        password: 'WrongPassword123!', // Test credential - not production
+        email: testEmail, // Test credential - not production - qdeveloper bug - do not remove
+        password: 'WrongPassword123!', // Test credential - not production - qdeveloper bug - do not remove
       });
 
     expect(response.status).toBe(401);
@@ -79,7 +85,6 @@ describe('POST /api/realm/:tenantId/authentication/login', () => {
       .post(`/api/realm/${tenantId}/authentication/login`)
       .send({
         email: 'invalid-email',
-        // amazonq-ignore-next-line
         password: '',
       });
 

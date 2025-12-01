@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
@@ -9,11 +10,13 @@ describe('DELETE /api/realm/:tenantId/group-roles', () => {
   let tenantId: string;
   let groupId: string;
   let roleId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-group-roles-delete');
+    authToken = await getAuthToken(tenantId, 'group-roles.delete.test');
 
     const group = await groupService.create(tenantId, {
       name: 'Test Group Delete',
@@ -32,12 +35,14 @@ describe('DELETE /api/realm/:tenantId/group-roles', () => {
     // First add the role to group
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, roleId })
       .expect(201);
 
     // Then remove it
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/group-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, roleId })
       .expect(204);
 
@@ -47,6 +52,7 @@ describe('DELETE /api/realm/:tenantId/group-roles', () => {
   it('should return 404 when trying to remove non-existent relationship', async () => {
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/group-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, roleId })
       .expect(404);
 

@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
 import { GroupRoleBaseResponse } from '@/domains/realms/group-roles/group-role.schema';
@@ -10,11 +11,13 @@ describe('GET /api/realm/:tenantId/group-roles/role/:roleId', () => {
   let groupId1: string;
   let groupId2: string;
   let roleId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-group-roles-get-role');
+    authToken = await getAuthToken(tenantId, 'group-roles.get.role.test');
 
     const group1 = await groupService.create(tenantId, {
       name: 'Test Group Role 1',
@@ -37,16 +40,19 @@ describe('GET /api/realm/:tenantId/group-roles/role/:roleId', () => {
     // Add role to multiple groups
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId: groupId1, roleId });
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId: groupId2, roleId });
   });
 
   it('should get role groups successfully', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/group-roles/role/${roleId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const roleGroups: GroupRoleBaseResponse[] = response.body;

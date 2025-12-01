@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
@@ -9,6 +10,7 @@ import { AccountPolicyListResponse } from '@/domains/realms/account-policies/acc
 
 describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
   let tenantId: string;
+  let authToken: string;
   let accountId: string;
   let policyId1: string;
   let policyId2: string;
@@ -17,12 +19,14 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-policies-get-account');
+    authToken = await getAuthToken(tenantId, 'account-policies.get.account.test');
 
     const accountResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: generateTestEmail('test'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: generateTestEmail('test'), // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
     const account: AccountBaseResponse = accountResponse.body;
@@ -30,6 +34,7 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
 
     const policy1Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-1-${uuidv4()}`,
@@ -43,6 +48,7 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
 
     const policy2Response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-2-${uuidv4()}`,
@@ -56,11 +62,13 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId, policyId: policyId1 })
       .expect(201);
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId, policyId: policyId2 })
       .expect(201);
   });
@@ -68,6 +76,7 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
   it('should get all policies for an account', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/account-policies/account/${accountId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const accountPolicies: AccountPolicyListResponse = response.body;
@@ -82,9 +91,10 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
   it('should return empty array for account with no policies', async () => {
     const emptyAccountResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: generateTestEmail('empty'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: generateTestEmail('empty'), // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
     const emptyAccount: AccountBaseResponse = emptyAccountResponse.body;
@@ -93,6 +103,7 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
       .get(
         `/api/realm/${tenantId}/account-policies/account/${emptyAccount._id}`
       )
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const accountPolicies: AccountPolicyListResponse = response.body;

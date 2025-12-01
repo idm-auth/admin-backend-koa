@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
@@ -10,6 +11,7 @@ import { ErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/account-policies', () => {
   let tenantId: string;
+  let authToken: string;
   let accountId: string;
   let policyId: string;
 
@@ -17,12 +19,14 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-policies-post');
+    authToken = await getAuthToken(tenantId, 'account-policies.post.test');
 
     const accountResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        email: generateTestEmail('test'), // Test credential - not production
-        password: TEST_PASSWORD, // Test credential - not production
+        email: generateTestEmail('test'), // Test credential - not production - qdeveloper bug - do not remove
+        password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
       })
       .expect(201);
     const account: AccountBaseResponse = accountResponse.body;
@@ -30,6 +34,7 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
 
     const policyResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-${uuidv4()}`,
@@ -45,6 +50,7 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
   it('should create account-policy relationship successfully', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId, policyId })
       .expect(201);
 
@@ -60,6 +66,7 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
   it('should return 400 for missing accountId', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ policyId })
       .expect(400);
 
@@ -70,6 +77,7 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
   it('should return 400 for missing policyId', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId })
       .expect(400);
 
@@ -80,6 +88,7 @@ describe('POST /api/realm/:tenantId/account-policies', () => {
   it('should return 400 for invalid accountId format', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ accountId: 'invalid-id', policyId })
       .expect(400);
 

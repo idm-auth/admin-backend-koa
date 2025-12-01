@@ -1,16 +1,19 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { expectValidationError } from '@test/utils/validation-helpers';
 import { RoleBaseResponse } from '@/domains/realms/roles/role.mapper';
 
 describe('POST /api/realm/:tenantId/roles', () => {
   let tenantId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-roles-post');
+    authToken = await getAuthToken(tenantId, 'roles.post.test');
   });
 
   it('should create role successfully', async () => {
@@ -22,6 +25,7 @@ describe('POST /api/realm/:tenantId/roles', () => {
 
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(roleData)
       .expect(201);
 
@@ -39,7 +43,8 @@ describe('POST /api/realm/:tenantId/roles', () => {
     await expectValidationError(
       `/api/realm/${tenantId}/roles`,
       { description: 'Role without name' },
-      /Name is required|Required/
+      /Name is required|Required/,
+      authToken
     );
   });
 
@@ -47,7 +52,8 @@ describe('POST /api/realm/:tenantId/roles', () => {
     await expectValidationError(
       `/api/realm/${tenantId}/roles`,
       { name: 'test-role', permissions: 'invalid-type' },
-      /Expected array|Invalid/
+      /Expected array|Invalid/,
+      authToken
     );
   });
 });

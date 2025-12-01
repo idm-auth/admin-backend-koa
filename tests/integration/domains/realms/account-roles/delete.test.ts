@@ -2,6 +2,7 @@ import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
 import { RoleBaseResponse } from '@/domains/realms/roles/role.schema';
@@ -11,15 +12,18 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
   let tenantId: string;
   let accountId: string;
   let roleId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-roles-delete');
+    authToken = await getAuthToken(tenantId, 'account-roles.delete.test');
 
     // Create account
     const accountResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         email: generateTestEmail('test'), // Test credential - not production
         password: TEST_PASSWORD, // Test credential - not production
@@ -31,6 +35,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
     // Create role
     const roleResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         name: `test-role-${uuidv4()}`,
         description: 'Test role',
@@ -42,6 +47,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
     // Create relationship
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
         roleId,
@@ -52,6 +58,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
   it('should delete account-role relationship successfully', async () => {
     await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/account-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
         roleId,
@@ -65,6 +72,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
 
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/account-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId: nonExistentAccountId,
         roleId: nonExistentRoleId,
@@ -78,6 +86,7 @@ describe('DELETE /api/realm/:tenantId/account-roles', () => {
   it('should return 400 for missing accountId', async () => {
     const response = await request(getApp().callback())
       .delete(`/api/realm/${tenantId}/account-roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         roleId,
       })

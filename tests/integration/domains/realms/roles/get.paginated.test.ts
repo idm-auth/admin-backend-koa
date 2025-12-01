@@ -1,15 +1,18 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import * as roleService from '@/domains/realms/roles/role.service';
 
 describe('GET /api/realm/:tenantId/roles - Paginated', () => {
   let tenantId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-role-paginated');
+    authToken = await getAuthToken(tenantId, 'roles.get.paginated.test');
 
     // Criar alguns roles para os testes usando service
     const rolesData = [
@@ -39,6 +42,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should list all roles successfully', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .expect(200);
 
       expect(response.body).toHaveProperty('data');
@@ -59,9 +63,11 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
 
     it('should return empty array when no roles exist', async () => {
       const emptyTenantId = await getTenantId('vi-test-db-tenant-empty-roles');
+      const emptyAuthToken = await getAuthToken(emptyTenantId, 'roles.get.paginated.empty.test');
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/roles/`)
+        .set('Authorization', `Bearer ${emptyAuthToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .expect(200);
 
       expect(response.body).toHaveProperty('data');
@@ -72,6 +78,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should filter roles by name', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'Admin' })
         .expect(200);
 
@@ -86,6 +93,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should sort roles by name descending', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ sortBy: 'name', descending: true })
         .expect(200);
 
@@ -102,6 +110,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should paginate roles correctly', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 2 })
         .expect(200);
 
@@ -115,6 +124,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should filter roles by description', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles/`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'editor' })
         .expect(200);
 
@@ -129,6 +139,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${invalidTenantId}/roles`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 10 })
         .expect(400);
 
@@ -139,6 +150,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should return 400 for invalid pagination parameters', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: -1, limit: 0 })
         .expect(400);
 
@@ -148,6 +160,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should return 400 for limit exceeding maximum', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 1000 })
         .expect(400);
 
@@ -157,6 +170,7 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
     it('should return 400 for invalid filter format', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/roles`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ filter: 'invalid<>filter' })
         .expect(400);
 

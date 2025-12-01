@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { TEST_PASSWORD, generateTestEmail } from '@test/utils/test-constants';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
@@ -13,11 +14,13 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
   let accountId: string;
   let groupId1: string;
   let groupId2: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-account-groups-get-account');
+    authToken = await getAuthToken(tenantId, 'account-groups.get.account.test');
 
     // Create test account using service
     const account = await accountService.create(tenantId, {
@@ -42,6 +45,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
     // Create relationships
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
         groupId: groupId1,
@@ -49,6 +53,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
 
     await request(getApp().callback())
       .post(`/api/realm/${tenantId}/account-groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         accountId,
         groupId: groupId2,
@@ -58,6 +63,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
   it('should get account groups successfully', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/account-groups/account/${accountId}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     // Type safety com o schema definido
@@ -88,6 +94,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
       .get(
         `/api/realm/${tenantId}/account-groups/account/${newAccount._id.toString()}`
       )
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     expect(Array.isArray(response.body)).toBe(true);
@@ -97,6 +104,7 @@ describe('GET /api/realm/:tenantId/account-groups/account/:accountId', () => {
   it('should return 400 for invalid accountId', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/account-groups/account/invalid-id`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
     const errorResponse: ErrorResponse = response.body;

@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import { GroupBaseResponse } from '@/domains/realms/groups/group.schema';
 import { PolicyBaseResponse } from '@/domains/realms/policies/policy.schema';
@@ -11,14 +12,17 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
   let tenantId: string;
   let groupId: string;
   let policyId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-group-policies-post');
+    authToken = await getAuthToken(tenantId, 'group-policies.post.test');
 
     const groupResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/groups`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         name: `test-group-${uuidv4()}`,
         description: 'Test group',
@@ -29,6 +33,7 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
 
     const policyResponse = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
         version: '1',
         name: `test-policy-${uuidv4()}`,
@@ -44,6 +49,7 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
   it('should create group-policy relationship successfully', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId, policyId })
       .expect(201);
 
@@ -59,6 +65,7 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
   it('should return 400 for missing groupId', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ policyId })
       .expect(400);
 
@@ -69,6 +76,7 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
   it('should return 400 for missing policyId', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId })
       .expect(400);
 
@@ -79,6 +87,7 @@ describe('POST /api/realm/:tenantId/group-policies', () => {
   it('should return 400 for invalid groupId format', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/group-policies`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({ groupId: 'invalid-id', policyId })
       .expect(400);
 
