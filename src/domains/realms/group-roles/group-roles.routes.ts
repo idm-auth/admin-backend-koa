@@ -16,6 +16,7 @@ export const initialize = async () => {
     name: 'addRoleToGroup',
     path: '/',
     summary: 'Add role to group',
+    authentication: { someOneMethod: true },
     handlers: [groupRoleController.addRoleToGroup],
     request: {
       params: requestTenantIdParamsSchema,
@@ -52,6 +53,7 @@ export const initialize = async () => {
     name: 'removeRoleFromGroup',
     path: '/',
     summary: 'Remove role from group',
+    authentication: { someOneMethod: true },
     handlers: [groupRoleController.removeRoleFromGroup],
     request: {
       params: requestTenantIdParamsSchema,
@@ -91,6 +93,7 @@ export const initialize = async () => {
     name: 'getGroupRoles',
     path: '/group/:groupId',
     summary: 'Get group roles',
+    authentication: { someOneMethod: true },
     handlers: [groupRoleController.getGroupRoles],
     request: {
       params: groupRoleParamsSchema,
@@ -120,6 +123,7 @@ export const initialize = async () => {
     name: 'getRoleGroups',
     path: '/role/:roleId',
     summary: 'Get role groups',
+    authentication: { someOneMethod: true },
     handlers: [groupRoleController.getRoleGroups],
     request: {
       params: roleGroupParamsSchema,

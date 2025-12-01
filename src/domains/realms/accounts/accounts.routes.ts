@@ -51,8 +51,8 @@ export const initialize = async () => {
     name: 'listAccounts',
     path: '/',
     summary: 'List all accounts with pagination',
-    handlers: [accountController.findAllPaginated],
     authentication: { someOneMethod: true },
+    handlers: [accountController.findAllPaginated],
     request: {
       params: requestTenantIdParamsSchema,
       query: safeAccountListQuerySchema,
@@ -66,6 +66,7 @@ export const initialize = async () => {
     name: 'createAccount',
     path: '/',
     summary: 'Create account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -80,6 +81,7 @@ export const initialize = async () => {
     name: 'getAccountById',
     path: '/:id',
     summary: 'Get account by ID',
+    authentication: { someOneMethod: true },
     handlers: [accountController.findById],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -93,6 +95,7 @@ export const initialize = async () => {
     name: 'updateAccount',
     path: '/:id',
     summary: 'Update account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -109,6 +112,7 @@ export const initialize = async () => {
     name: 'removeAccount',
     path: '/:id',
     summary: 'Remove account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.remove],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -122,6 +126,7 @@ export const initialize = async () => {
     name: 'resetAccountPassword',
     path: '/:id/reset-password',
     summary: 'Reset account password',
+    authentication: { someOneMethod: true },
     handlers: [accountController.resetPassword],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -173,6 +178,7 @@ export const initialize = async () => {
     name: 'updateAccountPassword',
     path: '/:id/update-password',
     summary: 'Update account password',
+    authentication: { someOneMethod: true },
     handlers: [accountController.updatePassword],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -224,6 +230,7 @@ export const initialize = async () => {
     name: 'addAccountEmail',
     path: '/:id/email',
     summary: 'Add email to account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.addEmail],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -275,6 +282,7 @@ export const initialize = async () => {
     name: 'removeAccountEmail',
     path: '/:id/email/remove',
     summary: 'Remove email from account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.removeEmail],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -326,6 +334,7 @@ export const initialize = async () => {
     name: 'setAccountPrimaryEmail',
     path: '/:id/email/primary',
     summary: 'Set primary email for account',
+    authentication: { someOneMethod: true },
     handlers: [accountController.setPrimaryEmail],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -377,6 +386,7 @@ export const initialize = async () => {
     name: 'setAccountActiveStatus',
     path: '/:id/active-status',
     summary: 'Set account active status',
+    authentication: { someOneMethod: true },
     handlers: [accountController.setActiveStatus],
     request: {
       params: requestTenantIdAndIdParamsSchema,

@@ -25,6 +25,7 @@ export const initialize = async () => {
     name: 'createAccountPolicy',
     path: '/',
     summary: 'Create account-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [accountPolicyController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -61,6 +62,7 @@ export const initialize = async () => {
     name: 'removeAccountPolicy',
     path: '/',
     summary: 'Remove account-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [accountPolicyController.remove],
     request: {
       params: requestTenantIdParamsSchema,
@@ -100,6 +102,7 @@ export const initialize = async () => {
     name: 'getAccountPolicies',
     path: '/account/:accountId',
     summary: 'Get policies for account',
+    authentication: { someOneMethod: true },
     handlers: [accountPolicyController.findByAccountId],
     request: {
       params: requestTenantIdAndAccountIdParamsSchema,
@@ -129,6 +132,7 @@ export const initialize = async () => {
     name: 'getPolicyAccounts',
     path: '/policy/:policyId',
     summary: 'Get accounts with policy',
+    authentication: { someOneMethod: true },
     handlers: [accountPolicyController.findByPolicyId],
     request: {
       params: requestTenantIdAndPolicyIdParamsSchema,

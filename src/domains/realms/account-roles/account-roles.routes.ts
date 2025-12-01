@@ -27,6 +27,7 @@ export const initialize = async () => {
     name: 'createAccountRole',
     path: '/',
     summary: 'Create account-role relationship',
+    authentication: { someOneMethod: true },
     handlers: [accountRoleController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -64,6 +65,7 @@ export const initialize = async () => {
     name: 'removeAccountRole',
     path: '/',
     summary: 'Remove account-role relationship',
+    authentication: { someOneMethod: true },
     handlers: [accountRoleController.remove],
     request: {
       params: requestTenantIdParamsSchema,
@@ -104,6 +106,7 @@ export const initialize = async () => {
     name: 'getAccountRoles',
     path: '/account/:accountId',
     summary: 'Get roles for account',
+    authentication: { someOneMethod: true },
     handlers: [accountRoleController.findByAccountId],
     request: {
       params: requestTenantIdAndAccountIdParamsSchema,
@@ -134,6 +137,7 @@ export const initialize = async () => {
     name: 'getRoleAccounts',
     path: '/role/:roleId',
     summary: 'Get accounts with role',
+    authentication: { someOneMethod: true },
     handlers: [accountRoleController.findByRoleId],
     request: {
       params: requestTenantIdAndRoleIdParamsSchema,

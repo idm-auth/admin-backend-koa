@@ -25,6 +25,7 @@ export const initialize = async () => {
     name: 'createGroupPolicy',
     path: '/',
     summary: 'Create group-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [groupPolicyController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -61,6 +62,7 @@ export const initialize = async () => {
     name: 'removeGroupPolicy',
     path: '/',
     summary: 'Remove group-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [groupPolicyController.remove],
     request: {
       params: requestTenantIdParamsSchema,
@@ -100,6 +102,7 @@ export const initialize = async () => {
     name: 'getGroupPolicies',
     path: '/group/:groupId',
     summary: 'Get policies for group',
+    authentication: { someOneMethod: true },
     handlers: [groupPolicyController.findByGroupId],
     request: {
       params: requestTenantIdAndGroupIdParamsSchema,
@@ -129,6 +132,7 @@ export const initialize = async () => {
     name: 'getPolicyGroups',
     path: '/policy/:policyId',
     summary: 'Get groups with policy',
+    authentication: { someOneMethod: true },
     handlers: [groupPolicyController.findByPolicyId],
     request: {
       params: requestTenantIdAndPolicyIdParamsSchema,

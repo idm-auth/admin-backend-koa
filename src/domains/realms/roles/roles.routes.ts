@@ -45,6 +45,7 @@ export const initialize = async () => {
     name: 'listRoles',
     path: '/',
     summary: 'List all roles with pagination',
+    authentication: { someOneMethod: true },
     handlers: [roleController.findAllPaginated],
     request: {
       params: requestTenantIdParamsSchema,
@@ -59,6 +60,7 @@ export const initialize = async () => {
     name: 'createRole',
     path: '/',
     summary: 'Create role',
+    authentication: { someOneMethod: true },
     handlers: [roleController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -73,6 +75,7 @@ export const initialize = async () => {
     name: 'getRoleById',
     path: '/:id',
     summary: 'Get role by ID',
+    authentication: { someOneMethod: true },
     handlers: [roleController.findById],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -86,6 +89,7 @@ export const initialize = async () => {
     name: 'updateRole',
     path: '/:id',
     summary: 'Update role',
+    authentication: { someOneMethod: true },
     handlers: [roleController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -100,6 +104,7 @@ export const initialize = async () => {
     name: 'removeRole',
     path: '/:id',
     summary: 'Remove role',
+    authentication: { someOneMethod: true },
     handlers: [roleController.remove],
     request: {
       params: requestTenantIdAndIdParamsSchema,

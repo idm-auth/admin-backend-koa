@@ -21,6 +21,7 @@ export const initialize = async () => {
     name: 'createAccountGroup',
     path: '/',
     summary: 'Add account to group',
+    authentication: { someOneMethod: true },
     handlers: [accountGroupController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -58,6 +59,7 @@ export const initialize = async () => {
     name: 'removeAccountFromGroup',
     path: '/',
     summary: 'Remove account from group',
+    authentication: { someOneMethod: true },
     handlers: [accountGroupController.remove],
     request: {
       params: requestTenantIdParamsSchema,
@@ -98,6 +100,7 @@ export const initialize = async () => {
     name: 'getAccountGroups',
     path: '/account/{accountId}',
     summary: 'Get account groups',
+    authentication: { someOneMethod: true },
     handlers: [accountGroupController.findByAccountId],
     request: {
       params: requestTenantIdAndAccountIdParamsSchema,
@@ -128,6 +131,7 @@ export const initialize = async () => {
     name: 'getGroupAccounts',
     path: '/group/{groupId}',
     summary: 'Get group accounts',
+    authentication: { someOneMethod: true },
     handlers: [accountGroupController.findByGroupId],
     request: {
       params: requestTenantIdAndGroupIdParamsSchema,

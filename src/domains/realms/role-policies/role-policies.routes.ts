@@ -25,6 +25,7 @@ export const initialize = async () => {
     name: 'createRolePolicy',
     path: '/',
     summary: 'Create role-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [rolePolicyController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -61,6 +62,7 @@ export const initialize = async () => {
     name: 'removeRolePolicy',
     path: '/',
     summary: 'Remove role-policy relationship',
+    authentication: { someOneMethod: true },
     handlers: [rolePolicyController.remove],
     request: {
       params: requestTenantIdParamsSchema,
@@ -100,6 +102,7 @@ export const initialize = async () => {
     name: 'getRolePolicies',
     path: '/role/:roleId',
     summary: 'Get policies for role',
+    authentication: { someOneMethod: true },
     handlers: [rolePolicyController.findByRoleId],
     request: {
       params: requestTenantIdAndRoleIdParamsSchema,
@@ -129,6 +132,7 @@ export const initialize = async () => {
     name: 'getPolicyRoles',
     path: '/policy/:policyId',
     summary: 'Get roles with policy',
+    authentication: { someOneMethod: true },
     handlers: [rolePolicyController.findByPolicyId],
     request: {
       params: requestTenantIdAndPolicyIdParamsSchema,

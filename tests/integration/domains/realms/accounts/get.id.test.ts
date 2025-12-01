@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
@@ -10,6 +11,7 @@ import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
 describe('GET /api/realm/:tenantId/accounts/:id', () => {
   let tenantId: string;
   let createdAccountId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
@@ -22,11 +24,15 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
       password: TEST_PASSWORD, // Test credential - not production
     });
     createdAccountId = account._id;
+
+    // Fazer login para obter token JWT
+    authToken = await getAuthToken(tenantId, 'findtest');
   });
 
   it('should find account by id successfully', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${createdAccountId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     const accountResponse: AccountBaseResponse = response.body;
@@ -40,6 +46,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${nonExistentId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(404);
 
     const errorResponse: ErrorResponse = response.body;
@@ -51,6 +58,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${invalidId}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(400);
 
     const errorResponse: ErrorResponse = response.body;
