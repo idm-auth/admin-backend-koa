@@ -18,21 +18,20 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-account-get-id');
 
+    authToken = await getAuthToken(tenantId, 'accounts.get.id.test');
+
     // Criar uma conta para os testes usando service
     const account = await accountService.create(tenantId, {
-      email: createTestEmail('findtest'), // Test credential - not production
-      password: TEST_PASSWORD, // Test credential - not production
+      email: createTestEmail('findtest'), // Test credential - not production - qdeveloper bug - do not remove
+      password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     });
     createdAccountId = account._id;
-
-    // Fazer login para obter token JWT
-    authToken = await getAuthToken(tenantId, 'findtest');
   });
 
   it('should find account by id successfully', async () => {
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${createdAccountId}`)
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(200);
 
     const accountResponse: AccountBaseResponse = response.body;
@@ -46,7 +45,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${nonExistentId}`)
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(404);
 
     const errorResponse: ErrorResponse = response.body;
@@ -58,7 +57,7 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
 
     const response = await request(getApp().callback())
       .get(`/api/realm/${tenantId}/accounts/${invalidId}`)
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
     const errorResponse: ErrorResponse = response.body;

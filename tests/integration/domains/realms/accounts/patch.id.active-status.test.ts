@@ -2,6 +2,7 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
 import { AccountUpdateResponse } from '@/domains/realms/accounts/account.schema';
 import { ErrorResponse } from '@/domains/commons/base/base.schema';
@@ -9,20 +10,22 @@ import { ErrorResponse } from '@/domains/commons/base/base.schema';
 describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
   let tenantId: string;
   let accountId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-account-active-status');
+    authToken = await getAuthToken(tenantId, 'accounts.patch.id.active-status.test');
 
-    // Create account for testing
     const accountData = {
-      email: createTestEmail('active-status'), // Test email - not production
-      password: TEST_PASSWORD, // Test credential - not production
+      email: createTestEmail('active-status'), // Test credential - not production - qdeveloper bug - do not remove
+      password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/accounts`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(accountData)
       .expect(201);
 
@@ -36,6 +39,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/active-status`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(statusData)
       .expect(200);
 
@@ -53,6 +57,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/active-status`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(statusData)
       .expect(200);
 
@@ -68,6 +73,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/active-status`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(statusData)
       .expect(400);
 
@@ -77,11 +83,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
   it('should return 400 for invalid isActive type', async () => {
     const statusData = {
-      isActive: 'invalid',
+      isActive: 'invalid', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/active-status`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(statusData)
       .expect(400);
 
@@ -97,6 +104,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/active-status', () => {
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${nonExistentId}/active-status`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(statusData)
       .expect(404);
 

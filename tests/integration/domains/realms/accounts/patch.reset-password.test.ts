@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
+import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
@@ -10,29 +11,30 @@ import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   let tenantId: string;
   let accountId: string;
+  let authToken: string;
 
   const getApp = () => globalThis.testKoaApp;
-  // amazonq-ignore-next-line // dont remove this line
-  const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production
+  const NEW_PASSWORD = 'NewPassword456!'; // Test credential - not production - qdeveloper bug - do not remove
 
   beforeAll(async () => {
     tenantId = await getTenantId('vi-test-db-tenant-reset-password');
+    authToken = await getAuthToken(tenantId, 'accounts.patch.reset-password.test');
 
-    // Criar uma conta para testar o reset usando service
     const account = await accountService.create(tenantId, {
-      email: createTestEmail('resettest'), // Test credential - not production
-      password: TEST_PASSWORD, // Test credential - not production
+      email: createTestEmail('resettest'), // Test credential - not production - qdeveloper bug - do not remove
+      password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     });
     accountId = account._id;
   });
 
   it('should reset password successfully', async () => {
     const resetData = {
-      password: NEW_PASSWORD,
+      password: NEW_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(200);
 
@@ -48,6 +50,7 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -57,12 +60,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for weak password', async () => {
     const resetData = {
-      // amazonq-ignore-next-line // dont remove this line
-      password: 'weak',
+      password: 'weak', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -72,12 +75,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without uppercase', async () => {
     const resetData = {
-      // amazonq-ignore-next-line // dont remove this line
-      password: 'password123!',
+      password: 'password123!', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -89,12 +92,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without lowercase', async () => {
     const resetData = {
-      // amazonq-ignore-next-line // dont remove this line
-      password: 'PASSWORD123!',
+      password: 'PASSWORD123!', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -106,12 +109,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without number', async () => {
     const resetData = {
-      // amazonq-ignore-next-line // dont remove this line
-      password: 'Password!',
+      password: 'Password!', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -123,12 +126,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
 
   it('should return 400 for password without special character', async () => {
     const resetData = {
-      // amazonq-ignore-next-line // dont remove this line
-      password: 'Password123',
+      password: 'Password123', // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${accountId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -141,11 +144,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   it('should return 404 for non-existent account', async () => {
     const nonExistentId = uuidv4();
     const resetData = {
-      password: NEW_PASSWORD,
+      password: NEW_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${nonExistentId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(404);
 
@@ -156,11 +160,12 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   it('should return 400 for invalid account ID format', async () => {
     const invalidId = 'invalid-uuid';
     const resetData = {
-      password: NEW_PASSWORD,
+      password: NEW_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(`/api/realm/${tenantId}/accounts/${invalidId}/reset-password`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 
@@ -171,13 +176,14 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/reset-password', () => {
   it('should return 400 for invalid tenant ID format', async () => {
     const invalidTenantId = 'invalid-uuid';
     const resetData = {
-      password: NEW_PASSWORD,
+      password: NEW_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     };
 
     const response = await request(getApp().callback())
       .patch(
         `/api/realm/${invalidTenantId}/accounts/${accountId}/reset-password`
       )
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send(resetData)
       .expect(400);
 

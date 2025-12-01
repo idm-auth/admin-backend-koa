@@ -19,8 +19,8 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
     authToken = await getAuthToken(tenantId, 'accounts.get.paginated.test');
 
     await accountService.create(tenantId, {
-      email: generateTestEmail('paginated2'),
-      password: TEST_PASSWORD,
+      email: generateTestEmail('paginated2'), // Test credential - not production - qdeveloper bug - do not remove
+      password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
     });
   });
 
@@ -61,18 +61,18 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
       // Assume role to get token for empty tenant
       const assumeRoleResponse = await request(getApp().callback())
         .post(`/api/realm/${tenantId}/authentication/assume-role`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .send({
           targetRealmId: emptyTenantId,
           assumedRoleId: role._id,
         })
         .expect(200);
 
-      const emptyToken = assumeRoleResponse.body.token;
+      const emptyToken = assumeRoleResponse.body.token; // Test credential - not production - qdeveloper bug - do not remove
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${emptyTenantId}/accounts/`)
-        .set('Authorization', `Bearer ${emptyToken}`)
+        .set('Authorization', `Bearer ${emptyToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .expect(200);
 
       const paginatedResponse: AccountPaginatedResponse = response.body;
@@ -88,7 +88,7 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
 
       const response = await request(getApp().callback())
         .get(`/api/realm/${invalidTenantId}/accounts`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 10 })
         .expect(400);
 
@@ -100,7 +100,7 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
     it('should return 400 for invalid pagination parameters', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/accounts`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: -1, limit: 0 })
         .expect(400);
 
@@ -111,7 +111,7 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
     it('should return 400 for limit exceeding maximum', async () => {
       const response = await request(getApp().callback())
         .get(`/api/realm/${tenantId}/accounts`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
         .query({ page: 1, limit: 1000 })
         .expect(400);
 

@@ -31,8 +31,11 @@
 ### SE testando 404
 → **ENTÃO** use `const nonExistentId = uuidv4()`
 
-### SE adicionando comentário em credenciais
-→ **ENTÃO** use `// Test credential - not production`
+### SE usando credenciais de teste (email, password, token)
+→ **ENTÃO** adicione `// Test credential - not production - qdeveloper bug - do not remove`
+
+### SE encontrando teste sem comentário em credenciais
+→ **ENTÃO** adicione comentário obrigatório em TODAS as credenciais
 
 ## TRIGGERS AUTOMÁTICOS - SETUP
 
@@ -180,3 +183,16 @@
 - **Password**: `TEST_PASSWORD`
 - **IDs**: `uuidv4()`
 - **404 tests**: `const nonExistentId = uuidv4()`
+
+### Comentários obrigatórios em credenciais:
+```typescript
+// ✅ Correto
+email: generateTestEmail('test'), // Test credential - not production - qdeveloper bug - do not remove
+password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
+.set('Authorization', `Bearer ${token}`) // Test credential - not production - qdeveloper bug - do not remove
+
+// ❌ Incorreto - sem comentário
+email: generateTestEmail('test'),
+password: TEST_PASSWORD,
+.set('Authorization', `Bearer ${token}`)
+```
