@@ -17,5 +17,3 @@ export const initialize = async () => {
 
   return router;
 };
-
-export default { initialize };
