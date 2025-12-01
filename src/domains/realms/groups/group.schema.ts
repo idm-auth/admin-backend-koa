@@ -32,10 +32,6 @@ export const groupListItemResponseSchema = groupBaseResponseSchema;
 
 export const groupReadResponseSchema = groupBaseResponseSchema;
 
-export const groupListResponseSchema = z.array(groupListItemResponseSchema);
-
-export const groupSearchResponseSchema = groupReadResponseSchema;
-
 export const groupUpdateSchema = z.object({
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
@@ -47,8 +43,6 @@ export type GroupCreateResponse = z.infer<typeof groupCreateResponseSchema>;
 export type GroupUpdateResponse = z.infer<typeof groupUpdateResponseSchema>;
 export type GroupListItemResponse = z.infer<typeof groupListItemResponseSchema>;
 export type GroupReadResponse = z.infer<typeof groupReadResponseSchema>;
-export type GroupListResponse = z.infer<typeof groupListResponseSchema>;
-export type GroupSearchResponse = z.infer<typeof groupSearchResponseSchema>;
 export type GroupUpdate = z.infer<typeof groupUpdateSchema>;
 
 // Pagination schemas

@@ -43,7 +43,6 @@ curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c
 
 ### Other Endpoints
 
-- `GET /api/core/v1/realm/{tenantId}/accounts/search?email={email}` - Buscar conta por email
 - `GET /api/core/v1/realm/{tenantId}/accounts/{id}` - Buscar conta por ID
 - `PUT /api/core/v1/realm/{tenantId}/accounts/{id}` - Atualizar conta
 - `DELETE /api/core/v1/realm/{tenantId}/accounts/{id}` - Remover conta
@@ -51,7 +50,6 @@ curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c
 ## Groups API
 
 - `POST /api/core/v1/realm/{tenantId}/groups` - Criar grupo
-- `GET /api/core/v1/realm/{tenantId}/groups/search?name={name}` - Buscar grupo por nome
 - `GET /api/core/v1/realm/{tenantId}/groups/{id}` - Buscar grupo por ID
 - `PUT /api/core/v1/realm/{tenantId}/groups/{id}` - Atualizar grupo
 - `DELETE /api/core/v1/realm/{tenantId}/groups/{id}` - Remover grupo
@@ -59,7 +57,6 @@ curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c
 ## Roles API
 
 - `POST /api/core/v1/realm/{tenantId}/roles` - Criar role
-- `GET /api/core/v1/realm/{tenantId}/roles/search?name={name}` - Buscar role por nome
 - `GET /api/core/v1/realm/{tenantId}/roles/{id}` - Buscar role por ID
 - `PUT /api/core/v1/realm/{tenantId}/roles/{id}` - Atualizar role
 - `DELETE /api/core/v1/realm/{tenantId}/roles/{id}` - Remover role
@@ -67,7 +64,6 @@ curl -X POST http://localhost:3000/api/realm/4565ebbb-c38b-46b7-890c-84b8b103c6c
 ## Policies API
 
 - `POST /api/core/v1/realm/{tenantId}/policies` - Criar policy
-- `GET /api/core/v1/realm/{tenantId}/policies/search?name={name}` - Buscar policy por nome
 - `GET /api/core/v1/realm/{tenantId}/policies/{id}` - Buscar policy por ID
 - `PUT /api/core/v1/realm/{tenantId}/policies/{id}` - Atualizar policy
 - `DELETE /api/core/v1/realm/{tenantId}/policies/{id}` - Remover policy

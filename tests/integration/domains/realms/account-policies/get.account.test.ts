@@ -90,7 +90,9 @@ describe('GET /api/realm/:tenantId/account-policies/account/:accountId', () => {
     const emptyAccount: AccountBaseResponse = emptyAccountResponse.body;
 
     const response = await request(getApp().callback())
-      .get(`/api/realm/${tenantId}/account-policies/account/${emptyAccount._id}`)
+      .get(
+        `/api/realm/${tenantId}/account-policies/account/${emptyAccount._id}`
+      )
       .expect(200);
 
     const accountPolicies: AccountPolicyListResponse = response.body;

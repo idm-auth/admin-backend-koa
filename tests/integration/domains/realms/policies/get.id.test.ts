@@ -37,7 +37,9 @@ describe('GET /api/realm/:tenantId/policies/:id', () => {
     expect(policy.description).toBe('Test policy for GET');
     expect(policy.effect).toBe('Allow');
     expect(policy.actions).toEqual(['iam:accounts:read']);
-    expect(policy.resources).toEqual(['grn:global:iam::company-xyz:accounts/*']);
+    expect(policy.resources).toEqual([
+      'grn:global:iam::company-xyz:accounts/*',
+    ]);
     expect(policy).toHaveProperty('createdAt');
     expect(policy).toHaveProperty('updatedAt');
   });

@@ -9,10 +9,8 @@ import {
   realmCreateResponseSchema,
   realmCreateSchema,
   realmListQuerySchema,
-  realmListResponseSchema,
   realmPaginatedResponseSchema,
   realmReadResponseSchema,
-  realmSearchResponseSchema,
   realmUpdateResponseSchema,
   realmUpdateSchema,
 } from './realm.schema';
@@ -26,8 +24,7 @@ export const initialize = async () => {
     realmCreateResponseSchema,
     realmUpdateResponseSchema,
     realmReadResponseSchema,
-    realmPaginatedResponseSchema,
-    realmSearchResponseSchema
+    realmPaginatedResponseSchema
   );
 
   // GET /realms - List all realms (paginated)

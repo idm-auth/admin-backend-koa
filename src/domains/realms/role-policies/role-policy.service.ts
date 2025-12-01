@@ -50,10 +50,7 @@ export const remove = async (
     },
     async () => {
       const logger = await getLogger();
-      logger.info(
-        { tenantId, roleId, policyId },
-        'Removing policy from role'
-      );
+      logger.info({ tenantId, roleId, policyId }, 'Removing policy from role');
 
       const dbName = await getDBName({ publicUUID: tenantId });
       const result = await getModel(dbName).findOneAndDelete({

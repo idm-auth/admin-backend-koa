@@ -1,11 +1,10 @@
-import { describe, expect, it, beforeAll } from 'vitest';
-import request from 'supertest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import { GroupBaseResponse } from '@/domains/realms/groups/group.schema';
 import { PolicyBaseResponse } from '@/domains/realms/policies/policy.schema';
-import { GroupPolicyBaseResponse } from '@/domains/realms/group-policies/group-policy.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { getTenantId } from '@test/utils/tenant.util';
+import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('DELETE /api/realm/:tenantId/group-policies', () => {
   let tenantId: string;

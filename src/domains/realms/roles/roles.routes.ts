@@ -3,10 +3,8 @@ import * as roleController from './role.controller';
 import {
   roleCreateResponseSchema,
   roleCreateSchema,
-  roleListResponseSchema,
   rolePaginatedResponseSchema,
   roleReadResponseSchema,
-  roleSearchResponseSchema,
   roleUpdateResponseSchema,
   roleUpdateSchema,
 } from './role.schema';
@@ -39,8 +37,7 @@ export const initialize = async () => {
     roleCreateResponseSchema,
     roleUpdateResponseSchema,
     roleReadResponseSchema,
-    rolePaginatedResponseSchema,
-    roleSearchResponseSchema
+    rolePaginatedResponseSchema
   );
 
   // GET /roles - List all roles (paginated)

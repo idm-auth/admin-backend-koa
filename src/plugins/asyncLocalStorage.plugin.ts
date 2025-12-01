@@ -1,12 +1,9 @@
 import { AsyncLocalStorage } from 'async_hooks';
+import type { Logger } from 'pino';
 
-interface ContextData {
+export interface ContextData {
   requestId: string;
+  logger: Logger | null;
 }
 
 export const asyncLocalStorage = new AsyncLocalStorage<ContextData>();
-
-export const getRequestId = () => {
-  const store = asyncLocalStorage.getStore();
-  return store?.requestId;
-};

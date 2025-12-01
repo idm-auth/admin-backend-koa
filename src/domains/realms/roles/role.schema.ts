@@ -29,8 +29,6 @@ export const roleCreateResponseSchema = roleBaseResponseSchema;
 export const roleUpdateResponseSchema = roleBaseResponseSchema;
 export const roleReadResponseSchema = roleBaseResponseSchema;
 export const roleListItemResponseSchema = roleBaseResponseSchema;
-export const roleListResponseSchema = z.array(roleListItemResponseSchema);
-export const roleSearchResponseSchema = roleReadResponseSchema;
 
 export const roleUpdateSchema = z.object({
   name: z.string().optional(),
@@ -44,8 +42,6 @@ export type RoleCreateResponse = z.infer<typeof roleCreateResponseSchema>;
 export type RoleUpdateResponse = z.infer<typeof roleUpdateResponseSchema>;
 export type RoleReadResponse = z.infer<typeof roleReadResponseSchema>;
 export type RoleListItemResponse = z.infer<typeof roleListItemResponseSchema>;
-export type RoleListResponse = z.infer<typeof roleListResponseSchema>;
-export type RoleSearchResponse = z.infer<typeof roleSearchResponseSchema>;
 export type RoleUpdate = z.infer<typeof roleUpdateSchema>;
 
 export type RoleParams = z.infer<typeof requestIDParamsSchema>;

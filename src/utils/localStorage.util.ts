@@ -1,17 +1,13 @@
 // src/utils/localStorage.util.ts
-import { AsyncLocalStorage } from 'async_hooks';
 import type { Logger } from 'pino';
 import { getLogger as pinoLogger } from '@/plugins/pino.plugin';
-
-interface RequestContext {
-  requestId: string;
-  logger: Logger | null;
-}
-
-const asyncLocalStorage = new AsyncLocalStorage<RequestContext>();
+import {
+  asyncLocalStorage,
+  type ContextData,
+} from '@/plugins/asyncLocalStorage.plugin';
 
 export const runWithContext = (
-  context: RequestContext,
+  context: ContextData,
   callback: () => Promise<void>
 ) => {
   return asyncLocalStorage.run(context, callback);

@@ -9,10 +9,8 @@ import * as groupController from './group.controller';
 import {
   groupCreateResponseSchema,
   groupCreateSchema,
-  groupListResponseSchema,
   groupPaginatedResponseSchema,
   groupReadResponseSchema,
-  groupSearchResponseSchema,
   groupUpdateResponseSchema,
   groupUpdateSchema,
 } from './group.schema';
@@ -39,8 +37,7 @@ export const initialize = async () => {
     groupCreateResponseSchema,
     groupUpdateResponseSchema,
     groupReadResponseSchema,
-    groupPaginatedResponseSchema,
-    groupSearchResponseSchema
+    groupPaginatedResponseSchema
   );
 
   // GET /groups - List all groups (paginated)

@@ -69,10 +69,6 @@ export const realmReadResponseSchema = realmBaseResponseSchema.extend({
   jwtConfig: jwtConfigResponseSchema,
 });
 
-export const realmListResponseSchema = z.array(realmListItemResponseSchema);
-
-export const realmSearchResponseSchema = realmReadResponseSchema;
-
 export type RealmCreate = z.infer<typeof realmCreateSchema>;
 export type RealmUpdate = z.infer<typeof realmUpdateSchema>;
 export type RealmBaseResponse = z.infer<typeof realmBaseResponseSchema>;
@@ -80,8 +76,6 @@ export type RealmCreateResponse = z.infer<typeof realmCreateResponseSchema>;
 export type RealmUpdateResponse = z.infer<typeof realmUpdateResponseSchema>;
 export type RealmListItemResponse = z.infer<typeof realmListItemResponseSchema>;
 export type RealmReadResponse = z.infer<typeof realmReadResponseSchema>;
-export type RealmListResponse = z.infer<typeof realmListResponseSchema>;
-export type RealmSearchResponse = z.infer<typeof realmSearchResponseSchema>;
 
 export type RealmParams = z.infer<typeof requestIDParamsSchema>;
 

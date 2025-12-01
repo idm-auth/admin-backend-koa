@@ -26,8 +26,7 @@ src/domains/realms/accounts/
 tests/integration/domains/realms/accounts/
 └── v1/
     ├── post.test.ts
-    ├── get.id.test.ts
-    └── get.search.test.ts
+    └── get.id.test.ts
 ```
 
 ## Vantagens da Nova Estrutura

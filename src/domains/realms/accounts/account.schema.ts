@@ -37,10 +37,6 @@ export const accountListItemResponseSchema = accountBaseResponseSchema;
 
 export const accountReadResponseSchema = accountBaseResponseSchema;
 
-export const accountListResponseSchema = z.array(accountListItemResponseSchema);
-
-export const accountSearchResponseSchema = accountReadResponseSchema;
-
 // Account update schema - Email e password não podem ser alterados aqui
 // Email e password devem ter métodos específicos para alteração
 // Ainda não tem outros campos
@@ -82,8 +78,6 @@ export type AccountListItemResponse = z.infer<
   typeof accountListItemResponseSchema
 >;
 export type AccountReadResponse = z.infer<typeof accountReadResponseSchema>;
-export type AccountListResponse = z.infer<typeof accountListResponseSchema>;
-export type AccountSearchResponse = z.infer<typeof accountSearchResponseSchema>;
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
 export type AccountUpdatePassword = z.infer<typeof accountUpdatePasswordSchema>;

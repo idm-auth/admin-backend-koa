@@ -34,7 +34,6 @@ export const policyCreateResponseSchema = policyBaseResponseSchema;
 export const policyUpdateResponseSchema = policyBaseResponseSchema;
 export const policyReadResponseSchema = policyBaseResponseSchema;
 export const policyListItemResponseSchema = policyBaseResponseSchema;
-export const policyListResponseSchema = z.array(policyListItemResponseSchema);
 
 export const policyUpdateSchema = z.object({
   name: z.string().optional(),
@@ -52,7 +51,6 @@ export type PolicyReadResponse = z.infer<typeof policyReadResponseSchema>;
 export type PolicyListItemResponse = z.infer<
   typeof policyListItemResponseSchema
 >;
-export type PolicyListResponse = z.infer<typeof policyListResponseSchema>;
 export type PolicyUpdate = z.infer<typeof policyUpdateSchema>;
 
 export const policyListQuerySchema = paginationQuerySchema;

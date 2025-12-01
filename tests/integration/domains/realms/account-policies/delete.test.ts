@@ -1,12 +1,11 @@
-import { describe, expect, it, beforeAll } from 'vitest';
-import request from 'supertest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { v4 as uuidv4 } from 'uuid';
-import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
 import { PolicyBaseResponse } from '@/domains/realms/policies/policy.schema';
-import { AccountPolicyBaseResponse } from '@/domains/realms/account-policies/account-policy.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { getTenantId } from '@test/utils/tenant.util';
+import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
+import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('DELETE /api/realm/:tenantId/account-policies', () => {
   let tenantId: string;

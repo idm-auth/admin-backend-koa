@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeAll } from 'vitest';
-import request from 'supertest';
-import { getTenantId } from '@test/utils/tenant.util';
 import * as policyService from '@/domains/realms/policies/policy.service';
+import { getTenantId } from '@test/utils/tenant.util';
+import request from 'supertest';
+import { beforeAll, describe, it } from 'vitest';
 
 describe('DELETE /api/realm/:tenantId/policies/:id', () => {
   let tenantId: string;

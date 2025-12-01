@@ -7,20 +7,18 @@ import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import { z } from 'zod';
 import * as accountController from './account.controller';
 import {
+  accountAddEmailSchema,
   accountCreateResponseSchema,
   accountCreateSchema,
-  accountListResponseSchema,
   accountPaginatedResponseSchema,
   accountReadResponseSchema,
+  accountRemoveEmailSchema,
   accountResetPasswordSchema,
-  accountSearchResponseSchema,
+  accountSetActiveStatusSchema,
+  accountSetPrimaryEmailSchema,
+  accountUpdatePasswordSchema,
   accountUpdateResponseSchema,
   accountUpdateSchema,
-  accountUpdatePasswordSchema,
-  accountAddEmailSchema,
-  accountRemoveEmailSchema,
-  accountSetPrimaryEmailSchema,
-  accountSetActiveStatusSchema,
 } from './account.schema';
 
 // Safe query schema that prevents SSRF by restricting filter values
@@ -45,8 +43,7 @@ export const initialize = async () => {
     accountCreateResponseSchema,
     accountUpdateResponseSchema,
     accountReadResponseSchema,
-    accountPaginatedResponseSchema,
-    accountSearchResponseSchema
+    accountPaginatedResponseSchema
   );
 
   // GET /accounts - List all accounts (paginated)

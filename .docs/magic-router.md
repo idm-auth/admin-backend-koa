@@ -382,8 +382,6 @@ const swagger = createCrudSwagger(
   accountCreateResponseSchema,
   accountUpdateResponseSchema,
   accountReadResponseSchema,
-  accountListResponseSchema,
-  accountSearchResponseSchema,
   accountPaginatedResponseSchema
 );
 

@@ -33,8 +33,7 @@ src/domains/{contexto}/{dominio}/
 tests/
 ├── integration/domains/{contexto}/{dominio}/
 │   ├── post.test.ts
-│   ├── get.id.test.ts
-│   └── get.search.test.ts
+│   └── get.id.test.ts
 └── unit/domains/{contexto}/{dominio}/
     ├── service/
     ├── controller/

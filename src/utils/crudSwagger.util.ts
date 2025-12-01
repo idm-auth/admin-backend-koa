@@ -52,8 +52,7 @@ export const createCrudSwagger = (
   createResponseSchema: z.ZodSchema,
   updateResponseSchema: z.ZodSchema,
   readResponseSchema: z.ZodSchema,
-  listPaginatedResponseSchema: z.ZodSchema,
-  searchResponseSchema: z.ZodSchema
+  listPaginatedResponseSchema: z.ZodSchema
 ) => ({
   create: {
     request: {
@@ -99,13 +98,6 @@ export const createCrudSwagger = (
   delete: {
     responses: {
       200: createNoContentResponse(`${entityName} removed successfully`),
-      400: commonResponses.badRequest,
-      404: commonResponses.notFound,
-    },
-  },
-  search: {
-    responses: {
-      200: createSuccessResponse(`${entityName} found`, searchResponseSchema),
       400: commonResponses.badRequest,
       404: commonResponses.notFound,
     },
