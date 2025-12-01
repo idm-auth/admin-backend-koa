@@ -15,7 +15,10 @@ import {
   requestValidationMiddleware,
   responseValidationMiddleware,
 } from '@/middlewares/validation.middleware';
-import { authenticationMiddleware } from '@/middlewares/authentication.middleware';
+import {
+  authenticationMiddleware,
+  AuthenticationConfig,
+} from '@/middlewares/authentication.middleware';
 import { getLoggerNoAsync } from '@/plugins/pino.plugin';
 import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 import {
@@ -38,11 +41,6 @@ export type Method =
   | 'head'
   | 'options'
   | 'trace';
-
-export type AuthenticationConfig = {
-  jwt?: boolean;
-  apiKey?: boolean;
-};
 
 export type MagicRouteConfig<TContext extends Context = Context> =
   RouteConfig & {
@@ -139,10 +137,20 @@ export class MagicRouter<TContext extends Context = Context> {
 
     // Registra rotas próprias
     this.swaggerRoutes.forEach((route) => {
-      const routeConfig = {
+      const routeConfig: RouteConfig = {
         ...route,
         path: fullPrefix + route.path,
       };
+
+      // Adiciona security se authentication está configurado
+      if (route.authentication) {
+        const hasJwt =
+          route.authentication.someOneMethod ||
+          route.authentication.onlyMethods?.jwt;
+        if (hasJwt) {
+          routeConfig.security = [{ bearerAuth: [] }];
+        }
+      }
 
       if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
         const testRegistry = new OpenAPIRegistry();

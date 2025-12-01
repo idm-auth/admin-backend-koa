@@ -45,6 +45,7 @@ export const initialize = async () => {
     name: 'listGroups',
     path: '/',
     summary: 'List all groups with pagination',
+    authentication: { someOneMethod: true },
     handlers: [groupController.findAllPaginated],
     request: {
       params: requestTenantIdParamsSchema,
@@ -59,6 +60,7 @@ export const initialize = async () => {
     name: 'createGroup',
     path: '/',
     summary: 'Create group',
+    authentication: { someOneMethod: true },
     handlers: [groupController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -73,6 +75,7 @@ export const initialize = async () => {
     name: 'getGroupById',
     path: '/:id',
     summary: 'Get group by ID',
+    authentication: { someOneMethod: true },
     handlers: [groupController.findById],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -86,6 +89,7 @@ export const initialize = async () => {
     name: 'updateGroup',
     path: '/:id',
     summary: 'Update group',
+    authentication: { someOneMethod: true },
     handlers: [groupController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -100,6 +104,7 @@ export const initialize = async () => {
     name: 'removeGroup',
     path: '/:id',
     summary: 'Remove group',
+    authentication: { someOneMethod: true },
     handlers: [groupController.remove],
     request: {
       params: requestTenantIdAndIdParamsSchema,

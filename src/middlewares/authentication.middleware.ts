@@ -1,12 +1,36 @@
 import { Context, Next } from 'koa';
 import { UnauthorizedError } from '@/errors/unauthorized';
-import { AuthenticationConfig } from '@/utils/core/MagicRouter';
 import * as jwtService from '@/domains/realms/jwt/jwt.service';
 import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 
 const MIDDLEWARE_NAME = 'authentication.middleware';
+
+/**
+ * Authentication configuration for routes
+ *
+ * @property someOneMethod - Accept any available authentication method (tries JWT, then API Key)
+ * @property onlyMethods - Accept only specific authentication methods
+ * @property onlyMethods.jwt - Accept JWT authentication
+ * @property onlyMethods.apiKey - Accept API Key authentication
+ *
+ * @example
+ * // Accept any method
+ * authentication: { someOneMethod: true }
+ *
+ * @example
+ * // Accept only JWT
+ * authentication: { onlyMethods: { jwt: true } }
+ *
+ * @example
+ * // Accept JWT or API Key
+ * authentication: { onlyMethods: { jwt: true, apiKey: true } }
+ */
+export type AuthenticationConfig = {
+  someOneMethod?: boolean;
+  onlyMethods?: { jwt?: boolean; apiKey?: boolean };
+};
 
 export const authenticationMiddleware = (config: AuthenticationConfig) => {
   return async (ctx: Context, next: Next) => {
@@ -23,8 +47,12 @@ export const authenticationMiddleware = (config: AuthenticationConfig) => {
       async (span) => {
         const methods = [];
 
-        if (config.jwt) methods.push(tryJwtAuth);
-        if (config.apiKey) methods.push(tryApiKeyAuth);
+        if (config.someOneMethod) {
+          methods.push(tryJwtAuth, tryApiKeyAuth);
+        } else if (config.onlyMethods) {
+          if (config.onlyMethods.jwt) methods.push(tryJwtAuth);
+          if (config.onlyMethods.apiKey) methods.push(tryApiKeyAuth);
+        }
 
         let authenticated = false;
         let lastError: Error | null = null;

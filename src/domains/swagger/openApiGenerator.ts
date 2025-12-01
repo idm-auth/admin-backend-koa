@@ -9,6 +9,12 @@ extendZodWithOpenApi(z);
 
 const registry = new OpenAPIRegistry();
 
+registry.registerComponent('securitySchemes', 'bearerAuth', {
+  type: 'http',
+  scheme: 'bearer',
+  bearerFormat: 'JWT',
+});
+
 export { registry };
 
 export const getOpenAPIDocument = () => {
@@ -71,11 +77,6 @@ export const getOpenAPIDocument = () => {
       {
         name: 'Realms',
         description: 'Tenant realm management',
-      },
-    ],
-    security: [
-      {
-        bearerAuth: [],
       },
     ],
   });

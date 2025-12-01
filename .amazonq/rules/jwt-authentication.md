@@ -2,8 +2,11 @@
 
 ## TRIGGERS AUTOMÁTICOS - AUTENTICAÇÃO
 
-### SE rota precisa autenticação
-→ **ENTÃO** adicione `authentication: { jwt: true }` na configuração MagicRouter
+### SE rota precisa autenticação JWT específica
+→ **ENTÃO** adicione `authentication: { onlyMethods: { jwt: true } }` na configuração MagicRouter
+
+### SE rota aceita qualquer método de autenticação
+→ **ENTÃO** adicione `authentication: { someOneMethod: true }` na configuração MagicRouter
 
 ### SE rota é pública (login, signup)
 → **ENTÃO** NUNCA adicione authentication, deixe sem a propriedade
@@ -21,14 +24,27 @@
 
 ### Proteger rota com JWT
 ```typescript
+// Apenas JWT
 router.get({
   name: 'listAccounts',
   path: '/',
   summary: 'List all accounts',
   handlers: [accountController.findAllPaginated],
-  authentication: {
-    jwt: true,
+  authentication: { onlyMethods: { jwt: true } },
+  request: {
+    params: requestTenantIdParamsSchema,
   },
+  responses: swagger.listPaginated.responses,
+  tags: ['Accounts'],
+});
+
+// Qualquer método (JWT ou API Key)
+router.get({
+  name: 'listAccounts',
+  path: '/',
+  summary: 'List all accounts',
+  handlers: [accountController.findAllPaginated],
+  authentication: { someOneMethod: true },
   request: {
     params: requestTenantIdParamsSchema,
   },
@@ -100,7 +116,7 @@ export const login = async (tenantId: string, credentials: LoginCredentials) => 
 ## PADRÕES DE RECONHECIMENTO
 
 ### Rota protegida quando vejo:
-- `authentication: { jwt: true }` na configuração
+- `authentication: { onlyMethods: { jwt: true } }` ou `authentication: { someOneMethod: true }` na configuração
 - Controller acessa `ctx.state.user.accountId`
 - Documentação Swagger mostra security requirement
 
@@ -183,6 +199,8 @@ export const findById = async (ctx: Context) => {
 
 ## REGRA DE OURO
 
-**"Rota protegida = authentication: { jwt: true }. Middleware faz tudo automaticamente."**
+**"Rota protegida = authentication: { onlyMethods: { jwt: true } } ou { someOneMethod: true }. Middleware faz tudo automaticamente."**
 
 **"NUNCA implemente verificação JWT manualmente. Use o middleware."**
+
+**"someOneMethod aceita qualquer método. onlyMethods especifica quais métodos aceitar."**
