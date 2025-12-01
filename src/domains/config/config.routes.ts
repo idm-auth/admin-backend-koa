@@ -1,9 +1,6 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as configController from './config.controller';
-import { configParamsSchema, ConfigParams } from './config.schema';
-import { Context } from 'koa';
-
-type ConfigContext = Context & { params: ConfigParams };
+import { configParamsSchema } from './config.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({
@@ -22,7 +19,7 @@ export const initialize = async () => {
     tags: ['Config'],
   });
 
-  router.get<ConfigContext>({
+  router.get({
     name: 'getConfig',
     path: '/app/:appName/env/:env',
     handlers: [configController.getConfig],

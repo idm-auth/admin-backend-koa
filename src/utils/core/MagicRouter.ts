@@ -4,36 +4,18 @@
  * Este router combina funcionalidades do Koa Router com geração automática
  * de documentação OpenAPI/Swagger usando zod-to-openapi.
  *
- * PROBLEMA DE TIPOS GENÉRICOS:
+ * TIPOS GENÉRICOS:
  *
- * O cast `as MagicRouteConfig<Context>` nos métodos HTTP é necessário devido
- * a uma limitação do sistema de tipos do TypeScript com covariância de generics.
- *
- * Situação:
- * - swaggerRoutes: Array<MagicRouteConfig<Context>>
- * - configLocal: MagicRouteConfig<TContext> onde TContext extends Context
- *
- * Mesmo que TContext extends Context, TypeScript não permite a atribuição
- * direta porque TContext pode ser um subtipo mais específico de Context,
- * criando incompatibilidade de covariância.
- *
- * O cast é type-safe na prática porque:
- * 1. TContext extends Context garante compatibilidade estrutural
- * 2. Em runtime, todos os contexts são compatíveis
- * 3. TypeScript não possui wildcards como Java (<? extends Context>)
- *
- * Alternativas consideradas:
- * - Array<MagicRouteConfig<any>>: Perde type safety
- * - Union types: Complexidade desnecessária
- * - Conditional types: Over-engineering
- *
- * O cast é a solução mais pragmática e segura para este caso específico.
+ * MagicRouter<TContext> - Cada router é genérico sobre seu tipo de Context.
+ * Todas as rotas de um router específico usam o mesmo TContext.
+ * Routers com diferentes TContext podem ser compostos via useMagic().
  */
 
 import {
   requestValidationMiddleware,
   responseValidationMiddleware,
 } from '@/middlewares/validation.middleware';
+import { authenticationMiddleware } from '@/middlewares/authentication.middleware';
 import { getLoggerNoAsync } from '@/plugins/pino.plugin';
 import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 import {
@@ -46,30 +28,41 @@ import { Context, Next } from 'koa';
 import pino from 'pino';
 import { registry } from '../../domains/swagger/openApiGenerator';
 
-// HTTP Methods enum for semantic usage
-export enum HttpMethod {
-  GET = 'get',
-  POST = 'post',
-  PUT = 'put',
-  DELETE = 'delete',
-  PATCH = 'patch',
-}
+// Method type (from zod-to-openapi RouteConfig)
+export type Method =
+  | 'get'
+  | 'post'
+  | 'put'
+  | 'delete'
+  | 'patch'
+  | 'head'
+  | 'options'
+  | 'trace';
+
+export type AuthenticationConfig = {
+  jwt?: boolean;
+  apiKey?: boolean;
+};
 
 export type MagicRouteConfig<TContext extends Context = Context> =
   RouteConfig & {
     name: string;
     middlewares?: Array<(ctx: TContext, next: Next) => Promise<void>>;
     handlers: Array<(ctx: TContext, next: Next) => Promise<void>>;
+    authentication?: AuthenticationConfig;
   };
 
 export type MagicRouteConfigWithoutMethod<TContext extends Context = Context> =
   Omit<MagicRouteConfig<TContext>, 'method'>;
 
-export class MagicRouter {
+export class MagicRouter<TContext extends Context = Context> {
   private router: Router;
 
-  private swaggerRoutes: Array<MagicRouteConfig<Context>> = [];
-  private childRouters: Array<{ pathPrefix: string; router: MagicRouter }> = [];
+  private swaggerRoutes: Array<MagicRouteConfig<TContext>> = [];
+  private childRouters: Array<{
+    pathPrefix: string;
+    router: MagicRouter<TContext>;
+  }> = [];
   private basePath: string;
   private logger: pino.Logger;
 
@@ -79,12 +72,18 @@ export class MagicRouter {
     this.logger = getLoggerNoAsync();
   }
 
-  private buildHandlers<TContext extends Context = Context>(
-    config: MagicRouteConfig<TContext>
-  ) {
+  private buildHandlers(config: MagicRouteConfig<TContext>) {
     const middlewares = config.middlewares || [];
     const requestValidation = requestValidationMiddleware<TContext>(config);
     const responseValidation = responseValidationMiddleware<TContext>(config);
+
+    // Autenticação (qualquer método válido)
+    const authenticationMiddlewares = [];
+    if (config.authentication) {
+      authenticationMiddlewares.push(
+        authenticationMiddleware(config.authentication)
+      );
+    }
 
     // Wrapper apenas no último handler para chamar next()
     const handlers = [...config.handlers];
@@ -97,6 +96,7 @@ export class MagicRouter {
 
     return [
       requestValidation,
+      ...authenticationMiddlewares,
       ...middlewares,
       ...handlers,
       wrappedLastHandler,
@@ -110,8 +110,8 @@ export class MagicRouter {
   }
 
   useMagic(
-    pathPrefixOrRouter: string | MagicRouter,
-    router?: MagicRouter
+    pathPrefixOrRouter: string | MagicRouter<TContext>,
+    router?: MagicRouter<TContext>
   ): this {
     if (typeof pathPrefixOrRouter === 'string' && router) {
       // useMagic('/path', router)
@@ -132,7 +132,7 @@ export class MagicRouter {
     return this;
   }
 
-  getSwaggerRoutes(): MagicRouteConfig<Context>[] {
+  getSwaggerRoutes(): MagicRouteConfig<TContext>[] {
     return this.swaggerRoutes;
   }
 
@@ -207,58 +207,48 @@ export class MagicRouter {
   }
 
   // HTTP Methods
-  get<TContext extends Context = Context>(
-    config: MagicRouteConfigWithoutMethod<TContext>
-  ): this {
-    const configLocal = { ...config, method: HttpMethod.GET };
+  get(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const configLocal = { ...config, method: 'get' as Method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
     this.router.get(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal as MagicRouteConfig<Context>);
+    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
-  post<TContext extends Context = Context>(
-    config: MagicRouteConfigWithoutMethod<TContext>
-  ): this {
-    const configLocal = { ...config, method: HttpMethod.POST };
+  post(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const configLocal = { ...config, method: 'post' as Method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
     this.router.post(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal as MagicRouteConfig<Context>);
+    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
-  put<TContext extends Context = Context>(
-    config: MagicRouteConfigWithoutMethod<TContext>
-  ): this {
-    const configLocal = { ...config, method: HttpMethod.PUT };
+  put(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const configLocal = { ...config, method: 'put' as Method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
     this.router.put(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal as MagicRouteConfig<Context>);
+    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
-  delete<TContext extends Context = Context>(
-    config: MagicRouteConfigWithoutMethod<TContext>
-  ): this {
-    const configLocal = { ...config, method: HttpMethod.DELETE };
+  delete(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const configLocal = { ...config, method: 'delete' as Method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
     this.router.delete(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal as MagicRouteConfig<Context>);
+    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
-  patch<TContext extends Context = Context>(
-    config: MagicRouteConfigWithoutMethod<TContext>
-  ): this {
-    const configLocal = { ...config, method: HttpMethod.PATCH };
+  patch(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const configLocal = { ...config, method: 'patch' as Method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
     this.router.patch(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal as MagicRouteConfig<Context>);
+    this.swaggerRoutes.push(configLocal);
     return this;
   }
 }
