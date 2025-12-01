@@ -8,7 +8,7 @@ export const expectValidationError = async (
 ) => {
   const response = await request(globalThis.testKoaApp.callback())
     .post(endpoint)
-    .send(data)
+    .send(data as Record<string, unknown>)
     .expect(400);
 
   if (typeof expectedError === 'string') {

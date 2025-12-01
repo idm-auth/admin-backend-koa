@@ -45,9 +45,8 @@ export const initialize = async () => {
     accountCreateResponseSchema,
     accountUpdateResponseSchema,
     accountReadResponseSchema,
-    accountListResponseSchema,
-    accountSearchResponseSchema,
-    accountPaginatedResponseSchema
+    accountPaginatedResponseSchema,
+    accountSearchResponseSchema
   );
 
   // GET /accounts - List all accounts (paginated)

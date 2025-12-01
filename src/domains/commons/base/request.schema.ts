@@ -61,3 +61,12 @@ export const requestTenantIdAndRoleIdParamsSchema = z.object({
 export type RequestTenantIdAndRoleIdParams = z.infer<
   typeof requestTenantIdAndRoleIdParamsSchema
 >;
+
+export const requestTenantIdAndPolicyIdParamsSchema = z.object({
+  tenantId: publicUUIDSchema,
+  policyId: DocIdSchema,
+});
+
+export type RequestTenantIdAndPolicyIdParams = z.infer<
+  typeof requestTenantIdAndPolicyIdParamsSchema
+>;

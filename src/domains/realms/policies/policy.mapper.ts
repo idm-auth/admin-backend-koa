@@ -1,38 +1,87 @@
 import { withSpan } from '@/utils/tracing.util';
 import { PolicyDocument } from './policy.model';
+import {
+  PolicyBaseResponse,
+  PolicyCreateResponse,
+  PolicyUpdateResponse,
+  PolicyReadResponse,
+  PolicyListItemResponse,
+} from './policy.schema';
 
 const MAPPER_NAME = 'policy.mapper';
 
-export const toResponse = (policy: PolicyDocument) =>
+export const toBaseResponse = (policy: PolicyDocument): PolicyBaseResponse =>
   withSpan(
     {
-      name: `${MAPPER_NAME}.toResponse`,
+      name: `${MAPPER_NAME}.toBaseResponse`,
       attributes: {
-        'entity.id': policy._id.toString(),
-        operation: 'toResponse',
+        'policy.id': policy._id.toString(),
+        operation: 'toBaseResponse',
       },
     },
     () => ({
-      _id: policy._id,
+      _id: policy._id.toString(),
+      version: policy.version,
       name: policy.name,
       description: policy.description,
       effect: policy.effect,
       actions: policy.actions,
       resources: policy.resources,
-      conditions: policy.conditions,
       createdAt: policy.createdAt.toISOString(),
       updatedAt: policy.updatedAt.toISOString(),
     })
   );
 
-export const toListResponse = (policies: PolicyDocument[]) =>
+export const toCreateResponse = (
+  policy: PolicyDocument
+): PolicyCreateResponse =>
   withSpan(
     {
-      name: `${MAPPER_NAME}.toListResponse`,
+      name: `${MAPPER_NAME}.toCreateResponse`,
       attributes: {
-        'result.count': policies.length,
-        operation: 'toListResponse',
+        'policy.id': policy._id.toString(),
+        operation: 'toCreateResponse',
       },
     },
-    () => policies.map(toResponse)
+    () => toBaseResponse(policy)
+  );
+
+export const toUpdateResponse = (
+  policy: PolicyDocument
+): PolicyUpdateResponse =>
+  withSpan(
+    {
+      name: `${MAPPER_NAME}.toUpdateResponse`,
+      attributes: {
+        'policy.id': policy._id.toString(),
+        operation: 'toUpdateResponse',
+      },
+    },
+    () => toBaseResponse(policy)
+  );
+
+export const toReadResponse = (policy: PolicyDocument): PolicyReadResponse =>
+  withSpan(
+    {
+      name: `${MAPPER_NAME}.toReadResponse`,
+      attributes: {
+        'policy.id': policy._id.toString(),
+        operation: 'toReadResponse',
+      },
+    },
+    () => toBaseResponse(policy)
+  );
+
+export const toListItemResponse = (
+  policy: PolicyDocument
+): PolicyListItemResponse =>
+  withSpan(
+    {
+      name: `${MAPPER_NAME}.toListItemResponse`,
+      attributes: {
+        'policy.id': policy._id.toString(),
+        operation: 'toListItemResponse',
+      },
+    },
+    () => toBaseResponse(policy)
   );

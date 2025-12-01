@@ -3,29 +3,29 @@ import * as policyMapper from '@/domains/realms/policies/policy.mapper';
 import { expectMapsObject } from '@test/utils/mapper-test-helpers';
 import { PolicyDocument } from '@/domains/realms/policies/policy.model';
 
-describe('policy.mapper.toResponse', () => {
+describe('policy.mapper.toBaseResponse', () => {
   it('should map policy to response format', () => {
     expectMapsObject(
-      policyMapper.toResponse,
+      policyMapper.toBaseResponse,
       {
         _id: 'test-id',
+        version: '1',
         name: 'admin-policy',
         description: 'Administrator policy',
         effect: 'Allow',
         actions: ['read', 'write'],
         resources: ['users', 'groups'],
-        conditions: { ip: '192.168.1.0/24' },
         createdAt: new Date('2023-01-01'),
         updatedAt: new Date('2023-01-02'),
       } as PolicyDocument,
       {
         _id: 'test-id',
+        version: '1',
         name: 'admin-policy',
         description: 'Administrator policy',
         effect: 'Allow',
         actions: ['read', 'write'],
         resources: ['users', 'groups'],
-        conditions: { ip: '192.168.1.0/24' },
         createdAt: '2023-01-01T00:00:00.000Z',
         updatedAt: '2023-01-02T00:00:00.000Z',
       }
@@ -34,9 +34,10 @@ describe('policy.mapper.toResponse', () => {
 
   it('should handle policy without optional fields', () => {
     expectMapsObject(
-      policyMapper.toResponse,
+      policyMapper.toBaseResponse,
       {
         _id: 'test-id',
+        version: '1',
         name: 'basic-policy',
         effect: 'Deny',
         actions: ['delete'],
@@ -46,12 +47,12 @@ describe('policy.mapper.toResponse', () => {
       } as PolicyDocument,
       {
         _id: 'test-id',
+        version: '1',
         name: 'basic-policy',
         description: undefined,
         effect: 'Deny',
         actions: ['delete'],
         resources: ['files'],
-        conditions: undefined,
         createdAt: '2023-01-01T00:00:00.000Z',
         updatedAt: '2023-01-01T00:00:00.000Z',
       }

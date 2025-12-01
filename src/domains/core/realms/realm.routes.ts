@@ -26,9 +26,8 @@ export const initialize = async () => {
     realmCreateResponseSchema,
     realmUpdateResponseSchema,
     realmReadResponseSchema,
-    realmListResponseSchema,
-    realmSearchResponseSchema,
-    realmPaginatedResponseSchema
+    realmPaginatedResponseSchema,
+    realmSearchResponseSchema
   );
 
   // GET /realms - List all realms (paginated)

@@ -39,9 +39,8 @@ export const initialize = async () => {
     roleCreateResponseSchema,
     roleUpdateResponseSchema,
     roleReadResponseSchema,
-    roleListResponseSchema,
-    roleSearchResponseSchema,
-    rolePaginatedResponseSchema
+    rolePaginatedResponseSchema,
+    roleSearchResponseSchema
   );
 
   // GET /roles - List all roles (paginated)

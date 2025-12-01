@@ -39,9 +39,8 @@ export const initialize = async () => {
     groupCreateResponseSchema,
     groupUpdateResponseSchema,
     groupReadResponseSchema,
-    groupListResponseSchema,
-    groupSearchResponseSchema,
-    groupPaginatedResponseSchema
+    groupPaginatedResponseSchema,
+    groupSearchResponseSchema
   );
 
   // GET /groups - List all groups (paginated)

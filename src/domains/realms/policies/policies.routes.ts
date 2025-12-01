@@ -1,86 +1,138 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
-import * as policyController from './policy.controller';
 import {
-  policyCreateResponseSchema,
-  policyCreateSchema,
-  policyListResponseSchema,
-  policyReadResponseSchema,
-  policySearchResponseSchema,
-  policyUpdateResponseSchema,
-  policyUpdateSchema,
-} from './policy.schema';
-import {
-  requestTenantIdAndIdParamsSchema,
   requestTenantIdParamsSchema,
+  requestTenantIdAndIdParamsSchema,
 } from '@/domains/commons/base/request.schema';
-import { createCrudSwagger } from '@/utils/crudSwagger.util';
+import * as controller from './policy.controller';
+import {
+  policyCreateSchema,
+  policyCreateResponseSchema,
+  policyUpdateSchema,
+  policyUpdateResponseSchema,
+  policyReadResponseSchema,
+  policyPaginatedResponseSchema,
+  policyListQuerySchema,
+} from './policy.schema';
+
+const router = new MagicRouter({ prefix: '/policies' });
+
+router.post({
+  name: 'createPolicy',
+  path: '/',
+  summary: 'Create policy',
+  handlers: [controller.create],
+  request: {
+    params: requestTenantIdParamsSchema,
+    body: {
+      content: {
+        'application/json': {
+          schema: policyCreateSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Policy created successfully',
+      content: {
+        'application/json': {
+          schema: policyCreateResponseSchema,
+        },
+      },
+    },
+  },
+  tags: ['Policies'],
+});
+
+router.get({
+  name: 'getPolicyById',
+  path: '/:id',
+  summary: 'Get policy by ID',
+  handlers: [controller.findById],
+  request: {
+    params: requestTenantIdAndIdParamsSchema,
+  },
+  responses: {
+    200: {
+      description: 'Policy retrieved successfully',
+      content: {
+        'application/json': {
+          schema: policyReadResponseSchema,
+        },
+      },
+    },
+  },
+  tags: ['Policies'],
+});
+
+router.patch({
+  name: 'updatePolicy',
+  path: '/:id',
+  summary: 'Update policy',
+  handlers: [controller.update],
+  request: {
+    params: requestTenantIdAndIdParamsSchema,
+    body: {
+      content: {
+        'application/json': {
+          schema: policyUpdateSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Policy updated successfully',
+      content: {
+        'application/json': {
+          schema: policyUpdateResponseSchema,
+        },
+      },
+    },
+  },
+  tags: ['Policies'],
+});
+
+router.delete({
+  name: 'deletePolicy',
+  path: '/:id',
+  summary: 'Delete policy',
+  handlers: [controller.remove],
+  request: {
+    params: requestTenantIdAndIdParamsSchema,
+  },
+  responses: {
+    204: {
+      description: 'Policy deleted successfully',
+    },
+  },
+  tags: ['Policies'],
+});
+
+router.get({
+  name: 'listPolicies',
+  path: '/',
+  summary: 'List policies',
+  handlers: [controller.list],
+  request: {
+    params: requestTenantIdParamsSchema,
+    query: policyListQuerySchema,
+  },
+  responses: {
+    200: {
+      description: 'Policies retrieved successfully',
+      content: {
+        'application/json': {
+          schema: policyPaginatedResponseSchema,
+        },
+      },
+    },
+  },
+  tags: ['Policies'],
+});
 
 export const initialize = async () => {
-  const router = new MagicRouter({ prefix: '/policies' });
-  const swagger = createCrudSwagger(
-    'Policy',
-    policyCreateSchema,
-    policyUpdateSchema,
-    policyCreateResponseSchema,
-    policyUpdateResponseSchema,
-    policyReadResponseSchema,
-    policyListResponseSchema,
-    policySearchResponseSchema
-  );
-
-  // POST /policies - Create policy
-  router.post({
-    name: 'createPolicy',
-    path: '/',
-    summary: 'Create policy',
-    handlers: [policyController.create],
-    request: {
-      params: requestTenantIdParamsSchema,
-      body: swagger.create.request.body,
-    },
-    responses: swagger.create.responses,
-    tags: ['Policies'],
-  });
-
-  // GET /policies/:id - Get policy by ID
-  router.get({
-    name: 'getPolicyById',
-    path: '/:id',
-    summary: 'Get policy by ID',
-    handlers: [policyController.findById],
-    request: {
-      params: requestTenantIdAndIdParamsSchema,
-    },
-    responses: swagger.read.responses,
-    tags: ['Policies'],
-  });
-
-  // PUT /policies/:id - Update policy
-  router.put({
-    name: 'updatePolicy',
-    path: '/:id',
-    summary: 'Update policy',
-    handlers: [policyController.update],
-    request: {
-      params: requestTenantIdAndIdParamsSchema,
-      body: swagger.update.request.body,
-    },
-    responses: swagger.update.responses,
-    tags: ['Policies'],
-  });
-
-  // DELETE /policies/:id - Remove policy
-  router.delete({
-    name: 'removePolicy',
-    path: '/:id',
-    summary: 'Remove policy',
-    handlers: [policyController.remove],
-    request: {
-      params: requestTenantIdAndIdParamsSchema,
-    },
-    responses: swagger.delete.responses,
-    tags: ['Policies'],
-  });
-
   return router;
 };
+
+export default router;
