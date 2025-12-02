@@ -63,16 +63,20 @@ export const login = async (
         const token = await jwtService.generateToken(tenantId, {
           accountId: account._id,
         });
+        const refreshToken = await jwtService.generateRefreshToken(tenantId, {
+          accountId: account._id,
+        });
 
         logger.debug(
           { tenantId, accountId: account._id },
-          'JWT token generated successfully'
+          'JWT token and refresh token generated successfully'
         );
 
         span.setAttributes({ 'auth.success': true });
 
         return {
           token,
+          refreshToken,
           account: {
             _id: account._id.toString(),
             emails: account.emails,
@@ -172,6 +176,58 @@ export const assumeRole = async (
       );
 
       return { token, expiresIn };
+    }
+  );
+};
+
+export const refresh = async (
+  tenantId: string,
+  refreshToken: string
+): Promise<{ token: string; refreshToken: string }> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.refresh`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'refresh',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId }, 'Refresh token attempt initiated');
+
+      try {
+        const decoded = (await jwtService.verifyToken(
+          tenantId,
+          refreshToken
+        )) as JwtPayload;
+        span.setAttributes({ 'account.id': decoded.accountId });
+
+        logger.debug(
+          { tenantId, accountId: decoded.accountId },
+          'Refresh token verified successfully'
+        );
+
+        const newToken = await jwtService.generateToken(tenantId, {
+          accountId: decoded.accountId,
+        });
+        const newRefreshToken = await jwtService.generateRefreshToken(tenantId, {
+          accountId: decoded.accountId,
+        });
+
+        logger.info(
+          { tenantId, accountId: decoded.accountId },
+          'New tokens generated successfully'
+        );
+
+        span.setAttributes({ 'auth.success': true });
+
+        return { token: newToken, refreshToken: newRefreshToken };
+      } catch (error) {
+        logger.warn({ tenantId, error }, 'Invalid refresh token');
+        span.setAttributes({ 'auth.success': false });
+        throw new UnauthorizedError('Invalid refresh token');
+      }
     }
   );
 };

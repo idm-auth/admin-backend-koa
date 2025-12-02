@@ -14,6 +14,7 @@ import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { executePagination } from '@/utils/pagination.util';
+import { getMainConnection } from '@/plugins/mongo.plugin';
 
 export type GetDBNameParams = {
   publicUUID: PublicUUID;
@@ -227,7 +228,7 @@ export const remove = async (id: string): Promise<void> => {
         operation: 'remove',
       },
     },
-    async () => {
+    async (span) => {
       const logger = await getLogger();
       logger.debug({ id });
 
@@ -237,6 +238,18 @@ export const remove = async (id: string): Promise<void> => {
       if (!realm) {
         throw new NotFoundError('Realm not found');
       }
+
+      const mainConnection = getMainConnection();
+
+      span.setAttributes({ 'realm.dbName': realm.dbName });
+      logger.info({ dbName: realm.dbName }, 'Dropping realm database');
+
+      await mainConnection.useDb(realm.dbName).dropDatabase();
+
+      logger.info(
+        { dbName: realm.dbName },
+        'Realm database dropped successfully'
+      );
     }
   );
 };

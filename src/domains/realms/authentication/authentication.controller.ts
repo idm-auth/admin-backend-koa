@@ -84,3 +84,33 @@ export const assumeRole = async (ctx: Context) => {
     }
   );
 };
+
+export const refresh = async (ctx: Context) => {
+  return withSpanAsync(
+    {
+      name: `${CONTROLLER_NAME}.refresh`,
+      attributes: {
+        'tenant.id': ctx.validated.params.tenantId,
+        'http.method': 'POST',
+        operation: 'refresh',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      const { tenantId } = ctx.validated.params;
+      const { refreshToken } = ctx.validated.body;
+
+      logger.info({ tenantId }, 'Processing refresh token request');
+
+      const result = await authenticationService.refresh(
+        tenantId,
+        refreshToken
+      );
+
+      logger.info({ tenantId }, 'Refresh token completed successfully');
+
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  );
+};

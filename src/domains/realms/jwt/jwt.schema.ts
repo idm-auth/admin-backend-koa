@@ -14,3 +14,9 @@ export const jwtPayloadSchema = z.object({
 });
 
 export type JwtPayload = z.infer<typeof jwtPayloadSchema>;
+
+export const jwtPayloadSignSchema = jwtPayloadSchema.extend({
+  iat: z.number(),
+});
+
+export type JwtPayloadSign = z.infer<typeof jwtPayloadSignSchema>;

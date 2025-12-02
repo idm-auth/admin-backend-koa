@@ -1,4 +1,4 @@
-import { JwtPayload, jwtPayloadSchema } from './jwt.schema';
+import { JwtPayload, JwtPayloadSign, jwtPayloadSchema } from './jwt.schema';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { validateZod } from '@/domains/commons/validations/validation.service';
@@ -32,7 +32,10 @@ export const generateToken = async (
       const realm = await realmService.findByPublicUUID(tenantId);
       span.setAttributes({ 'realm.id': realm._id });
 
-      const payloadSign: string | Buffer | object = payload;
+      const payloadSign: JwtPayloadSign = {
+        ...payload,
+        iat: Math.floor(Date.now() / 1000),
+      };
       const secretOrPrivateKeySign: Secret | PrivateKey =
         realm.jwtConfig.secret;
       const optionsSign: SignOptions = {
@@ -70,6 +73,48 @@ export const verifyToken = async (tenantId: PublicUUID, token: string) => {
         span.setAttributes({ 'jwt.valid': false });
         throw error;
       }
+    }
+  );
+};
+
+export const generateRefreshToken = async (
+  tenantId: PublicUUID,
+  payload: JwtPayload
+): Promise<string> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.generateRefreshToken`,
+      attributes: {
+        'tenant.id': tenantId,
+        'account.id': payload.accountId,
+        operation: 'generateRefreshToken',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.debug({ tenantId });
+
+      await validateZod(payload, jwtPayloadSchema);
+
+      const realm = await realmService.findByPublicUUID(tenantId);
+      span.setAttributes({ 'realm.id': realm._id });
+
+      const payloadSign: JwtPayloadSign = {
+        ...payload,
+        iat: Math.floor(Date.now() / 1000),
+      };
+      const secretOrPrivateKeySign: Secret | PrivateKey =
+        realm.jwtConfig.secret;
+      const optionsSign: SignOptions = {
+        expiresIn: '7d',
+      };
+
+      span.setAttributes({ 'jwt.expiresIn': '7d' });
+
+      const token = jwt.sign(payloadSign, secretOrPrivateKeySign, optionsSign);
+      span.setAttributes({ 'jwt.generated': true });
+
+      return token;
     }
   );
 };

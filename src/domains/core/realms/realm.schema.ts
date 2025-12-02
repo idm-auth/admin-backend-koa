@@ -12,8 +12,20 @@ import {
 import { requestIDParamsSchema } from '@/domains/commons/base/request.schema';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
+import ms from 'ms';
 
 extendZodWithOpenApi(z);
+
+const expiresInSchema = z.string().refine(
+  (val) => {
+    try {
+      return typeof ms(val as ms.StringValue) === 'number';
+    } catch {
+      return false;
+    }
+  },
+  { message: 'Invalid time format' }
+);
 
 export const realmCreateSchema = z.object({
   name: nameSchema,
@@ -21,9 +33,7 @@ export const realmCreateSchema = z.object({
   dbName: dbNameSchema,
   jwtConfig: z
     .object({
-      expiresIn: z
-        .string({ error: 'JWT expires in is required' })
-        .default('24h'),
+      expiresIn: expiresInSchema.default('24h'),
     })
     .optional(),
 });
@@ -34,7 +44,7 @@ export const realmUpdateSchema = z.object({
   dbName: dbNameSchema.optional(),
   jwtConfig: z
     .object({
-      expiresIn: z.string().optional(),
+      expiresIn: expiresInSchema.optional(),
     })
     .optional(),
 });
@@ -42,7 +52,7 @@ export const realmUpdateSchema = z.object({
 // Response schemas
 const jwtConfigResponseSchema = z.object({
   secret: z.string(),
-  expiresIn: z.string(),
+  expiresIn: expiresInSchema,
 });
 
 export const realmBaseResponseSchema = z.strictObject({

@@ -5,6 +5,8 @@ import {
   loginResponseSchema,
   assumeRoleRequestSchema,
   assumeRoleResponseSchema,
+  refreshTokenRequestSchema,
+  refreshTokenResponseSchema,
 } from './authentication.schema';
 import { errorResponseSchema } from '@/domains/commons/base/base.schema';
 import { requestTenantIdParamsSchema } from '@/domains/commons/base/request.schema';
@@ -99,6 +101,50 @@ export const initialize = async () => {
       },
       404: {
         description: 'Target realm or role not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+    tags: ['Authentication'],
+  });
+
+  router.post({
+    name: 'refreshToken',
+    path: '/refresh',
+    summary: 'Refresh access token',
+    handlers: [authenticationController.refresh],
+    request: {
+      params: requestTenantIdParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: refreshTokenRequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Token refreshed successfully',
+        content: {
+          'application/json': {
+            schema: refreshTokenResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      401: {
+        description: 'Unauthorized - Invalid refresh token',
         content: {
           'application/json': {
             schema: errorResponseSchema,

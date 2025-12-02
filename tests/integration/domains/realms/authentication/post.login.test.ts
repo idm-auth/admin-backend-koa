@@ -40,6 +40,7 @@ describe('POST /api/realm/:tenantId/authentication/login', () => {
 
     const loginResponse: LoginResponse = response.body;
     expect(loginResponse).toHaveProperty('token');
+    expect(loginResponse).toHaveProperty('refreshToken');
     expect(loginResponse).toHaveProperty('account');
     expect(loginResponse.account).toHaveProperty('_id');
     expect(loginResponse.account).toHaveProperty('emails');

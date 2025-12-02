@@ -11,6 +11,7 @@ export const loginRequestSchema = z.object({
 
 export const loginResponseSchema = z.object({
   token: z.string(),
+  refreshToken: z.string(),
   account: z.object({
     _id: DocIdSchema,
     emails: z.array(
@@ -24,6 +25,18 @@ export const loginResponseSchema = z.object({
 
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
+export const refreshTokenRequestSchema = z.object({
+  refreshToken: z.string().min(1),
+});
+
+export const refreshTokenResponseSchema = z.object({
+  token: z.string(),
+  refreshToken: z.string(),
+});
+
+export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
+export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 
 export const assumeRoleRequestSchema = z.object({
   targetRealmId: DocIdSchema,

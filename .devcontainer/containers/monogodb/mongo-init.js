@@ -7,16 +7,42 @@ use(database);
 db.createCollection(collection);
 
 use(databaseAdmin);
+
+db.createRole({
+  role: 'idmDatabaseManager',
+  privileges: [
+    {
+      resource: { cluster: true },
+      actions: ['listDatabases']
+    },
+    {
+      resource: { db: '', collection: '' },
+      actions: [
+        'dropDatabase',
+        'createCollection',
+        'dropCollection',
+        'createIndex',
+        'dropIndex',
+        'find',
+        'insert',
+        'update',
+        'remove'
+      ]
+    }
+  ],
+  roles: []
+});
+
 db.createUser({
   user: user,
   pwd: pwd,
-  roles: ['readWriteAnyDatabase'],
+  roles: ['idmDatabaseManager'],
 });
 
 db.createUser({
   user: 'test',
   pwd: 'test',
-  roles: ['readWriteAnyDatabase', 'dbAdminAnyDatabase'],
+  roles: ['idmDatabaseManager'],
 });
 
 // const databaseSingleTenant = 'singleTenant';
