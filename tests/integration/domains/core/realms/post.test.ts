@@ -116,6 +116,25 @@ describe('POST /api/core/realms', () => {
     expect(realmResponse).toHaveProperty('publicUUID');
   });
 
+  it('should return 400 for invalid jwtConfig.expiresIn format', async () => {
+    const realmData = {
+      name: 'test-realm-invalid-jwt',
+      description: 'Test realm',
+      dbName: 'vi-test-db-invalid-jwt',
+      jwtConfig: {
+        expiresIn: 'invalid-format',
+      },
+    };
+
+    const response = await request(getApp().callback())
+      .post('/api/core/realms')
+      .send(realmData)
+      .expect(400);
+
+    const errorResponse: ErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error');
+  });
+
   it('should return 409 for duplicate name (Conflict)', async () => {
     const realmData = {
       name: 'duplicate-test-realm',

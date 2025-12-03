@@ -17,13 +17,7 @@ import ms from 'ms';
 extendZodWithOpenApi(z);
 
 const expiresInSchema = z.string().refine(
-  (val) => {
-    try {
-      return typeof ms(val as ms.StringValue) === 'number';
-    } catch {
-      return false;
-    }
-  },
+  (val) => typeof ms(val as ms.StringValue) === 'number',
   { message: 'Invalid time format' }
 );
 

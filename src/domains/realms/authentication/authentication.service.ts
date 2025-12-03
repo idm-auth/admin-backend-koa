@@ -13,6 +13,7 @@ import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
+import ms from 'ms';
 
 const SERVICE_NAME = 'authentication.service';
 
@@ -162,8 +163,8 @@ export const assumeRole = async (
 
       const token = await jwtService.generateToken(data.targetRealmId, payload);
 
-      // Get expiration from target realm config
-      const expiresIn = parseExpiresIn(targetRealm.jwtConfig.expiresIn);
+      // Get expiration from target realm config (convert to seconds)
+      const expiresIn = Math.floor(ms(targetRealm.jwtConfig.expiresIn as ms.StringValue) / 1000);
 
       logger.info(
         {
@@ -235,20 +236,4 @@ export const refresh = async (
   );
 };
 
-const parseExpiresIn = (expiresIn: string): number => {
-  // Parse strings like "24h", "7d", "1h" to seconds
-  const match = expiresIn.match(/^(\d+)([smhd])$/);
-  if (!match) return 3600; // Default 1 hour
 
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
-
-  const multipliers: Record<string, number> = {
-    s: 1,
-    m: 60,
-    h: 3600,
-    d: 86400,
-  };
-
-  return value * (multipliers[unit] || 3600);
-};
