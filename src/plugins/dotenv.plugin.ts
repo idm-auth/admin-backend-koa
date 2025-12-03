@@ -30,6 +30,7 @@ export enum EnvKey {
   LOGGER_LEVEL = 'LOGGER_LEVEL',
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT',
   PROMETHEUS_PORT = 'PROMETHEUS_PORT',
+  IDM_API_URL = 'IDM_API_URL',
 }
 
 const defaults: Record<EnvKey, string> = {
@@ -44,6 +45,7 @@ const defaults: Record<EnvKey, string> = {
   [EnvKey.LOGGER_LEVEL]: 'info',
   [EnvKey.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT]: 'http://jaeger:4318/v1/traces',
   [EnvKey.PROMETHEUS_PORT]: '9090',
+  [EnvKey.IDM_API_URL]: 'http://localhost:3000',
 };
 
 // Cache para valores do banco

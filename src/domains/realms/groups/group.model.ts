@@ -8,7 +8,7 @@ import mongoose, { InferSchemaType } from 'mongoose';
 const schemaName = 'groups';
 
 export const schema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   description: { type: String },
 });
 
@@ -23,8 +23,6 @@ export type GroupCreate = Omit<GroupSchema, never> & {
 export type GroupUpdate = Omit<GroupSchema, never> & {
   // Todos os campos são obrigatórios para Group
 };
-
-schema.index({ name: 1 }, { unique: true });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);

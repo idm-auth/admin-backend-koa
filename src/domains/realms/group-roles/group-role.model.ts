@@ -9,8 +9,8 @@ import mongoose, { InferSchemaType } from 'mongoose';
 const schemaName = 'group-roles';
 
 export const schema = new mongoose.Schema({
-  groupId: { type: String, required: true },
-  roleId: { type: String, required: true },
+  groupId: { type: String, required: true, index: true },
+  roleId: { type: String, required: true, index: true },
 });
 
 schema.add(baseDocumentSchema);
@@ -24,8 +24,6 @@ export type GroupRoleCreate = Omit<GroupRoleSchema, never> & {
 };
 
 schema.index({ groupId: 1, roleId: 1 }, { unique: true });
-schema.index({ groupId: 1 });
-schema.index({ roleId: 1 });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);

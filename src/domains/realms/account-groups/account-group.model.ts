@@ -9,8 +9,8 @@ import mongoose, { InferSchemaType } from 'mongoose';
 const schemaName = 'account-groups';
 
 export const schema = new mongoose.Schema({
-  accountId: { type: String, required: true },
-  groupId: { type: String, required: true },
+  accountId: { type: String, required: true, index: true },
+  groupId: { type: String, required: true, index: true },
 });
 
 schema.add(baseDocumentSchema);
@@ -24,8 +24,6 @@ export type AccountGroupCreate = Omit<AccountGroupSchema, never> & {
 };
 
 schema.index({ accountId: 1, groupId: 1 }, { unique: true });
-schema.index({ accountId: 1 });
-schema.index({ groupId: 1 });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);

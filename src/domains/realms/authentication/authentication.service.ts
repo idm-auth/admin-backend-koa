@@ -211,9 +211,12 @@ export const refresh = async (
         const newToken = await jwtService.generateToken(tenantId, {
           accountId: decoded.accountId,
         });
-        const newRefreshToken = await jwtService.generateRefreshToken(tenantId, {
-          accountId: decoded.accountId,
-        });
+        const newRefreshToken = await jwtService.generateRefreshToken(
+          tenantId,
+          {
+            accountId: decoded.accountId,
+          }
+        );
 
         logger.info(
           { tenantId, accountId: decoded.accountId },

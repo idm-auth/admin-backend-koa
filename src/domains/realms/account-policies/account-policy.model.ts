@@ -9,8 +9,8 @@ import mongoose, { InferSchemaType } from 'mongoose';
 const schemaName = 'account-policies';
 
 export const schema = new mongoose.Schema({
-  accountId: { type: String, required: true },
-  policyId: { type: String, required: true },
+  accountId: { type: String, required: true, index: true },
+  policyId: { type: String, required: true, index: true },
 });
 
 schema.add(baseDocumentSchema);
@@ -25,8 +25,6 @@ export type AccountPolicyCreate = Omit<
 >;
 
 schema.index({ accountId: 1, policyId: 1 }, { unique: true });
-schema.index({ accountId: 1 });
-schema.index({ policyId: 1 });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);

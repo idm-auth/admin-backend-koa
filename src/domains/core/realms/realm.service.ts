@@ -15,6 +15,7 @@ import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { executePagination } from '@/utils/pagination.util';
 import { getMainConnection } from '@/plugins/mongo.plugin';
+import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 
 export type GetDBNameParams = {
   publicUUID: PublicUUID;
@@ -293,7 +294,7 @@ export const initSetup = async () => {
       },
     },
     async (span) => {
-      const coreDBName = 'idm-core-db';
+      const coreDBName = getEnvValue(EnvKey.MONGODB_CORE_DBNAME);
 
       span.setAttributes({ 'realm.coreDBName': coreDBName });
 

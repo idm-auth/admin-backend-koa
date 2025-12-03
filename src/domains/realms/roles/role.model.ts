@@ -9,7 +9,7 @@ import mongoose, { InferSchemaType } from 'mongoose';
 const schemaName = 'roles';
 
 export const schema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   description: { type: String },
   permissions: [{ type: String }],
 });
@@ -21,8 +21,6 @@ export type Role = RoleSchema & BaseDocument;
 export type RoleDocument = RoleSchema & BaseDocument;
 export type RoleDocumentID = RoleSchema & BaseDocumentID;
 export type RoleCreate = Omit<RoleSchema, '_id' | 'createdAt' | 'updatedAt'>;
-
-schema.index({ name: 1 }, { unique: true });
 
 export const getModel = (dbName: DBName) => {
   const conn = getRealmDb(dbName);

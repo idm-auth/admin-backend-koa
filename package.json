@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
+    "build": "rollup -c",
     "dev": "nodemon",
     "test": "vitest --run",
     "test:parallel": "vitest --run --reporter=verbose",
@@ -35,6 +36,7 @@
   "homepage": "https://github.com/idm-auth/backend-koa#readme",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.1.0",
+    "@idm-auth/client": "file:.external/auth-client-js",
     "@koa/bodyparser": "^6.0.0",
     "@koa/cors": "^5.0.0",
     "@koa/router": "^14.0.0",
@@ -44,6 +46,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
     "@opentelemetry/sdk-node": "^0.208.0",
     "@types/jsonwebtoken": "^9.0.10",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "jsonwebtoken": "^9.0.2",
@@ -59,6 +62,8 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@rollup/plugin-replace": "^6.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/bcrypt": "^6.0.0",
     "@types/koa": "^3.0.1",
@@ -84,11 +89,13 @@
     "npm-check-updates": "^19.1.2",
     "pino-pretty": "^13.1.2",
     "prettier": "^3.6.2",
+    "rollup": "^4.53.3",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
+    "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.13"

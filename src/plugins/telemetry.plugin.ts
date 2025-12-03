@@ -5,8 +5,8 @@ import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { getEnvValue, EnvKey } from './dotenv.plugin';
 import { getLogger } from './pino.plugin';
 
-export const SERVICE_NAME = 'backend-koa-iam';
-export const SERVICE_VERSION = '1.0.0';
+export const SERVICE_NAME = 'PKG_NAME';
+export const SERVICE_VERSION = 'PKG_VERSION';
 
 const traceExporter = new OTLPTraceExporter({
   url: getEnvValue(EnvKey.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT),

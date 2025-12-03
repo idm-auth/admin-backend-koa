@@ -1,5 +1,6 @@
 import { MagicRouter } from '../../utils/core/MagicRouter';
 import * as accounts from './accounts/accounts.routes';
+import * as applications from './applications/applications.routes';
 import * as groups from './groups/groups.routes';
 import * as roles from './roles/roles.routes';
 import * as policies from './policies/policies.routes';
@@ -15,6 +16,7 @@ export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/realm/:tenantId' });
 
   const accountsRouter = await accounts.initialize();
+  const applicationsRouter = await applications.initialize();
   const groupsRouter = await groups.initialize();
   const rolesRouter = await roles.initialize();
   const policiesRouter = await policies.initialize();
@@ -27,6 +29,7 @@ export const initialize = async () => {
   const authenticationRouter = await authentication.initialize();
 
   router.useMagic(accountsRouter);
+  router.useMagic(applicationsRouter);
   router.useMagic(groupsRouter);
   router.useMagic(rolesRouter);
   router.useMagic(policiesRouter);
