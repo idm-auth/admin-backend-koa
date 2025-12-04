@@ -6,7 +6,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import * as roleService from '@/domains/realms/roles/role.service';
 import { AccountPaginatedResponse } from '@/domains/realms/accounts/account.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
   let tenantId: string;
@@ -92,9 +95,11 @@ describe('GET /api/realm/:tenantId/accounts - Paginated', () => {
         .query({ page: 1, limit: 10 })
         .expect(400);
 
-      const errorResponse: ErrorResponse = response.body;
-      expect(errorResponse).toHaveProperty('error');
-      expect(errorResponse.error).toContain('Invalid');
+      const errorResponse: ValidationErrorResponse = response.body;
+      expect(errorResponse).toHaveProperty('error', 'Validation failed');
+      expect(
+        errorResponse.fields?.some((f) => f.message.includes('Invalid'))
+      ).toBe(true);
     });
 
     it('should return 400 for invalid pagination parameters', async () => {

@@ -18,11 +18,9 @@ describe('GET /api/realm/:tenantId/applications - Paginated', () => {
 
     await applicationService.create(tenantId, {
       name: 'App 1',
-      applicationKey: uuidv4(),
     });
     await applicationService.create(tenantId, {
       name: 'App 2',
-      applicationKey: uuidv4(),
     });
   });
 

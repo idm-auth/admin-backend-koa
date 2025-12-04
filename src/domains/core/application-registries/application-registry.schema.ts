@@ -9,7 +9,6 @@ import { z } from 'zod';
 extendZodWithOpenApi(z);
 
 export const applicationRegistryCreateSchema = z.object({
-  applicationKey: DocIdSchema,
   tenantId: DocIdSchema,
   applicationId: DocIdSchema,
 });

@@ -6,6 +6,7 @@ import { RealmUpdateResponse } from '@/domains/core/realms/realm.schema';
 import {
   ErrorResponse,
   ConflictErrorResponse,
+  ValidationErrorResponse,
 } from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/core/realms/:id', () => {
@@ -94,8 +95,10 @@ describe('PUT /api/core/realms/:id', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 409 for duplicate name (Conflict)', async () => {

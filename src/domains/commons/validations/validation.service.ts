@@ -26,8 +26,11 @@ export const validateZod = async <T>(
     return await schema.parseAsync(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const message = error.issues.map((e) => e.message).join(', ');
-      throw new ValidationError(message);
+      const fields = error.issues.map((e) => ({
+        field: e.path.join('.') || 'unknown',
+        message: e.message,
+      }));
+      throw new ValidationError('Validation failed', fields);
     }
     throw error;
   }

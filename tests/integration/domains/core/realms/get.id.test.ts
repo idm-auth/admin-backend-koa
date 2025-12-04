@@ -7,7 +7,10 @@ import {
   RealmReadResponse,
   RealmPaginatedResponse,
 } from '@/domains/core/realms/realm.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('GET /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -67,8 +70,10 @@ describe('GET /api/core/realms/:id', () => {
       .get(`/api/core/realms/${invalidId}`)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 200 for empty ID (falls back to paginated list)', async () => {

@@ -22,13 +22,11 @@ describe('GET /api/core/application-registries/key/:applicationKey', () => {
     authToken = await getAuthToken(coreTenantId, 'app-registry.get.key.test');
     await getModel().createIndexes();
 
-    createdApplicationKey = uuidv4();
-
-    await applicationRegistryService.create({
-      applicationKey: createdApplicationKey,
+    const registry = await applicationRegistryService.create({
       tenantId: uuidv4(),
       applicationId: uuidv4(),
     });
+    createdApplicationKey = registry.applicationKey;
   });
 
   it('should find registry by valid application key', async () => {

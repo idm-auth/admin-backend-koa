@@ -20,7 +20,6 @@ describe('application-registry.service.create', () => {
 
     await expect(
       applicationRegistryService.create({
-        applicationKey: uuidv4(),
         tenantId: uuidv4(),
         applicationId: uuidv4(),
       })

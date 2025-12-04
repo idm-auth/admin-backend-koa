@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { TEST_PASSWORD, createTestEmail } from '@test/utils/test-constants';
 
 describe('GET /api/realm/:tenantId/accounts/:id', () => {
@@ -60,7 +63,8 @@ describe('GET /api/realm/:tenantId/accounts/:id', () => {
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

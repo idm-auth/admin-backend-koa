@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as applicationService from '@/domains/realms/applications/application.service';
 import { ApplicationBaseResponse } from '@/domains/realms/applications/application.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/realm/:tenantId/applications/:id', () => {
   let tenantId: string;
@@ -20,7 +23,6 @@ describe('PUT /api/realm/:tenantId/applications/:id', () => {
 
     const result = await applicationService.create(tenantId, {
       name: 'Original Name',
-      applicationKey: uuidv4(),
     });
     createdApplicationId = result.application._id;
   });
@@ -78,7 +80,8 @@ describe('PUT /api/realm/:tenantId/applications/:id', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

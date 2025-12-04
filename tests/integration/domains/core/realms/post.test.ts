@@ -6,6 +6,7 @@ import { RealmCreateResponse } from '@/domains/core/realms/realm.schema';
 import {
   ErrorResponse,
   ConflictErrorResponse,
+  ValidationErrorResponse,
 } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/core/realms', () => {
@@ -78,8 +79,12 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Name is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(
+      errorResponse.fields?.some((f) => f.message.includes('Name is required'))
+    ).toBe(true);
   });
 
   it('should return 400 for missing dbName', async () => {
@@ -93,8 +98,14 @@ describe('POST /api/core/realms', () => {
       .send(realmData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Database name is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Database name is required')
+      )
+    ).toBe(true);
   });
 
   it('should create realm successfully without jwtConfig', async () => {

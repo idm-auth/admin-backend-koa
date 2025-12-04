@@ -30,7 +30,6 @@ describe('application-registry.service.findByApplicationIdAndTenantId', () => {
     const tenantId = uuidv4();
 
     await applicationRegistryService.create({
-      applicationKey: uuidv4(),
       tenantId,
       applicationId,
     });

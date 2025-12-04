@@ -9,14 +9,13 @@ import {
   PaginationQuery,
 } from '@/domains/commons/base/pagination.schema';
 import { validateZod } from '@/domains/commons/validations/validation.service';
-import { getModel, Realm, RealmCreate } from './realm.model';
-import { ConflictError } from '@/errors/conflict';
 import { NotFoundError } from '@/errors/not-found';
-import { getLogger } from '@/utils/localStorage.util';
-import { withSpanAsync } from '@/utils/tracing.util';
-import { executePagination } from '@/utils/pagination.util';
+import { EnvKey, getEnvValue } from '@/plugins/dotenv.plugin';
 import { getMainConnection } from '@/plugins/mongo.plugin';
-import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
+import { getLogger } from '@/utils/localStorage.util';
+import { executePagination } from '@/utils/pagination.util';
+import { withSpanAsync } from '@/utils/tracing.util';
+import { getModel, Realm, RealmCreate } from './realm.model';
 
 export type GetDBNameParams = {
   publicUUID: PublicUUID;

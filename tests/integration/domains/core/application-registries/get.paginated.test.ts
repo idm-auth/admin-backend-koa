@@ -21,13 +21,11 @@ describe('GET /api/core/application-registries - Paginated', () => {
     await getModel().createIndexes();
 
     await applicationRegistryService.create({
-      applicationKey: uuidv4(),
       tenantId: uuidv4(),
       applicationId: uuidv4(),
     });
 
     await applicationRegistryService.create({
-      applicationKey: uuidv4(),
       tenantId: uuidv4(),
       applicationId: uuidv4(),
     });

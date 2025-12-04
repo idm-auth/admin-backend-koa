@@ -4,7 +4,10 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/group-roles', () => {
   let tenantId: string;
@@ -59,7 +62,8 @@ describe('POST /api/realm/:tenantId/group-roles', () => {
       .send(relationData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

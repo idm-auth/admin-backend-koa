@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PUT /api/realm/:tenantId/accounts/:id', () => {
@@ -103,8 +106,9 @@ describe('PUT /api/realm/:tenantId/accounts/:id', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 200 for invalid email format (email ignored)', async () => {

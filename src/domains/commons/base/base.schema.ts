@@ -26,7 +26,7 @@ export const DocIdSchema = z
 export type DocId = z.infer<typeof DocIdSchema>;
 
 export const publicUUIDSchema = z
-  .uuidv4('Invalid ID')
+  .uuidv4('Invalid UUID')
   .openapi({ description: 'public identifier (UUID v4)' });
 export type PublicUUID = z.infer<typeof publicUUIDSchema>;
 
@@ -89,16 +89,53 @@ export type Name = z.infer<typeof nameSchema>;
 export type Description = z.infer<typeof descriptionSchema>;
 export type DbName = z.infer<typeof dbNameSchema>;
 
+export const ERROR_TYPE = {
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  NOT_FOUND: 'NOT_FOUND',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  CONFLICT: 'CONFLICT',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+} as const;
+
+export const errorTypeEnum = z.enum([
+  ERROR_TYPE.VALIDATION_FAILED,
+  ERROR_TYPE.NOT_FOUND,
+  ERROR_TYPE.UNAUTHORIZED,
+  ERROR_TYPE.CONFLICT,
+  ERROR_TYPE.INTERNAL_ERROR,
+]);
+
 export const errorResponseSchema = z.object({
   error: z.string(),
+  error_type: errorTypeEnum.default(ERROR_TYPE.INTERNAL_ERROR),
   details: z.string().optional(),
 });
 
-export const conflictErrorResponseSchema = z.object({
-  error: z.string(),
-  field: z.string().optional(),
-  details: z.string().optional(),
-});
+export type ErrorType = z.infer<typeof errorTypeEnum>;
+
+export const validationErrorResponseSchema = errorResponseSchema
+  .omit({ error_type: true })
+  .extend({
+    error_type: errorTypeEnum.default(ERROR_TYPE.VALIDATION_FAILED),
+    fields: z
+      .array(
+        z.object({
+          field: z.string(),
+          message: z.string(),
+        })
+      )
+      .optional(),
+  });
+
+export const conflictErrorResponseSchema = errorResponseSchema
+  .omit({ error_type: true })
+  .extend({
+    error_type: errorTypeEnum.default(ERROR_TYPE.CONFLICT),
+    field: z.string().optional(),
+  });
 
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;
+export type ValidationErrorResponse = z.infer<
+  typeof validationErrorResponseSchema
+>;
 export type ConflictErrorResponse = z.infer<typeof conflictErrorResponseSchema>;

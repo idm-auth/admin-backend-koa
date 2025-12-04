@@ -3,7 +3,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { Realm } from '@/domains/core/realms/realm.model';
 import { RealmReadResponse } from '@/domains/core/realms/realm.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
   let createdRealmPublicUUID: string;
@@ -67,7 +70,9 @@ describe('GET /api/core/realms/publicUUID/:publicUUID', () => {
       .get(`/api/core/realms/publicUUID/${invalidPublicUUID}`)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(errorResponse.fields?.[0].message).toContain('Invalid');
   });
 });

@@ -2,8 +2,8 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
-import { expectValidationError } from '@test/utils/validation-helpers';
 import { RoleBaseResponse } from '@/domains/realms/roles/role.mapper';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/roles', () => {
   let tenantId: string;
@@ -40,20 +40,37 @@ describe('POST /api/realm/:tenantId/roles', () => {
   });
 
   it('should return 400 for missing name', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/roles`,
-      { description: 'Role without name' },
-      /Name is required|Required/,
-      authToken
-    );
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
+      .send({ description: 'Role without name' })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some(
+        (f) =>
+          f.message.includes('Name is required') ||
+          f.message.includes('Required')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for invalid permissions type', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/roles`,
-      { name: 'test-role', permissions: 'invalid-type' },
-      /Expected array|Invalid/,
-      authToken
-    );
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/roles`)
+      .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
+      .send({ name: 'test-role', permissions: 'invalid-type' })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some(
+        (f) =>
+          f.message.includes('Expected array') || f.message.includes('Invalid')
+      )
+    ).toBe(true);
   });
 });

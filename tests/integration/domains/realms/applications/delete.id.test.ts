@@ -4,7 +4,10 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as applicationService from '@/domains/realms/applications/application.service';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('DELETE /api/realm/:tenantId/applications/:id', () => {
   let tenantId: string;
@@ -19,7 +22,6 @@ describe('DELETE /api/realm/:tenantId/applications/:id', () => {
 
     const result = await applicationService.create(tenantId, {
       name: 'Test Application',
-      applicationKey: uuidv4(),
     });
     createdApplicationId = result.application._id;
   });
@@ -53,7 +55,8 @@ describe('DELETE /api/realm/:tenantId/applications/:id', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

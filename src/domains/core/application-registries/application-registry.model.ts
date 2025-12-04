@@ -17,7 +17,10 @@ schema.add(baseDocumentSchema);
 
 export type ApplicationRegistrySchema = InferSchemaType<typeof schema>;
 export type ApplicationRegistry = ApplicationRegistrySchema & BaseDocument;
-export type ApplicationRegistryCreate = ApplicationRegistrySchema;
+export type ApplicationRegistryCreate = Omit<
+  ApplicationRegistrySchema,
+  'applicationKey'
+>;
 
 export const getModel = () => {
   const conn = getCoreDb();

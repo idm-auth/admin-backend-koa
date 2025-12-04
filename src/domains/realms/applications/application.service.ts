@@ -45,18 +45,21 @@ export const create = async (
         'db.name': dbName,
       });
 
-      await applicationRegistryService.create({
-        applicationKey: data.applicationKey,
+      const registry = await applicationRegistryService.create({
         tenantId,
         applicationId: application._id,
       });
 
       logger.info(
-        { applicationId: application._id, tenantId },
+        {
+          applicationId: application._id,
+          tenantId,
+          applicationKey: registry.applicationKey,
+        },
         'Application created successfully'
       );
 
-      return { application, applicationKey: data.applicationKey };
+      return { application, applicationKey: registry.applicationKey };
     }
   );
 };

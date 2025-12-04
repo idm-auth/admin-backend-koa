@@ -1,13 +1,12 @@
+import { DocId } from '@/domains/commons/base/base.schema';
 import {
   PaginatedResponse,
   PaginationQuery,
 } from '@/domains/commons/base/pagination.schema';
-import { DocId } from '@/domains/commons/base/base.schema';
 import { NotFoundError } from '@/errors/not-found';
-import { ConflictError } from '@/errors/conflict';
 import { getLogger } from '@/utils/localStorage.util';
-import { withSpanAsync } from '@/utils/tracing.util';
 import { executePagination } from '@/utils/pagination.util';
+import { withSpanAsync } from '@/utils/tracing.util';
 import {
   ApplicationRegistry,
   ApplicationRegistryCreate,
@@ -23,17 +22,33 @@ export const create = async (
     {
       name: `${SERVICE_NAME}.service.create`,
       attributes: {
-        'application-registry.applicationKey': data.applicationKey,
+        'application-registry.tenantId': data.tenantId,
+        'application-registry.applicationId': data.applicationId,
         operation: 'create',
       },
     },
     async (span) => {
       const logger = await getLogger();
-      logger.info({ data }, 'Creating new application registry');
+      const { v4: uuidv4 } = await import('uuid');
+      const applicationKey = uuidv4();
 
-      const registry = await getModel().create(data);
-      span.setAttributes({ 'application-registry.id': registry._id });
-      logger.info({ registryId: registry._id }, 'Registry created');
+      logger.info(
+        { data, applicationKey },
+        'Creating new application registry'
+      );
+
+      const registry = await getModel().create({
+        ...data,
+        applicationKey,
+      });
+      span.setAttributes({
+        'application-registry.id': registry._id,
+        'application-registry.applicationKey': applicationKey,
+      });
+      logger.info(
+        { registryId: registry._id, applicationKey },
+        'Registry created'
+      );
       return registry;
     }
   );

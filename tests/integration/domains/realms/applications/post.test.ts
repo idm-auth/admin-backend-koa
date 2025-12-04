@@ -19,7 +19,6 @@ describe('POST /api/realm/:tenantId/applications', () => {
   it('should create a new application successfully', async () => {
     const applicationData = {
       name: 'Test Application',
-      applicationKey: uuidv4(),
     };
 
     const response = await request(getApp().callback())

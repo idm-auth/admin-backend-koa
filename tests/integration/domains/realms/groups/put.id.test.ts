@@ -4,6 +4,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('PUT /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
@@ -98,7 +99,9 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 400 for invalid name characters', async () => {
@@ -112,10 +115,13 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty(
-      'error',
-      'Name contains invalid characters'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Name contains invalid characters')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for name too long', async () => {
@@ -129,10 +135,13 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty(
-      'error',
-      'Name must be at most 100 characters'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Name must be at most 100 characters')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for invalid description characters', async () => {
@@ -146,10 +155,13 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty(
-      'error',
-      'Description contains invalid characters'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Description contains invalid characters')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for description too long', async () => {
@@ -163,9 +175,12 @@ describe('PUT /api/realm/:tenantId/groups/:id', () => {
       .send(updateData)
       .expect(400);
 
-    expect(response.body).toHaveProperty(
-      'error',
-      'Description must be at most 500 characters'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Description must be at most 500 characters')
+      )
+    ).toBe(true);
   });
 });

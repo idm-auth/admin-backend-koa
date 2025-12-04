@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
 import { GroupBaseResponse } from '@/domains/realms/groups/group.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
@@ -61,7 +64,8 @@ describe('GET /api/realm/:tenantId/groups/:id', () => {
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

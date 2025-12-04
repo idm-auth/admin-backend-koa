@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountBaseResponse } from '@/domains/realms/accounts/account.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
@@ -63,8 +66,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Password is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Password is required')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for missing newPassword', async () => {
@@ -78,8 +86,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Password is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Password is required')
+      )
+    ).toBe(true);
   });
 
   it('should return 404 for incorrect current password', async () => {
@@ -113,8 +126,11 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse.error).toMatch(/Password must/);
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) => f.message.includes('Password must'))
+    ).toBe(true);
   });
 
   it('should return 404 for non-existent account', async () => {
@@ -147,7 +163,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/update-password', () => {
       .send(updateData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

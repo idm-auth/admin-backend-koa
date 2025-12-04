@@ -2,8 +2,11 @@ import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as applicationRegistryService from '@/domains/core/application-registries/application-registry.service';
-import { ApplicationRegistry, getModel } from '@/domains/core/application-registries/application-registry.model';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ApplicationRegistry,
+  getModel,
+} from '@/domains/core/application-registries/application-registry.model';
+import { ErrorResponse, ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
@@ -22,7 +25,6 @@ describe('DELETE /api/core/application-registries/:id', () => {
     await getModel().createIndexes();
 
     const registryData = {
-      applicationKey: uuidv4(),
       tenantId: uuidv4(),
       applicationId: uuidv4(),
     };
@@ -71,7 +73,9 @@ describe('DELETE /api/core/application-registries/:id', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

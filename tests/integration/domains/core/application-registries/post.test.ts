@@ -1,4 +1,7 @@
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { getModel } from '@/domains/core/application-registries/application-registry.model';
 import { ApplicationRegistryCreateResponse } from '@/domains/core/application-registries/application-registry.schema';
 import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
@@ -23,7 +26,6 @@ describe('POST /api/core/application-registries', () => {
 
   it('should create a new application registry successfully', async () => {
     const registryData = {
-      applicationKey: uuidv4(),
       tenantId: uuidv4(),
       applicationId: uuidv4(),
     };
@@ -36,30 +38,13 @@ describe('POST /api/core/application-registries', () => {
 
     const registryResponse: ApplicationRegistryCreateResponse = response.body;
     expect(registryResponse).toHaveProperty('_id');
-    expect(registryResponse.applicationKey).toBe(registryData.applicationKey);
+    expect(registryResponse).toHaveProperty('applicationKey');
     expect(registryResponse.tenantId).toBe(registryData.tenantId);
     expect(registryResponse.applicationId).toBe(registryData.applicationId);
   });
 
-  it('should return 400 for missing applicationKey', async () => {
-    const registryData = {
-      tenantId: 'test-tenant',
-      applicationId: 'test-app',
-    };
-
-    const response = await request(getApp().callback())
-      .post('/api/core/application-registries')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send(registryData)
-      .expect(400);
-
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error');
-  });
-
   it('should return 400 for missing tenantId', async () => {
     const registryData = {
-      applicationKey: uuidv4(),
       applicationId: uuidv4(),
     };
 
@@ -69,13 +54,12 @@ describe('POST /api/core/application-registries', () => {
       .send(registryData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
   });
 
   it('should return 400 for missing applicationId', async () => {
     const registryData = {
-      applicationKey: uuidv4(),
       tenantId: uuidv4(),
     };
 
@@ -85,51 +69,7 @@ describe('POST /api/core/application-registries', () => {
       .send(registryData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error');
-  });
-
-  it('should return 409 for duplicate applicationKey', async () => {
-    const duplicateKey = uuidv4();
-
-    await request(getApp().callback())
-      .post('/api/core/application-registries')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        applicationKey: duplicateKey,
-        tenantId: uuidv4(),
-        applicationId: uuidv4(),
-      })
-      .expect(201);
-
-    const response = await request(getApp().callback())
-      .post('/api/core/application-registries')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        applicationKey: duplicateKey,
-        tenantId: uuidv4(),
-        applicationId: uuidv4(),
-      })
-      .expect(409);
-
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Resource already exists');
-  });
-
-  it('should return 400 for empty applicationKey', async () => {
-    const registryData = {
-      applicationKey: '',
-      tenantId: 'test-tenant',
-      applicationId: 'test-app',
-    };
-
-    const response = await request(getApp().callback())
-      .post('/api/core/application-registries')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send(registryData)
-      .expect(400);
-
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
   });
 });

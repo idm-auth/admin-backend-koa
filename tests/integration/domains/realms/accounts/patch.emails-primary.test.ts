@@ -5,7 +5,10 @@ import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
 import { AccountReadResponse } from '@/domains/realms/accounts/account.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
@@ -68,8 +71,11 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Email is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) => f.message.includes('Email is required'))
+    ).toBe(true);
   });
 
   it('should return 404 for email not found in account', async () => {
@@ -101,11 +107,13 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty(
-      'error',
-      'Invalid email format, Email domain not allowed'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Invalid email format')
+      )
+    ).toBe(true);
   });
 
   it('should set already primary email as primary (idempotent)', async () => {
@@ -172,7 +180,8 @@ describe('PATCH /api/realm/:tenantId/accounts/:id/email/primary', () => {
       .send(emailData)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

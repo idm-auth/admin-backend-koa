@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import request from 'supertest';
 import { getTenantId } from '@test/utils/tenant.util';
-import { expectValidationError } from '@test/utils/validation-helpers';
 import { PolicyBaseResponse } from '@/domains/realms/policies/policy.schema';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('POST /api/realm/:tenantId/policies', () => {
   let tenantId: string;
@@ -60,66 +60,107 @@ describe('POST /api/realm/:tenantId/policies', () => {
   });
 
   it('should return 400 for missing name', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/policies`,
-      {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/policies`)
+      .send({
         effect: 'Allow',
         actions: ['iam:accounts:read'],
         resources: ['grn:global:iam::company-xyz:accounts/*'],
-      },
-      /Name is required|Required/
-    );
+      })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some(
+        (f) =>
+          f.message.includes('Name is required') ||
+          f.message.includes('Required')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for missing effect', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/policies`,
-      {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/policies`)
+      .send({
         name: 'TestPolicy',
         actions: ['iam:accounts:read'],
         resources: ['grn:global:iam::company-xyz:accounts/*'],
-      },
-      /Effect must be Allow or Deny|Required/
-    );
+      })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some(
+        (f) =>
+          f.message.includes('Effect must be Allow or Deny') ||
+          f.message.includes('Required')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for invalid effect', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/policies`,
-      {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/policies`)
+      .send({
         name: 'TestPolicy',
         effect: 'Invalid',
         actions: ['iam:accounts:read'],
         resources: ['grn:global:iam::company-xyz:accounts/*'],
-      },
-      /Effect must be Allow or Deny|Invalid enum value/
-    );
+      })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some(
+        (f) =>
+          f.message.includes('Effect must be Allow or Deny') ||
+          f.message.includes('Invalid enum value')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for empty actions array', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/policies`,
-      {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/policies`)
+      .send({
         name: 'TestPolicy',
         effect: 'Allow',
         actions: [],
         resources: ['grn:global:iam::company-xyz:accounts/*'],
-      },
-      /At least one action is required/
-    );
+      })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('At least one action is required')
+      )
+    ).toBe(true);
   });
 
   it('should return 400 for empty resources array', async () => {
-    await expectValidationError(
-      `/api/realm/${tenantId}/policies`,
-      {
+    const response = await request(getApp().callback())
+      .post(`/api/realm/${tenantId}/policies`)
+      .send({
         name: 'TestPolicy',
         effect: 'Allow',
         actions: ['iam:accounts:read'],
         resources: [],
-      },
-      /At least one resource is required/
-    );
+      })
+      .expect(400);
+
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('At least one resource is required')
+      )
+    ).toBe(true);
   });
 
   it('should return 409 for duplicate policy name', async () => {

@@ -4,6 +4,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as groupService from '@/domains/realms/groups/group.service';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('DELETE /api/realm/:tenantId/groups/:id', () => {
   let tenantId: string;
@@ -50,7 +51,9 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    expect(response.body).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 400 for invalid tenantId format', async () => {
@@ -62,7 +65,8 @@ describe('DELETE /api/realm/:tenantId/groups/:id', () => {
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    expect(response.body).toHaveProperty('error');
-    expect(response.body.error).toContain('Invalid');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid');
   });
 });

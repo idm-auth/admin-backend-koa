@@ -4,7 +4,10 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { v4 as uuidv4 } from 'uuid';
 import * as accountService from '@/domains/realms/accounts/account.service';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { generateTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
 
 describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
@@ -52,8 +55,11 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({})
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Email is required');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) => f.message.includes('Email is required'))
+    ).toBe(true);
   });
 
   it('should return 400 for removing the only email', async () => {
@@ -95,11 +101,13 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: 'invalid-email' }) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty(
-      'error',
-      'Invalid email format, Email domain not allowed'
-    );
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(
+      errorResponse.fields?.some((f) =>
+        f.message.includes('Invalid email format')
+      )
+    ).toBe(true);
   });
 
   it('should return 404 for non-existent account', async () => {
@@ -122,7 +130,8 @@ describe('POST /api/realm/:tenantId/accounts/:id/email/remove', () => {
       .send({ email: secondaryEmail }) // Test credential - not production - qdeveloper bug - do not remove
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 });

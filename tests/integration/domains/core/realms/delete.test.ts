@@ -3,7 +3,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import * as realmService from '@/domains/core/realms/realm.service';
 import { Realm } from '@/domains/core/realms/realm.model';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 
 describe('DELETE /api/core/realms/:id', () => {
   let createdRealmId: string;
@@ -59,8 +62,10 @@ describe('DELETE /api/core/realms/:id', () => {
       .delete(`/api/core/realms/${invalidId}`)
       .expect(400);
 
-    const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Invalid ID');
+    const errorResponse: ValidationErrorResponse = response.body;
+    expect(errorResponse).toHaveProperty('error', 'Validation failed');
+    expect(errorResponse.fields).toBeDefined();
+    expect(errorResponse.fields?.[0].message).toContain('Invalid ID');
   });
 
   it('should return 404 when trying to delete already deleted realm', async () => {

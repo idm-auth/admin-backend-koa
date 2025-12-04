@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import * as roleService from '@/domains/realms/roles/role.service';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 
 describe('GET /api/realm/:tenantId/roles - Paginated', () => {
   let tenantId: string;
@@ -146,8 +147,9 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
         .query({ page: 1, limit: 10 })
         .expect(400);
 
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toContain('Invalid');
+      const errorResponse: ValidationErrorResponse = response.body;
+      expect(errorResponse).toHaveProperty('error', 'Validation failed');
+      expect(errorResponse.fields?.[0].message).toContain('Invalid');
     });
 
     it('should return 400 for invalid pagination parameters', async () => {
@@ -177,7 +179,13 @@ describe('GET /api/realm/:tenantId/roles - Paginated', () => {
         .query({ filter: 'invalid<>filter' })
         .expect(400);
 
-      expect(response.body).toHaveProperty('error', 'Invalid filter format');
+      const errorResponse: ValidationErrorResponse = response.body;
+      expect(errorResponse).toHaveProperty('error', 'Validation failed');
+      expect(
+        errorResponse.fields?.some((f) =>
+          f.message.includes('Invalid filter format')
+        )
+      ).toBe(true);
     });
   });
 });
