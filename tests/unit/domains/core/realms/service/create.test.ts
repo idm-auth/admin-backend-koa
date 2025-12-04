@@ -23,29 +23,6 @@ describe('realm.service.create', () => {
     await getModel().findByIdAndDelete(result._id);
   });
 
-  it('should throw ConflictError for duplicate name', async () => {
-    const uniqueName = `test-realm-duplicate-${uuidv4()}`;
-
-    // Garantir que os índices estão criados
-    await getModel().createIndexes();
-
-    const first: Realm = await realmService.create({
-      name: uniqueName,
-      dbName: `vi-test-db-${uuidv4()}`,
-      description: 'First realm',
-    });
-
-    await expect(
-      realmService.create({
-        name: uniqueName,
-        dbName: `vi-test-db-${uuidv4()}`,
-        description: 'Second realm',
-      })
-    ).rejects.toThrow('Resource already exists');
-
-    await getModel().findByIdAndDelete(first._id);
-  });
-
   it('should rethrow error for duplicate publicUUID', async () => {
     const publicUUID = uuidv4();
 

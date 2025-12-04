@@ -31,22 +31,10 @@ export const create = async (
       const logger = await getLogger();
       logger.info({ data }, 'Creating new application registry');
 
-      try {
-        const registry = await getModel().create(data);
-        span.setAttributes({ 'application-registry.id': registry._id });
-        logger.info({ registryId: registry._id }, 'Registry created');
-        return registry;
-      } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === 'object' &&
-          'code' in error &&
-          error.code === 11000
-        ) {
-          throw new ConflictError('Application key already exists');
-        }
-        throw error;
-      }
+      const registry = await getModel().create(data);
+      span.setAttributes({ 'application-registry.id': registry._id });
+      logger.info({ registryId: registry._id }, 'Registry created');
+      return registry;
     }
   );
 };

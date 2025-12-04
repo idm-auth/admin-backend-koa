@@ -113,10 +113,7 @@ describe('POST /api/core/application-registries', () => {
       .expect(409);
 
     const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty(
-      'error',
-      'Application key already exists'
-    );
+    expect(errorResponse).toHaveProperty('error', 'Resource already exists');
   });
 
   it('should return 400 for empty applicationKey', async () => {

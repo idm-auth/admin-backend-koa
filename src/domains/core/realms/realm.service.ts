@@ -60,28 +60,9 @@ export const create = async (data: RealmCreate) => {
 
       await validateDBName(data.dbName);
 
-      try {
-        const realm = await getModel().create(data);
-        span.setAttributes({ 'realm.id': realm._id });
-        return realm;
-      } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === 'object' &&
-          'code' in error &&
-          error.code === 11000
-        ) {
-          // MongoDB duplicate key error
-          const mongoError = error as { keyPattern?: { name?: unknown } };
-          if (mongoError.keyPattern?.name) {
-            throw new ConflictError('Resource already exists', {
-              field: 'name',
-              details: 'A resource with this name already exists',
-            });
-          }
-        }
-        throw error;
-      }
+      const realm = await getModel().create(data);
+      span.setAttributes({ 'realm.id': realm._id });
+      return realm;
     }
   );
 };
