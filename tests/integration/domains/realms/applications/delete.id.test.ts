@@ -17,10 +17,11 @@ describe('DELETE /api/realm/:tenantId/applications/:id', () => {
     tenantId = await getTenantId('vi-test-db-tenant-application-delete');
     authToken = await getAuthToken(tenantId, 'applications.delete.id.test');
 
-    const application = await applicationService.create(tenantId, {
+    const result = await applicationService.create(tenantId, {
       name: 'Test Application',
+      applicationKey: uuidv4(),
     });
-    createdApplicationId = application._id;
+    createdApplicationId = result.application._id;
   });
 
   it('should delete application successfully', async () => {

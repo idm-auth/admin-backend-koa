@@ -4,6 +4,7 @@ import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import * as applicationService from '@/domains/realms/applications/application.service';
 import { ApplicationPaginatedResponse } from '@/domains/realms/applications/application.schema';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('GET /api/realm/:tenantId/applications - Paginated', () => {
   let tenantId: string;
@@ -15,8 +16,14 @@ describe('GET /api/realm/:tenantId/applications - Paginated', () => {
     tenantId = await getTenantId('vi-test-db-tenant-application-paginated');
     authToken = await getAuthToken(tenantId, 'applications.get.paginated.test');
 
-    await applicationService.create(tenantId, { name: 'App 1' });
-    await applicationService.create(tenantId, { name: 'App 2' });
+    await applicationService.create(tenantId, {
+      name: 'App 1',
+      applicationKey: uuidv4(),
+    });
+    await applicationService.create(tenantId, {
+      name: 'App 2',
+      applicationKey: uuidv4(),
+    });
   });
 
   it('should list all applications successfully', async () => {

@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { ApplicationBaseResponse } from '@/domains/realms/applications/application.schema';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('POST /api/realm/:tenantId/applications', () => {
   let tenantId: string;
@@ -18,6 +19,7 @@ describe('POST /api/realm/:tenantId/applications', () => {
   it('should create a new application successfully', async () => {
     const applicationData = {
       name: 'Test Application',
+      applicationKey: uuidv4(),
     };
 
     const response = await request(getApp().callback())

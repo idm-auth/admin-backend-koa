@@ -8,7 +8,7 @@ import {
 
 export const runWithContext = (
   context: ContextData,
-  callback: () => Promise<void>
+  callback: () => Promise<unknown>
 ) => {
   return asyncLocalStorage.run(context, callback);
 };

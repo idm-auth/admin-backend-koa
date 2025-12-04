@@ -1,6 +1,6 @@
 import pino from 'pino';
 import pinoCaller from 'pino-caller';
-import { getEnvValue, EnvKey } from './dotenv.plugin';
+import { EnvKey, getEnvValue } from './dotenv.plugin';
 
 let logger: pino.Logger;
 
@@ -10,17 +10,19 @@ export const initPino = async () => {
   const baseLogger = pino({
     level: getEnvValue(EnvKey.LOGGER_LEVEL),
     transport: {
-      target: 'pino-pretty', // opcional, para logs legíveis no console
+      target: 'pino-pretty',
       options: {
+        destination: 1,
         colorize: true,
         singleLine: true,
         messageFormat: '[{requestId}] -> {msg}',
+        sync: true,
       },
     },
   });
 
   logger = pinoCaller(baseLogger, {
-    relativeTo: process.cwd(), // deixa o path relativo à raiz do projeto
+    relativeTo: process.cwd(),
   });
   return logger;
 };
@@ -33,4 +35,9 @@ export const getLogger = async () => {
 // amazonq-ignore-next-line
 export const getLoggerNoAsync = () => {
   return logger;
+};
+
+export const flushLogs = async (): Promise<unknown> => {
+  if (!logger) return;
+  logger.flush();
 };

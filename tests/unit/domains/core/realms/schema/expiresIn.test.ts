@@ -11,6 +11,8 @@ describe('realm.schema expiresIn validation', () => {
       },
     };
 
-    expect(() => realmCreateSchema.parse(invalidData)).toThrow('Invalid time format');
+    expect(() => realmCreateSchema.parse(invalidData)).toThrow(
+      'Invalid time format'
+    );
   });
 });

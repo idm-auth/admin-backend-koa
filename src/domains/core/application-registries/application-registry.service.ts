@@ -2,6 +2,7 @@ import {
   PaginatedResponse,
   PaginationQuery,
 } from '@/domains/commons/base/pagination.schema';
+import { DocId } from '@/domains/commons/base/base.schema';
 import { NotFoundError } from '@/errors/not-found';
 import { ConflictError } from '@/errors/conflict';
 import { getLogger } from '@/utils/localStorage.util';
@@ -50,7 +51,7 @@ export const create = async (
   );
 };
 
-export const findById = async (id: string): Promise<ApplicationRegistry> => {
+export const findById = async (id: DocId): Promise<ApplicationRegistry> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.findById`,
@@ -73,7 +74,7 @@ export const findById = async (id: string): Promise<ApplicationRegistry> => {
 };
 
 export const findByApplicationKey = async (
-  applicationKey: string
+  applicationKey: DocId
 ): Promise<ApplicationRegistry> => {
   return withSpanAsync(
     {
@@ -96,8 +97,37 @@ export const findByApplicationKey = async (
   );
 };
 
+export const findByApplicationIdAndTenantId = async (
+  applicationId: DocId,
+  tenantId: DocId
+): Promise<ApplicationRegistry> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.service.findByApplicationIdAndTenantId`,
+      attributes: {
+        'application-registry.applicationId': applicationId,
+        'application-registry.tenantId': tenantId,
+        operation: 'findByApplicationIdAndTenantId',
+      },
+    },
+    async () => {
+      const logger = await getLogger();
+      logger.info(
+        { applicationId, tenantId },
+        'Finding registry by application ID and tenant ID'
+      );
+
+      const registry = await getModel().findOne({ applicationId, tenantId });
+      if (!registry) {
+        throw new NotFoundError('Application registry not found');
+      }
+      return registry;
+    }
+  );
+};
+
 export const update = async (
-  id: string,
+  id: DocId,
   data: Partial<ApplicationRegistry>
 ): Promise<ApplicationRegistry> => {
   return withSpanAsync(
@@ -160,7 +190,7 @@ export const findAllPaginated = async (
   );
 };
 
-export const remove = async (id: string): Promise<void> => {
+export const remove = async (id: DocId): Promise<void> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.remove`,

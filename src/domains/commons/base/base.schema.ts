@@ -27,7 +27,7 @@ export type DocId = z.infer<typeof DocIdSchema>;
 
 export const publicUUIDSchema = z
   .uuidv4('Invalid ID')
-  .openapi({ description: 'Tenant identifier (UUID v4)' });
+  .openapi({ description: 'public identifier (UUID v4)' });
 export type PublicUUID = z.infer<typeof publicUUIDSchema>;
 
 export const emailSchema = z

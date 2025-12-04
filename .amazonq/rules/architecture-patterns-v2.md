@@ -81,7 +81,7 @@
 ```typescript
 // ✅ Correto
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: EntityCreate
 ): Promise<EntityDocument> => {
   // implementação
@@ -89,7 +89,7 @@ export const create = async (
 
 // ❌ Incorreto - tenantId misturado
 export const create = async (args: {
-  tenantId: string;
+  tenantId: PublicUUID;
   data: EntityCreate;
 }): Promise<EntityDocument> => {};
 ```
@@ -97,7 +97,7 @@ export const create = async (args: {
 ### Service pattern obrigatório
 ```typescript
 // ✅ Correto
-export const findById = async (tenantId: string, id: string) => {
+export const findById = async (tenantId: PublicUUID, id: DocId) => {
   const entity = await getModel().findById(id);
   if (!entity) {
     throw new NotFoundError('Entity not found');
@@ -106,7 +106,7 @@ export const findById = async (tenantId: string, id: string) => {
 };
 
 // ❌ Incorreto - retorna null
-export const findById = async (tenantId: string, id: string) => {
+export const findById = async (tenantId: PublicUUID, id: DocId) => {
   const entity = await getModel().findById(id);
   return entity ? entity.toObject() : null;
 };

@@ -1,4 +1,4 @@
-import { DocId } from '@/domains/commons/base/base.schema';
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -14,7 +14,7 @@ import { GroupCreate, GroupUpdate } from './group.schema';
 const SERVICE_NAME = 'group';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: GroupCreate
 ): Promise<Group> => {
   return withSpanAsync(
@@ -49,7 +49,10 @@ export const create = async (
   );
 };
 
-export const findById = async (tenantId: string, id: DocId): Promise<Group> => {
+export const findById = async (
+  tenantId: PublicUUID,
+  id: DocId
+): Promise<Group> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.findById`,
@@ -81,8 +84,8 @@ export const findById = async (tenantId: string, id: DocId): Promise<Group> => {
 };
 
 export const update = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   data: GroupUpdate
 ): Promise<Group> => {
   return withSpanAsync(
@@ -120,7 +123,10 @@ export const update = async (
   );
 };
 
-export const remove = async (tenantId: string, id: string): Promise<void> => {
+export const remove = async (
+  tenantId: PublicUUID,
+  id: DocId
+): Promise<void> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.remove`,
@@ -148,7 +154,7 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
 };
 
 export const findAllPaginated = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   query: PaginationQuery
 ): Promise<PaginatedResponse<Group>> => {
   return withSpanAsync(

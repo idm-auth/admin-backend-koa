@@ -1,12 +1,13 @@
 import {
+  DocId,
   DocIdSchema,
+  PublicUUID,
   publicUUIDSchema,
 } from '@/domains/commons/base/base.schema';
 import {
   PaginatedResponse,
   PaginationQuery,
 } from '@/domains/commons/base/pagination.schema';
-import { PublicUUID } from '@/domains/commons/base/base.schema';
 import { validateZod } from '@/domains/commons/validations/validation.service';
 import { getModel, Realm, RealmCreate } from './realm.model';
 import { ConflictError } from '@/errors/conflict';
@@ -85,7 +86,7 @@ export const create = async (data: RealmCreate) => {
   );
 };
 
-export const findById = async (id: string) => {
+export const findById = async (id: DocId) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.findById`,
@@ -151,7 +152,7 @@ export const findByName = async (name: string) => {
   );
 };
 
-export const update = async (id: string, data: Partial<Realm>) => {
+export const update = async (id: DocId, data: Partial<Realm>) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.update`,
@@ -220,7 +221,7 @@ export const findAllPaginated = async (
   );
 };
 
-export const remove = async (id: string): Promise<void> => {
+export const remove = async (id: DocId): Promise<void> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.remove`,
@@ -295,8 +296,10 @@ export const initSetup = async () => {
     },
     async (span) => {
       const coreDBName = getEnvValue(EnvKey.MONGODB_CORE_DBNAME);
+      const coreRealmName = getEnvValue(EnvKey.CORE_REALM_NAME);
 
       span.setAttributes({ 'realm.coreDBName': coreDBName });
+      span.setAttributes({ 'realm.name': coreRealmName });
 
       let coreRealm = await getModel().findOne({
         dbName: coreDBName,
@@ -305,7 +308,7 @@ export const initSetup = async () => {
       if (!coreRealm) {
         coreRealm = await getModel().create({
           dbName: coreDBName,
-          name: 'idm-core-realm',
+          name: coreRealmName,
           description: 'Realm Core',
         });
         span.setAttributes({ 'realm.created': true });

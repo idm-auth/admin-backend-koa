@@ -11,13 +11,14 @@ import { executePagination } from '@/utils/pagination.util';
 import { v4 as uuidv4 } from 'uuid';
 import { Application, getModel } from './application.model';
 import { ApplicationCreate, ApplicationUpdate } from './application.schema';
+import * as applicationRegistryService from '@/domains/core/application-registries/application-registry.service';
 
 const SERVICE_NAME = 'application';
 
 export const create = async (
   tenantId: string,
   data: ApplicationCreate
-): Promise<Application> => {
+): Promise<{ application: Application; applicationKey: string }> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.create`,
@@ -44,12 +45,18 @@ export const create = async (
         'db.name': dbName,
       });
 
+      await applicationRegistryService.create({
+        applicationKey: data.applicationKey,
+        tenantId,
+        applicationId: application._id,
+      });
+
       logger.info(
         { applicationId: application._id, tenantId },
         'Application created successfully'
       );
 
-      return application;
+      return { application, applicationKey: data.applicationKey };
     }
   );
 };
@@ -57,7 +64,7 @@ export const create = async (
 export const findById = async (
   tenantId: string,
   id: DocId
-): Promise<Application> => {
+): Promise<{ application: Application; applicationKey: string }> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.findById`,
@@ -80,22 +87,28 @@ export const findById = async (
         throw new NotFoundError('Application not found');
       }
 
+      const registry =
+        await applicationRegistryService.findByApplicationIdAndTenantId(
+          application._id,
+          tenantId
+        );
+
       span.setAttributes({ 'db.name': dbName });
       logger.info(
         { applicationId: application._id, tenantId },
         'Application found successfully'
       );
 
-      return application;
+      return { application, applicationKey: registry.applicationKey };
     }
   );
 };
 
 export const update = async (
   tenantId: string,
-  id: string,
+  id: DocId,
   data: ApplicationUpdate
-): Promise<Application> => {
+): Promise<{ application: Application; applicationKey: string }> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.update`,
@@ -109,7 +122,8 @@ export const update = async (
       const logger = await getLogger();
       logger.info({ tenantId, id }, 'Updating application');
 
-      const application = await findById(tenantId, id);
+      const result = await findById(tenantId, id);
+      const application = result.application;
 
       if (data.name !== undefined) {
         application.name = data.name;
@@ -122,12 +136,15 @@ export const update = async (
         { applicationId: updatedApplication._id, tenantId },
         'Application updated successfully'
       );
-      return updatedApplication;
+      return {
+        application: updatedApplication,
+        applicationKey: result.applicationKey,
+      };
     }
   );
 };
 
-export const remove = async (tenantId: string, id: string): Promise<void> => {
+export const remove = async (tenantId: string, id: DocId): Promise<void> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.remove`,
@@ -148,6 +165,13 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
         throw new NotFoundError('Application not found');
       }
 
+      const registry =
+        await applicationRegistryService.findByApplicationIdAndTenantId(
+          id,
+          tenantId
+        );
+      await applicationRegistryService.remove(registry._id);
+
       span.setAttributes({ 'db.name': dbName });
       logger.info({ tenantId, id }, 'Application deleted successfully');
     }
@@ -157,7 +181,9 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
 export const findAllPaginated = async (
   tenantId: string,
   query: PaginationQuery
-): Promise<PaginatedResponse<Application>> => {
+): Promise<
+  PaginatedResponse<{ application: Application; applicationKey: string }>
+> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.findAllPaginated`,
@@ -190,6 +216,17 @@ export const findAllPaginated = async (
         })
       );
 
+      const dataWithKeys = await Promise.all(
+        result.data.map(async (app) => {
+          const registry =
+            await applicationRegistryService.findByApplicationIdAndTenantId(
+              app._id,
+              tenantId
+            );
+          return { application: app, applicationKey: registry.applicationKey };
+        })
+      );
+
       logger.info(
         {
           tenantId,
@@ -199,7 +236,7 @@ export const findAllPaginated = async (
         'Applications pagination completed successfully'
       );
 
-      return result;
+      return { ...result, data: dataWithKeys };
     }
   );
 };

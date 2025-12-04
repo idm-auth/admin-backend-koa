@@ -120,8 +120,8 @@ router.delete({
   handlers: [accountController.remove],
   request: {
     params: z.object({
-      tenantId: z.string(),
-      id: z.string(),
+      tenantId: DocIdSchema,
+      id: DocIdSchema,
     }),
   },
   responses: {

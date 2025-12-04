@@ -20,6 +20,7 @@ export const requestIdMiddleware = async (
   const context = { requestId, logger: requestLogger };
 
   return runWithContext(context, async () => {
+    ctx.state.requestId = requestId;
     ctx.set('X-Request-ID', requestId);
     await next();
   });

@@ -188,11 +188,12 @@ IDM_API_URL=https://idm.example.com
 // src/domains/commons/idm-client/idm-client.service.ts
 import { authenticate } from '@idm-auth/client';
 import { AxiosHttpClient } from '@/utils/http/AxiosHttpClient';
+import { PublicUUID } from '@/domains/commons/base/base.schema';
 
 const httpClient = new AxiosHttpClient(10000);
 
 export const validateToken = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   token: string,
   application: string
 ) => {

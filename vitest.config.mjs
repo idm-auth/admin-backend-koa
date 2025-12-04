@@ -3,6 +3,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  esbuild: {
+    sourcemap: true,
+  },
   test: {
     globals: true, // habilita describe, it, expect
     environment: 'node',

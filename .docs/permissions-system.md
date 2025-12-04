@@ -394,8 +394,10 @@ Resource: grn:global:iam::company-xyz:accounts/*
 ### Policy Document
 
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface Policy {
-  _id: string;
+  _id: DocId;
   name: string;
   description?: string;
   effect: 'Allow' | 'Deny';
@@ -410,11 +412,13 @@ interface Policy {
 ### Role Document
 
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface Role {
-  _id: string;
+  _id: DocId;
   name: string;
   description?: string;
-  permissions: string[]; // Array de policyIds
+  permissions: DocId[]; // Array de policyIds
   createdAt: Date;
   updatedAt: Date;
 }
@@ -640,9 +644,11 @@ Exemplos:
 ### Policy Engine
 
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface AuthorizationRequest {
-  accountId: string;
-  tenantId: string;
+  accountId: DocId;
+  tenantId: DocId;
   action: string;
   resource: string;
   context?: {

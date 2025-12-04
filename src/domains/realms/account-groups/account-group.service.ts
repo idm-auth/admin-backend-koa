@@ -1,3 +1,4 @@
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import { AccountGroupDocument, getModel } from './account-group.model';
 import { AccountGroupCreate } from './account-group.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -8,7 +9,7 @@ import { withSpanAsync } from '@/utils/tracing.util';
 const SERVICE_NAME = 'account-group.service';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: AccountGroupCreate
 ): Promise<AccountGroupDocument> => {
   return withSpanAsync(
@@ -36,8 +37,8 @@ export const create = async (
 };
 
 export const remove = async (
-  tenantId: string,
-  accountId: string,
+  tenantId: PublicUUID,
+  accountId: DocId,
   groupId: string
 ): Promise<void> => {
   return withSpanAsync(
@@ -69,7 +70,7 @@ export const remove = async (
 };
 
 export const findByAccountId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   accountId: string
 ): Promise<AccountGroupDocument[]> => {
   return withSpanAsync(
@@ -94,7 +95,7 @@ export const findByAccountId = async (
 };
 
 export const findByGroupId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   groupId: string
 ): Promise<AccountGroupDocument[]> => {
   return withSpanAsync(

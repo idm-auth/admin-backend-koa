@@ -76,8 +76,9 @@ export const findAllPaginated = async (ctx: Context) => {
 ### Gerar token JWT (após login)
 ```typescript
 import * as jwtService from '@/domains/realms/jwt/jwt.service';
+import { PublicUUID } from '@/domains/commons/base/base.schema';
 
-export const login = async (tenantId: string, credentials: LoginCredentials) => {
+export const login = async (tenantId: PublicUUID, credentials: LoginCredentials) => {
   // Validar credenciais
   const account = await validateCredentials(tenantId, credentials);
   
@@ -147,7 +148,9 @@ export const login = async (ctx: Context) => {
 };
 
 // Service
-export const login = async (tenantId: string, credentials: LoginCredentials) => {
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
+export const login = async (tenantId: PublicUUID, credentials: LoginCredentials) => {
   const account = await validateCredentials(tenantId, credentials);
   
   const token = await jwtService.generateToken(tenantId, {

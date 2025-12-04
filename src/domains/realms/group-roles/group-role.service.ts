@@ -1,3 +1,4 @@
+import { PublicUUID } from '@/domains/commons/base/base.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
@@ -8,7 +9,7 @@ import { GroupRoleCreate } from './group-role.schema';
 const SERVICE_NAME = 'group-role.service';
 
 export const addRoleToGroup = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: GroupRoleCreate
 ): Promise<GroupRoleDocument> => {
   return withSpanAsync(
@@ -33,7 +34,7 @@ export const addRoleToGroup = async (
 };
 
 export const removeRoleFromGroup = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: { groupId: string; roleId: string }
 ): Promise<void> => {
   return withSpanAsync(
@@ -62,7 +63,7 @@ export const removeRoleFromGroup = async (
 };
 
 export const getGroupRoles = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: { groupId: string }
 ): Promise<GroupRoleDocument[]> => {
   return withSpanAsync(
@@ -87,7 +88,7 @@ export const getGroupRoles = async (
 };
 
 export const getRoleGroups = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: { roleId: string }
 ): Promise<GroupRoleDocument[]> => {
   return withSpanAsync(

@@ -1,22 +1,36 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import * as applicationRegistryService from '@/domains/core/application-registries/application-registry.service';
-import * as applicationRegistryModel from '@/domains/core/application-registries/application-registry.model';
+import { getTenantId } from '@test/utils/tenant.util';
+import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
+import { getModel } from '@/domains/core/application-registries/application-registry.model';
+import { getCoreDb } from '@/plugins/mongo.plugin';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('application-registry.service.create', () => {
-  it('should rethrow non-MongoDB errors', async () => {
-    const getModelSpy = vi.spyOn(applicationRegistryModel, 'getModel');
-    getModelSpy.mockReturnValue({
-      create: vi.fn().mockRejectedValue(new Error('Database connection failed')),
-    } as unknown as ReturnType<typeof applicationRegistryModel.getModel>);
+  beforeAll(async () => {
+    const coreDbName = 'vi-test-db-app-registry-create-error';
+    setLocalMemValue(EnvKey.CORE_REALM_NAME, coreDbName);
+    await getTenantId(coreDbName);
+    await getModel().createIndexes();
+  });
+
+  it('should throw original error when database operation fails', async () => {
+    const conn = getCoreDb();
+    await conn.close();
 
     await expect(
       applicationRegistryService.create({
-        applicationKey: 'test-key',
-        tenantId: 'test-tenant',
-        applicationId: 'test-app',
+        applicationKey: uuidv4(),
+        tenantId: uuidv4(),
+        applicationId: uuidv4(),
       })
-    ).rejects.toThrow('Database connection failed');
+    ).rejects.toThrow();
+  });
 
-    vi.restoreAllMocks();
+  afterAll(async () => {
+    const conn = getCoreDb();
+    if (conn.readyState === 0) {
+      await conn.openUri(process.env.MONGODB_URI || '');
+    }
   });
 });

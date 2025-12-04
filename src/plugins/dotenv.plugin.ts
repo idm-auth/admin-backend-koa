@@ -31,6 +31,7 @@ export enum EnvKey {
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT',
   PROMETHEUS_PORT = 'PROMETHEUS_PORT',
   IDM_API_URL = 'IDM_API_URL',
+  CORE_REALM_NAME = 'CORE_REALM_NAME',
 }
 
 const defaults: Record<EnvKey, string> = {
@@ -46,6 +47,16 @@ const defaults: Record<EnvKey, string> = {
   [EnvKey.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT]: 'http://jaeger:4318/v1/traces',
   [EnvKey.PROMETHEUS_PORT]: '9090',
   [EnvKey.IDM_API_URL]: 'http://localhost:3000',
+  [EnvKey.CORE_REALM_NAME]: 'idm-core-realm',
+};
+
+let localMem: Partial<Record<EnvKey, string>> = {};
+
+export const setLocalMemValue = (key: EnvKey, value: string): void => {
+  localMem[key] = value;
+};
+export const clearLocalCache = (): void => {
+  localMem = {};
 };
 
 // Cache para valores do banco
@@ -63,5 +74,5 @@ export const clearDbCache = (): void => {
 
 // Função principal com hierarquia: ENV > DB > Default
 export const getEnvValue = (key: EnvKey): string => {
-  return process.env[key] || dbCache[key] || defaults[key];
+  return localMem[key] || process.env[key] || dbCache[key] || defaults[key];
 };

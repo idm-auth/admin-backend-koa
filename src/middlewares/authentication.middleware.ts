@@ -4,6 +4,8 @@ import { UnauthorizedError } from '@/errors/unauthorized';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { Context, Next } from 'koa';
+import * as realmService from '@/domains/core/realms/realm.service';
+import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 
 const MIDDLEWARE_NAME = 'authentication.middleware';
 
@@ -34,6 +36,11 @@ export type AuthenticationConfig = {
 
 export const authenticationMiddleware = (config: AuthenticationConfig) => {
   return async (ctx: Context, next: Next) => {
+    const logger = await getLogger();
+    logger.debug(
+      { url: ctx.url, method: ctx.method, config },
+      'authenticationMiddleware started'
+    );
     return withSpanAsync(
       {
         name: `${MIDDLEWARE_NAME}.authenticate`,
@@ -49,13 +56,14 @@ export const authenticationMiddleware = (config: AuthenticationConfig) => {
 
         if (config.someOneMethod) {
           methods.push(tryJwtAuth, tryApiKeyAuth);
+          // methods.push(tryJwtAuth);
         } else if (config.onlyMethods) {
           if (config.onlyMethods.jwt) methods.push(tryJwtAuth);
           if (config.onlyMethods.apiKey) methods.push(tryApiKeyAuth);
         }
 
         let authenticated = false;
-        let lastError: Error | null = null;
+        const errors: Error[] = [];
 
         for (const method of methods) {
           try {
@@ -64,15 +72,20 @@ export const authenticationMiddleware = (config: AuthenticationConfig) => {
             span.setAttributes({ 'auth.success': true });
             break;
           } catch (error) {
-            lastError = error as Error;
+            errors.push(error as Error);
             continue;
           }
         }
 
         if (!authenticated) {
           span.setAttributes({ 'auth.success': false });
+
+          for (let i = errors.length - 1; i > 0; i--) {
+            (errors[i - 1] as Error & { cause?: Error }).cause = errors[i];
+          }
+
           throw new UnauthorizedError('Authentication failed for all methods', {
-            cause: lastError,
+            cause: errors[0],
           });
         }
 
@@ -90,11 +103,16 @@ const tryJwtAuth = async (ctx: Context) => {
     },
     async (span) => {
       const logger = await getLogger();
+      logger.debug({ url: ctx.url, method: ctx.method }, 'tryJwtAuth started');
       const token = extractBearerToken(ctx);
-      const tenantId = ctx.validated?.params?.tenantId || ctx.params?.tenantId;
+      let tenantId = ctx.validated?.params?.tenantId || ctx.params?.tenantId;
+      logger.debug({ tenantId, hasTenantId: !!tenantId }, 'tenantId resolved');
 
       if (!tenantId) {
-        throw new UnauthorizedError('Tenant ID not found in request');
+        const coreRealmName = getEnvValue(EnvKey.CORE_REALM_NAME);
+        const realm = await realmService.findByName(coreRealmName);
+        tenantId = realm.publicUUID;
+        // throw new UnauthorizedError('Tenant ID not found in request');
       }
 
       span.setAttributes({ 'tenant.id': tenantId });

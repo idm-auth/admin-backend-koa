@@ -108,10 +108,12 @@ export const create = async (ctx: Context) => {
 
 #### Services
 ```typescript
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
 const SERVICE_NAME = 'account.service';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: AccountCreate
 ): Promise<Account> => {
   return withSpanAsync(

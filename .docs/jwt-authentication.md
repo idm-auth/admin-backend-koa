@@ -21,11 +21,13 @@ Middleware que valida tokens JWT e popula `ctx.user` com dados do usuário auten
 Adiciona `user` ao Context do Koa com type safety.
 
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface Context {
   user?: {
-    accountId: string;
+    accountId: DocId;
     email: string;
-    tenantId: string;
+    tenantId: DocId;
   };
 }
 ```

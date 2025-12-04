@@ -1,3 +1,4 @@
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import { AccountRoleDocument, getModel } from './account-role.model';
 import { AccountRoleCreate } from './account-role.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -8,7 +9,7 @@ import { withSpanAsync } from '@/utils/tracing.util';
 const SERVICE_NAME = 'account-role.service';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: AccountRoleCreate
 ): Promise<AccountRoleDocument> => {
   return withSpanAsync(
@@ -36,9 +37,9 @@ export const create = async (
 };
 
 export const remove = async (
-  tenantId: string,
-  accountId: string,
-  roleId: string
+  tenantId: PublicUUID,
+  accountId: DocId,
+  roleId: DocId
 ): Promise<void> => {
   return withSpanAsync(
     {
@@ -69,8 +70,8 @@ export const remove = async (
 };
 
 export const findByAccountId = async (
-  tenantId: string,
-  accountId: string
+  tenantId: PublicUUID,
+  accountId: DocId
 ): Promise<AccountRoleDocument[]> => {
   return withSpanAsync(
     {
@@ -94,8 +95,8 @@ export const findByAccountId = async (
 };
 
 export const findByRoleId = async (
-  tenantId: string,
-  roleId: string
+  tenantId: PublicUUID,
+  roleId: DocId
 ): Promise<AccountRoleDocument[]> => {
   return withSpanAsync(
     {

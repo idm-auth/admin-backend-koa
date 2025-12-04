@@ -15,7 +15,7 @@ describe('POST /api/realm/:tenantId/auth/assume-role', () => {
 
   beforeAll(async () => {
     sourceTenantId = await getTenantId('vi-test-db-assume-role-source');
-    
+
     await accountService.create(sourceTenantId, {
       email: createTestEmail('assume-role'),
       password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
@@ -31,7 +31,7 @@ describe('POST /api/realm/:tenantId/auth/assume-role', () => {
     token = loginResponse.body.token; // Test credential - not production - qdeveloper bug - do not remove
 
     targetTenantId = await getTenantId('vi-test-db-assume-role-target');
-    
+
     const role = await roleService.create(targetTenantId, {
       name: `test-role-${uuidv4()}`,
     });

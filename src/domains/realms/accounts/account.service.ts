@@ -2,6 +2,7 @@ import {
   DocId,
   Password,
   passwordSchema,
+  PublicUUID,
 } from '@/domains/commons/base/base.schema';
 import {
   PaginatedResponse,
@@ -22,7 +23,7 @@ import { AccountCreate, AccountUpdate } from './account.schema';
 const SERVICE_NAME = 'account';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: AccountCreate
 ): Promise<Account> => {
   return withSpanAsync(
@@ -63,7 +64,7 @@ export const create = async (
 };
 
 export const findById = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   id: DocId
 ): Promise<Account> => {
   return withSpanAsync(
@@ -104,7 +105,7 @@ export const findById = async (
 };
 
 export const findByEmail = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   email: string
 ): Promise<Account> => {
   return withSpanAsync(
@@ -142,8 +143,8 @@ export const findByEmail = async (
 // Account update function - Email e password não podem ser alterados aqui
 // Email e password devem ter métodos específicos para alteração
 export const update = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   data: AccountUpdate
 ): Promise<Account> => {
   return withSpanAsync(
@@ -191,7 +192,10 @@ export const comparePassword = async (
   return isValid;
 };
 
-export const remove = async (tenantId: string, id: string): Promise<void> => {
+export const remove = async (
+  tenantId: PublicUUID,
+  id: DocId
+): Promise<void> => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.service.remove`,
@@ -219,7 +223,7 @@ export const remove = async (tenantId: string, id: string): Promise<void> => {
 };
 
 export const findAllPaginated = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   query: PaginationQuery
 ): Promise<PaginatedResponse<Account>> => {
   return withSpanAsync(
@@ -269,8 +273,8 @@ export const findAllPaginated = async (
 };
 
 export const resetPassword = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   password: Password
 ): Promise<Account> => {
   return withSpanAsync(
@@ -315,8 +319,8 @@ export const resetPassword = async (
 };
 
 export const updatePassword = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   currentPassword: Password,
   newPassword: Password
 ): Promise<Account> => {
@@ -373,8 +377,8 @@ export const updatePassword = async (
 };
 
 export const addEmail = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   email: string
 ): Promise<Account> => {
   return withSpanAsync(
@@ -417,8 +421,8 @@ export const addEmail = async (
 };
 
 export const removeEmail = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   email: string
 ): Promise<Account> => {
   return withSpanAsync(
@@ -463,8 +467,8 @@ export const removeEmail = async (
 };
 
 export const setPrimaryEmail = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   email: string
 ): Promise<Account> => {
   return withSpanAsync(
@@ -507,8 +511,8 @@ export const setPrimaryEmail = async (
 };
 
 export const setActiveStatus = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   isActive: boolean
 ): Promise<Account> => {
   return withSpanAsync(

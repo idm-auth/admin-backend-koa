@@ -32,7 +32,9 @@ export const create = async (ctx: Context) => {
 
 ### 3. Service Pattern
 ```typescript
-export const create = async (tenantId: string, data: EntityCreate) => {
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
+export const create = async (tenantId: PublicUUID, data: EntityCreate) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.create`,
@@ -115,9 +117,11 @@ export const create = async (ctx: Context) => {
 };
 
 // account.service.ts
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
 const SERVICE_NAME = 'account.service';
 
-export const create = async (tenantId: string, data: AccountCreate) => {
+export const create = async (tenantId: PublicUUID, data: AccountCreate) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.create`,

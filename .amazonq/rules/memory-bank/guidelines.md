@@ -49,16 +49,18 @@ Each domain follows a flat structure with these files:
 
 **Tenant ID as First Parameter**
 ```typescript
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+
 // Service functions always receive tenantId first, separated from data
-export const create = async (tenantId: string, data: EntityCreate): Promise<Entity> => {
+export const create = async (tenantId: PublicUUID, data: EntityCreate): Promise<Entity> => {
   // Implementation
 };
 
-export const update = async (tenantId: string, id: string, data: EntityUpdate): Promise<Entity> => {
+export const update = async (tenantId: PublicUUID, id: DocId, data: EntityUpdate): Promise<Entity> => {
   // Implementation
 };
 
-export const findById = async (tenantId: string, id: string): Promise<Entity> => {
+export const findById = async (tenantId: PublicUUID, id: DocId): Promise<Entity> => {
   // Implementation
 };
 ```
@@ -73,8 +75,10 @@ export const findById = async (tenantId: string, id: string): Promise<Entity> =>
 
 **Error Handling - Never Return Null**
 ```typescript
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+
 // Services throw specific errors, never return null/undefined
-export const findById = async (tenantId: string, id: string): Promise<Entity> => {
+export const findById = async (tenantId: PublicUUID, id: DocId): Promise<Entity> => {
   const entity = await getModel(dbName).findById(id);
   
   if (!entity) {
@@ -87,7 +91,9 @@ export const findById = async (tenantId: string, id: string): Promise<Entity> =>
 
 **Validation Before Operations**
 ```typescript
-export const create = async (tenantId: string, data: EntityCreate): Promise<Entity> => {
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
+export const create = async (tenantId: PublicUUID, data: EntityCreate): Promise<Entity> => {
   // 1. Validate uniqueness/business rules
   await validateEmailUnique(tenantId, data.email);
   
@@ -312,9 +318,11 @@ export const create = async (ctx: Context) => {
 
 **Service Telemetry**
 ```typescript
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
 const SERVICE_NAME = 'entity';
 
-export const create = async (tenantId: string, data: EntityCreate) => {
+export const create = async (tenantId: PublicUUID, data: EntityCreate) => {
   return withSpanAsync({
     name: `${SERVICE_NAME}.service.create`,
     attributes: {
@@ -491,8 +499,10 @@ expect(entity.emails).toHaveLength(1);
 
 ### Async/Await Pattern
 ```typescript
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
 // Always use async/await, never raw Promises
-export const create = async (tenantId: string, data: EntityCreate): Promise<Entity> => {
+export const create = async (tenantId: PublicUUID, data: EntityCreate): Promise<Entity> => {
   const dbName = await getDBName({ publicUUID: tenantId });
   const entity = await getModel(dbName).create(data);
   return entity;

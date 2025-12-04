@@ -9,7 +9,8 @@ import {
 const MAPPER_NAME = 'application';
 
 export const toCreateResponse = (
-  application: Application
+  application: Application,
+  applicationKey: string
 ): ApplicationCreateResponse => {
   return withSpan(
     {
@@ -20,12 +21,14 @@ export const toCreateResponse = (
       _id: application._id.toString(),
       name: application.name,
       applicationSecret: application.applicationSecret,
+      applicationKey,
     })
   );
 };
 
 export const toUpdateResponse = (
-  application: Application
+  application: Application,
+  applicationKey: string
 ): ApplicationUpdateResponse => {
   return withSpan(
     {
@@ -36,12 +39,14 @@ export const toUpdateResponse = (
       _id: application._id.toString(),
       name: application.name,
       applicationSecret: application.applicationSecret,
+      applicationKey,
     })
   );
 };
 
 export const toListItemResponse = (
-  application: Application
+  application: Application,
+  applicationKey: string
 ): ApplicationListItemResponse => {
   return withSpan(
     {
@@ -52,6 +57,7 @@ export const toListItemResponse = (
       _id: application._id.toString(),
       name: application.name,
       applicationSecret: application.applicationSecret,
+      applicationKey,
     })
   );
 };

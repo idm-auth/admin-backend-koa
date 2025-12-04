@@ -4,10 +4,11 @@ import { getDBName } from '@/domains/core/realms/realm.service';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { getModel, PolicyCreate } from './policy.model';
 import { PolicyUpdate } from './policy.schema';
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 
 const SERVICE_NAME = 'policy.service';
 
-export const create = async (tenantId: string, data: PolicyCreate) => {
+export const create = async (tenantId: PublicUUID, data: PolicyCreate) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.create`,
@@ -29,7 +30,7 @@ export const create = async (tenantId: string, data: PolicyCreate) => {
   );
 };
 
-export const findById = async (tenantId: string, id: string) => {
+export const findById = async (tenantId: PublicUUID, id: DocId) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.findById`,
@@ -54,8 +55,8 @@ export const findById = async (tenantId: string, id: string) => {
 };
 
 export const update = async (
-  tenantId: string,
-  id: string,
+  tenantId: PublicUUID,
+  id: DocId,
   data: PolicyUpdate
 ) => {
   return withSpanAsync(
@@ -95,7 +96,7 @@ export const update = async (
   );
 };
 
-export const remove = async (tenantId: string, id: string) => {
+export const remove = async (tenantId: PublicUUID, id: DocId) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.remove`,
@@ -119,7 +120,7 @@ export const remove = async (tenantId: string, id: string) => {
   );
 };
 
-export const list = async (tenantId: string, page = 1, limit = 25) => {
+export const list = async (tenantId: PublicUUID, page = 1, limit = 25) => {
   return withSpanAsync(
     {
       name: `${SERVICE_NAME}.list`,

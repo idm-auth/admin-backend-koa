@@ -1,5 +1,8 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { DocIdSchema } from '@/domains/commons/base/base.schema';
+import {
+  DocIdSchema,
+  publicUUIDSchema,
+} from '@/domains/commons/base/base.schema';
 import {
   paginationQuerySchema,
   createPaginatedResponseSchema,
@@ -10,12 +13,14 @@ extendZodWithOpenApi(z);
 
 export const applicationCreateSchema = z.object({
   name: z.string().min(1),
+  applicationKey: publicUUIDSchema,
 });
 
 export const applicationBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
   applicationSecret: z.string(),
+  applicationKey: DocIdSchema,
 });
 
 export const applicationCreateResponseSchema = applicationBaseResponseSchema;

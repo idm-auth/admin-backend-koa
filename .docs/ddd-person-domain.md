@@ -37,13 +37,15 @@ src/domains/core/persons/
 
 ### Campos Principais
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface Person {
-  _id: string;           // UUID da pessoa
+  _id: DocId;            // UUID da pessoa
   name: string;          // Nome completo
   document?: string;     // CPF, RG, ou documento de identificação
   phone?: string;        // Telefone principal
   birthDate?: Date;      // Data de nascimento
-  accounts: string[];    // Array de IDs das contas associadas
+  accounts: DocId[];     // Array de IDs das contas associadas
   createdAt: Date;
   updatedAt: Date;
 }
@@ -86,19 +88,21 @@ const accountSchema = new Schema({
 
 ### Service Pattern
 ```typescript
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+
 // Person service - SEM tenantId (global)
 export const create = async (data: PersonCreate): Promise<PersonDocument> => {
   // Implementação global
 };
 
-export const findById = async (id: string): Promise<PersonDocument> => {
+export const findById = async (id: DocId): Promise<PersonDocument> => {
   // Busca global
 };
 
 // Account service - COM tenantId (mantém padrão atual)
 export const create = async (
-  tenantId: string,
-  data: AccountCreate & { personId: string }
+  tenantId: PublicUUID,
+  data: AccountCreate & { personId: DocId }
 ): Promise<AccountDocument> => {
   // Implementação tenant-scoped
 };

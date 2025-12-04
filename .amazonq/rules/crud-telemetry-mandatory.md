@@ -33,8 +33,10 @@ export const create = async (ctx: Context) => {
 };
 
 // Service - withSpanAsync + tenant.id + entity.id
+import { PublicUUID } from '@/domains/commons/base/base.schema';
+
 const SERVICE_NAME = '{domain}.service';
-export const create = async (tenantId: string, data: EntityCreate) => {
+export const create = async (tenantId: PublicUUID, data: EntityCreate) => {
   return withSpanAsync({
     name: `${SERVICE_NAME}.create`,
     attributes: { 'tenant.id': tenantId, operation: 'create' },

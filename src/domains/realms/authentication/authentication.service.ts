@@ -13,12 +13,13 @@ import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
 import { withSpanAsync } from '@/utils/tracing.util';
 import { JwtPayload } from '@/domains/realms/jwt/jwt.schema';
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import ms from 'ms';
 
 const SERVICE_NAME = 'authentication.service';
 
 export const login = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   args: LoginRequest
 ): Promise<LoginResponse> => {
   return withSpanAsync(
@@ -114,8 +115,8 @@ export const login = async (
 };
 
 export const assumeRole = async (
-  sourceRealmId: string,
-  sourceAccountId: string,
+  sourceRealmId: PublicUUID,
+  sourceAccountId: DocId,
   data: AssumeRoleRequest
 ): Promise<AssumeRoleResponse> => {
   return withSpanAsync(
@@ -164,7 +165,9 @@ export const assumeRole = async (
       const token = await jwtService.generateToken(data.targetRealmId, payload);
 
       // Get expiration from target realm config (convert to seconds)
-      const expiresIn = Math.floor(ms(targetRealm.jwtConfig.expiresIn as ms.StringValue) / 1000);
+      const expiresIn = Math.floor(
+        ms(targetRealm.jwtConfig.expiresIn as ms.StringValue) / 1000
+      );
 
       logger.info(
         {
@@ -182,7 +185,7 @@ export const assumeRole = async (
 };
 
 export const refresh = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   refreshToken: string
 ): Promise<{ token: string; refreshToken: string }> => {
   return withSpanAsync(
@@ -235,5 +238,3 @@ export const refresh = async (
     }
   );
 };
-
-

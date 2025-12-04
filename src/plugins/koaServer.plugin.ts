@@ -1,18 +1,22 @@
+import { initialize as api } from '@/domains/api.routes';
+import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';
 import { errorHandler } from '@/middlewares/errorHandler.middleware';
 import { requestIdMiddleware } from '@/middlewares/requestId.middleware';
 import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
-import { initialize as api } from '@/domains/api.routes';
-import { initialize as swaggerRoutes } from '@/domains/swagger/swagger.routes';
 import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
-import { getEnvValue, EnvKey } from './dotenv.plugin';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Koa from 'koa';
+import { EnvKey, getEnvValue } from './dotenv.plugin';
+import { getLogger } from '@/plugins/pino.plugin';
 
 const app = new Koa();
 
 export const initKoa = async () => {
-  // Error handler deve ser o primeiro middleware
+  const logger = await getLogger();
+  // RequestId middleware primeiro para criar contexto
+  app.use(requestIdMiddleware);
+  // Error handler segundo para capturar erros com contexto
   app.use(errorHandler);
 
   app.use(cors());
@@ -22,7 +26,6 @@ export const initKoa = async () => {
       parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'], // Incluir DELETE
     })
   );
-  app.use(requestIdMiddleware);
 
   const apiRouter = await api();
   app.use(apiRouter.routes());
@@ -43,13 +46,14 @@ export const initKoa = async () => {
   if (getEnvValue(EnvKey.NODE_ENV) === 'development') {
     logRoutesDetailed(apiRouter.getInternalRouter());
   }
-
+  logger.info('Koa server initialized');
   return app;
 };
 
 export const listenKoa = async () => {
+  const logger = await getLogger();
   const PORT = getEnvValue(EnvKey.PORT);
   app.listen(PORT, () => {
-    console.log(`Koa server running on http://localhost:${PORT}`);
+    logger.info(`Koa server running on http://localhost:${PORT}`);
   });
 };

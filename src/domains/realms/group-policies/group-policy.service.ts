@@ -1,3 +1,4 @@
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import { GroupPolicyDocument, getModel } from './group-policy.model';
 import { GroupPolicyCreate } from './group-policy.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -8,7 +9,7 @@ import { withSpanAsync } from '@/utils/tracing.util';
 const SERVICE_NAME = 'group-policy.service';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: GroupPolicyCreate
 ): Promise<GroupPolicyDocument> => {
   return withSpanAsync(
@@ -36,8 +37,8 @@ export const create = async (
 };
 
 export const remove = async (
-  tenantId: string,
-  groupId: string,
+  tenantId: PublicUUID,
+  groupId: DocId,
   policyId: string
 ): Promise<void> => {
   return withSpanAsync(
@@ -69,7 +70,7 @@ export const remove = async (
 };
 
 export const findByGroupId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   groupId: string
 ): Promise<GroupPolicyDocument[]> => {
   return withSpanAsync(
@@ -94,7 +95,7 @@ export const findByGroupId = async (
 };
 
 export const findByPolicyId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   policyId: string
 ): Promise<GroupPolicyDocument[]> => {
   return withSpanAsync(

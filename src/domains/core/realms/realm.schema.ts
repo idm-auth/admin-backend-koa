@@ -16,10 +16,11 @@ import ms from 'ms';
 
 extendZodWithOpenApi(z);
 
-const expiresInSchema = z.string().refine(
-  (val) => typeof ms(val as ms.StringValue) === 'number',
-  { message: 'Invalid time format' }
-);
+const expiresInSchema = z
+  .string()
+  .refine((val) => typeof ms(val as ms.StringValue) === 'number', {
+    message: 'Invalid time format',
+  });
 
 export const realmCreateSchema = z.object({
   name: nameSchema,

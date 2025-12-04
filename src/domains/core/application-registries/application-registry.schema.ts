@@ -9,22 +9,22 @@ import { z } from 'zod';
 extendZodWithOpenApi(z);
 
 export const applicationRegistryCreateSchema = z.object({
-  applicationKey: z.string().min(1),
-  tenantId: z.string().min(1),
-  applicationId: z.string().min(1),
+  applicationKey: DocIdSchema,
+  tenantId: DocIdSchema,
+  applicationId: DocIdSchema,
 });
 
 export const applicationRegistryUpdateSchema = z.object({
-  applicationKey: z.string().min(1).optional(),
-  tenantId: z.string().min(1).optional(),
-  applicationId: z.string().min(1).optional(),
+  applicationKey: DocIdSchema.optional(),
+  tenantId: DocIdSchema.optional(),
+  applicationId: DocIdSchema.optional(),
 });
 
 export const applicationRegistryBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
-  applicationKey: z.string(),
-  tenantId: z.string(),
-  applicationId: z.string(),
+  applicationKey: DocIdSchema,
+  tenantId: DocIdSchema,
+  applicationId: DocIdSchema,
 });
 
 export const applicationRegistryCreateResponseSchema =

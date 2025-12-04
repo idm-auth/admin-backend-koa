@@ -1,3 +1,4 @@
+import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
 import { AccountPolicyDocument, getModel } from './account-policy.model';
 import { AccountPolicyCreate } from './account-policy.schema';
 import { getDBName } from '@/domains/core/realms/realm.service';
@@ -8,7 +9,7 @@ import { withSpanAsync } from '@/utils/tracing.util';
 const SERVICE_NAME = 'account-policy.service';
 
 export const create = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   data: AccountPolicyCreate
 ): Promise<AccountPolicyDocument> => {
   return withSpanAsync(
@@ -36,8 +37,8 @@ export const create = async (
 };
 
 export const remove = async (
-  tenantId: string,
-  accountId: string,
+  tenantId: PublicUUID,
+  accountId: DocId,
   policyId: string
 ): Promise<void> => {
   return withSpanAsync(
@@ -69,7 +70,7 @@ export const remove = async (
 };
 
 export const findByAccountId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   accountId: string
 ): Promise<AccountPolicyDocument[]> => {
   return withSpanAsync(
@@ -94,7 +95,7 @@ export const findByAccountId = async (
 };
 
 export const findByPolicyId = async (
-  tenantId: string,
+  tenantId: PublicUUID,
   policyId: string
 ): Promise<AccountPolicyDocument[]> => {
   return withSpanAsync(

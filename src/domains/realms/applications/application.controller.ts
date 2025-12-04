@@ -27,11 +27,14 @@ export const create = async (ctx: Context) => {
         'Try create new application'
       );
 
-      const application = await applicationService.create(
+      const { application, applicationKey } = await applicationService.create(
         tenantId,
         ctx.validated.body
       );
-      const response = applicationMapper.toCreateResponse(application);
+      const response = applicationMapper.toCreateResponse(
+        application,
+        applicationKey
+      );
 
       logger.info(
         { tenantId, applicationId: application._id },
@@ -58,8 +61,14 @@ export const findById = async (ctx: Context) => {
     async () => {
       const { tenantId, id } = ctx.validated.params;
 
-      const application = await applicationService.findById(tenantId, id);
-      const response = applicationMapper.toCreateResponse(application);
+      const { application, applicationKey } = await applicationService.findById(
+        tenantId,
+        id
+      );
+      const response = applicationMapper.toCreateResponse(
+        application,
+        applicationKey
+      );
 
       ctx.body = response;
     }
@@ -82,7 +91,7 @@ export const update = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const updateData = ctx.validated.body;
 
-      const application = await applicationService.update(
+      const { application, applicationKey } = await applicationService.update(
         tenantId,
         id,
         updateData
@@ -93,7 +102,10 @@ export const update = async (ctx: Context) => {
         'Application updated successfully'
       );
 
-      ctx.body = applicationMapper.toUpdateResponse(application);
+      ctx.body = applicationMapper.toUpdateResponse(
+        application,
+        applicationKey
+      );
     }
   );
 };
@@ -121,7 +133,9 @@ export const findAllPaginated = async (ctx: Context) => {
         query
       );
 
-      const data = serviceResult.data.map(applicationMapper.toListItemResponse);
+      const data = serviceResult.data.map(({ application, applicationKey }) =>
+        applicationMapper.toListItemResponse(application, applicationKey)
+      );
 
       const result: ApplicationPaginatedResponse = {
         data,

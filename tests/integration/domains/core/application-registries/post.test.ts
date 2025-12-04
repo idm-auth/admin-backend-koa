@@ -1,26 +1,36 @@
-import request from 'supertest';
-import { describe, expect, it, beforeAll } from 'vitest';
+import { ErrorResponse } from '@/domains/commons/base/base.schema';
 import { getModel } from '@/domains/core/application-registries/application-registry.model';
 import { ApplicationRegistryCreateResponse } from '@/domains/core/application-registries/application-registry.schema';
-import { ErrorResponse } from '@/domains/commons/base/base.schema';
+import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
+import { getAuthToken } from '@test/utils/auth.util';
+import { getTenantId } from '@test/utils/tenant.util';
+import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('POST /api/core/application-registries', () => {
+  let coreTenantId: string;
+  let authToken: string;
   const getApp = () => globalThis.testKoaApp;
 
   beforeAll(async () => {
+    const coreDbName = 'vi-test-db-core-app-registry-post';
+    setLocalMemValue(EnvKey.CORE_REALM_NAME, coreDbName);
+    coreTenantId = await getTenantId(coreDbName);
+    authToken = await getAuthToken(coreTenantId, 'app-registry.post.test');
     await getModel().createIndexes();
   });
 
   it('should create a new application registry successfully', async () => {
     const registryData = {
-      applicationKey: `test-app-key-${uuidv4()}`,
-      tenantId: 'test-tenant-id',
-      applicationId: 'test-app-id',
+      applicationKey: uuidv4(),
+      tenantId: uuidv4(),
+      applicationId: uuidv4(),
     };
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(registryData)
       .expect(201);
 
@@ -39,6 +49,7 @@ describe('POST /api/core/application-registries', () => {
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(registryData)
       .expect(400);
 
@@ -48,12 +59,13 @@ describe('POST /api/core/application-registries', () => {
 
   it('should return 400 for missing tenantId', async () => {
     const registryData = {
-      applicationKey: `test-key-${uuidv4()}`,
-      applicationId: 'test-app',
+      applicationKey: uuidv4(),
+      applicationId: uuidv4(),
     };
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(registryData)
       .expect(400);
 
@@ -63,12 +75,13 @@ describe('POST /api/core/application-registries', () => {
 
   it('should return 400 for missing applicationId', async () => {
     const registryData = {
-      applicationKey: `test-key-${uuidv4()}`,
-      tenantId: 'test-tenant',
+      applicationKey: uuidv4(),
+      tenantId: uuidv4(),
     };
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(registryData)
       .expect(400);
 
@@ -77,28 +90,33 @@ describe('POST /api/core/application-registries', () => {
   });
 
   it('should return 409 for duplicate applicationKey', async () => {
-    const duplicateKey = `duplicate-key-${uuidv4()}`;
+    const duplicateKey = uuidv4();
 
     await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         applicationKey: duplicateKey,
-        tenantId: 'tenant-1',
-        applicationId: 'app-1',
+        tenantId: uuidv4(),
+        applicationId: uuidv4(),
       })
       .expect(201);
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         applicationKey: duplicateKey,
-        tenantId: 'tenant-2',
-        applicationId: 'app-2',
+        tenantId: uuidv4(),
+        applicationId: uuidv4(),
       })
       .expect(409);
 
     const errorResponse: ErrorResponse = response.body;
-    expect(errorResponse).toHaveProperty('error', 'Application key already exists');
+    expect(errorResponse).toHaveProperty(
+      'error',
+      'Application key already exists'
+    );
   });
 
   it('should return 400 for empty applicationKey', async () => {
@@ -110,6 +128,7 @@ describe('POST /api/core/application-registries', () => {
 
     const response = await request(getApp().callback())
       .post('/api/core/application-registries')
+      .set('Authorization', `Bearer ${authToken}`)
       .send(registryData)
       .expect(400);
 

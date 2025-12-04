@@ -18,10 +18,11 @@ describe('PUT /api/realm/:tenantId/applications/:id', () => {
     tenantId = await getTenantId('vi-test-db-tenant-application-put');
     authToken = await getAuthToken(tenantId, 'applications.put.id.test');
 
-    const application = await applicationService.create(tenantId, {
+    const result = await applicationService.create(tenantId, {
       name: 'Original Name',
+      applicationKey: uuidv4(),
     });
-    createdApplicationId = application._id;
+    createdApplicationId = result.application._id;
   });
 
   it('should update application successfully', async () => {

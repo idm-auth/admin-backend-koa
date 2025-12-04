@@ -29,6 +29,7 @@ export const initialize = async () => {
     name: 'listApplicationRegistries',
     path: '/',
     summary: 'List all application registries with pagination',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.findAllPaginated],
     request: {
       query: applicationRegistryListQuerySchema,
@@ -41,6 +42,7 @@ export const initialize = async () => {
     name: 'createApplicationRegistry',
     path: '/',
     summary: 'Create application registry',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.create],
     request: {
       body: swagger.create.request.body,
@@ -53,6 +55,7 @@ export const initialize = async () => {
     name: 'getApplicationRegistryByKey',
     path: '/key/:applicationKey',
     summary: 'Get application registry by key',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.findByApplicationKey],
     request: {
       params: z.object({ applicationKey: z.string() }),
@@ -65,6 +68,7 @@ export const initialize = async () => {
     name: 'getApplicationRegistryById',
     path: '/:id',
     summary: 'Get application registry by ID',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.findById],
     request: {
       params: requestIDParamsSchema,
@@ -77,6 +81,7 @@ export const initialize = async () => {
     name: 'updateApplicationRegistry',
     path: '/:id',
     summary: 'Update application registry',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.update],
     request: {
       params: requestIDParamsSchema,
@@ -90,6 +95,7 @@ export const initialize = async () => {
     name: 'removeApplicationRegistry',
     path: '/:id',
     summary: 'Remove application registry',
+    authentication: { someOneMethod: true },
     handlers: [applicationRegistryController.remove],
     request: {
       params: requestIDParamsSchema,

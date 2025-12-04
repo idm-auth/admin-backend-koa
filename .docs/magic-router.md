@@ -86,10 +86,12 @@ router.post({
 
 ### Parâmetros de URL
 ```typescript
+import { DocIdSchema } from '@/domains/commons/base/base.schema';
+
 request: {
   params: z.object({
-    tenantId: publicUUIDSchema,
-    id: publicUUIDSchema,
+    tenantId: DocIdSchema,
+    id: DocIdSchema,
   }),
 }
 ```
@@ -125,13 +127,15 @@ request: {
 
 ### Resposta de Sucesso
 ```typescript
+import { DocIdSchema } from '@/domains/commons/base/base.schema';
+
 responses: {
   200: {
     description: 'Success',
     content: {
       'application/json': {
         schema: z.object({
-          id: z.string(),
+          id: DocIdSchema,
           email: z.string().email(),
           createdAt: z.string(),
         }),
@@ -419,8 +423,10 @@ const accountCreateSchema = z.object({
   password: z.string().min(8),
 });
 
+import { DocIdSchema } from '@/domains/commons/base/base.schema';
+
 const accountResponseSchema = z.object({
-  id: z.string(),
+  id: DocIdSchema,
   email: z.string().email(),
   createdAt: z.string(),
   updatedAt: z.string(),

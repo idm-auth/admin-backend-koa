@@ -71,8 +71,10 @@ Representam as operações que podem ser realizadas:
 
 ### Policy Expandida
 ```typescript
+import { DocId } from '@/domains/commons/base/base.schema';
+
 interface Policy {
-  _id: string;
+  _id: DocId;
   name: string;
   description?: string;
   
