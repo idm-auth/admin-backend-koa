@@ -20,16 +20,86 @@ const validateSSRF = (email: string): boolean => {
   return !blockedDomains.includes(domain) && !isPrivateIP;
 };
 
+/**
+ * DocIdSchema - Document ID (UUID v4)
+ * 
+ * ALWAYS import and reuse this schema for document IDs (_id fields).
+ * 
+ * Features:
+ * - UUID v4 format validation
+ * - Used for MongoDB document _id fields
+ * - Custom error message for invalid IDs
+ * 
+ * Usage:
+ * ```typescript
+ * import { DocIdSchema, DocId } from '@/domains/commons/base/base.schema';
+ * 
+ * const mySchema = z.object({
+ *   id: DocIdSchema,
+ * });
+ * 
+ * // Type usage
+ * const findById = async (id: DocId) => { ... }
+ * ```
+ * 
+ * DO NOT recreate UUID validation - always import this schema.
+ */
 export const DocIdSchema = z
   .uuidv4('Invalid ID')
   .openapi({ description: 'Unique identifier (UUID v4)' });
 export type DocId = z.infer<typeof DocIdSchema>;
 
+/**
+ * PublicUUIDSchema - Public UUID (UUID v4)
+ * 
+ * ALWAYS import and reuse this schema for public identifiers (tenantId, etc).
+ * 
+ * Features:
+ * - UUID v4 format validation
+ * - Used for tenant IDs and other public identifiers
+ * - Custom error message for invalid UUIDs
+ * 
+ * Usage:
+ * ```typescript
+ * import { publicUUIDSchema, PublicUUID } from '@/domains/commons/base/base.schema';
+ * 
+ * const mySchema = z.object({
+ *   tenantId: publicUUIDSchema,
+ * });
+ * 
+ * // Type usage
+ * const create = async (tenantId: PublicUUID, data: EntityCreate) => { ... }
+ * ```
+ * 
+ * DO NOT recreate UUID validation - always import this schema.
+ */
 export const publicUUIDSchema = z
   .uuidv4('Invalid UUID')
   .openapi({ description: 'public identifier (UUID v4)' });
 export type PublicUUID = z.infer<typeof publicUUIDSchema>;
 
+/**
+ * Email Schema - RFC 5322 Compliant
+ * 
+ * ALWAYS import and reuse this schema instead of creating new email validations.
+ * 
+ * Features:
+ * - RFC 5322 email format validation (official email standard)
+ * - XSS protection (blocks dangerous characters like <, >, ", ', &, javascript:, etc)
+ * - SSRF protection (blocks localhost, private IPs, internal domains)
+ * - Custom error messages for empty/invalid inputs
+ * 
+ * Usage:
+ * ```typescript
+ * import { emailSchema } from '@/domains/commons/base/base.schema';
+ * 
+ * const mySchema = z.object({
+ *   email: emailSchema,
+ * });
+ * ```
+ * 
+ * DO NOT recreate email validation - always import this schema.
+ */
 export const emailSchema = z
   .email({
     pattern: z.regexes.rfc5322Email,
@@ -44,6 +114,29 @@ export const emailSchema = z
 
 export type Email = z.infer<typeof emailSchema>;
 
+/**
+ * Password Schema - OWASP Compliant
+ * 
+ * ALWAYS import and reuse this schema instead of creating new password validations.
+ * 
+ * OWASP Requirements:
+ * - Minimum 8 characters length
+ * - At least one lowercase letter (a-z)
+ * - At least one uppercase letter (A-Z)
+ * - At least one number (0-9)
+ * - At least one special character (!@#$%^&*, etc)
+ * 
+ * Usage:
+ * ```typescript
+ * import { passwordSchema } from '@/domains/commons/base/base.schema';
+ * 
+ * const mySchema = z.object({
+ *   password: passwordSchema,
+ * });
+ * ```
+ * 
+ * DO NOT recreate password validation - always import this schema.
+ */
 export const passwordSchema = z
   .string({ error: 'Password is required' })
   .min(8, 'Password must be at least 8 characters long')

@@ -1,5 +1,22 @@
 # Validação e Tipos - IA Rules
 
+## TRIGGERS AUTOMÁTICOS - REUTILIZAÇÃO
+
+### SE criando validação de email
+→ **ENTÃO** importe `emailSchema` de @/domains/commons/base/base.schema
+
+### SE criando validação de password
+→ **ENTÃO** importe `passwordSchema` de @/domains/commons/base/base.schema
+
+### SE criando validação de UUID
+→ **ENTÃO** importe `DocIdSchema` ou use `z.uuidv4()` de @/domains/commons/base/base.schema
+
+### SE criando schema novo
+→ **ENTÃO** verifique PRIMEIRO se similar já existe em @/domains/commons/base/
+
+### SE validação é comum (email, password, UUID, pagination)
+→ **ENTÃO** NUNCA recrie, SEMPRE reutilize de commons/base/
+
 ## TRIGGERS AUTOMÁTICOS - ZOD
 
 ### SE importando Zod
@@ -8,14 +25,9 @@
 ### SE usando Zod em arquivo
 → **ENTÃO** adicione `extendZodWithOpenApi(z);` após imports
 
-### SE criando email schema
-→ **ENTÃO** use `z.email()` com configuração completa, NUNCA `z.string().email()`
 
-### SE criando password schema
-→ **ENTÃO** use validações OWASP completas (8+ chars, maiúscula, minúscula, número, especial)
 
-### SE usando UUID
-→ **ENTÃO** use `z.uuidv4('Invalid ID')`
+
 
 ## TRIGGERS AUTOMÁTICOS - TYPESCRIPT
 
@@ -68,30 +80,18 @@
 
 ## AÇÕES OBRIGATÓRIAS
 
+### Reutilização obrigatória
+- **SEMPRE** verifique @/domains/commons/base/ ANTES de criar schemas
+- **emailSchema, passwordSchema, DocIdSchema** - NUNCA recrie
+- **Schemas comuns** disponíveis em base.schema.ts e pagination.schema.ts
+- **DRY (Don't Repeat Yourself)** - reutilização > duplicação
+
 ### Zod v4 obrigatório
 - **SEMPRE** use Zod v4, nunca versões anteriores
 - **Import obrigatório**: `import { z } from 'zod';`
 - **extendZodWithOpenApi** obrigatório em todos os arquivos Zod
 
-### Zod v4 syntax
-```typescript
-// ✅ Email correto
-z.email({
-  pattern: z.regexes.rfc5322Email,
-  error: (issue) => 
-    issue.input === undefined || issue.input === ''
-      ? 'Email is required'
-      : 'Invalid email format',
-})
 
-// ✅ Password OWASP
-z.string({ error: 'Password is required' })
-  .min(8, 'Password must be at least 8 characters long')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
-```
 
 ### TypeScript obrigatório
 - **NUNCA** use `any` - sempre tipo específico ou `unknown`
@@ -111,6 +111,12 @@ z.string({ error: 'Password is required' })
 - **ZERO exceções** - regra inviolável
 
 ## GUARDRAILS OBRIGATÓRIOS
+
+### Reutilização de schemas
+- **NUNCA** recrie emailSchema, passwordSchema, DocIdSchema
+- **SEMPRE** importe de @/domains/commons/base/base.schema
+- **SEMPRE** verifique commons/base/ antes de criar novo schema
+- **ZERO tolerância** para duplicação de schemas comuns
 
 ### Zod imports
 - **NUNCA** use `import z from 'zod'` (default import)
@@ -137,10 +143,9 @@ z.string({ error: 'Password is required' })
 ## PADRÕES DE RECONHECIMENTO
 
 ### Zod v4 correto quando vejo:
-- `z.email()` com configuração completa
-- `z.uuidv4()` para UUIDs
 - `extendZodWithOpenApi(z);` após imports
 - Mensagens de erro em inglês e específicas
+- Schemas importados de commons/base/
 
 ### TypeScript correto quando vejo:
 - Declaração de tipo em vez de cast
@@ -154,6 +159,8 @@ z.string({ error: 'Password is required' })
 - Sequência de validação respeitada
 
 ## REGRA DE OURO
+
+**"Verifique commons/base/ PRIMEIRO. Reutilize schemas existentes (emailSchema, passwordSchema, DocIdSchema, publicUUIDSchema). NUNCA recrie."**
 
 **Se `npm run type-check` mostra qualquer erro, o código NÃO está pronto**
 

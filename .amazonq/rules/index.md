@@ -55,6 +55,16 @@
 
 ## Arquivos Específicos (Não Consolidados)
 
+### **todo-in-code.md** - TODO no Código
+- **TODO sempre no código** - NUNCA apenas mencione em conversa
+- **Descrição clara** do que precisa ser feito
+- **Código é fonte da verdade** para tarefas pendentes
+
+### **read-command.md** - Comando "Leia" (CRÍTICO)
+- **Comando "leia"** - IA apenas lê e entende, NUNCA modifica
+- **Sem alterações** - aguarda instrução explícita para ações
+- **Preparação** - entende conteúdo e dependências para conversar
+
 ### **jwt-authentication.md** - JWT Authentication (CRÍTICO)
 - **authentication: { jwt: true }** - Proteção de rotas no MagicRouter
 - **Middleware automático** - NUNCA implemente verificação manual

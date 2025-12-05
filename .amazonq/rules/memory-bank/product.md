@@ -1,94 +1,110 @@
-# Product Overview
+# Product Overview - Backend-Koa IAM
 
 ## Project Purpose
 
-Backend-Koa IAM is a comprehensive Identity and Access Management (IAM) system that combines the functionality of AWS IAM and AWS Cognito into a unified multi-tenant solution. It provides enterprise-grade authentication, authorization, and access control for modern applications.
+Backend-Koa IAM is a comprehensive Identity and Access Management (IAM) system that combines the functionality of AWS IAM and AWS Cognito into a unified, self-hosted multi-tenant solution. It provides enterprise-grade authentication, authorization, and access control for SaaS applications and microservices architectures.
 
 ## Value Proposition
 
-- **Unified IAM Solution**: Combines user authentication (Cognito-like) with permission management (IAM-like) in a single system
-- **Multi-Tenant Architecture**: Complete data isolation per tenant/realm with separate database contexts
-- **Production-Ready**: Built with enterprise patterns including DDD architecture, comprehensive testing, and observability
-- **Developer-Friendly**: RESTful APIs with OpenAPI/Swagger documentation, type-safe validation, and clear error handling
+- **AWS Alternative**: Self-hosted replacement for AWS IAM + Cognito, eliminating vendor lock-in and reducing cloud costs
+- **Multi-tenant Architecture**: Complete data isolation per tenant with separate databases and security contexts
+- **Unified Solution**: Single system handling both authentication (Cognito-like) and authorization (IAM-like)
+- **Developer-Friendly**: RESTful APIs with comprehensive OpenAPI/Swagger documentation
+- **Enterprise-Ready**: Production-grade security, observability, and scalability
 
-## Key Features
+## Key Features and Capabilities
 
-### Authentication & User Management
-- User account creation and management (CRUD operations)
-- JWT-based authentication with tenant-scoped tokens
-- OWASP-compliant password policies with bcrypt hashing
-- Email-based user identification with RFC 5322 validation
-- Secure credential management with test credential annotations
+### Authentication (Cognito-like)
+- User account creation and management with email-based identity
+- JWT-based authentication with tenant-specific tokens
+- Secure password handling with bcrypt hashing
+- OWASP-compliant password policies
+- Token generation and verification per tenant realm
 
-### Authorization & Access Control
+### Authorization (IAM-like)
 - Role-Based Access Control (RBAC) system
-- Granular permission policies (IAM-style)
+- Granular permission policies with resource-level control
 - User groups for organizational hierarchy
-- Flexible relationship management:
+- Flexible relationship models:
   - Account-to-Group associations
   - Account-to-Role assignments
   - Group-to-Role mappings
+  - Account/Group/Role-to-Policy attachments
 
-### Multi-Tenancy
-- Realm-based tenant isolation (equivalent to Cognito User Pools)
-- Separate MongoDB databases per tenant
-- Tenant-scoped API operations
-- Secure tenant context propagation via AsyncLocalStorage
-
-### API & Integration
-- RESTful API design with consistent patterns
-- Comprehensive OpenAPI 3.0 documentation via Swagger
-- MagicRouter for type-safe routing with automatic validation
-- Structured error responses with proper HTTP status codes
-- Request/response validation using Zod v4 schemas
-
-### Observability & Monitoring
-- Distributed tracing with OpenTelemetry
-- Structured logging with Pino
-- Request ID tracking across service boundaries
-- Telemetry integration in controllers, services, and mappers
-- Jaeger and Prometheus exporters for metrics
-
-### Data Management
-- MongoDB with Mongoose ODM
-- UUID-based entity identification
-- Efficient pagination for large datasets
-- Optimized indexes for multi-tenant queries
+### Multi-tenancy
+- Complete tenant isolation (realms) with separate MongoDB databases
+- Tenant-scoped APIs: `/api/realm/{tenantId}/...`
+- Security context per tenant for JWT secrets and configurations
 - Database name sanitization for security
+
+### Core Entities
+- **Realms**: Multi-tenant contexts (equivalent to Cognito User Pools)
+- **Accounts**: User identities with email and credentials
+- **Groups**: Organizational units for grouping users
+- **Roles**: Permission definitions for access control
+- **Policies**: Granular access rules (resource, action, effect)
+- **Applications**: Client application registrations
+- **Application Registries**: Global application catalog
+
+### API Capabilities
+- Full CRUD operations for all entities
+- Advanced search and filtering (e.g., search accounts by email)
+- Pagination support for large datasets
+- Relationship management (associations between entities)
+- Bulk operations where applicable
+- Interactive Swagger UI at `/docs`
 
 ## Target Users
 
-### Application Developers
+### Developers
 - Building SaaS applications requiring multi-tenant authentication
 - Implementing microservices with centralized access control
-- Creating APIs with granular permission requirements
-- Developing applications needing AWS IAM/Cognito alternatives
+- Creating APIs with granular permission systems
+- Migrating from AWS Cognito/IAM to self-hosted solutions
 
 ### System Administrators
 - Managing user accounts across multiple tenants
 - Defining and enforcing security policies
-- Organizing users into groups and roles
-- Auditing access patterns and permissions
+- Auditing access and permissions
+- Configuring tenant-specific authentication rules
 
 ### DevOps Engineers
-- Deploying containerized IAM solutions
-- Integrating authentication into CI/CD pipelines
-- Monitoring system health and performance
-- Managing multi-environment configurations
+- Deploying self-hosted IAM infrastructure
+- Integrating with existing monitoring and observability tools
+- Managing multi-tenant database architectures
+- Scaling authentication services
 
 ## Use Cases
 
-### SaaS Platform Authentication
-Multi-tenant SaaS applications can use realms to isolate customer data while providing each tenant with complete user management, role definitions, and permission policies.
+### SaaS Multi-tenant Applications
+- Isolate customer data with separate realms
+- Provide per-customer user management
+- Enforce tenant-specific access policies
+- Scale authentication across thousands of tenants
 
-### Microservices Authorization
-Microservices architectures can leverage the centralized IAM for consistent authentication and authorization across all services, with JWT tokens carrying tenant and permission context.
+### Microservices Authentication
+- Centralized authentication service for distributed systems
+- JWT token validation across services
+- Service-to-service authorization
+- API gateway integration
 
-### Enterprise Access Management
-Organizations can implement fine-grained access control with groups representing departments, roles defining job functions, and policies controlling resource access.
+### Enterprise Access Control
+- Hierarchical permission management with groups and roles
+- Fine-grained resource access policies
+- Compliance with security standards (OWASP)
+- Audit trails for access patterns
 
-### API Gateway Integration
-API gateways can validate JWT tokens and enforce permissions before routing requests to backend services, using the IAM as the source of truth for access decisions.
+### API Security
+- Protect REST APIs with JWT authentication
+- Implement role-based endpoint access
+- Validate permissions at the resource level
+- Rate limiting and security monitoring
 
-### Development & Testing
-The system includes comprehensive test utilities, in-memory MongoDB support, and test credential management for safe development and automated testing workflows.
+## Business Benefits
+
+- **Cost Reduction**: Eliminate AWS Cognito and IAM service fees
+- **Data Sovereignty**: Full control over user data and infrastructure
+- **Customization**: Extend and modify to meet specific requirements
+- **Vendor Independence**: No lock-in to cloud provider services
+- **Compliance**: Meet data residency and privacy regulations
+- **Scalability**: Horizontal scaling with MongoDB sharding

@@ -35,6 +35,24 @@ export const getWebAdminConfig = async (args: {
   return result;
 };
 
+/**
+ * Initial Setup - Database Seeding
+ * 
+ * This function is called by the frontend via /config/init-setup endpoint
+ * on the first application startup when the database is empty.
+ * 
+ * It creates all essential initial data required for the application to function:
+ * - Core realm (tenant context)
+ * - Web admin configuration
+ * - TODO: Initial admin account (first user)
+ * - TODO: Default roles (admin, user, etc)
+ * - TODO: Basic policies (permission definitions)
+ * - TODO: Default groups (organizational structure)
+ * - TODO: Other essential configurations
+ * 
+ * The function is idempotent - it can be called multiple times safely.
+ * If data already exists, it returns status 200 without creating duplicates.
+ */
 export const initSetup = async () => {
   const logger = await getLogger();
   const base = {
