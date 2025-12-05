@@ -23,7 +23,7 @@ const safeApplicationListQuerySchema = z.object({
     .regex(/^[a-zA-Z0-9\s._-]*$/, 'Invalid filter format')
     .max(100)
     .optional(),
-  sortBy: z.enum(['name', 'createdAt', 'updatedAt']).optional(),
+  sortBy: z.enum(['name', 'systemId', 'createdAt', 'updatedAt']).optional(),
   descending: z.coerce.boolean().default(false),
 });
 
@@ -88,9 +88,7 @@ export const initialize = async () => {
     handlers: [applicationController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
-      body: {
-        content: { 'application/json': { schema: applicationUpdateSchema } },
-      },
+      body: swagger.update.request.body,
     },
     responses: swagger.update.responses,
     tags: ['Applications'],

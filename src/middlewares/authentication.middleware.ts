@@ -112,7 +112,6 @@ const tryJwtAuth = async (ctx: Context) => {
         const coreRealmName = getEnvValue(EnvKey.CORE_REALM_NAME);
         const realm = await realmService.findByName(coreRealmName);
         tenantId = realm.publicUUID;
-        // throw new UnauthorizedError('Tenant ID not found in request');
       }
 
       span.setAttributes({ 'tenant.id': tenantId });

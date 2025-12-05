@@ -1,9 +1,8 @@
+import { ApplicationBaseResponse } from '@/domains/realms/applications/application.schema';
+import { getAuthToken } from '@test/utils/auth.util';
+import { getTenantId } from '@test/utils/tenant.util';
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { getAuthToken } from '@test/utils/auth.util';
-import { ApplicationBaseResponse } from '@/domains/realms/applications/application.schema';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('POST /api/realm/:tenantId/applications', () => {
   let tenantId: string;
@@ -19,6 +18,14 @@ describe('POST /api/realm/:tenantId/applications', () => {
   it('should create a new application successfully', async () => {
     const applicationData = {
       name: 'Test Application',
+      systemId: 'test-system',
+      availableActions: [
+        {
+          resourceType: 'accounts',
+          pathPattern: '/accounts/:accountId',
+          operations: ['create', 'read', 'update', 'delete'],
+        },
+      ],
     };
 
     const response = await request(getApp().callback())
@@ -31,10 +38,13 @@ describe('POST /api/realm/:tenantId/applications', () => {
 
     expect(application).toHaveProperty('_id');
     expect(application).toHaveProperty('name', 'Test Application');
+    expect(application).toHaveProperty('systemId', 'test-system');
     expect(application).toHaveProperty('applicationSecret');
+    expect(application).toHaveProperty('availableActions');
+    expect(application.availableActions).toHaveLength(1);
   });
 
-  it('should return 400 for missing name', async () => {
+  it('should return 400 for missing required fields', async () => {
     const response = await request(getApp().callback())
       .post(`/api/realm/${tenantId}/applications`)
       .set('Authorization', `Bearer ${authToken}`)

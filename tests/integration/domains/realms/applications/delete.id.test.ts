@@ -22,8 +22,16 @@ describe('DELETE /api/realm/:tenantId/applications/:id', () => {
 
     const result = await applicationService.create(tenantId, {
       name: 'Test Application',
+      systemId: 'test-system-delete',
+      availableActions: [
+        {
+          resourceType: 'accounts',
+          pathPattern: '/accounts/:accountId',
+          operations: ['delete'],
+        },
+      ],
     });
-    createdApplicationId = result.application._id;
+    createdApplicationId = result._id.toString();
   });
 
   it('should delete application successfully', async () => {

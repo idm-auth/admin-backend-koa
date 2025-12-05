@@ -13,7 +13,7 @@ export const create = async (ctx: Context) => {
       name: `${CONTROLLER_NAME}.controller.create`,
       attributes: {
         'tenant.id': ctx.validated.params.tenantId,
-        'application.name': ctx.validated.body?.name,
+        'application.systemId': ctx.validated.body?.systemId,
         'http.method': 'POST',
         controller: CONTROLLER_NAME,
       },
@@ -27,14 +27,11 @@ export const create = async (ctx: Context) => {
         'Try create new application'
       );
 
-      const { application, applicationKey } = await applicationService.create(
+      const application = await applicationService.create(
         tenantId,
         ctx.validated.body
       );
-      const response = applicationMapper.toCreateResponse(
-        application,
-        applicationKey
-      );
+      const response = applicationMapper.toCreateResponse(application);
 
       logger.info(
         { tenantId, applicationId: application._id },
@@ -61,14 +58,8 @@ export const findById = async (ctx: Context) => {
     async () => {
       const { tenantId, id } = ctx.validated.params;
 
-      const { application, applicationKey } = await applicationService.findById(
-        tenantId,
-        id
-      );
-      const response = applicationMapper.toCreateResponse(
-        application,
-        applicationKey
-      );
+      const application = await applicationService.findById(tenantId, id);
+      const response = applicationMapper.toCreateResponse(application);
 
       ctx.body = response;
     }
@@ -91,21 +82,26 @@ export const update = async (ctx: Context) => {
       const { tenantId, id } = ctx.validated.params;
       const updateData = ctx.validated.body;
 
-      const { application, applicationKey } = await applicationService.update(
-        tenantId,
-        id,
-        updateData
-      );
+      try {
+        const application = await applicationService.update(
+          tenantId,
+          id,
+          updateData
+        );
 
-      logger.info(
-        { tenantId, applicationId: id },
-        'Application updated successfully'
-      );
+        logger.info(
+          { tenantId, applicationId: id },
+          'Application updated successfully'
+        );
 
-      ctx.body = applicationMapper.toUpdateResponse(
-        application,
-        applicationKey
-      );
+        ctx.body = applicationMapper.toUpdateResponse(application);
+      } catch (error) {
+        logger.error(
+          { error, tenantId, applicationId: id },
+          'Failed to update application'
+        );
+        throw error;
+      }
     }
   );
 };
@@ -133,9 +129,7 @@ export const findAllPaginated = async (ctx: Context) => {
         query
       );
 
-      const data = serviceResult.data.map(({ application, applicationKey }) =>
-        applicationMapper.toListItemResponse(application, applicationKey)
-      );
+      const data = serviceResult.data.map(applicationMapper.toListItemResponse);
 
       const result: ApplicationPaginatedResponse = {
         data,
@@ -173,14 +167,22 @@ export const remove = async (ctx: Context) => {
       const logger = await getLogger();
       const { tenantId, id } = ctx.validated.params;
 
-      await applicationService.remove(tenantId, id);
+      try {
+        await applicationService.remove(tenantId, id);
 
-      logger.info(
-        { tenantId, applicationId: id },
-        'Application removed successfully'
-      );
+        logger.info(
+          { tenantId, applicationId: id },
+          'Application removed successfully'
+        );
 
-      ctx.status = 204;
+        ctx.status = 204;
+      } catch (error) {
+        logger.error(
+          { error, tenantId, applicationId: id },
+          'Failed to remove application'
+        );
+        throw error;
+      }
     }
   );
 };

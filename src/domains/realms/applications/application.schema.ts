@@ -1,5 +1,5 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { DocIdSchema } from '@/domains/commons/base/base.schema';
+import { DocIdSchema, nameSchema } from '@/domains/commons/base/base.schema';
 import {
   paginationQuerySchema,
   createPaginatedResponseSchema,
@@ -8,15 +8,38 @@ import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
+const availableActionSchema = z.object({
+  resourceType: z.string().min(1, 'Resource type is required'),
+  pathPattern: z
+    .string()
+    .min(1, 'Path pattern is required')
+    .regex(/^\//, 'Path pattern must start with /'),
+  operations: z
+    .array(z.string().min(1))
+    .min(1, 'At least one operation is required'),
+});
+
 export const applicationCreateSchema = z.object({
-  name: z.string().min(1),
+  name: nameSchema,
+  systemId: z.string().min(1, 'System ID is required'),
+  availableActions: z
+    .array(availableActionSchema)
+    .min(1, 'At least one action is required'),
 });
 
 export const applicationBaseResponseSchema = z.strictObject({
   _id: DocIdSchema,
   name: z.string(),
+  systemId: z.string(),
+  availableActions: z.array(
+    z.object({
+      resourceType: z.string(),
+      pathPattern: z.string(),
+      operations: z.array(z.string()),
+    })
+  ),
   applicationSecret: z.string(),
-  applicationKey: DocIdSchema,
+  isActive: z.boolean(),
 });
 
 export const applicationCreateResponseSchema = applicationBaseResponseSchema;
@@ -25,7 +48,9 @@ export const applicationListItemResponseSchema = applicationBaseResponseSchema;
 export const applicationReadResponseSchema = applicationBaseResponseSchema;
 
 export const applicationUpdateSchema = z.object({
-  name: z.string().min(1).optional(),
+  name: nameSchema.optional(),
+  availableActions: z.array(availableActionSchema).optional(),
+  isActive: z.boolean().optional(),
 });
 
 export type ApplicationCreate = z.infer<typeof applicationCreateSchema>;

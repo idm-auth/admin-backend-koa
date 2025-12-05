@@ -23,8 +23,16 @@ describe('GET /api/realm/:tenantId/applications/:id', () => {
 
     const result = await applicationService.create(tenantId, {
       name: 'Test Application',
+      systemId: 'test-system-get',
+      availableActions: [
+        {
+          resourceType: 'accounts',
+          pathPattern: '/accounts/:accountId',
+          operations: ['read'],
+        },
+      ],
     });
-    createdApplicationId = result.application._id;
+    createdApplicationId = result._id.toString();
   });
 
   it('should find application by id successfully', async () => {
@@ -36,7 +44,9 @@ describe('GET /api/realm/:tenantId/applications/:id', () => {
     const applicationResponse: ApplicationBaseResponse = response.body;
     expect(applicationResponse).toHaveProperty('_id', createdApplicationId);
     expect(applicationResponse).toHaveProperty('name', 'Test Application');
+    expect(applicationResponse).toHaveProperty('systemId', 'test-system-get');
     expect(applicationResponse).toHaveProperty('applicationSecret');
+    expect(applicationResponse).toHaveProperty('availableActions');
   });
 
   it('should return 404 for non-existent application', async () => {

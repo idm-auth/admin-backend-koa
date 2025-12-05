@@ -1,13 +1,10 @@
-import request from 'supertest';
-import { beforeAll, describe, expect, it } from 'vitest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { getAuthToken } from '@test/utils/auth.util';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 import * as groupService from '@/domains/realms/groups/group.service';
 import * as roleService from '@/domains/realms/roles/role.service';
-import {
-  ErrorResponse,
-  ValidationErrorResponse,
-} from '@/domains/commons/base/base.schema';
+import { getAuthToken } from '@test/utils/auth.util';
+import { getTenantId } from '@test/utils/tenant.util';
+import request from 'supertest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('POST /api/realm/:tenantId/group-roles', () => {
   let tenantId: string;

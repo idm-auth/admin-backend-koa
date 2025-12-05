@@ -159,13 +159,13 @@ Para recursos com hierarquia, use ponto (.) como separador:
 - `*:*:*` - Todas as operações em todos os sistemas (super admin)
 
 #### 3. Resources (Recursos)
-**Formato GRN (Global Resource Name):** `grn:partition:sistema:region:tenantId:resource-type/resource-id`
+**Formato GRN (Global Resource Name):** `grn:partition:sistema:region:tenantId:resource-path`
 
 **Estrutura Completa (6 partes):**
 ```
-grn:partition:sistema:region:tenantId:resource-type/resource-id
+grn:partition:sistema:region:tenantId:resource-path
  │      │       │       │        │            │
- │      │       │       │        │            └─ Tipo e ID do recurso
+ │      │       │       │        │            └─ Path completo do recurso (baseado no pathPattern)
  │      │       │       │        └──────────────── Tenant (empresa ou cliente)
  │      │       │       └─────────────────────────── Região/Continente
  │      │       └─────────────────────────────────── Sistema/Aplicação
@@ -209,23 +209,38 @@ Contexto de isolamento (empresa ou cliente):
 - `${tenantId}` - Variável dinâmica
 - `*` - Todos os tenants (wildcard)
 
-**5. Resource Type/ID:**
-Tipo e identificador do recurso:
+**5. Resource Path:**
+Path completo do recurso baseado no pathPattern da aplicação:
 - `accounts/*` - Todas as contas
 - `accounts/user-123` - Conta específica
-- `customers/*` - Todos os customers
-- `customers.orders/*` - Todos os pedidos de customers (aninhado)
+- `customers/*/orders/*` - Todos os pedidos de todos os customers
+- `customers/cust-1/orders/order-2` - Pedido específico de customer específico
+- `customers/cust-1/orders/*/items/*` - Todos os items de todos os pedidos do customer
 - `*` - Todos os recursos (wildcard)
+
+**Importante:** O resource path segue a estrutura do pathPattern definido na aplicação:
+- pathPattern: `/customers/:customerId/orders/:orderId/items/:itemId`
+- GRN: `grn:global:crm::tenant:customers/c1/orders/o2/items/i3`
+
+O GRN preserva a hierarquia completa com todos os IDs intermediários.
 
 **Exemplos Práticos:**
 
 ```json
-// Esfera Civil (Global)
+// Esfera Civil (Global) - Recursos Simples
 "resources": [
   "grn:global:iam::company-xyz:accounts/*",
+  "grn:global:iam::company-xyz:accounts/user-123",
   "grn:global:crm:americas:company-xyz:customers/*",
-  "grn:global:billing:europe:client-abc:invoices/*",
-  "grn:global:crm:asia:client-abc:customers.orders/*"
+  "grn:global:billing:europe:client-abc:invoices/*"
+]
+
+// Recursos com Hierarquia Profunda
+"resources": [
+  "grn:global:crm::company-xyz:customers/cust-1/orders/*",
+  "grn:global:crm::company-xyz:customers/cust-1/orders/order-2/items/*",
+  "grn:global:crm::company-xyz:customers/*/orders/*/items/item-3",
+  "grn:global:iam::company-xyz:accounts/acc-1/emails/*"
 ]
 
 // Esfera Governamental
@@ -243,10 +258,11 @@ Tipo e identificador do recurso:
 
 // Wildcards Multi-Esfera
 "resources": [
-  "grn:*:*:*:*:*",                              // Super admin absoluto
-  "grn:global:*:americas:company-xyz:*",        // Tudo da empresa nas Américas
-  "grn:gov:*:*:prefeitura-sp:*",                // Tudo da prefeitura
-  "grn:*:crm:americas:*:customers/*"             // Todos customers CRM nas Américas
+  "grn:*:*:*:*:*",                                    // Super admin absoluto
+  "grn:global:*:americas:company-xyz:*",              // Tudo da empresa nas Américas
+  "grn:gov:*:*:prefeitura-sp:*",                      // Tudo da prefeitura
+  "grn:*:crm:americas:*:customers/*",                 // Todos customers CRM nas Américas
+  "grn:global:crm::company-xyz:customers/*/orders/*"  // Todos orders de todos customers
 ]
 ```
 

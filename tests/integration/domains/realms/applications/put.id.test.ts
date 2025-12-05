@@ -23,8 +23,16 @@ describe('PUT /api/realm/:tenantId/applications/:id', () => {
 
     const result = await applicationService.create(tenantId, {
       name: 'Original Name',
+      systemId: 'test-system-put',
+      availableActions: [
+        {
+          resourceType: 'accounts',
+          pathPattern: '/accounts/:accountId',
+          operations: ['read'],
+        },
+      ],
     });
-    createdApplicationId = result.application._id;
+    createdApplicationId = result._id.toString();
   });
 
   it('should update application successfully', async () => {

@@ -1,10 +1,9 @@
+import { ApplicationPaginatedResponse } from '@/domains/realms/applications/application.schema';
+import * as applicationService from '@/domains/realms/applications/application.service';
+import { getAuthToken } from '@test/utils/auth.util';
+import { getTenantId } from '@test/utils/tenant.util';
 import request from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { getTenantId } from '@test/utils/tenant.util';
-import { getAuthToken } from '@test/utils/auth.util';
-import * as applicationService from '@/domains/realms/applications/application.service';
-import { ApplicationPaginatedResponse } from '@/domains/realms/applications/application.schema';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('GET /api/realm/:tenantId/applications - Paginated', () => {
   let tenantId: string;
@@ -18,9 +17,25 @@ describe('GET /api/realm/:tenantId/applications - Paginated', () => {
 
     await applicationService.create(tenantId, {
       name: 'App 1',
+      systemId: 'test-system-1',
+      availableActions: [
+        {
+          resourceType: 'accounts',
+          pathPattern: '/accounts/:accountId',
+          operations: ['read'],
+        },
+      ],
     });
     await applicationService.create(tenantId, {
       name: 'App 2',
+      systemId: 'test-system-2',
+      availableActions: [
+        {
+          resourceType: 'groups',
+          pathPattern: '/groups/:groupId',
+          operations: ['read'],
+        },
+      ],
     });
   });
 
@@ -39,7 +54,9 @@ describe('GET /api/realm/:tenantId/applications - Paginated', () => {
     paginatedResponse.data.forEach((application) => {
       expect(application).toHaveProperty('_id');
       expect(application).toHaveProperty('name');
+      expect(application).toHaveProperty('systemId');
       expect(application).toHaveProperty('applicationSecret');
+      expect(application).toHaveProperty('availableActions');
     });
   });
 

@@ -1,7 +1,4 @@
-import {
-  ErrorResponse,
-  ValidationErrorResponse,
-} from '@/domains/commons/base/base.schema';
+import { ValidationErrorResponse } from '@/domains/commons/base/base.schema';
 import { getModel } from '@/domains/core/application-registries/application-registry.model';
 import { ApplicationRegistryCreateResponse } from '@/domains/core/application-registries/application-registry.schema';
 import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';

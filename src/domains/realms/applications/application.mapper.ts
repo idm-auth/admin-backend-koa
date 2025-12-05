@@ -9,8 +9,7 @@ import {
 const MAPPER_NAME = 'application';
 
 export const toCreateResponse = (
-  application: Application,
-  applicationKey: string
+  application: Application
 ): ApplicationCreateResponse => {
   return withSpan(
     {
@@ -20,15 +19,20 @@ export const toCreateResponse = (
     () => ({
       _id: application._id.toString(),
       name: application.name,
+      systemId: application.systemId,
+      availableActions: application.availableActions.map((action) => ({
+        resourceType: action.resourceType,
+        pathPattern: action.pathPattern,
+        operations: action.operations,
+      })),
       applicationSecret: application.applicationSecret,
-      applicationKey,
+      isActive: application.isActive,
     })
   );
 };
 
 export const toUpdateResponse = (
-  application: Application,
-  applicationKey: string
+  application: Application
 ): ApplicationUpdateResponse => {
   return withSpan(
     {
@@ -38,15 +42,20 @@ export const toUpdateResponse = (
     () => ({
       _id: application._id.toString(),
       name: application.name,
+      systemId: application.systemId,
+      availableActions: application.availableActions.map((action) => ({
+        resourceType: action.resourceType,
+        pathPattern: action.pathPattern,
+        operations: action.operations,
+      })),
       applicationSecret: application.applicationSecret,
-      applicationKey,
+      isActive: application.isActive,
     })
   );
 };
 
 export const toListItemResponse = (
-  application: Application,
-  applicationKey: string
+  application: Application
 ): ApplicationListItemResponse => {
   return withSpan(
     {
@@ -56,8 +65,14 @@ export const toListItemResponse = (
     () => ({
       _id: application._id.toString(),
       name: application.name,
+      systemId: application.systemId,
+      availableActions: application.availableActions.map((action) => ({
+        resourceType: action.resourceType,
+        pathPattern: action.pathPattern,
+        operations: action.operations,
+      })),
       applicationSecret: application.applicationSecret,
-      applicationKey,
+      isActive: application.isActive,
     })
   );
 };

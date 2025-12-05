@@ -6,7 +6,10 @@ import {
   ApplicationRegistry,
   getModel,
 } from '@/domains/core/application-registries/application-registry.model';
-import { ErrorResponse, ValidationErrorResponse } from '@/domains/commons/base/base.schema';
+import {
+  ErrorResponse,
+  ValidationErrorResponse,
+} from '@/domains/commons/base/base.schema';
 import { getTenantId } from '@test/utils/tenant.util';
 import { getAuthToken } from '@test/utils/auth.util';
 import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
