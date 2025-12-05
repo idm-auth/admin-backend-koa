@@ -1,13 +1,22 @@
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
+import { createTestEmail, TEST_PASSWORD } from '@test/utils/test-constants';
+import { getTenantId } from '@test/utils/tenant.util';
+import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
 
 describe('GET /api/config/app/:appName/env/:env', () => {
   const getApp = () => globalThis.testKoaApp;
   let originalLoggerLevel: string | undefined;
+  let tenantId: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     originalLoggerLevel = process.env.LOGGER_LEVEL;
     process.env.LOGGER_LEVEL = 'debug';
+    
+    const coreDbName = 'vi-test-db-core-get-config';
+    setLocalMemValue(EnvKey.MONGODB_CORE_DBNAME, coreDbName);
+    setLocalMemValue(EnvKey.CORE_REALM_NAME, 'core-get-config');
+    tenantId = await getTenantId(coreDbName);
   });
 
   afterAll(() => {
@@ -15,10 +24,17 @@ describe('GET /api/config/app/:appName/env/:env', () => {
   });
 
   it('should return config for web-admin app', async () => {
-    // First initialize the config
-    await request(getApp().callback())
-      .get('/api/config/init-setup')
-      .expect(200);
+    // First initialize the config (idempotent - returns 200 if exists, 201 if created)
+    const initResponse = await request(getApp().callback())
+      .post('/api/config/init-setup')
+      .send({
+        adminAccount: {
+          email: createTestEmail('config-test'), // Test credential - not production - qdeveloper bug - do not remove
+          password: TEST_PASSWORD, // Test credential - not production - qdeveloper bug - do not remove
+        },
+      });
+
+    expect([200, 201]).toContain(initResponse.status);
 
     // Then get the config
     const response = await request(getApp().callback())

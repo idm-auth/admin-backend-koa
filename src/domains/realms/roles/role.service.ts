@@ -1,5 +1,6 @@
 import { RoleDocument, getModel } from './role.model';
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+import { FilterQuery } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -33,6 +34,35 @@ export const create = async (
       const role = await getModel(dbName).create(data);
 
       span.setAttributes({ 'entity.id': role._id });
+      return role;
+    }
+  );
+};
+
+export const findOneByQuery = async (
+  tenantId: PublicUUID,
+  query: FilterQuery<RoleDocument>
+): Promise<RoleDocument> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findOneByQuery`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findOneByQuery',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, query }, 'Finding role by query');
+
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const role = await getModel(dbName).findOne(query);
+
+      if (!role) {
+        throw new NotFoundError('Role not found');
+      }
+
+      span.setAttributes({ 'db.name': dbName });
       return role;
     }
   );

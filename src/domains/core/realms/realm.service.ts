@@ -266,6 +266,29 @@ export const getDBName = async ({ publicUUID }: GetDBNameParams) => {
   );
 };
 
+export const getRealmCore = async () => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.getRealmCore`,
+      attributes: {
+        operation: 'getRealmCore',
+      },
+    },
+    async (span) => {
+      const coreRealmName = getEnvValue(EnvKey.CORE_REALM_NAME);
+      span.setAttributes({ 'realm.name': coreRealmName });
+
+      const coreRealm = await getModel().findOne({ name: coreRealmName });
+      if (!coreRealm) {
+        throw new NotFoundError(`Core realm not found: ${coreRealmName}`);
+      }
+
+      span.setAttributes({ 'realm.id': coreRealm._id });
+      return coreRealm;
+    }
+  );
+};
+
 export const initSetup = async () => {
   return withSpanAsync(
     {

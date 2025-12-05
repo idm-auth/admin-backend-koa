@@ -1,4 +1,5 @@
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+import { FilterQuery } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -47,6 +48,35 @@ export const create = async (
         'Application created successfully'
       );
 
+      return application;
+    }
+  );
+};
+
+export const findOneByQuery = async (
+  tenantId: PublicUUID,
+  query: FilterQuery<Application>
+): Promise<Application> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.service.findOneByQuery`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findOneByQuery',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, query }, 'Finding application by query');
+
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const application = await getModel(dbName).findOne(query);
+
+      if (!application) {
+        throw new NotFoundError('Application not found');
+      }
+
+      span.setAttributes({ 'db.name': dbName });
       return application;
     }
   );

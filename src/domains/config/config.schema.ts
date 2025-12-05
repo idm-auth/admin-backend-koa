@@ -1,7 +1,10 @@
+import {
+  emailSchema,
+  passwordSchema,
+} from '@/domains/commons/base/base.schema';
+import { envConfigZSchema } from '@/domains/commons/base/webAdminConfig.schema';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { envConfigZSchema } from '@/domains/commons/base/webAdminConfig.schema';
-import { emailSchema, passwordSchema } from '@/domains/commons/base/base.schema';
 
 extendZodWithOpenApi(z);
 

@@ -51,6 +51,45 @@ describe('PUT /api/realm/:tenantId/applications/:id', () => {
     expect(applicationResponse).toHaveProperty('name', 'Updated Name');
   });
 
+  it('should update application availableActions', async () => {
+    const updateData = {
+      availableActions: [
+        {
+          resourceType: 'groups',
+          pathPattern: '/groups/:groupId',
+          operations: ['read', 'write'],
+        },
+      ],
+    };
+
+    const response = await request(getApp().callback())
+      .put(`/api/realm/${tenantId}/applications/${createdApplicationId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send(updateData)
+      .expect(200);
+
+    const applicationResponse: ApplicationBaseResponse = response.body;
+    expect(applicationResponse).toHaveProperty('_id', createdApplicationId);
+    expect(applicationResponse.availableActions).toHaveLength(1);
+    expect(applicationResponse.availableActions[0].resourceType).toBe('groups');
+  });
+
+  it('should update application isActive', async () => {
+    const updateData = {
+      isActive: false,
+    };
+
+    const response = await request(getApp().callback())
+      .put(`/api/realm/${tenantId}/applications/${createdApplicationId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send(updateData)
+      .expect(200);
+
+    const applicationResponse: ApplicationBaseResponse = response.body;
+    expect(applicationResponse).toHaveProperty('_id', createdApplicationId);
+    expect(applicationResponse).toHaveProperty('isActive', false);
+  });
+
   it('should update application with empty data', async () => {
     const updateData = {};
 

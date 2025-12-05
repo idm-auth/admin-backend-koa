@@ -1,4 +1,5 @@
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+import { FilterQuery } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -44,6 +45,35 @@ export const create = async (
         'Group created successfully'
       );
 
+      return group;
+    }
+  );
+};
+
+export const findOneByQuery = async (
+  tenantId: PublicUUID,
+  query: FilterQuery<Group>
+): Promise<Group> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.service.findOneByQuery`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findOneByQuery',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, query }, 'Finding group by query');
+
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const group = await getModel(dbName).findOne(query);
+
+      if (!group) {
+        throw new NotFoundError('Group not found');
+      }
+
+      span.setAttributes({ 'db.name': dbName });
       return group;
     }
   );

@@ -1,19 +1,41 @@
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import * as configController from './config.controller';
-import { configParamsSchema } from './config.schema';
+import { configParamsSchema, initSetupSchema } from './config.schema';
 
 export const initialize = async () => {
   const router = new MagicRouter({
     prefix: '/config',
   });
 
-  router.get({
+  router.post({
     name: 'getInitSetup',
     path: '/init-setup',
     handlers: [configController.getInitSetup],
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: initSetupSchema,
+          },
+        },
+      },
+    },
     responses: {
       200: {
         description: 'Init setup configuration',
+      },
+    },
+    tags: ['Config'],
+  });
+
+  // TODO: só fazer se for JWT Admin
+  router.post({
+    name: 'repairDefaultSetup',
+    path: '/repair-default-setup',
+    handlers: [configController.repairDefaultSetup],
+    responses: {
+      200: {
+        description: 'Default setup repaired successfully',
       },
     },
     tags: ['Config'],
