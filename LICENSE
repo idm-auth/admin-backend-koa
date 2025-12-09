@@ -1,0 +1,116 @@
+Backend-Koa IAM Proprietary License
+
+Copyright (c) 2024 idm-auth.io
+All rights reserved.
+
+## Grant of License
+
+Subject to the terms and conditions of this license, idm-auth.io grants you a
+limited, non-exclusive, non-transferable, non-sublicensable license to use,
+copy, modify, and distribute the Backend-Koa IAM software (the "Software")
+solely for your internal business purposes.
+
+## Permitted Use
+
+You MAY:
+- Use the Software in your production environments for internal purposes
+- Modify the Software to meet your internal requirements
+- Create derivative works for your internal use
+- Distribute copies of the Software within your organization
+
+## Restrictions
+
+You may NOT:
+- Offer the Software as a commercial service, including but not limited to:
+  - Software as a Service (SaaS)
+  - Platform as a Service (PaaS)
+  - Managed hosting services
+  - Cloud-based offerings
+- Sell, lease, or sublicense the Software as a standalone product
+- Provide the Software as part of a commercial offering where the Software
+  constitutes a substantial portion of the value
+- Remove, alter, or obscure any copyright, trademark, or license notices
+- Use idm-auth.io trademarks without prior written permission
+
+## Exclusive Commercial Rights
+
+idm-auth.io retains exclusive rights to:
+- Commercialize the Software as a service or product
+- Offer support, consulting, and professional services
+- Create and distribute commercial versions or derivatives
+- Grant commercial licenses to third parties
+
+## Intellectual Property
+
+The Software and all intellectual property rights therein are and shall remain
+the exclusive property of idm-auth.io. This license does not grant you any
+rights to patents, copyrights, trade secrets, trademarks, or any other rights
+in respect to the Software except as expressly set forth herein.
+
+## Attribution
+
+You must retain all copyright notices and attribution statements in the Software
+and any derivative works. If you distribute modified versions, you must clearly
+indicate that changes were made and include a prominent notice stating that you
+modified the Software.
+
+## No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL IDM-AUTH.IO BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Limitation of Liability
+
+IN NO EVENT SHALL IDM-AUTH.IO BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+## Termination
+
+This license is effective until terminated. Your rights under this license will
+terminate automatically without notice if you fail to comply with any term of
+this license. Upon termination, you must cease all use of the Software and
+destroy all copies in your possession or control.
+
+If idm-auth.io notifies you of a violation and you remedy such violation within
+30 days of receiving notice, your license will be reinstated. However, repeated
+violations will result in permanent termination.
+
+## Governing Law
+
+This license shall be governed by and construed in accordance with the laws of
+the jurisdiction in which idm-auth.io is established, without regard to its
+conflict of law provisions.
+
+## Commercial Licensing
+
+If you wish to use the Software in a manner not permitted by this license,
+including offering it as a commercial service, you must obtain a separate
+commercial license from idm-auth.io.
+
+For commercial licensing inquiries:
+- Email: license@idm-auth.io
+- Website: https://idm-auth.io
+
+## Definitions
+
+- "Software" means the Backend-Koa IAM source code, documentation, and any
+  related materials provided by idm-auth.io.
+- "Internal business purposes" means use within your organization for your own
+  operations, excluding any commercial service offerings to third parties.
+- "Commercial service" means any offering where third parties access or use the
+  Software, directly or indirectly, as part of a paid service.
+
+## Contact
+
+For questions about this license or permitted use:
+- Email: license@idm-auth.io
+- Website: https://idm-auth.io

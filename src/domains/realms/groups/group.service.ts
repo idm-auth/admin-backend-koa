@@ -1,5 +1,4 @@
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
-import { FilterQuery } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -7,8 +6,9 @@ import {
 import { getDBName } from '@/domains/core/realms/realm.service';
 import { NotFoundError } from '@/errors/not-found';
 import { getLogger } from '@/utils/localStorage.util';
-import { withSpanAsync } from '@/utils/tracing.util';
 import { executePagination } from '@/utils/pagination.util';
+import { withSpanAsync } from '@/utils/tracing.util';
+import { QueryFilter } from 'mongoose';
 import { Group, getModel } from './group.model';
 import { GroupCreate, GroupUpdate } from './group.schema';
 
@@ -52,7 +52,7 @@ export const create = async (
 
 export const findOneByQuery = async (
   tenantId: PublicUUID,
-  query: FilterQuery<Group>
+  query: QueryFilter<Group>
 ): Promise<Group> => {
   return withSpanAsync(
     {

@@ -42,12 +42,19 @@ export type Method =
   | 'options'
   | 'trace';
 
+export type AuthorizationConfig = {
+  systemId: string;
+  operation: string;
+  resource: string;
+};
+
 export type MagicRouteConfig<TContext extends Context = Context> =
   RouteConfig & {
     name: string;
     middlewares?: Array<(ctx: TContext, next: Next) => Promise<void>>;
     handlers: Array<(ctx: TContext, next: Next) => Promise<void>>;
     authentication?: AuthenticationConfig;
+    authorization?: AuthorizationConfig;
   };
 
 export type MagicRouteConfigWithoutMethod<TContext extends Context = Context> =

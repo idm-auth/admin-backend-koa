@@ -9,7 +9,7 @@ describe('policy.mapper.toBaseResponse', () => {
       policyMapper.toBaseResponse,
       {
         _id: 'test-id',
-        version: '1',
+        version: '2025-12-24',
         name: 'admin-policy',
         description: 'Administrator policy',
         effect: 'Allow',
@@ -20,7 +20,7 @@ describe('policy.mapper.toBaseResponse', () => {
       } as PolicyDocument,
       {
         _id: 'test-id',
-        version: '1',
+        version: '2025-12-24',
         name: 'admin-policy',
         description: 'Administrator policy',
         effect: 'Allow',
@@ -37,7 +37,7 @@ describe('policy.mapper.toBaseResponse', () => {
       policyMapper.toBaseResponse,
       {
         _id: 'test-id',
-        version: '1',
+        version: '2025-12-24',
         name: 'basic-policy',
         effect: 'Deny',
         actions: ['delete'],
@@ -47,7 +47,7 @@ describe('policy.mapper.toBaseResponse', () => {
       } as PolicyDocument,
       {
         _id: 'test-id',
-        version: '1',
+        version: '2025-12-24',
         name: 'basic-policy',
         description: undefined,
         effect: 'Deny',

@@ -4,6 +4,7 @@ import { errorHandler } from '@/middlewares/errorHandler.middleware';
 import { requestIdMiddleware } from '@/middlewares/requestId.middleware';
 import { initialize as swaggerPlugin } from '@/plugins/swagger.plugin';
 import { logRoutesDetailed } from '@/utils/routeLoggerDetailed.util';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 import bodyParser from '@koa/bodyparser';
 import cors from '@koa/cors';
 import Koa from 'koa';
@@ -11,6 +12,7 @@ import { EnvKey, getEnvValue } from './dotenv.plugin';
 import { getLogger } from '@/plugins/pino.plugin';
 
 const app = new Koa();
+let globalApiRouter: MagicRouter | null = null;
 
 export const initKoa = async () => {
   const logger = await getLogger();
@@ -28,6 +30,7 @@ export const initKoa = async () => {
   );
 
   const apiRouter = await api();
+  globalApiRouter = apiRouter;
   app.use(apiRouter.routes());
 
   // Swagger routes apenas em desenvolvimento
@@ -56,4 +59,11 @@ export const listenKoa = async () => {
   app.listen(PORT, () => {
     logger.info(`Koa server running on http://localhost:${PORT}`);
   });
+};
+
+export const getApiRouter = (): MagicRouter => {
+  if (!globalApiRouter) {
+    throw new Error('API Router not initialized. Call initKoa first.');
+  }
+  return globalApiRouter;
 };

@@ -14,7 +14,7 @@ describe('DELETE /api/realm/:tenantId/policies/:id', () => {
 
   it('should delete policy successfully', async () => {
     const policy = await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'PolicyToDelete',
       effect: 'Allow',
       actions: ['iam:accounts:read'],

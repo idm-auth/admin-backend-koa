@@ -6,7 +6,7 @@ describe('policy.mapper.toListItemResponse', () => {
   it('should map policy to list item response format', () => {
     const input: PolicyDocument = {
       _id: 'test-id-1',
-      version: '1',
+      version: '2025-12-24',
       name: 'admin-policy',
       description: 'Administrator policy',
       effect: 'Allow',
@@ -20,7 +20,7 @@ describe('policy.mapper.toListItemResponse', () => {
 
     expect(result).toEqual({
       _id: 'test-id-1',
-      version: '1',
+      version: '2025-12-24',
       name: 'admin-policy',
       description: 'Administrator policy',
       effect: 'Allow',
@@ -34,7 +34,7 @@ describe('policy.mapper.toListItemResponse', () => {
   it('should handle policy without optional fields', () => {
     const input: PolicyDocument = {
       _id: 'test-id-2',
-      version: '1',
+      version: '2025-12-24',
       name: 'user-policy',
       effect: 'Deny',
       actions: ['delete'],
@@ -47,7 +47,7 @@ describe('policy.mapper.toListItemResponse', () => {
 
     expect(result).toEqual({
       _id: 'test-id-2',
-      version: '1',
+      version: '2025-12-24',
       name: 'user-policy',
       description: undefined,
       effect: 'Deny',

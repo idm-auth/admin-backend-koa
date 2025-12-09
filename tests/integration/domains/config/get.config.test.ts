@@ -7,16 +7,15 @@ import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
 describe('GET /api/config/app/:appName/env/:env', () => {
   const getApp = () => globalThis.testKoaApp;
   let originalLoggerLevel: string | undefined;
-  let tenantId: string;
 
   beforeAll(async () => {
     originalLoggerLevel = process.env.LOGGER_LEVEL;
     process.env.LOGGER_LEVEL = 'debug';
-    
+
     const coreDbName = 'vi-test-db-core-get-config';
     setLocalMemValue(EnvKey.MONGODB_CORE_DBNAME, coreDbName);
     setLocalMemValue(EnvKey.CORE_REALM_NAME, 'core-get-config');
-    tenantId = await getTenantId(coreDbName);
+    await getTenantId(coreDbName);
   });
 
   afterAll(() => {

@@ -14,7 +14,7 @@ describe('PATCH /api/realm/:tenantId/policies/:id', () => {
     tenantId = await getTenantId('vi-test-db-policies-patch');
 
     const policy = await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'OriginalPolicy',
       description: 'Original description',
       effect: 'Allow',
@@ -113,7 +113,7 @@ describe('PATCH /api/realm/:tenantId/policies/:id', () => {
 
   it('should return 409 for duplicate name', async () => {
     await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'ExistingPolicy',
       effect: 'Allow',
       actions: ['iam:accounts:read'],

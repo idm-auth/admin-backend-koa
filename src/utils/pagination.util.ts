@@ -5,7 +5,7 @@ import {
 } from '@/domains/commons/base/pagination.schema';
 import { Span } from '@opentelemetry/api';
 
-export type FilterQueryBuilder = (filter: string) => Record<string, unknown>;
+export type QueryFilterBuilder = (filter: string) => Record<string, unknown>;
 
 export interface PaginationOptions<T> {
   model: Model<T>;
@@ -32,7 +32,7 @@ export const sanitizeRegexInputForFilter = (input: string): string => {
  */
 export const executePagination = async <T>(
   options: PaginationOptions<T>,
-  buildFilterQuery: FilterQueryBuilder
+  buildQueryFilter: QueryFilterBuilder
 ): Promise<PaginatedResponse<T>> => {
   const { model, query, defaultSortField = 'name', span } = options;
 
@@ -40,10 +40,10 @@ export const executePagination = async <T>(
   const skip = (page - 1) * limit;
 
   // Build filter query usando função customizada do service
-  let filterQuery: Record<string, unknown> = {};
+  let QueryFilter: Record<string, unknown> = {};
   if (filter) {
     const sanitizedFilter = sanitizeRegexInputForFilter(filter);
-    filterQuery = buildFilterQuery(sanitizedFilter);
+    QueryFilter = buildQueryFilter(sanitizedFilter);
     span?.setAttributes({ 'query.filter': sanitizedFilter });
   }
 
@@ -61,8 +61,8 @@ export const executePagination = async <T>(
 
   // Execute queries
   const [data, total] = await Promise.all([
-    model.find(filterQuery).sort(sortQuery).skip(skip).limit(limit),
-    model.countDocuments(filterQuery),
+    model.find(QueryFilter).sort(sortQuery).skip(skip).limit(limit),
+    model.countDocuments(QueryFilter),
   ]);
 
   const totalPages = Math.ceil(total / limit);

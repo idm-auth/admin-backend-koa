@@ -2,6 +2,7 @@ import {
   requestTenantIdAndIdParamsSchema,
   requestTenantIdParamsSchema,
 } from '@/domains/commons/base/request.schema';
+import { CrudOperation, IAM_SYSTEM_ID } from '@/domains/commons/base/constants';
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import { z } from 'zod';
@@ -34,6 +35,8 @@ const safeAccountListQuerySchema = z.object({
   descending: z.coerce.boolean().default(false),
 });
 
+const RESOURCE_TYPE = 'realm.accounts';
+
 export const initialize = async () => {
   const router = new MagicRouter({ prefix: '/accounts' });
   const swagger = createCrudSwagger(
@@ -52,6 +55,11 @@ export const initialize = async () => {
     path: '/',
     summary: 'List all accounts with pagination',
     authentication: { someOneMethod: true },
+    authorization: {
+      systemId: IAM_SYSTEM_ID,
+      operation: CrudOperation.LIST,
+      resource: RESOURCE_TYPE,
+    },
     handlers: [accountController.findAllPaginated],
     request: {
       params: requestTenantIdParamsSchema,
@@ -67,6 +75,11 @@ export const initialize = async () => {
     path: '/',
     summary: 'Create account',
     authentication: { someOneMethod: true },
+    authorization: {
+      systemId: IAM_SYSTEM_ID,
+      operation: CrudOperation.CREATE,
+      resource: RESOURCE_TYPE,
+    },
     handlers: [accountController.create],
     request: {
       params: requestTenantIdParamsSchema,
@@ -82,6 +95,11 @@ export const initialize = async () => {
     path: '/:id',
     summary: 'Get account by ID',
     authentication: { someOneMethod: true },
+    authorization: {
+      systemId: IAM_SYSTEM_ID,
+      operation: CrudOperation.READ,
+      resource: RESOURCE_TYPE,
+    },
     handlers: [accountController.findById],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -96,6 +114,11 @@ export const initialize = async () => {
     path: '/:id',
     summary: 'Update account',
     authentication: { someOneMethod: true },
+    authorization: {
+      systemId: IAM_SYSTEM_ID,
+      operation: CrudOperation.UPDATE,
+      resource: RESOURCE_TYPE,
+    },
     handlers: [accountController.update],
     request: {
       params: requestTenantIdAndIdParamsSchema,
@@ -113,6 +136,11 @@ export const initialize = async () => {
     path: '/:id',
     summary: 'Remove account',
     authentication: { someOneMethod: true },
+    authorization: {
+      systemId: IAM_SYSTEM_ID,
+      operation: CrudOperation.DELETE,
+      resource: RESOURCE_TYPE,
+    },
     handlers: [accountController.remove],
     request: {
       params: requestTenantIdAndIdParamsSchema,

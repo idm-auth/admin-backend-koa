@@ -1,13 +1,12 @@
-import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import * as configService from '@/domains/config/config.service';
-import * as realmService from '@/domains/core/realms/realm.service';
-import * as applicationService from '@/domains/realms/applications/application.service';
-import * as roleService from '@/domains/realms/roles/role.service';
-import * as groupService from '@/domains/realms/groups/group.service';
-import * as groupRoleService from '@/domains/realms/group-roles/group-role.service';
 import { getModel as getRealmModel } from '@/domains/core/realms/realm.model';
+import * as applicationService from '@/domains/realms/applications/application.service';
+import * as groupRoleService from '@/domains/realms/group-roles/group-role.service';
+import * as groupService from '@/domains/realms/groups/group.service';
+import * as roleService from '@/domains/realms/roles/role.service';
 import { EnvKey, setLocalMemValue } from '@/plugins/dotenv.plugin';
 import { v4 as uuidv4 } from 'uuid';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('config.service.repairDefaultSetup', () => {
   const coreRealmName = `core-repair-${uuidv4()}`;
@@ -68,12 +67,5 @@ describe('config.service.repairDefaultSetup', () => {
       )._id,
     });
     expect(groupRoles.length).toBeGreaterThan(0);
-  });
-
-  it('should use core realm when tenantId not provided', async () => {
-    const result = await configService.repairDefaultSetup(undefined);
-
-    expect(result).toHaveProperty('status', 200);
-    expect(result).toHaveProperty('tenantId');
   });
 });

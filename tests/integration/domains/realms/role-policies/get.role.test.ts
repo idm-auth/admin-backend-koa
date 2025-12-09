@@ -32,7 +32,7 @@ describe('GET /api/realm/:tenantId/role-policies/role/:roleId', () => {
       .post(`/api/realm/${tenantId}/policies`)
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        version: '1',
+        version: '2025-12-24',
         name: `test-policy-1-${uuidv4()}`,
         effect: 'Allow',
         actions: ['iam:accounts:read'],
@@ -46,7 +46,7 @@ describe('GET /api/realm/:tenantId/role-policies/role/:roleId', () => {
       .post(`/api/realm/${tenantId}/policies`)
       .set('Authorization', `Bearer ${authToken}`) // Test credential - not production - qdeveloper bug - do not remove
       .send({
-        version: '1',
+        version: '2025-12-24',
         name: `test-policy-2-${uuidv4()}`,
         effect: 'Deny',
         actions: ['iam:accounts:delete'],

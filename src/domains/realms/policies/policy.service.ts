@@ -1,10 +1,12 @@
-import { NotFoundError } from '@/errors/not-found';
-import { ConflictError } from '@/errors/conflict';
-import { getDBName } from '@/domains/core/realms/realm.service';
-import { withSpanAsync } from '@/utils/tracing.util';
-import { getModel, PolicyCreate } from './policy.model';
-import { PolicyUpdate } from './policy.schema';
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
+import { getDBName } from '@/domains/core/realms/realm.service';
+import { ConflictError } from '@/errors/conflict';
+import { NotFoundError } from '@/errors/not-found';
+import { getLogger } from '@/utils/localStorage.util';
+import { withSpanAsync } from '@/utils/tracing.util';
+import { QueryFilter } from 'mongoose';
+import { getModel, PolicyCreate, PolicyDocument } from './policy.model';
+import { PolicyUpdate } from './policy.schema';
 
 const SERVICE_NAME = 'policy.service';
 
@@ -115,6 +117,35 @@ export const remove = async (tenantId: PublicUUID, id: DocId) => {
         throw new NotFoundError('Policy not found');
       }
 
+      return policy;
+    }
+  );
+};
+
+export const findOneByQuery = async (
+  tenantId: PublicUUID,
+  query: QueryFilter<PolicyDocument>
+): Promise<PolicyDocument> => {
+  return withSpanAsync(
+    {
+      name: `${SERVICE_NAME}.findOneByQuery`,
+      attributes: {
+        'tenant.id': tenantId,
+        operation: 'findOneByQuery',
+      },
+    },
+    async (span) => {
+      const logger = await getLogger();
+      logger.info({ tenantId, query }, 'Finding policy by query');
+
+      const dbName = await getDBName({ publicUUID: tenantId });
+      const policy = await getModel(dbName).findOne(query);
+
+      if (!policy) {
+        throw new NotFoundError('Policy not found');
+      }
+
+      span.setAttributes({ 'db.name': dbName });
       return policy;
     }
   );

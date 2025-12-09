@@ -13,7 +13,7 @@ describe('GET /api/realm/:tenantId/policies', () => {
     tenantId = await getTenantId('vi-test-db-policies-list');
 
     await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'Policy1',
       effect: 'Allow',
       actions: ['iam:accounts:read'],
@@ -21,7 +21,7 @@ describe('GET /api/realm/:tenantId/policies', () => {
     });
 
     await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'Policy2',
       effect: 'Deny',
       actions: ['iam:accounts:delete'],
@@ -29,7 +29,7 @@ describe('GET /api/realm/:tenantId/policies', () => {
     });
 
     await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'Policy3',
       effect: 'Allow',
       actions: ['iam:roles:*'],

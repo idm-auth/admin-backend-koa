@@ -9,44 +9,19 @@ import * as accountService from '@/domains/realms/accounts/account.service';
 import * as applicationService from '@/domains/realms/applications/application.service';
 import * as roleService from '@/domains/realms/roles/role.service';
 import * as groupService from '@/domains/realms/groups/group.service';
+import * as policyService from '@/domains/realms/policies/policy.service';
 import * as accountGroupService from '@/domains/realms/account-groups/account-group.service';
 import * as groupRoleService from '@/domains/realms/group-roles/group-role.service';
+import * as rolePolicyService from '@/domains/realms/role-policies/role-policy.service';
 import { NotFoundError } from '@/errors/not-found';
 import { EnvKey, getEnvValue } from '@/plugins/dotenv.plugin';
 import { getLogger } from '@/utils/localStorage.util';
 import { InitSetup } from './config.schema';
 import { getModel, WebAdminConfig } from './webAdminConfig.model';
-import { ApplicationCreate } from '@/domains/realms/applications/application.schema';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
-
-const CRUD_OPERATIONS = ['create', 'read', 'update', 'delete', 'list'] as const;
-
-const IAM_SYSTEM_APPLICATION: ApplicationCreate = {
-  name: 'IAM System',
-  systemId: 'iam-system',
-  availableActions: [
-    {
-      resourceType: 'realm.account',
-      pathPattern: '/realm/:tenantId/accounts',
-      operations: [...CRUD_OPERATIONS],
-    },
-    {
-      resourceType: 'realm.role',
-      pathPattern: '/realm/:tenantId/roles',
-      operations: [...CRUD_OPERATIONS],
-    },
-    {
-      resourceType: 'realm.policy',
-      pathPattern: '/realm/:tenantId/policies',
-      operations: [...CRUD_OPERATIONS],
-    },
-    {
-      resourceType: 'realm.group',
-      pathPattern: '/realm/:tenantId/groups',
-      operations: [...CRUD_OPERATIONS],
-    },
-  ],
-};
+import { IAM_SYSTEM_ID } from '@/domains/commons/base/constants';
+import { getApiRouter } from '@/plugins/koaServer.plugin';
+import { MagicRouter } from '@/utils/core/MagicRouter';
 
 export const getWebAdminConfig = async (args: {
   app: string;
@@ -80,35 +55,48 @@ export const getWebAdminConfig = async (args: {
  * - IAM System application
  * - iam-admin role
  * - iam-admin group
+ * - Default policies (iam-admin-full-access)
+ * - role-policy associations
  * - group-role association
  *
  * Does NOT touch admin accounts - only system resources.
  * If tenantId is not provided, uses core realm.
  */
-export const repairDefaultSetup = async (tenantId?: PublicUUID) => {
+export const repairDefaultSetup = async (tenantId: PublicUUID) => {
   const logger = await getLogger();
 
-  if (!tenantId) {
-    const coreRealm = await realmService.getRealmCore();
-    tenantId = coreRealm.publicUUID;
-    logger.info({ tenantId }, 'Using core realm tenantId');
-  }
+  // Generate availableActions from routes
+  const generatedActions = generateAvailableActionsFromRoutes(IAM_SYSTEM_ID);
+  logger.info(
+    { generatedActions: JSON.stringify(generatedActions, null, 2) },
+    'Generated availableActions from routes'
+  );
 
-  // Check and create iam-system application
+  // Check and create/update iam-system application
   let iamSystemApp;
   try {
     iamSystemApp = await applicationService.findOneByQuery(tenantId, {
-      systemId: 'iam-system',
+      systemId: IAM_SYSTEM_ID,
     });
+
+    // Update availableActions if application exists
+    iamSystemApp = await applicationService.update(tenantId, iamSystemApp._id, {
+      availableActions: generatedActions,
+    });
+    logger.info(
+      { applicationId: iamSystemApp._id },
+      'IAM System application availableActions updated'
+    );
   } catch (error) {
     if (error instanceof NotFoundError) {
-      iamSystemApp = await applicationService.create(
-        tenantId,
-        IAM_SYSTEM_APPLICATION
-      );
+      iamSystemApp = await applicationService.create(tenantId, {
+        name: 'IAM System',
+        systemId: IAM_SYSTEM_ID,
+        availableActions: generatedActions,
+      });
       logger.info(
         { applicationId: iamSystemApp._id },
-        'IAM System application recreated'
+        'IAM System application created'
       );
     } else {
       throw error;
@@ -152,6 +140,50 @@ export const repairDefaultSetup = async (tenantId?: PublicUUID) => {
     }
   }
 
+  // Check and create iam-admin-full-access policy
+  let iamAdminPolicy;
+  try {
+    iamAdminPolicy = await policyService.findOneByQuery(tenantId, {
+      name: 'iam-admin-full-access',
+    });
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      iamAdminPolicy = await policyService.create(tenantId, {
+        version: '2025-12-24',
+        name: 'iam-admin-full-access',
+        description: 'Full access to all IAM resources',
+        effect: 'Allow',
+        actions: ['iam-system:*:*'],
+        resources: ['grn:global:iam-system:*:*:*'],
+      });
+      logger.info(
+        { policyId: iamAdminPolicy._id },
+        'IAM Admin policy recreated'
+      );
+    } else {
+      throw error;
+    }
+  }
+
+  // Check and create role-policy association
+  const rolePolicies = await rolePolicyService.findByRoleId(
+    tenantId,
+    iamAdminRole._id
+  );
+  const hasPolicy = rolePolicies.find(
+    (rp) => rp.policyId === iamAdminPolicy._id
+  );
+  if (!hasPolicy) {
+    await rolePolicyService.create(tenantId, {
+      roleId: iamAdminRole._id,
+      policyId: iamAdminPolicy._id,
+    });
+    logger.info(
+      { roleId: iamAdminRole._id, policyId: iamAdminPolicy._id },
+      'IAM Admin role-policy association recreated'
+    );
+  }
+
   // Check and create group-role association
   const groupRoles = await groupRoleService.getGroupRoles(tenantId, {
     groupId: iamAdminGroup._id,
@@ -173,6 +205,81 @@ export const repairDefaultSetup = async (tenantId?: PublicUUID) => {
 };
 
 /**
+ * Generate Available Actions from Routes
+ *
+ * Extracts availableActions from MagicRouter routes based on authorization config.
+ * Groups routes by pathPattern and collects unique operations.
+ *
+ * @param systemId - Filter routes by systemId (e.g., 'iam-system')
+ * @returns Array of availableActions for Application
+ */
+export const generateAvailableActionsFromRoutes = (systemId: string) => {
+  const apiRouter = getApiRouter();
+
+  // Collect all routes recursively from child routers with full path
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const collectAllRoutes = (router: MagicRouter, parentPrefix = ''): any[] => {
+    const basePath = (router as unknown as { basePath: string }).basePath || '';
+    const fullPrefix = parentPrefix + basePath;
+
+    const routes = router.getSwaggerRoutes ? router.getSwaggerRoutes() : [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const routesWithFullPath = routes.map((route: any) => ({
+      ...route,
+      fullPath: fullPrefix + route.path,
+    }));
+
+    const childRouters =
+      (
+        router as unknown as {
+          childRouters: Array<{ pathPrefix: string; router: MagicRouter }>;
+        }
+      ).childRouters || [];
+    const childRoutes = childRouters.flatMap((child) =>
+      collectAllRoutes(child.router, fullPrefix + child.pathPrefix)
+    );
+
+    return [...routesWithFullPath, ...childRoutes];
+  };
+
+  const allRoutes = collectAllRoutes(apiRouter);
+
+  // Filter routes by systemId
+  const systemRoutes = allRoutes.filter(
+    (route) => route.authorization?.systemId === systemId
+  );
+
+  // Group by pathPattern and resource, collect operations
+  const actionsMap = new Map<
+    string,
+    { resourceType: string; operations: Set<string> }
+  >();
+  systemRoutes.forEach((route) => {
+    if (route.authorization) {
+      const { resource, operation } = route.authorization;
+      const pathPattern = route.fullPath;
+
+      if (!actionsMap.has(pathPattern)) {
+        actionsMap.set(pathPattern, {
+          resourceType: resource,
+          operations: new Set(),
+        });
+      }
+      actionsMap.get(pathPattern)!.operations.add(operation);
+    }
+  });
+
+  // Build availableActions array
+  return Array.from(actionsMap.entries()).map(
+    ([pathPattern, { resourceType, operations }]) => ({
+      resourceType,
+      pathPattern,
+      operations: Array.from(operations),
+    })
+  );
+};
+
+/**
  * Initial Setup - Database Seeding
  *
  * Called by frontend via /config/init-setup endpoint on first startup.
@@ -183,7 +290,6 @@ export const repairDefaultSetup = async (tenantId?: PublicUUID) => {
  * - Default system resources (via repairDefaultSetup)
  * - Admin account associated with iam-admin group
  * - Web admin configuration
- * - TODO: Default policies (permission definitions for iam-admin role)
  *
  * Idempotent - returns 200 if already exists.
  */

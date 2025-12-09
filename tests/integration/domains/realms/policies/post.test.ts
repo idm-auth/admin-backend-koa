@@ -30,7 +30,7 @@ describe('POST /api/realm/:tenantId/policies', () => {
     const policy: PolicyBaseResponse = response.body;
 
     expect(policy).toHaveProperty('_id');
-    expect(policy.version).toBe('1');
+    expect(policy.version).toBe('2025-12-24');
     expect(policy.name).toBe(policyData.name);
     expect(policy.description).toBe(policyData.description);
     expect(policy.effect).toBe(policyData.effect);

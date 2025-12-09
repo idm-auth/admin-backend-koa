@@ -1,5 +1,5 @@
 import { DocId, PublicUUID } from '@/domains/commons/base/base.schema';
-import { FilterQuery } from 'mongoose';
+import { QueryFilter } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationQuery,
@@ -55,7 +55,7 @@ export const create = async (
 
 export const findOneByQuery = async (
   tenantId: PublicUUID,
-  query: FilterQuery<Application>
+  query: QueryFilter<Application>
 ): Promise<Application> => {
   return withSpanAsync(
     {

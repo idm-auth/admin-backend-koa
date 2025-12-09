@@ -10,7 +10,25 @@ import { POLICY_EFFECTS } from './policy.model';
 extendZodWithOpenApi(z);
 
 export const policyCreateSchema = z.object({
-  version: z.string().optional().default('1'),
+  version: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Version must be ISO date format (YYYY-MM-DD)'
+    )
+    .refine(
+      (v) => {
+        const date = new Date(v);
+        return (
+          date instanceof Date &&
+          !isNaN(date.getTime()) &&
+          v === date.toISOString().split('T')[0]
+        );
+      },
+      { message: 'Version must be valid ISO date (YYYY-MM-DD)' }
+    )
+    .optional()
+    .default('2025-12-24'),
   name: z.string({ error: 'Name is required' }),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS, { error: 'Effect must be Allow or Deny' }),
@@ -36,6 +54,24 @@ export const policyReadResponseSchema = policyBaseResponseSchema;
 export const policyListItemResponseSchema = policyBaseResponseSchema;
 
 export const policyUpdateSchema = z.object({
+  version: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Version must be ISO date format (YYYY-MM-DD)'
+    )
+    .refine(
+      (v) => {
+        const date = new Date(v);
+        return (
+          date instanceof Date &&
+          !isNaN(date.getTime()) &&
+          v === date.toISOString().split('T')[0]
+        );
+      },
+      { message: 'Version must be valid ISO date (YYYY-MM-DD)' }
+    )
+    .optional(),
   name: z.string().optional(),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS).optional(),

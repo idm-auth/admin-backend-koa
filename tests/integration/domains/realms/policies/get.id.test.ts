@@ -14,7 +14,7 @@ describe('GET /api/realm/:tenantId/policies/:id', () => {
     tenantId = await getTenantId('vi-test-db-policies-get-id');
 
     const policy = await policyService.create(tenantId, {
-      version: '1',
+      version: '2025-12-24',
       name: 'TestPolicy',
       description: 'Test policy for GET',
       effect: 'Allow',
