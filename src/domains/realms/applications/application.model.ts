@@ -26,7 +26,7 @@ const schemaName = 'applications';
 export const schema = new mongoose.Schema({
   _id: { type: String, default: uuidv4 },
   name: { type: String, required: true, index: true },
-  systemId: { type: String, required: true, index: true },
+  systemId: { type: String, required: true, unique: true, index: true },
   availableActions: [
     {
       resourceType: { type: String, required: true },
@@ -44,7 +44,7 @@ export const schema = new mongoose.Schema({
 
 schema.add(baseDocumentSchema);
 
-schema.index({ systemId: 1 }, { unique: true });
+// Schema-level indexes (only for nested fields)
 schema.index({ 'availableActions.resourceType': 1 });
 schema.index({ 'availableActions.pathPattern': 1 });
 

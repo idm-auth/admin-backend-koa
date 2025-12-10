@@ -18,7 +18,7 @@ describe('POST /api/config/init-setup', () => {
   beforeAll(async () => {
     const coreDbName = 'vi-test-db-core-init-setup';
     setLocalMemValue(EnvKey.MONGODB_CORE_DBNAME, coreDbName);
-    setLocalMemValue(EnvKey.CORE_REALM_NAME, 'core-init-setup');
+    setLocalMemValue(EnvKey.CORE_REALM_NAME, 'vi-test-db-core-init-setup');
     tenantId = await getTenantId(coreDbName);
   });
 
@@ -41,7 +41,10 @@ describe('POST /api/config/init-setup', () => {
       systemId: 'iam-system',
     });
     expect(iamApp.name).toBe('IAM System');
-    expect(iamApp.availableActions).toHaveLength(4);
+    expect(iamApp.availableActions).toHaveLength(2);
+    expect(iamApp.availableActions[0].pathPattern).toContain('/accounts');
+    expect(iamApp.availableActions[0].operations).toContain('list');
+    expect(iamApp.availableActions[0].operations).toContain('create');
 
     // Verify iam-admin role was created via service
     const iamAdminRole = await roleService.findOneByQuery(tenantId, {

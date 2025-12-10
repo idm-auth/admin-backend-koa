@@ -5,6 +5,15 @@
 ### SE definindo _id customizado
 → **ENTÃO** use `{ type: String, default: uuidv4 }`, NUNCA `_id: false`
 
+### SE criando índice MongoDB
+→ **ENTÃO** use field-level quando possível, schema-level apenas para nested/compound
+
+### SE índice é em campo top-level
+→ **ENTÃO** use `{ index: true }` ou `{ unique: true, index: true }` no campo
+
+### SE índice é em campo nested ou compound
+→ **ENTÃO** use `schema.index()` após definição do schema
+
 ### SE criando subdocument
 → **ENTÃO** use `_id: false` APENAS em embedded schemas
 
@@ -43,6 +52,23 @@
 → **ENTÃO** corresponda ao diretório do domínio
 
 ## AÇÕES OBRIGATÓRIAS
+
+### Índices MongoDB (Ver: .docs/database-indexes.md)
+```typescript
+// ✅ Correto - field-level para campos simples
+const schema = new mongoose.Schema({
+  name: { type: String, index: true },
+  email: { type: String, unique: true, index: true },
+});
+
+// ✅ Correto - schema-level apenas para nested/compound
+schema.index({ 'user.profile.email': 1 });
+schema.index({ lastName: 1, firstName: 1 }); // compound
+
+// ❌ Incorreto - duplicação
+email: { type: String, index: true },
+schema.index({ email: 1 }); // DUPLICADO!
+```
 
 ### UUID como _id obrigatório
 ```typescript

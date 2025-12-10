@@ -48,7 +48,15 @@ export const getMainConnection = (): Connection => {
 export const closeMainConnection = async () => {
   const logger = await getLogger();
   if (mainConnection) {
-    logger.info('Fechando conexão principal com MongoDB...');
+    logger.info('Fechando todas as conexões com MongoDB...');
+    
+    // Fecha todas as conexões em cache (realms)
+    const connections = mongoose.connections.filter(
+      (conn) => conn !== mainConnection && conn.readyState !== 0
+    );
+    await Promise.all(connections.map((conn) => conn.close()));
+    
+    // Fecha a conexão principal
     await mainConnection.close();
     mainConnection = null;
   }

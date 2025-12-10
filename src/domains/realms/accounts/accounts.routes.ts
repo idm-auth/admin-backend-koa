@@ -56,7 +56,6 @@ export const initialize = async () => {
     summary: 'List all accounts with pagination',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: 'test-system',
       operation: CrudOperation.LIST,
       resource: RESOURCE_TYPE,
     },

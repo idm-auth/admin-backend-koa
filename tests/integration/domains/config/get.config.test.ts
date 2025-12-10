@@ -14,7 +14,7 @@ describe('GET /api/config/app/:appName/env/:env', () => {
 
     const coreDbName = 'vi-test-db-core-get-config';
     setLocalMemValue(EnvKey.MONGODB_CORE_DBNAME, coreDbName);
-    setLocalMemValue(EnvKey.CORE_REALM_NAME, 'core-get-config');
+    setLocalMemValue(EnvKey.CORE_REALM_NAME, 'vi-test-db-core-get-config');
     await getTenantId(coreDbName);
   });
 
