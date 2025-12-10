@@ -21,7 +21,6 @@ import { getModel, WebAdminConfig } from './webAdminConfig.model';
 import { PublicUUID } from '@/domains/commons/base/base.schema';
 import { IAM_SYSTEM_ID } from '@/domains/commons/base/constants';
 import { getApiRouter } from '@/plugins/koaServer.plugin';
-import { MagicRouter } from '@/utils/core/MagicRouter';
 
 export const getWebAdminConfig = async (args: {
   app: string;
@@ -66,7 +65,10 @@ export const repairDefaultSetup = async (tenantId: PublicUUID) => {
   const logger = await getLogger();
 
   // Generate availableActions from routes
-  const generatedActions = generateAvailableActionsFromRoutes(IAM_SYSTEM_ID);
+  const apiRouter = getApiRouter();
+  const systems = apiRouter.getAvailableActions(IAM_SYSTEM_ID);
+  const iamSystem = systems.find((s) => s.systemId === IAM_SYSTEM_ID);
+  const generatedActions = iamSystem?.availableActions ?? [];
   logger.info(
     { generatedActions: JSON.stringify(generatedActions, null, 2) },
     'Generated availableActions from routes'
@@ -202,81 +204,6 @@ export const repairDefaultSetup = async (tenantId: PublicUUID) => {
 
   logger.info({ tenantId }, 'Default setup repair completed');
   return { status: 200, tenantId };
-};
-
-/**
- * Generate Available Actions from Routes
- *
- * Extracts availableActions from MagicRouter routes based on authorization config.
- * Groups routes by pathPattern and collects unique operations.
- *
- * @param systemId - Filter routes by systemId (e.g., 'iam-system')
- * @returns Array of availableActions for Application
- */
-export const generateAvailableActionsFromRoutes = (systemId: string) => {
-  const apiRouter = getApiRouter();
-
-  // Collect all routes recursively from child routers with full path
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const collectAllRoutes = (router: MagicRouter, parentPrefix = ''): any[] => {
-    const basePath = (router as unknown as { basePath: string }).basePath || '';
-    const fullPrefix = parentPrefix + basePath;
-
-    const routes = router.getSwaggerRoutes ? router.getSwaggerRoutes() : [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const routesWithFullPath = routes.map((route: any) => ({
-      ...route,
-      fullPath: fullPrefix + route.path,
-    }));
-
-    const childRouters =
-      (
-        router as unknown as {
-          childRouters: Array<{ pathPrefix: string; router: MagicRouter }>;
-        }
-      ).childRouters || [];
-    const childRoutes = childRouters.flatMap((child) =>
-      collectAllRoutes(child.router, fullPrefix + child.pathPrefix)
-    );
-
-    return [...routesWithFullPath, ...childRoutes];
-  };
-
-  const allRoutes = collectAllRoutes(apiRouter);
-
-  // Filter routes by systemId
-  const systemRoutes = allRoutes.filter(
-    (route) => route.authorization?.systemId === systemId
-  );
-
-  // Group by pathPattern and resource, collect operations
-  const actionsMap = new Map<
-    string,
-    { resourceType: string; operations: Set<string> }
-  >();
-  systemRoutes.forEach((route) => {
-    if (route.authorization) {
-      const { resource, operation } = route.authorization;
-      const pathPattern = route.fullPath;
-
-      if (!actionsMap.has(pathPattern)) {
-        actionsMap.set(pathPattern, {
-          resourceType: resource,
-          operations: new Set(),
-        });
-      }
-      actionsMap.get(pathPattern)!.operations.add(operation);
-    }
-  });
-
-  // Build availableActions array
-  return Array.from(actionsMap.entries()).map(
-    ([pathPattern, { resourceType, operations }]) => ({
-      resourceType,
-      pathPattern,
-      operations: Array.from(operations),
-    })
-  );
 };
 
 /**

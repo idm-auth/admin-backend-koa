@@ -2,7 +2,7 @@ import {
   requestTenantIdAndIdParamsSchema,
   requestTenantIdParamsSchema,
 } from '@/domains/commons/base/request.schema';
-import { CrudOperation, IAM_SYSTEM_ID } from '@/domains/commons/base/constants';
+import { CrudOperation } from '@/domains/commons/base/constants';
 import { MagicRouter } from '@/utils/core/MagicRouter';
 import { createCrudSwagger } from '@/utils/crudSwagger.util';
 import { z } from 'zod';
@@ -56,7 +56,7 @@ export const initialize = async () => {
     summary: 'List all accounts with pagination',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: IAM_SYSTEM_ID,
+      systemId: 'test-system',
       operation: CrudOperation.LIST,
       resource: RESOURCE_TYPE,
     },
@@ -76,7 +76,6 @@ export const initialize = async () => {
     summary: 'Create account',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: IAM_SYSTEM_ID,
       operation: CrudOperation.CREATE,
       resource: RESOURCE_TYPE,
     },
@@ -96,7 +95,6 @@ export const initialize = async () => {
     summary: 'Get account by ID',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: IAM_SYSTEM_ID,
       operation: CrudOperation.READ,
       resource: RESOURCE_TYPE,
     },
@@ -115,7 +113,6 @@ export const initialize = async () => {
     summary: 'Update account',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: IAM_SYSTEM_ID,
       operation: CrudOperation.UPDATE,
       resource: RESOURCE_TYPE,
     },
@@ -137,7 +134,6 @@ export const initialize = async () => {
     summary: 'Remove account',
     authentication: { someOneMethod: true },
     authorization: {
-      systemId: IAM_SYSTEM_ID,
       operation: CrudOperation.DELETE,
       resource: RESOURCE_TYPE,
     },

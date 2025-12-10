@@ -19,6 +19,7 @@ import {
   authenticationMiddleware,
   AuthenticationConfig,
 } from '@/middlewares/authentication.middleware';
+import { authorizationMiddleware } from '@/middlewares/authorization.middleware';
 import { getLoggerNoAsync } from '@/plugins/pino.plugin';
 import { getEnvValue, EnvKey } from '@/plugins/dotenv.plugin';
 import {
@@ -43,7 +44,7 @@ export type Method =
   | 'trace';
 
 export type AuthorizationConfig = {
-  systemId: string;
+  systemId?: string;
   operation: string;
   resource: string;
 };
@@ -63,7 +64,7 @@ export type MagicRouteConfigWithoutMethod<TContext extends Context = Context> =
 export class MagicRouter<TContext extends Context = Context> {
   private router: Router;
 
-  private swaggerRoutes: Array<MagicRouteConfig<TContext>> = [];
+  private routeConfigs: Array<MagicRouteConfig<TContext>> = [];
   private childRouters: Array<{
     pathPrefix: string;
     router: MagicRouter<TContext>;
@@ -82,11 +83,26 @@ export class MagicRouter<TContext extends Context = Context> {
     const requestValidation = requestValidationMiddleware<TContext>(config);
     const responseValidation = responseValidationMiddleware<TContext>(config);
 
+    // Set pathPattern in ctx.state (convert actual path back to pattern)
+    const pathPatternMiddleware = async (ctx: TContext, next: Next) => {
+      // ctx._matchedRoute contains the matched route pattern (e.g., /api/realm/:tenantId/accounts/:id)
+      ctx.state.pathPattern = ctx._matchedRoute || ctx.path;
+      await next();
+    };
+
     // Autenticação (qualquer método válido)
     const authenticationMiddlewares = [];
     if (config.authentication) {
       authenticationMiddlewares.push(
         authenticationMiddleware(config.authentication)
+      );
+    }
+
+    // Autorização
+    const authorizationMiddlewares = [];
+    if (config.authorization) {
+      authorizationMiddlewares.push(
+        authorizationMiddleware(config.authorization)
       );
     }
 
@@ -101,7 +117,9 @@ export class MagicRouter<TContext extends Context = Context> {
 
     return [
       requestValidation,
+      pathPatternMiddleware,
       ...authenticationMiddlewares,
+      ...authorizationMiddlewares,
       ...middlewares,
       ...handlers,
       wrappedLastHandler,
@@ -135,15 +153,20 @@ export class MagicRouter<TContext extends Context = Context> {
     return this;
   }
 
+  getRouteConfigs(): MagicRouteConfig<TContext>[] {
+    return this.routeConfigs;
+  }
+
+  // Deprecated: Use getRouteConfigs() instead
   getSwaggerRoutes(): MagicRouteConfig<TContext>[] {
-    return this.swaggerRoutes;
+    return this.routeConfigs;
   }
 
   registryAll(parentPrefix: string = ''): void {
     const fullPrefix = parentPrefix + this.basePath;
 
     // Registra rotas próprias
-    this.swaggerRoutes.forEach((route) => {
+    this.routeConfigs.forEach((route) => {
       const routeConfig: RouteConfig = {
         ...route,
         path: fullPrefix + route.path,
@@ -220,49 +243,120 @@ export class MagicRouter<TContext extends Context = Context> {
     return this.router;
   }
 
-  // HTTP Methods
-  get(config: MagicRouteConfigWithoutMethod<TContext>): this {
-    const configLocal = { ...config, method: 'get' as Method };
+  /**
+   * Get Available Actions
+   *
+   * Extracts availableActions from routes with authorization config.
+   * Recursively collects from child routers and groups by systemId.
+   *
+   * @param systemId - Default systemId for routes without explicit systemId
+   * @param accumulator - Accumulated results from parent routers
+   * @param parentPrefix - Internal: accumulated prefix from parent routers
+   * @returns Array grouped by systemId with their availableActions
+   */
+  getAvailableActions(
+    systemId: string,
+    accumulator: Array<{
+      systemId: string;
+      availableActions: Array<{
+        resourceType: string;
+        pathPattern: string;
+        operations: string[];
+      }>;
+    }> = [],
+    parentPrefix = ''
+  ): Array<{
+    systemId: string;
+    availableActions: Array<{
+      resourceType: string;
+      pathPattern: string;
+      operations: string[];
+    }>;
+  }> {
+    const fullPrefix = parentPrefix + this.basePath;
+
+    // Collect own routes with authorization
+    this.routeConfigs
+      .filter((route) => route.authorization)
+      .forEach((route) => {
+        const fullPath = fullPrefix + route.path;
+        const { resource, operation } = route.authorization!;
+        const actionSystemId = route.authorization!.systemId ?? systemId;
+
+        let system = accumulator.find((s) => s.systemId === actionSystemId);
+        if (!system) {
+          system = { systemId: actionSystemId, availableActions: [] };
+          accumulator.push(system);
+        }
+
+        let action = system.availableActions.find(
+          (a) => a.pathPattern === fullPath
+        );
+        if (!action) {
+          action = {
+            resourceType: resource,
+            pathPattern: fullPath,
+            operations: [],
+          };
+          system.availableActions.push(action);
+        }
+
+        if (!action.operations.includes(operation)) {
+          action.operations.push(operation);
+        }
+      });
+
+    // Collect recursively from child routers
+    this.childRouters.forEach(({ pathPrefix, router }) => {
+      router.getAvailableActions(
+        systemId,
+        accumulator,
+        fullPrefix + pathPrefix
+      );
+    });
+
+    return accumulator;
+  }
+
+  private registerRoute(
+    method: Method,
+    config: MagicRouteConfigWithoutMethod<TContext>
+  ) {
+    const configLocal = { ...config, method };
     const allHandlers = this.buildHandlers(configLocal);
     const koaPath = this.convertPath(configLocal.path);
+    this.routeConfigs.push(configLocal);
+    return { koaPath, allHandlers };
+  }
+
+  // HTTP Methods
+  get(config: MagicRouteConfigWithoutMethod<TContext>): this {
+    const { koaPath, allHandlers } = this.registerRoute('get', config);
     this.router.get(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
   post(config: MagicRouteConfigWithoutMethod<TContext>): this {
-    const configLocal = { ...config, method: 'post' as Method };
-    const allHandlers = this.buildHandlers(configLocal);
-    const koaPath = this.convertPath(configLocal.path);
+    const { koaPath, allHandlers } = this.registerRoute('post', config);
     this.router.post(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
   put(config: MagicRouteConfigWithoutMethod<TContext>): this {
-    const configLocal = { ...config, method: 'put' as Method };
-    const allHandlers = this.buildHandlers(configLocal);
-    const koaPath = this.convertPath(configLocal.path);
+    const { koaPath, allHandlers } = this.registerRoute('put', config);
     this.router.put(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
   delete(config: MagicRouteConfigWithoutMethod<TContext>): this {
-    const configLocal = { ...config, method: 'delete' as Method };
-    const allHandlers = this.buildHandlers(configLocal);
-    const koaPath = this.convertPath(configLocal.path);
+    const { koaPath, allHandlers } = this.registerRoute('delete', config);
     this.router.delete(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal);
     return this;
   }
 
   patch(config: MagicRouteConfigWithoutMethod<TContext>): this {
-    const configLocal = { ...config, method: 'patch' as Method };
-    const allHandlers = this.buildHandlers(configLocal);
-    const koaPath = this.convertPath(configLocal.path);
+    const { koaPath, allHandlers } = this.registerRoute('patch', config);
     this.router.patch(koaPath, ...allHandlers);
-    this.swaggerRoutes.push(configLocal);
     return this;
   }
 }
