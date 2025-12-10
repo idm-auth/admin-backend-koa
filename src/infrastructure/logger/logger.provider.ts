@@ -1,13 +1,13 @@
-import { Container } from "inversify";
-import pino from "pino";
-import pinoCaller from "pino-caller";
+import { Container } from 'inversify';
+import pino from 'pino';
+import pinoCaller from 'pino-caller';
 import {
   MongoDB,
   MongoDBSymbol,
-} from "@/infrastructure/mongodb/mongodb.provider";
-import { Env, EnvSymbol, EnvKey } from "@/infrastructure/env/env.provider";
+} from '@/infrastructure/mongodb/mongodb.provider';
+import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 
-export const LoggerSymbol = Symbol.for("Logger");
+export const LoggerSymbol = Symbol.for('Logger');
 
 export interface LoggerConfig {
   level?: string;
@@ -15,7 +15,7 @@ export interface LoggerConfig {
 }
 
 export const createLogger = async (
-  container?: Container,
+  container?: Container
 ): Promise<pino.Logger> => {
   let config: LoggerConfig | null = null;
   let env: Env | undefined;
@@ -26,8 +26,8 @@ export const createLogger = async (
       const mongodb = container.get<MongoDB>(MongoDBSymbol);
       const dbConfig = await mongodb
         .getCoreDb()
-        .collection("config")
-        .findOne({ key: "logger" });
+        .collection('config')
+        .findOne({ key: 'logger' });
       if (dbConfig?.value) {
         config = dbConfig.value;
       }
@@ -37,14 +37,14 @@ export const createLogger = async (
   }
 
   const baseLogger = pino({
-    level: config?.level || env?.get(EnvKey.LOGGER_LEVEL) || "info",
+    level: config?.level || env?.get(EnvKey.LOGGER_LEVEL) || 'info',
     transport: config?.transport || {
-      target: "pino-pretty",
+      target: 'pino-pretty',
       options: {
         destination: 1,
         colorize: true,
         singleLine: true,
-        messageFormat: "[{requestId}] -> {msg}",
+        messageFormat: '[{requestId}] -> {msg}',
         sync: true,
       },
     },

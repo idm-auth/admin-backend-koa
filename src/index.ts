@@ -1,9 +1,9 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   container,
   initializeContainer,
-} from "@/infrastructure/core/container";
-import { App, AppSymbol } from "@/infrastructure/core/app";
+} from '@/infrastructure/core/container';
+import { App, AppSymbol } from '@/infrastructure/core/app';
 
 (async () => {
   await initializeContainer();
@@ -18,5 +18,5 @@ const shutdown = async (signal: string) => {
   process.exit(0);
 };
 
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT", () => shutdown("SIGINT"));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

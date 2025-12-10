@@ -1,32 +1,32 @@
-import { injectable, inject } from "inversify";
-import { Logger } from "pino";
+import { injectable, inject } from 'inversify';
+import { Logger } from 'pino';
 import {
   KoaServer,
   KoaServerSymbol,
-} from "@/infrastructure/koa/koaServer.provider";
+} from '@/infrastructure/koa/koaServer.provider';
 import {
   MongoDB,
   MongoDBSymbol,
-} from "@/infrastructure/mongodb/mongodb.provider";
+} from '@/infrastructure/mongodb/mongodb.provider';
 import {
   LoggerSymbol,
   flushLogger,
-} from "@/infrastructure/logger/logger.provider";
+} from '@/infrastructure/logger/logger.provider';
 import {
   Telemetry,
   TelemetrySymbol,
-} from "@/infrastructure/telemetry/telemetry.provider";
+} from '@/infrastructure/telemetry/telemetry.provider';
 import {
   Swagger,
   SwaggerSymbol,
-} from "@/infrastructure/swagger/swagger.provider";
+} from '@/infrastructure/swagger/swagger.provider';
 
 export interface ILifecycle {
   init(): Promise<void>;
   shutdown(): Promise<void>;
 }
 
-export const AppSymbol = Symbol.for("App");
+export const AppSymbol = Symbol.for('App');
 
 @injectable()
 export class App implements ILifecycle {
@@ -35,7 +35,7 @@ export class App implements ILifecycle {
     @inject(MongoDBSymbol) private mongodb: MongoDB,
     @inject(TelemetrySymbol) private telemetry: Telemetry,
     @inject(SwaggerSymbol) private swagger: Swagger,
-    @inject(KoaServerSymbol) private koaServer: KoaServer,
+    @inject(KoaServerSymbol) private koaServer: KoaServer
   ) {}
 
   async init(): Promise<void> {

@@ -1,35 +1,40 @@
-import { injectable, inject } from "inversify";
-import Koa from "koa";
-import Router from "@koa/router";
-import bodyParser from "koa-bodyparser";
-import cors from "@koa/cors";
-import helmet from "koa-helmet";
-import { ILifecycle } from "@/infrastructure/core/app";
-import { Env, EnvSymbol, EnvKey } from "@/infrastructure/env/env.provider";
+import { injectable, inject } from 'inversify';
+import Koa from 'koa';
+import Router from '@koa/router';
+import bodyParser from 'koa-bodyparser';
+import cors from '@koa/cors';
+import helmet from 'koa-helmet';
+import { ILifecycle } from '@/infrastructure/core/app';
+import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 import {
   Swagger,
   SwaggerSymbol,
-} from "@/infrastructure/swagger/swagger.provider";
+} from '@/infrastructure/swagger/swagger.provider';
+import {
+  SampleRouter,
+  SampleRouterSymbol,
+} from '@/domain/sample/sample.router';
 
-export const KoaServerSymbol = Symbol.for("KoaServer");
+export const KoaServerSymbol = Symbol.for('KoaServer');
 
 @injectable()
 export class KoaServer implements ILifecycle {
   private app: Koa;
   private router: Router;
-  private server: ReturnType<Koa["listen"]> | null = null;
+  private server: ReturnType<Koa['listen']> | null = null;
 
   constructor(
     @inject(EnvSymbol) private env: Env,
-    @inject(SwaggerSymbol) private swagger: Swagger
+    @inject(SwaggerSymbol) private swagger: Swagger,
+    @inject(SampleRouterSymbol) private sampleRouter: SampleRouter
   ) {
     this.app = new Koa();
     this.router = new Router();
   }
 
   async init(): Promise<void> {
-    this.router.get("/", (ctx) => {
-      ctx.body = { status: "ok" };
+    this.router.get('/', (ctx) => {
+      ctx.body = { status: 'ok' };
     });
 
     this.swagger.setup(this.app);
@@ -38,6 +43,8 @@ export class KoaServer implements ILifecycle {
     this.app.use(bodyParser());
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
+    this.app.use(this.sampleRouter.getRouter().routes());
+    this.app.use(this.sampleRouter.getRouter().allowedMethods());
   }
 
   async listen(): Promise<void> {
