@@ -36,7 +36,7 @@ export class Telemetry implements ILifecycle {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
+   
   async init(): Promise<void> {
     this.sdk.start();
     this.logger.info('OpenTelemetry started successfully');

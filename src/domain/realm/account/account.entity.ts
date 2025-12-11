@@ -1,7 +1,24 @@
+import { baseEntitySchema } from '@/common/base/base.entity';
 import bcrypt from 'bcrypt';
-import mongoose, { InferSchemaType, HydratedDocument } from 'mongoose';
+import mongoose, {
+  ApplyBasicCreateCasting,
+  DeepPartial,
+  HydratedDocument,
+  InferSchemaType,
+  Require_id,
+} from 'mongoose';
 
-export const accountSchema = new mongoose.Schema(
+export type Account = {
+  isActive: boolean;
+  emails: Array<{
+    email: string;
+    isPrimary: boolean;
+  }>;
+  password: string;
+  salt: string;
+};
+
+export const accountSchema = new mongoose.Schema<Account>(
   {
     emails: [
       {
@@ -15,6 +32,7 @@ export const accountSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+accountSchema.add(baseEntitySchema);
 
 accountSchema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 
@@ -25,7 +43,16 @@ accountSchema.pre('save', async function () {
   }
 });
 
+export type AccountSchema = typeof accountSchema;
+export type AccountMongoose = InferSchemaType<typeof accountSchema>;
 export type AccountEntity = HydratedDocument<
   InferSchemaType<typeof accountSchema>
 >;
-export type AccountSchema = typeof accountSchema;
+// export type AccountEntity = Document & BaseEntity & AccountMongoose;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const x: DeepPartial<ApplyBasicCreateCasting<Require_id<Account>>> = {
+  emails: [{ email: 'dto.email', isPrimary: true }],
+  password: 'dto.password',
+  isActive: true,
+};

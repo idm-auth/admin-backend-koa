@@ -28,7 +28,7 @@ export class KoaServer implements ILifecycle {
     this.router = new Router();
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
+   
   async init(): Promise<void> {
     this.router.get('/', (ctx) => {
       ctx.body = { status: 'ok' };
@@ -42,7 +42,7 @@ export class KoaServer implements ILifecycle {
     this.app.use(this.router.allowedMethods());
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
+   
   async listen(): Promise<void> {
     const PORT = this.env.get(EnvKey.PORT);
     this.server = this.app.listen(parseInt(PORT), () => {

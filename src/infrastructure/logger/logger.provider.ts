@@ -12,7 +12,7 @@ export interface LoggerConfig {
 
 export const createLogger = async (
   container?: Container
-  // eslint-disable-next-line @typescript-eslint/require-await
+   
 ): Promise<pino.Logger> => {
   let config: LoggerConfig | null = {};
   let env: Env | undefined;

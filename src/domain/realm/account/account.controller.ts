@@ -1,27 +1,17 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
 import { AbstractController } from '@/abstract/AbstractController';
 import {
   AccountService,
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
-import { AccountEntity } from '@/domain/realm/account/account.entity';
-
-/**
- * Future AccountController with MagicRouter decorators
- *
- * This is a skeleton showing how AccountController will look when MagicRouter is implemented
- */
+import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
+import { AccountSchema } from '@/domain/realm/account/account.entity';
+import { Controller } from '@/infrastructure/core/stereotype.decorator';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
-// @Controller('/accounts')
-// @Auth({ someOneMethod: true })
-@injectable()
-export class AccountController extends AbstractController<
-  AccountService,
-  { email: string; password: string },
-  AccountEntity
-> {
+@Controller('/accounts')
+export class AccountController extends AbstractController<AccountSchema, AccountDtoTypes> {
   constructor(@inject(AccountServiceSymbol) protected service: AccountService) {
     super();
   }

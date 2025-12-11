@@ -20,6 +20,7 @@ export default [
     rules: {
       ...tseslint.configs['recommended-type-checked'].rules,
       ...eslintConfigPrettier.rules,
+      '@typescript-eslint/require-await': 'off',
     },
   },
 ];

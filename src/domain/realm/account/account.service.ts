@@ -1,30 +1,57 @@
-import { inject } from 'inversify';
-import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { AbstractService } from '@/abstract/AbstractService';
+import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
+import {
+  Account,
+  AccountEntity,
+  AccountSchema,
+} from '@/domain/realm/account/account.entity';
+import {
+  AccountMapper,
+  AccountMapperSymbol,
+} from '@/domain/realm/account/account.mapper';
 import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
-import { AccountEntity } from '@/domain/realm/account/account.entity';
 import { Service } from '@/infrastructure/core/stereotype.decorator';
+import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import bcrypt from 'bcrypt';
+import { inject } from 'inversify';
+import type {
+  ApplyBasicCreateCasting,
+  DeepPartial,
+  Require_id,
+  UpdateQuery,
+} from 'mongoose';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
 @Service(AccountServiceSymbol)
 export class AccountService extends AbstractService<
-  AccountEntity,
-  AccountEntity,
-  { email: string; password: string }
+  AccountSchema,
+  AccountDtoTypes
 > {
   @inject(AccountRepositorySymbol) protected repository!: AccountRepository;
-  protected mapper = {
-    toDto: (entity: AccountEntity) => entity,
-    toDtoList: (entities: AccountEntity[]) => entities,
-  };
+  @inject(AccountMapperSymbol) protected mapper!: AccountMapper;
 
   protected getServiceName(): string {
     return 'account';
+  }
+
+  protected buildCreateData(
+    dto: AccountDtoTypes['CreateRequestDto']
+  ): DeepPartial<ApplyBasicCreateCasting<Require_id<Account>>> {
+    return {
+      emails: [{ email: dto.email, isPrimary: true }],
+      password: dto.password,
+      isActive: true,
+    };
+  }
+
+  protected buildUpdateQuery(
+    data: AccountDtoTypes['UpdateRequestDto']
+  ): UpdateQuery<Account> {
+    return { $set: data };
   }
 
   @TraceAsync('account.service.findByEmail')

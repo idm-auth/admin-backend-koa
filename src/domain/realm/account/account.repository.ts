@@ -1,11 +1,11 @@
+import { AbstractMongoRepository } from '@/abstract/AbstractMongoRepository';
 import {
   AccountEntity,
   AccountSchema,
   accountSchema,
 } from '@/domain/realm/account/account.entity';
-import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
-import { AbstractMongoRepository } from '@/abstract/AbstractMongoRepository';
 import { Repository } from '@/infrastructure/core/stereotype.decorator';
+import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 
 export const AccountRepositorySymbol = Symbol.for('AccountRepository');
 
@@ -21,11 +21,12 @@ export class AccountRepository extends AbstractMongoRepository<AccountSchema> {
     email: string,
     password: string
   ): Promise<AccountEntity> {
-    return this.create(dbName, {
+    const obj = {
       emails: [{ email, isPrimary: true }],
       password,
       isActive: true,
-    });
+    };
+    return this.create(dbName, obj);
   }
 
   @TraceAsync('account.repository.findByEmail')

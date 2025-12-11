@@ -7,6 +7,7 @@ import { Trace, TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { inject } from 'inversify';
 import type {
   ApplyBasicCreateCasting,
+  CompileModelOptions,
   DeepPartial,
   HydratedDocument,
   InferSchemaType,
@@ -25,28 +26,45 @@ export interface MongoPaginationOptions {
   descending?: boolean;
 }
 
-export interface IRepository<TEntity> {
+export interface IRepository<TSchema extends Schema> {
+  getCollection(dbName: string): Model<InferSchemaType<TSchema>>;
   create(
     dbName: string,
-    data: DeepPartial<ApplyBasicCreateCasting<Require_id<TEntity>>>
-  ): Promise<TEntity>;
-  findById(dbName: string, id: string): Promise<TEntity | null>;
-  findOne(dbName: string, filter: QueryFilter<TEntity>): Promise<TEntity | null>;
-  findAll(dbName: string, filter?: QueryFilter<TEntity>): Promise<TEntity[]>;
+    data: DeepPartial<
+      ApplyBasicCreateCasting<Require_id<InferSchemaType<TSchema>>>
+    >
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>>>;
+  findById(
+    dbName: string,
+    id: string
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null>;
+  findOne(
+    dbName: string,
+    filter: QueryFilter<InferSchemaType<TSchema>>
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null>;
+  findAll(
+    dbName: string,
+    filter?: QueryFilter<InferSchemaType<TSchema>>
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>>[]>;
   findAllPaginated(
     dbName: string,
-    filter: QueryFilter<TEntity>,
+    filter: QueryFilter<InferSchemaType<TSchema>>,
     options: MongoPaginationOptions
-  ): Promise<PaginatedResult<TEntity>>;
+  ): Promise<PaginatedResult<HydratedDocument<InferSchemaType<TSchema>>>>;
   update(
     dbName: string,
     id: string,
-    data: UpdateQuery<TEntity>
-  ): Promise<TEntity | null>;
-  delete(dbName: string, id: string): Promise<TEntity | null>;
-  count(dbName: string, filter?: QueryFilter<TEntity>): Promise<number>;
+    data: UpdateQuery<InferSchemaType<TSchema>>
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null>;
+  delete(
+    dbName: string,
+    id: string
+  ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null>;
+  count(
+    dbName: string,
+    filter?: QueryFilter<InferSchemaType<TSchema>>
+  ): Promise<number>;
 }
-
 /**
  * DDD Repository Pattern - Infrastructure Layer
  *
@@ -55,26 +73,30 @@ export interface IRepository<TEntity> {
  * - Returns raw database results (null if not found)
  * - Service layer decides how to handle null/errors
  */
-export abstract class AbstractMongoRepository<TSchema extends Schema>
-  implements IRepository<HydratedDocument<InferSchemaType<TSchema>>>
-{
+export abstract class AbstractMongoRepository<
+  TSchema extends Schema,
+> implements IRepository<TSchema> {
   @inject(MongoDBSymbol) protected mongodb!: MongoDB;
+
   private modelCache = new Map<string, Model<InferSchemaType<TSchema>>>();
 
   constructor(
     protected schema: TSchema,
-    protected collectionName: string
+    protected collectionName: string,
+    protected options?: CompileModelOptions
   ) {}
 
   @Trace()
-  protected getCollection(dbName: string): Model<InferSchemaType<TSchema>> {
+  getCollection(dbName: string): Model<InferSchemaType<TSchema>> {
     const cacheKey = `${dbName}:${this.collectionName}`;
 
     if (!this.modelCache.has(cacheKey)) {
       const conn = this.mongodb.getRealmDb(dbName);
       const model = conn.model<InferSchemaType<TSchema>>(
         this.collectionName,
-        this.schema
+        this.schema,
+        this.collectionName,
+        this.options
       );
       this.modelCache.set(cacheKey, model);
     }
@@ -90,8 +112,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
     >
   ): Promise<HydratedDocument<InferSchemaType<TSchema>>> {
     const collection = this.getCollection(dbName);
-    const doc = await collection.create(data);
-    return doc;
+    return collection.create(data);
   }
 
   @TraceAsync()
@@ -106,7 +127,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
   @TraceAsync()
   async findOne(
     dbName: string,
-    filter: QueryFilter<HydratedDocument<InferSchemaType<TSchema>>>
+    filter: QueryFilter<InferSchemaType<TSchema>>
   ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null> {
     const collection = this.getCollection(dbName);
     return collection.findOne(filter);
@@ -115,7 +136,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
   @TraceAsync()
   async findAll(
     dbName: string,
-    filter: QueryFilter<HydratedDocument<InferSchemaType<TSchema>>> = {}
+    filter: QueryFilter<InferSchemaType<TSchema>> = {}
   ): Promise<HydratedDocument<InferSchemaType<TSchema>>[]> {
     const collection = this.getCollection(dbName);
     return collection.find(filter);
@@ -124,7 +145,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
   @TraceAsync()
   async findAllPaginated(
     dbName: string,
-    filter: QueryFilter<HydratedDocument<InferSchemaType<TSchema>>>,
+    filter: QueryFilter<InferSchemaType<TSchema>>,
     options: MongoPaginationOptions
   ): Promise<PaginatedResult<HydratedDocument<InferSchemaType<TSchema>>>> {
     const collection = this.getCollection(dbName);
@@ -150,7 +171,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
   async update(
     dbName: string,
     id: string,
-    data: UpdateQuery<HydratedDocument<InferSchemaType<TSchema>>>
+    data: UpdateQuery<InferSchemaType<TSchema>>
   ): Promise<HydratedDocument<InferSchemaType<TSchema>> | null> {
     const collection = this.getCollection(dbName);
     return collection.findByIdAndUpdate(id, data);
@@ -168,7 +189,7 @@ export abstract class AbstractMongoRepository<TSchema extends Schema>
   @TraceAsync()
   async count(
     dbName: string,
-    filter: QueryFilter<HydratedDocument<InferSchemaType<TSchema>>> = {}
+    filter: QueryFilter<InferSchemaType<TSchema>> = {}
   ): Promise<number> {
     const collection = this.getCollection(dbName);
     return collection.countDocuments(filter);
