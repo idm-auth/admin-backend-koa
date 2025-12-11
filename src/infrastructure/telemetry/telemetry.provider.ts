@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -7,10 +7,11 @@ import { Logger } from 'pino';
 import { ILifecycle } from '@/infrastructure/core/app';
 import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 import { LoggerSymbol } from '@/infrastructure/logger/logger.provider';
+import { Configuration } from '@/infrastructure/core/stereotype.decorator';
 
 export const TelemetrySymbol = Symbol.for('Telemetry');
 
-@injectable()
+@Configuration(TelemetrySymbol)
 export class Telemetry implements ILifecycle {
   private sdk: NodeSDK;
 
@@ -35,6 +36,7 @@ export class Telemetry implements ILifecycle {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async init(): Promise<void> {
     this.sdk.start();
     this.logger.info('OpenTelemetry started successfully');

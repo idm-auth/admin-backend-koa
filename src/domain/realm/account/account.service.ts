@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
 import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { AbstractService } from '@/abstract/AbstractService';
 import {
@@ -6,11 +6,12 @@ import {
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
 import { AccountEntity } from '@/domain/realm/account/account.entity';
+import { Service } from '@/infrastructure/core/stereotype.decorator';
 import bcrypt from 'bcrypt';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
-@injectable()
+@Service(AccountServiceSymbol)
 export class AccountService extends AbstractService<
   AccountEntity,
   AccountEntity,

@@ -1,4 +1,5 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
+import { Configuration } from '@/infrastructure/core/stereotype.decorator';
 import Koa from 'koa';
 import Router from '@koa/router';
 import bodyParser from 'koa-bodyparser';
@@ -10,14 +11,10 @@ import {
   Swagger,
   SwaggerSymbol,
 } from '@/infrastructure/swagger/swagger.provider';
-import {
-  SampleController,
-  SampleControllerSymbol,
-} from '@/domain/sample/sample.controller';
 
 export const KoaServerSymbol = Symbol.for('KoaServer');
 
-@injectable()
+@Configuration(KoaServerSymbol)
 export class KoaServer implements ILifecycle {
   private app: Koa;
   private router: Router;
@@ -25,13 +22,13 @@ export class KoaServer implements ILifecycle {
 
   constructor(
     @inject(EnvSymbol) private env: Env,
-    @inject(SwaggerSymbol) private swagger: Swagger,
-    @inject(SampleControllerSymbol) private sampleController: SampleController
+    @inject(SwaggerSymbol) private swagger: Swagger
   ) {
     this.app = new Koa();
     this.router = new Router();
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async init(): Promise<void> {
     this.router.get('/', (ctx) => {
       ctx.body = { status: 'ok' };
@@ -43,10 +40,9 @@ export class KoaServer implements ILifecycle {
     this.app.use(bodyParser());
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
-    this.app.use(this.sampleController.getRouter().routes());
-    this.app.use(this.sampleController.getRouter().allowedMethods());
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async listen(): Promise<void> {
     const PORT = this.env.get(EnvKey.PORT);
     this.server = this.app.listen(parseInt(PORT), () => {

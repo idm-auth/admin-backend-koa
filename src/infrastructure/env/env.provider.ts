@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { Configuration } from '@/infrastructure/core/stereotype.decorator';
 import { config } from 'dotenv';
 import path from 'path';
 import type { MongoDB } from '@/infrastructure/mongodb/mongodb.provider';
@@ -29,7 +29,7 @@ const defaults: Record<EnvKey, string> = {
   [EnvKey.SERVICE_VERSION]: '1.0.0',
 };
 
-@injectable()
+@Configuration(EnvSymbol)
 export class Env {
   private dbCache: Partial<Record<EnvKey, string>> = {};
   private mongodb?: MongoDB;

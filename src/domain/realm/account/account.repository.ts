@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import {
   AccountEntity,
   AccountSchema,
@@ -6,10 +5,11 @@ import {
 } from '@/domain/realm/account/account.entity';
 import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { AbstractMongoRepository } from '@/abstract/AbstractMongoRepository';
+import { Repository } from '@/infrastructure/core/stereotype.decorator';
 
 export const AccountRepositorySymbol = Symbol.for('AccountRepository');
 
-@injectable()
+@Repository(AccountRepositorySymbol)
 export class AccountRepository extends AbstractMongoRepository<AccountSchema> {
   constructor() {
     super(accountSchema, 'accounts');

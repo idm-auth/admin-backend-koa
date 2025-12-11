@@ -1,10 +1,10 @@
-import { inject } from 'inversify';
+import { PaginatedResult } from '@/common/pagination.dto';
 import {
   MongoDB,
   MongoDBSymbol,
 } from '@/infrastructure/mongodb/mongodb.provider';
 import { Trace, TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
-import { PaginatedResult } from '@/common/pagination.dto';
+import { inject } from 'inversify';
 import type {
   ApplyBasicCreateCasting,
   DeepPartial,
@@ -25,23 +25,24 @@ export interface MongoPaginationOptions {
   descending?: boolean;
 }
 
-/**
- * Repository contract interface
- */
 export interface IRepository<TEntity> {
-  create(dbName: string, data: Partial<TEntity>): Promise<TEntity>;
-  findById(dbName: string, id: string): Promise<TEntity | null>;
-  findOne(
+  create(
     dbName: string,
-    filter: QueryFilter<TEntity>
-  ): Promise<TEntity | null>;
+    data: DeepPartial<ApplyBasicCreateCasting<Require_id<TEntity>>>
+  ): Promise<TEntity>;
+  findById(dbName: string, id: string): Promise<TEntity | null>;
+  findOne(dbName: string, filter: QueryFilter<TEntity>): Promise<TEntity | null>;
   findAll(dbName: string, filter?: QueryFilter<TEntity>): Promise<TEntity[]>;
   findAllPaginated(
     dbName: string,
     filter: QueryFilter<TEntity>,
     options: MongoPaginationOptions
   ): Promise<PaginatedResult<TEntity>>;
-  update(dbName: string, id: string, data: Partial<TEntity>): Promise<TEntity | null>;
+  update(
+    dbName: string,
+    id: string,
+    data: UpdateQuery<TEntity>
+  ): Promise<TEntity | null>;
   delete(dbName: string, id: string): Promise<TEntity | null>;
   count(dbName: string, filter?: QueryFilter<TEntity>): Promise<number>;
 }
@@ -54,14 +55,11 @@ export interface IRepository<TEntity> {
  * - Returns raw database results (null if not found)
  * - Service layer decides how to handle null/errors
  */
-export abstract class AbstractMongoRepository<
-  TSchema extends Schema,
-> implements IRepository<HydratedDocument<InferSchemaType<TSchema>>> {
+export abstract class AbstractMongoRepository<TSchema extends Schema>
+  implements IRepository<HydratedDocument<InferSchemaType<TSchema>>>
+{
   @inject(MongoDBSymbol) protected mongodb!: MongoDB;
-  private modelCache = new Map<
-    string,
-    Model<HydratedDocument<InferSchemaType<TSchema>>>
-  >();
+  private modelCache = new Map<string, Model<InferSchemaType<TSchema>>>();
 
   constructor(
     protected schema: TSchema,
@@ -69,14 +67,12 @@ export abstract class AbstractMongoRepository<
   ) {}
 
   @Trace()
-  protected getCollection(
-    dbName: string
-  ): Model<HydratedDocument<InferSchemaType<TSchema>>> {
+  protected getCollection(dbName: string): Model<InferSchemaType<TSchema>> {
     const cacheKey = `${dbName}:${this.collectionName}`;
 
     if (!this.modelCache.has(cacheKey)) {
       const conn = this.mongodb.getRealmDb(dbName);
-      const model = conn.model<HydratedDocument<InferSchemaType<TSchema>>>(
+      const model = conn.model<InferSchemaType<TSchema>>(
         this.collectionName,
         this.schema
       );
@@ -90,9 +86,7 @@ export abstract class AbstractMongoRepository<
   async create(
     dbName: string,
     data: DeepPartial<
-      ApplyBasicCreateCasting<
-        Require_id<HydratedDocument<InferSchemaType<TSchema>>>
-      >
+      ApplyBasicCreateCasting<Require_id<InferSchemaType<TSchema>>>
     >
   ): Promise<HydratedDocument<InferSchemaType<TSchema>>> {
     const collection = this.getCollection(dbName);

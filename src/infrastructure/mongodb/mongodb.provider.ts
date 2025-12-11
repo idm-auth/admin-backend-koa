@@ -1,4 +1,5 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
+import { Configuration } from '@/infrastructure/core/stereotype.decorator';
 import mongoose, { Connection } from 'mongoose';
 import { Logger } from 'pino';
 import { ILifecycle } from '@/infrastructure/core/app';
@@ -7,7 +8,7 @@ import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 
 export const MongoDBSymbol = Symbol.for('MongoDB');
 
-@injectable()
+@Configuration(MongoDBSymbol)
 export class MongoDB implements ILifecycle {
   private connection: Connection | null = null;
 

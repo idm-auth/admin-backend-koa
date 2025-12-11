@@ -1,4 +1,5 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
+import { Configuration } from '@/infrastructure/core/stereotype.decorator';
 import { Logger } from 'pino';
 import {
   KoaServer,
@@ -28,7 +29,7 @@ export interface ILifecycle {
 
 export const AppSymbol = Symbol.for('App');
 
-@injectable()
+@Configuration(AppSymbol)
 export class App implements ILifecycle {
   constructor(
     @inject(LoggerSymbol) private logger: Logger,
