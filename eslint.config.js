@@ -1,5 +1,6 @@
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import tseslint from '@typescript-eslint/eslint-plugin';
 
 export default [
   {
@@ -13,11 +14,12 @@ export default [
       },
     },
     plugins: {
+      '@typescript-eslint': tseslint,
       prettier: eslintPluginPrettier,
     },
     rules: {
+      ...tseslint.configs['recommended-type-checked'].rules,
       ...eslintConfigPrettier.rules,
-      'prettier/prettier': 'error',
     },
   },
 ];

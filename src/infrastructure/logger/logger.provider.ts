@@ -1,11 +1,7 @@
+import { Env, EnvKey, EnvSymbol } from '@/infrastructure/env/env.provider';
 import { Container } from 'inversify';
 import pino from 'pino';
 import pinoCaller from 'pino-caller';
-import {
-  MongoDB,
-  MongoDBSymbol,
-} from '@/infrastructure/mongodb/mongodb.provider';
-import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 
 export const LoggerSymbol = Symbol.for('Logger');
 
@@ -16,21 +12,22 @@ export interface LoggerConfig {
 
 export const createLogger = async (
   container?: Container
+  // eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<pino.Logger> => {
-  let config: LoggerConfig | null = null;
+  let config: LoggerConfig | null = {};
   let env: Env | undefined;
 
   if (container) {
     try {
       env = container.get<Env>(EnvSymbol);
-      const mongodb = container.get<MongoDB>(MongoDBSymbol);
-      const dbConfig = await mongodb
-        .getCoreDb()
-        .collection('config')
-        .findOne({ key: 'logger' });
-      if (dbConfig?.value) {
-        config = dbConfig.value;
-      }
+      // const mongodb = container.get<MongoDB>(MongoDBSymbol);
+      // const dbConfig = await mongodb
+      //   .getCoreDb()
+      //   .collection('config')
+      //   .findOne({ key: 'logger' });
+      // if (dbConfig?.value) {
+      //   config = dbConfig.value;
+      // }
     } catch {
       // MongoDB não disponível, usa config padrão
     }

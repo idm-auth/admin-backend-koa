@@ -40,3 +40,10 @@
 - ALWAYS search the codebase (including old/, tests/) to confirm code is not in use
 - Use grep/search tools to find all references before removing
 - Example: `grep -r "methodName" --include="*.ts" .`
+
+
+## TypeScript Rules
+- NEVER use `any` type - defeats the purpose of TypeScript
+- ALWAYS provide proper type annotations and generics
+- Type safety is non-negotiable
+

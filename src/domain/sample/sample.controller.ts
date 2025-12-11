@@ -21,4 +21,8 @@ export class SampleController extends AbstractController<
   protected getControllerName(): string {
     return 'sample';
   }
+
+  protected getRoutePrefix(): string {
+    return '/samples';
+  }
 }

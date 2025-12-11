@@ -22,10 +22,6 @@ import {
   TelemetrySymbol,
 } from '@/infrastructure/telemetry/telemetry.provider';
 import {
-  SampleRouter,
-  SampleRouterSymbol,
-} from '@/domain/sample/sample.router';
-import {
   SampleController,
   SampleControllerSymbol,
 } from '@/domain/sample/sample.controller';
@@ -61,7 +57,6 @@ export const initializeContainer = async (): Promise<void> => {
     .bind(SampleControllerSymbol)
     .to(SampleController)
     .inSingletonScope();
-  container.bind(SampleRouterSymbol).to(SampleRouter).inSingletonScope();
   container.bind(KoaServerSymbol).to(KoaServer).inSingletonScope();
   container.bind(AppSymbol).to(App).inSingletonScope();
 

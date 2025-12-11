@@ -1,12 +1,15 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "./",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "outDir": "./dist",
     "rootDir": "./src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["src/*"]
     }

@@ -11,9 +11,9 @@ import {
   SwaggerSymbol,
 } from '@/infrastructure/swagger/swagger.provider';
 import {
-  SampleRouter,
-  SampleRouterSymbol,
-} from '@/domain/sample/sample.router';
+  SampleController,
+  SampleControllerSymbol,
+} from '@/domain/sample/sample.controller';
 
 export const KoaServerSymbol = Symbol.for('KoaServer');
 
@@ -26,7 +26,7 @@ export class KoaServer implements ILifecycle {
   constructor(
     @inject(EnvSymbol) private env: Env,
     @inject(SwaggerSymbol) private swagger: Swagger,
-    @inject(SampleRouterSymbol) private sampleRouter: SampleRouter
+    @inject(SampleControllerSymbol) private sampleController: SampleController
   ) {
     this.app = new Koa();
     this.router = new Router();
@@ -43,8 +43,8 @@ export class KoaServer implements ILifecycle {
     this.app.use(bodyParser());
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
-    this.app.use(this.sampleRouter.getRouter().routes());
-    this.app.use(this.sampleRouter.getRouter().allowedMethods());
+    this.app.use(this.sampleController.getRouter().routes());
+    this.app.use(this.sampleController.getRouter().allowedMethods());
   }
 
   async listen(): Promise<void> {

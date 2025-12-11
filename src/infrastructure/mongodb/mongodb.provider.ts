@@ -42,7 +42,7 @@ export class MongoDB implements ILifecycle {
 
     if (this.env.get(EnvKey.NODE_ENV) === 'development') {
       const openConnections = mongoose.connections.filter(
-        (c) => c.readyState === 1
+        (c) => c.readyState === mongoose.ConnectionStates.connected
       );
       this.logger.debug(
         { count: openConnections.length },
