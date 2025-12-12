@@ -9,14 +9,8 @@ const framework = new Framework();
 void (async () => {
   await framework.init(container);
 
-  const accountModule = new AccountModule();
-  accountModule.bind(container);
+  new AccountModule(container);
 
-  const controllerSymbols = [
-    accountModule.getControllerSymbol(),
-  ];
-
-  framework.register(controllerSymbols, container);
   await framework.listen();
 })();
 
