@@ -7,6 +7,7 @@ import {
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
 import { Controller } from '@/infrastructure/core/stereotype.decorator';
+import { Get, Post, Put, Delete } from '@/infrastructure/core/route.decorator';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
@@ -18,6 +19,31 @@ export class AccountController extends AbstractController<AccountSchema, Account
 
   protected getResourceType(): string {
     return 'realm.accounts';
+  }
+
+  @Post('/:tenantId')
+  async create(ctx: any): Promise<void> {
+    return super.create(ctx);
+  }
+
+  @Get('/:tenantId')
+  async findAllPaginated(ctx: any): Promise<void> {
+    return super.findAllPaginated(ctx);
+  }
+
+  @Get('/:tenantId/:id')
+  async findById(ctx: any): Promise<void> {
+    return super.findById(ctx);
+  }
+
+  @Put('/:tenantId/:id')
+  async update(ctx: any): Promise<void> {
+    return super.update(ctx);
+  }
+
+  @Delete('/:tenantId/:id')
+  async delete(ctx: any): Promise<void> {
+    return super.delete(ctx);
   }
 
   // CRUD methods inherited from AbstractController with default decorators

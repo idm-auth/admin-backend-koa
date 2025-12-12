@@ -76,15 +76,18 @@ export interface IRepository<TSchema extends Schema> {
 export abstract class AbstractMongoRepository<
   TSchema extends Schema,
 > implements IRepository<TSchema> {
-  @inject(MongoDBSymbol) protected mongodb!: MongoDB;
+  protected mongodb: MongoDB;
 
   private modelCache = new Map<string, Model<InferSchemaType<TSchema>>>();
 
   constructor(
+    mongodb: MongoDB,
     protected schema: TSchema,
     protected collectionName: string,
     protected options?: CompileModelOptions
-  ) {}
+  ) {
+    this.mongodb = mongodb;
+  }
 
   @Trace()
   getCollection(dbName: string): Model<InferSchemaType<TSchema>> {

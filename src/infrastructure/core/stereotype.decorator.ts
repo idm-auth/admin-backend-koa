@@ -11,6 +11,12 @@ export function Controller(basePath: string): ClassDecorator {
   return (target: any) => {
     injectable()(target);
     Reflect.defineMetadata(CONTROLLER_METADATA_KEY, { basePath }, target);
+
+    const container = getContainer();
+    const symbol = Symbol.for(target.name);
+    container.bind(symbol).to(target).inSingletonScope();
+
+    return target;
   };
 }
 

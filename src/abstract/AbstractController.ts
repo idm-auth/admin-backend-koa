@@ -7,7 +7,6 @@ export abstract class AbstractController<TSchema extends Schema, T extends DtoTy
   protected abstract service: IService<TSchema, T>;
   protected abstract getResourceType(): string;
 
-  // @Post('/')
   // @Authorize({ operation: 'CREATE', resource: this.getResourceType() })
   // @ValidateRequest({ params: tenantIdSchema, body: createSchema })
   // @ValidateResponse({ 201: responseSchema })
@@ -20,7 +19,6 @@ export abstract class AbstractController<TSchema extends Schema, T extends DtoTy
     ctx.body = result;
   }
 
-  // @Get('/')
   // @Authorize({ operation: 'LIST', resource: this.getResourceType() })
   // @ValidateRequest({ params: tenantIdSchema, query: paginationSchema })
   // @ValidateResponse({ 200: paginatedResponseSchema })
@@ -32,7 +30,6 @@ export abstract class AbstractController<TSchema extends Schema, T extends DtoTy
     ctx.body = result;
   }
 
-  // @Get('/:id')
   // @Authorize({ operation: 'READ', resource: this.getResourceType() })
   // @ValidateRequest({ params: tenantIdAndIdSchema })
   // @ValidateResponse({ 200: responseSchema, 404: errorSchema })
@@ -48,7 +45,6 @@ export abstract class AbstractController<TSchema extends Schema, T extends DtoTy
     ctx.body = result;
   }
 
-  // @Put('/:id')
   // @Authorize({ operation: 'UPDATE', resource: this.getResourceType() })
   // @ValidateRequest({ params: tenantIdAndIdSchema, body: updateSchema })
   // @ValidateResponse({ 200: responseSchema, 404: errorSchema })
@@ -65,7 +61,6 @@ export abstract class AbstractController<TSchema extends Schema, T extends DtoTy
     ctx.body = result;
   }
 
-  // @Delete('/:id')
   // @Authorize({ operation: 'DELETE', resource: this.getResourceType() })
   // @ValidateRequest({ params: tenantIdAndIdSchema })
   // @ValidateResponse({ 204: undefined, 404: errorSchema })

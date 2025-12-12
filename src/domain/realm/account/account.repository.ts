@@ -6,13 +6,15 @@ import {
 } from '@/domain/realm/account/account.entity';
 import { Repository } from '@/infrastructure/core/stereotype.decorator';
 import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
+import { inject } from 'inversify';
+import { MongoDB, MongoDBSymbol } from '@/infrastructure/mongodb/mongodb.provider';
 
 export const AccountRepositorySymbol = Symbol.for('AccountRepository');
 
 @Repository(AccountRepositorySymbol)
 export class AccountRepository extends AbstractMongoRepository<AccountSchema> {
-  constructor() {
-    super(accountSchema, 'accounts');
+  constructor(@inject(MongoDBSymbol) mongodb: MongoDB) {
+    super(mongodb, accountSchema, 'accounts');
   }
 
   @TraceAsync('account.repository.createAccount')
