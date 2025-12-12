@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { Configuration } from '@/infrastructure/core/stereotype.decorator';
+import { Configuration } from '@/infrastructure/core/stereotype/configuration.stereotype';
 import { Logger } from 'pino';
 import {
   KoaServer,

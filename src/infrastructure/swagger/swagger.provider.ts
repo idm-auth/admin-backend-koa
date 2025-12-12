@@ -1,4 +1,4 @@
-import { Configuration } from '@/infrastructure/core/stereotype.decorator';
+import { Configuration } from '@/infrastructure/core/stereotype/configuration.stereotype';
 import Koa from 'koa';
 import mount from 'koa-mount';
 import serve from 'koa-static';

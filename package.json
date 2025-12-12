@@ -53,6 +53,7 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "koa-inversify-framework": "file:.external/koa-inversify-framework",
     "@asteasolutions/zod-to-openapi": "^8.2.0",
     "@koa/cors": "^5.0.0",
     "@koa/router": "^15.0.0",
@@ -62,6 +63,7 @@
     "@opentelemetry/sdk-node": "^0.208.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
+    "glob": "^13.0.0",
     "inversify": "^7.10.6",
     "koa": "^3.1.1",
     "koa-bodyparser": "^4.4.1",

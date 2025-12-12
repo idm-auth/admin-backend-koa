@@ -4,7 +4,7 @@ import {
   AccountSchema,
   accountSchema,
 } from '@/domain/realm/account/account.entity';
-import { Repository } from '@/infrastructure/core/stereotype.decorator';
+import { Repository } from '@/infrastructure/core/stereotype/repository.stereotype';
 import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { inject } from 'inversify';
 import { MongoDB, MongoDBSymbol } from '@/infrastructure/mongodb/mongodb.provider';

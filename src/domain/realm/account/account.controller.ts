@@ -6,13 +6,16 @@ import {
 } from '@/domain/realm/account/account.service';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
-import { Controller } from '@/infrastructure/core/stereotype.decorator';
+import { Controller } from '@/infrastructure/core/stereotype/controller.stereotype';
 import { Get, Post, Put, Delete } from '@/infrastructure/core/route.decorator';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
-@Controller('/accounts')
-export class AccountController extends AbstractController<AccountSchema, AccountDtoTypes> {
+@Controller(AccountControllerSymbol, { basePath: '/accounts' })
+export class AccountController extends AbstractController<
+  AccountSchema,
+  AccountDtoTypes
+> {
   constructor(@inject(AccountServiceSymbol) protected service: AccountService) {
     super();
   }

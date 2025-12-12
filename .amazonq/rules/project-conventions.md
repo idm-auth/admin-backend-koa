@@ -44,6 +44,8 @@
 
 ## TypeScript Rules
 - NEVER use `any` type - defeats the purpose of TypeScript
+- NEVER use type casting (`as`) - it's the same as using `any` and means incorrect typing
+- If you need to cast, the types are wrong - fix the types instead
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
 

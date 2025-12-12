@@ -7,7 +7,7 @@ import {
   accountUpdateResponseSchema,
 } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
-import { Mapper } from '@/infrastructure/core/stereotype.decorator';
+import { Mapper } from '@/infrastructure/core/stereotype/mapper.stereotype';
 
 export const AccountMapperSymbol = Symbol.for('AccountMapper');
 

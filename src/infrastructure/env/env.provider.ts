@@ -1,4 +1,4 @@
-import { Configuration } from '@/infrastructure/core/stereotype.decorator';
+import { Configuration } from '@/infrastructure/core/stereotype/configuration.stereotype';
 import { config } from 'dotenv';
 import path from 'path';
 import type { MongoDB } from '@/infrastructure/mongodb/mongodb.provider';

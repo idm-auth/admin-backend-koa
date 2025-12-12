@@ -7,7 +7,7 @@ import { Logger } from 'pino';
 import { ILifecycle } from '@/infrastructure/core/app';
 import { Env, EnvSymbol, EnvKey } from '@/infrastructure/env/env.provider';
 import { LoggerSymbol } from '@/infrastructure/logger/logger.provider';
-import { Configuration } from '@/infrastructure/core/stereotype.decorator';
+import { Configuration } from '@/infrastructure/core/stereotype/configuration.stereotype';
 
 export const TelemetrySymbol = Symbol.for('Telemetry');
 

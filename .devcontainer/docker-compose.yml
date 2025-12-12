@@ -21,6 +21,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:consistent
       - ~/.aws:/home/dev-user/.aws:consistent
       - ../../auth-client-js:/workspace/.external/auth-client-js:consistent
+      - ../../koa-inversify-framework:/workspace/.external/koa-inversify-framework:consistent
     ports:
       - 3000:3000
       - 9090:9090

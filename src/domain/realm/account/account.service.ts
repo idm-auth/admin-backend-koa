@@ -13,7 +13,7 @@ import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
-import { Service } from '@/infrastructure/core/stereotype.decorator';
+import { Service } from '@/infrastructure/core/stereotype/service.stereotype';
 import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
