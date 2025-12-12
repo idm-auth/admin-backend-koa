@@ -1,20 +1,36 @@
+console.log('oi');
+import { glob } from 'glob';
+import { Framework } from 'koa-inversify-framework';
 import 'reflect-metadata';
-import { initializeContainer } from '@/infrastructure/core/container';
-import { getContainer } from '@/infrastructure/core/container.instance';
-import { App, AppSymbol } from '@/infrastructure/core/app';
-
+import { pathToFileURL } from 'url';
+import { getContainer } from './infrastructure/container.instance';
+const container = getContainer();
 void (async () => {
-  await initializeContainer();
-  const container = getContainer();
-  const app = container.get<App>(AppSymbol);
-  await app.init();
-  await app.listen();
+  const framework = new Framework();
+
+  await framework.init(container);
+
+  const files = await glob('src/domain/**/*.controller.ts', { absolute: true });
+  console.log('[Project] Found files:', files.length);
+
+  const modules = await Promise.all(
+    files.map((file) => {
+      console.log('[Project] Importing:', file);
+      return import(pathToFileURL(file).href);
+    })
+  );
+
+  const allSymbols = modules.flatMap((m) =>
+    Object.values(m).filter((v) => typeof v === 'symbol')
+  );
+  console.log('[Project] Found symbols:', allSymbols.length);
+
+  framework.register(allSymbols);
+  await framework.listen();
 })();
 
 const shutdown = async () => {
-  const container = getContainer();
-  const app = container.get<App>(AppSymbol);
-  await app.shutdown();
+  await framework.shutdown();
   process.exit(0);
 };
 

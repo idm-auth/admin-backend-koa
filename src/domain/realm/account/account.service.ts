@@ -1,4 +1,6 @@
-import { AbstractService } from '@/abstract/AbstractService';
+import { AbstractService } from 'koa-inversify-framework/abstract';
+import { Service } from 'koa-inversify-framework/stereotype';
+import { TraceAsync } from 'koa-inversify-framework';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import {
   Account,
@@ -13,8 +15,6 @@ import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
-import { Service } from '@/infrastructure/core/stereotype/service.stereotype';
-import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
 import type {

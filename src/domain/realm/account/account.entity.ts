@@ -1,4 +1,4 @@
-import { baseEntitySchema } from '@/common/base/base.entity';
+import { baseEntitySchema } from 'koa-inversify-framework/common/base';
 import bcrypt from 'bcrypt';
 import mongoose, {
   ApplyBasicCreateCasting,

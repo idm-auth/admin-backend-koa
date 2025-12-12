@@ -1,5 +1,5 @@
-import { DocIdSchema, emailSchema, passwordSchema } from '@/common/base.dto';
-import { DtoTypes } from '@/common/dto.types';
+import { DocIdSchema, emailSchema, passwordSchema } from 'koa-inversify-framework/common/base';
+import { DtoTypes } from 'koa-inversify-framework/common';
 import { z } from 'zod';
 
 export const accountCreateSchema = z.object({

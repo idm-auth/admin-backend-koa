@@ -1,13 +1,13 @@
 import { inject } from 'inversify';
-import { AbstractController } from '@/abstract/AbstractController';
+import { AbstractController } from 'koa-inversify-framework/abstract';
+import { Controller } from 'koa-inversify-framework/stereotype';
+import { Get, Post, Put, Delete } from 'koa-inversify-framework';
 import {
   AccountService,
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
-import { Controller } from '@/infrastructure/core/stereotype/controller.stereotype';
-import { Get, Post, Put, Delete } from '@/infrastructure/core/route.decorator';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 

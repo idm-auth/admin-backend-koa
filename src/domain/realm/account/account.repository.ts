@@ -1,13 +1,12 @@
-import { AbstractMongoRepository } from '@/abstract/AbstractMongoRepository';
+import { AbstractMongoRepository } from 'koa-inversify-framework/abstract';
+import { Repository } from 'koa-inversify-framework/stereotype';
+import { TraceAsync, MongoDB, MongoDBSymbol } from 'koa-inversify-framework';
 import {
   AccountEntity,
   AccountSchema,
   accountSchema,
 } from '@/domain/realm/account/account.entity';
-import { Repository } from '@/infrastructure/core/stereotype/repository.stereotype';
-import { TraceAsync } from '@/infrastructure/telemetry/trace.decorator';
 import { inject } from 'inversify';
-import { MongoDB, MongoDBSymbol } from '@/infrastructure/mongodb/mongodb.provider';
 
 export const AccountRepositorySymbol = Symbol.for('AccountRepository');
 

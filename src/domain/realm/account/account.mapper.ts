@@ -1,4 +1,5 @@
-import { AbstractMapper, MapperSchemas } from '@/abstract/AbstractMapper';
+import { AbstractMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
+import { Mapper } from 'koa-inversify-framework/stereotype';
 import {
   AccountDtoTypes,
   accountCreateResponseSchema,
@@ -7,7 +8,6 @@ import {
   accountUpdateResponseSchema,
 } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
-import { Mapper } from '@/infrastructure/core/stereotype/mapper.stereotype';
 
 export const AccountMapperSymbol = Symbol.for('AccountMapper');
 
