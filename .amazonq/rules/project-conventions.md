@@ -41,6 +41,13 @@
 - Use grep/search tools to find all references before removing
 - Example: `grep -r "methodName" --include="*.ts" .`
 
+## Refactoring Rules
+- After ANY refactoring or optimization, ALWAYS check for dead code and unused files
+- Search for imports of moved/changed code to ensure nothing is left behind
+- Remove unused files immediately - do not leave dead code in the codebase
+- Example: `grep -r "from '@/path/to/old/file'" --include="*.ts" src/`
+
+
 
 ## TypeScript Rules
 - NEVER use `any` type - defeats the purpose of TypeScript
@@ -48,4 +55,15 @@
 - If you need to cast, the types are wrong - fix the types instead
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
+
+## Decision Tracking Rules
+- ALWAYS track user rejections during the conversation
+- If user rejects a solution (explicitly or implicitly), NEVER suggest it again
+- When user says "I don't want X" or rejects approach X, mark it as FORBIDDEN for this session
+- Before suggesting a solution, check if it was already rejected
+- If all obvious solutions were rejected, ask user for their preferred approach
+- Rejection signals include:
+  - User explicitly says "no", "I don't want", "not that"
+  - User ignores suggestion and asks for something else
+  - User shows frustration after repeated suggestions
 

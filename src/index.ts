@@ -1,31 +1,22 @@
-console.log('oi');
-import { glob } from 'glob';
 import { Framework } from 'koa-inversify-framework';
 import 'reflect-metadata';
-import { pathToFileURL } from 'url';
 import { getContainer } from './infrastructure/container.instance';
-const container = getContainer();
-void (async () => {
-  const framework = new Framework();
+import { AccountModule } from '@/domain/realm/account/account.module';
 
+const container = getContainer();
+const framework = new Framework();
+
+void (async () => {
   await framework.init(container);
 
-  const files = await glob('src/domain/**/*.controller.ts', { absolute: true });
-  console.log('[Project] Found files:', files.length);
+  const accountModule = new AccountModule();
+  accountModule.bind(container);
 
-  const modules = await Promise.all(
-    files.map((file) => {
-      console.log('[Project] Importing:', file);
-      return import(pathToFileURL(file).href);
-    })
-  );
+  const controllerSymbols = [
+    accountModule.getControllerSymbol(),
+  ];
 
-  const allSymbols = modules.flatMap((m) =>
-    Object.values(m).filter((v) => typeof v === 'symbol')
-  );
-  console.log('[Project] Found symbols:', allSymbols.length);
-
-  framework.register(allSymbols);
+  framework.register(controllerSymbols, container);
   await framework.listen();
 })();
 
