@@ -1,5 +1,15 @@
 # Project Conventions
 
+## Framework
+- This project uses `koa-inversify-framework` developed locally at `.external/koa-inversify-framework/`
+- Framework provides: AbstractController, AbstractService, AbstractRepository, AbstractMapper, AbstractModule
+- Framework provides: @Controller, @Service, @Repository, @Mapper decorators
+- Framework provides: @Get, @Post, @Put, @Patch, @Delete, @TraceAsync decorators
+- Framework provides: MongoDB, Logger, Telemetry, Swagger, Env providers
+- Framework rules: `.external/koa-inversify-framework/.amazonq/rules/framework-conventions.md`
+- Framework usage guide: `.external/koa-inversify-framework/.doc/usage-guide.md`
+- Import from framework: `import { AbstractService } from 'koa-inversify-framework/abstract'`
+
 ## Naming Rules
 - ALWAYS use singular form: `infrastructure/`, `domain/`, `AppSymbol` (never plural)
 - DI symbols: PascalCase with `Symbol` suffix: `AppSymbol`, `KoaServerSymbol`
@@ -9,26 +19,26 @@
 - NEVER create separate `.type.ts` files - put interfaces/types in the same file as the class
 - ALWAYS export DI symbols in the same file as their class
 - Directory structure:
-  - `src/infrastructure/` - technical/framework code (Koa, DB, etc)
-  - `src/domain/` - business logic (DDD)
-- Reference: `src/infrastructure/core/app.ts`, `src/infrastructure/koa/koaServer.provider.ts`
+  - `src/infrastructure/` - application infrastructure (App, Container, custom providers)
+  - `src/domain/` - business logic (DDD modules: realm, etc)
+- Each domain module has: entity, dto, repository, mapper, service, controller, module
 
 ## Dependency Injection Rules
-- Container: Inversify
+- Container: Inversify (provided by framework)
 - Symbol format: `export const [Name]Symbol = Symbol.for('Name')`
-- ALWAYS use `@injectable()` on DI-managed classes
+- Framework decorators handle @injectable() automatically: @Controller, @Service, @Repository, @Mapper
 - ALWAYS use `@inject(Symbol)` in constructors
-- Reference: `src/infrastructure/core/app.ts`, `src/infrastructure/core/container.ts`
 
 ## Import Rules
 - ALWAYS use `@/` alias for src imports: `import { App } from '@/infrastructure/core/app'`
 - NEVER use relative paths like `../../`
 - Reference: any file in `src/`
 
-## Lifecycle Pattern
-- Infrastructure providers MUST implement `ILifecycle`
-- Reference: `src/infrastructure/core/app.ts` for interface definition
-- Reference: `src/infrastructure/koa/koaServer.provider.ts` for implementation
+## Module Pattern
+- Each domain module extends AbstractModule from framework
+- Module binds: Repository, Mapper, Service, Controller
+- Module returns controller symbol via getControllerSymbol()
+- Reference: `src/domain/realm/account/account.module.ts`
 
 ## Code Style Rules
 - Write MINIMAL code - only what's necessary
