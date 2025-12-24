@@ -1,4 +1,4 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { CreateInput } from 'koa-inversify-framework/common';
 import { ApplicationDtoTypes } from '@/domain/realm/application/application.dto';
@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 export const ApplicationServiceSymbol = Symbol.for('ApplicationService');
 
 @Service(ApplicationServiceSymbol, { multiTenant: true })
-export class ApplicationService extends AbstractService<ApplicationSchema, ApplicationDtoTypes> {
+export class ApplicationService extends AbstractCrudService<ApplicationSchema, ApplicationDtoTypes> {
   @inject(ApplicationRepositorySymbol) protected repository!: ApplicationRepository;
 
   protected buildCreateData(dto: ApplicationDtoTypes['CreateRequestDto']): CreateInput<ApplicationSchema> {

@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -17,10 +17,10 @@ export const GroupRoleControllerSymbol = Symbol.for('GroupRoleController');
   tags: ['Group Roles'],
 })
 @Controller(GroupRoleControllerSymbol, {
-  basePath: '/api/realm/:tenantId/group-roles',
+  basePath: '/api/realm/:tenantId/group-role',
   multiTenant: true,
 })
-export class GroupRoleController extends AbstractController<GroupRoleSchema, GroupRoleDtoTypes> {
+export class GroupRoleController extends AbstractCrudController<GroupRoleSchema, GroupRoleDtoTypes> {
   constructor(
     @inject(GroupRoleServiceSymbol) protected service: GroupRoleService,
     @inject(GroupRoleMapperSymbol) protected mapper: GroupRoleMapper

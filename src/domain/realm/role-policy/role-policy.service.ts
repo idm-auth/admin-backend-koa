@@ -1,4 +1,4 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { CreateInput } from 'koa-inversify-framework/common';
 import { RolePolicyDtoTypes } from '@/domain/realm/role-policy/role-policy.dto';
@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 export const RolePolicyServiceSymbol = Symbol.for('RolePolicyService');
 
 @Service(RolePolicyServiceSymbol, { multiTenant: true })
-export class RolePolicyService extends AbstractService<RolePolicySchema, RolePolicyDtoTypes> {
+export class RolePolicyService extends AbstractCrudService<RolePolicySchema, RolePolicyDtoTypes> {
   @inject(RolePolicyRepositorySymbol) protected repository!: RolePolicyRepository;
 
   protected buildCreateData(dto: RolePolicyDtoTypes['CreateRequestDto']): CreateInput<RolePolicySchema> {

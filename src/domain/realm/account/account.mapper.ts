@@ -1,4 +1,4 @@
-import { AbstractMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
+import { AbstractCrudMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
 import { Mapper } from 'koa-inversify-framework/stereotype';
 import {
   AccountDtoTypes,
@@ -12,7 +12,7 @@ import { AccountSchema } from '@/domain/realm/account/account.entity';
 export const AccountMapperSymbol = Symbol.for('AccountMapper');
 
 @Mapper(AccountMapperSymbol)
-export class AccountMapper extends AbstractMapper<
+export class AccountMapper extends AbstractCrudMapper<
   AccountSchema,
   AccountDtoTypes
 > {

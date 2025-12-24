@@ -1,4 +1,4 @@
-import { AbstractMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
+import { AbstractCrudMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
 import { Mapper } from 'koa-inversify-framework/stereotype';
 import { AccountGroupDtoTypes, accountGroupBaseResponseSchema } from '@/domain/realm/account-group/account-group.dto';
 import { AccountGroupSchema } from '@/domain/realm/account-group/account-group.entity';
@@ -6,7 +6,7 @@ import { AccountGroupSchema } from '@/domain/realm/account-group/account-group.e
 export const AccountGroupMapperSymbol = Symbol.for('AccountGroupMapper');
 
 @Mapper(AccountGroupMapperSymbol)
-export class AccountGroupMapper extends AbstractMapper<AccountGroupSchema, AccountGroupDtoTypes> {
+export class AccountGroupMapper extends AbstractCrudMapper<AccountGroupSchema, AccountGroupDtoTypes> {
   constructor() {
     const schemas: MapperSchemas<AccountGroupDtoTypes> = {
       createResponseSchema: accountGroupBaseResponseSchema,

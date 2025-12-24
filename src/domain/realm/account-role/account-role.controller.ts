@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -17,10 +17,10 @@ export const AccountRoleControllerSymbol = Symbol.for('AccountRoleController');
   tags: ['Account Roles'],
 })
 @Controller(AccountRoleControllerSymbol, {
-  basePath: '/api/realm/:tenantId/account-roles',
+  basePath: '/api/realm/:tenantId/account-role',
   multiTenant: true,
 })
-export class AccountRoleController extends AbstractController<AccountRoleSchema, AccountRoleDtoTypes> {
+export class AccountRoleController extends AbstractCrudController<AccountRoleSchema, AccountRoleDtoTypes> {
   constructor(
     @inject(AccountRoleServiceSymbol) protected service: AccountRoleService,
     @inject(AccountRoleMapperSymbol) protected mapper: AccountRoleMapper

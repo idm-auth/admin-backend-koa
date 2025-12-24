@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -17,10 +17,10 @@ export const PolicyControllerSymbol = Symbol.for('PolicyController');
   tags: ['Policies'],
 })
 @Controller(PolicyControllerSymbol, {
-  basePath: '/api/realm/:tenantId/policies',
+  basePath: '/api/realm/:tenantId/policy',
   multiTenant: true,
 })
-export class PolicyController extends AbstractController<PolicySchema, PolicyDtoTypes> {
+export class PolicyController extends AbstractCrudController<PolicySchema, PolicyDtoTypes> {
   constructor(
     @inject(PolicyServiceSymbol) protected service: PolicyService,
     @inject(PolicyMapperSymbol) protected mapper: PolicyMapper

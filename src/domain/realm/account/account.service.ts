@@ -1,4 +1,4 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { CreateInput } from 'koa-inversify-framework/common';
@@ -18,7 +18,7 @@ import { ConflictError, NotFoundError, ValidationError } from 'koa-inversify-fra
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
 @Service(AccountServiceSymbol, { multiTenant: true })
-export class AccountService extends AbstractService<
+export class AccountService extends AbstractCrudService<
   AccountSchema,
   AccountDtoTypes
 > {
@@ -49,7 +49,7 @@ export class AccountService extends AbstractService<
   }
 
   @TraceAsync('account.service.findByEmail')
-  async findByEmail(email: string): Promise<AccountEntity | null> {
+  async findByEmail(email: string): Promise<AccountEntity> {
     this.log.debug({ email }, 'Finding by email');
     return this.repository.findByEmail(email);
   }
@@ -65,9 +65,14 @@ export class AccountService extends AbstractService<
 
   @TraceAsync('account.service.validateEmailUnique')
   async validateEmailUnique(email: string): Promise<void> {
-    const existing = await this.findByEmail(email);
-    if (existing) {
+    try {
+      await this.findByEmail(email);
       throw new ConflictError('Email already exists');
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return;
+      }
+      throw error;
     }
   }
 
@@ -117,9 +122,9 @@ export class AccountService extends AbstractService<
     }
     const emailToRemove = account.emails.find((e) => e.email === email);
     if (!emailToRemove) {
-      throw new NotFoundError('Email not found in this account');
+      throw new NotFoundError('Email', email);
     }
-    account.emails.pull(emailToRemove);
+    account.emails = account.emails.filter((e) => e.email !== email);
     return account.save();
   }
 
@@ -129,7 +134,7 @@ export class AccountService extends AbstractService<
     const account = await this.findById(id);
     const emailExists = account.emails.some((e) => e.email === email);
     if (!emailExists) {
-      throw new NotFoundError('Email not found in this account');
+      throw new NotFoundError('Email', email);
     }
     account.emails.forEach((e) => {
       e.isPrimary = e.email === email;

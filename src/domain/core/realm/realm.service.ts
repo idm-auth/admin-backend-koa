@@ -1,4 +1,4 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { CreateInput } from 'koa-inversify-framework/common';
 import { RealmDtoTypes } from '@/domain/core/realm/realm.dto';
@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 export const RealmServiceSymbol = Symbol.for('RealmService');
 
 @Service(RealmServiceSymbol)
-export class RealmService extends AbstractService<RealmSchema, RealmDtoTypes> {
+export class RealmService extends AbstractCrudService<RealmSchema, RealmDtoTypes> {
   @inject(RealmRepositorySymbol) protected repository!: RealmRepository;
 
   protected buildCreateData(
@@ -39,12 +39,12 @@ export class RealmService extends AbstractService<RealmSchema, RealmDtoTypes> {
     return entity;
   }
 
-  async findByPublicUUID(publicUUID: string): Promise<RealmEntity | null> {
+  async findByPublicUUID(publicUUID: string): Promise<RealmEntity> {
     this.log.debug({ publicUUID }, 'Finding by publicUUID');
     return this.repository.findByPublicUUID(publicUUID);
   }
 
-  async findByName(name: string): Promise<RealmEntity | null> {
+  async findByName(name: string): Promise<RealmEntity> {
     this.log.debug({ name }, 'Finding by name');
     return this.repository.findByName(name);
   }

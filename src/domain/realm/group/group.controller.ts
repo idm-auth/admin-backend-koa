@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -17,10 +17,10 @@ export const GroupControllerSymbol = Symbol.for('GroupController');
   tags: ['Groups'],
 })
 @Controller(GroupControllerSymbol, {
-  basePath: '/api/realm/:tenantId/groups',
+  basePath: '/api/realm/:tenantId/group',
   multiTenant: true,
 })
-export class GroupController extends AbstractController<GroupSchema, GroupDtoTypes> {
+export class GroupController extends AbstractCrudController<GroupSchema, GroupDtoTypes> {
   constructor(
     @inject(GroupServiceSymbol) protected service: GroupService,
     @inject(GroupMapperSymbol) protected mapper: GroupMapper

@@ -1,20 +1,20 @@
-import { AbstractMongoRepository } from 'koa-inversify-framework/abstract';
+import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
 import { Repository } from 'koa-inversify-framework/stereotype';
 import { RealmSchema, realmSchema, RealmEntity } from '@/domain/core/realm/realm.entity';
 
 export const RealmRepositorySymbol = Symbol.for('RealmRepository');
 
 @Repository(RealmRepositorySymbol)
-export class RealmRepository extends AbstractMongoRepository<RealmSchema> {
+export class RealmRepository extends AbstractCrudMongoRepository<RealmSchema> {
   constructor() {
     super(realmSchema, 'realm');
   }
 
-  async findByPublicUUID(publicUUID: string): Promise<RealmEntity | null> {
+  async findByPublicUUID(publicUUID: string): Promise<RealmEntity> {
     return this.findOne({ publicUUID });
   }
 
-  async findByName(name: string): Promise<RealmEntity | null> {
+  async findByName(name: string): Promise<RealmEntity> {
     return this.findOne({ name });
   }
 }

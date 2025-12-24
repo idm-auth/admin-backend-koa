@@ -1,11 +1,11 @@
-import { AbstractMongoRepository } from 'koa-inversify-framework/abstract';
+import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
 import { Repository } from 'koa-inversify-framework/stereotype';
 import { AccountRoleSchema, accountRoleSchema } from '@/domain/realm/account-role/account-role.entity';
 
 export const AccountRoleRepositorySymbol = Symbol.for('AccountRoleRepository');
 
 @Repository(AccountRoleRepositorySymbol, { multiTenant: true })
-export class AccountRoleRepository extends AbstractMongoRepository<AccountRoleSchema> {
+export class AccountRoleRepository extends AbstractCrudMongoRepository<AccountRoleSchema> {
   constructor() {
     super(accountRoleSchema, 'account-roles');
   }

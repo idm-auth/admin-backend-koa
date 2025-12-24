@@ -1,13 +1,32 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
 import { commonErrorResponses } from 'koa-inversify-framework/common';
 import { RequestParamsIdSchema } from 'koa-inversify-framework/common';
 import { Context } from 'koa';
-import { RealmService, RealmServiceSymbol } from '@/domain/core/realm/realm.service';
-import { RealmMapper, RealmMapperSymbol } from '@/domain/core/realm/realm.mapper';
-import { RealmDtoTypes, realmCreateSchema, realmUpdateSchema, realmFullResponseSchema } from '@/domain/core/realm/realm.dto';
+import {
+  RealmService,
+  RealmServiceSymbol,
+} from '@/domain/core/realm/realm.service';
+import {
+  RealmMapper,
+  RealmMapperSymbol,
+} from '@/domain/core/realm/realm.mapper';
+import {
+  RealmDtoTypes,
+  realmCreateSchema,
+  realmUpdateSchema,
+  realmFullResponseSchema,
+} from '@/domain/core/realm/realm.dto';
 import { RealmSchema } from '@/domain/core/realm/realm.entity';
 
 export const RealmControllerSymbol = Symbol.for('RealmController');
@@ -17,8 +36,8 @@ export const RealmControllerSymbol = Symbol.for('RealmController');
   description: 'Realm management',
   tags: ['Realm'],
 })
-@Controller(RealmControllerSymbol, { basePath: '/api/realm' })
-export class RealmController extends AbstractController<
+@Controller(RealmControllerSymbol, { basePath: '/api/core/realm' })
+export class RealmController extends AbstractCrudController<
   RealmSchema,
   RealmDtoTypes
 > {
@@ -62,7 +81,11 @@ export class RealmController extends AbstractController<
   })
   @ZodValidateRequest({ body: realmCreateSchema })
   @Post('/')
-  async create(ctx: Context & { request: { body: { name: string; dbName: string; description?: string } } }): Promise<void> {
+  async create(
+    ctx: Context & {
+      request: { body: { name: string; dbName: string; description?: string } };
+    }
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -139,9 +162,17 @@ export class RealmController extends AbstractController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdSchema, body: realmUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdSchema,
+    body: realmUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: Context & { params: { id: string }; request: { body: { name?: string; description?: string } } }): Promise<void> {
+  async update(
+    ctx: Context & {
+      params: { id: string };
+      request: { body: { name?: string; description?: string } };
+    }
+  ): Promise<void> {
     return super.update(ctx);
   }
 

@@ -73,6 +73,45 @@
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
 
+## Error Handling Pattern (Framework Convention)
+- **Fail Fast Philosophy**: Throw exceptions immediately when problems occur - NEVER hide issues by returning `null`
+- Repository methods THROW exceptions when data is not found (NotFoundError)
+- NEVER return `null` or `undefined` from repository methods - this hides the problem and pushes error handling to callers
+- Return types are `Promise<Entity>`, NOT `Promise<Entity | null>`
+- Service/Controller layers catch and handle exceptions appropriately
+- **Why fail fast?**
+  - Makes bugs visible immediately instead of causing silent failures downstream
+  - Forces explicit error handling at the right layer (service/controller)
+  - Prevents null checks scattered throughout the codebase
+  - TypeScript types accurately reflect reality (no optional chaining needed)
+- Custom repository methods MUST follow this pattern:
+  ```typescript
+  // ✅ CORRECT - throws NotFoundError if not found (fail fast)
+  async findByEmail(email: string): Promise<Entity> {
+    return this.findOne({ email }); // throws if not found
+  }
+  
+  // ❌ WRONG - returns null (hides the problem)
+  async findByEmail(email: string): Promise<Entity | null> {
+    return this.findOne({ email }) ?? null;
+  }
+  ```
+- When you need to check if entity exists without throwing:
+  ```typescript
+  // Use try/catch in service layer to handle the exception explicitly
+  async validateEmailUnique(email: string): Promise<void> {
+    try {
+      await this.findByEmail(email);
+      throw new ConflictError('Email already exists');
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return; // Email is unique - this is the expected case
+      }
+      throw error; // Re-throw other errors
+    }
+  }
+  ```
+
 ## Koa Context Typing
 - NEVER cast `ctx.params`, `ctx.state`, or `ctx.request.body`
 - ALWAYS extend Context inline with intersection types:

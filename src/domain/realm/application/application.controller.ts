@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -17,10 +17,10 @@ export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
   tags: ['Applications'],
 })
 @Controller(ApplicationControllerSymbol, {
-  basePath: '/api/realm/:tenantId/applications',
+  basePath: '/api/realm/:tenantId/application',
   multiTenant: true,
 })
-export class ApplicationController extends AbstractController<ApplicationSchema, ApplicationDtoTypes> {
+export class ApplicationController extends AbstractCrudController<ApplicationSchema, ApplicationDtoTypes> {
   constructor(
     @inject(ApplicationServiceSymbol) protected service: ApplicationService,
     @inject(ApplicationMapperSymbol) protected mapper: ApplicationMapper

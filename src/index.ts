@@ -4,8 +4,8 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 import { RealmTenantResolver } from '@/infrastructure/tenant/realmTenantResolver.provider';
-import { RealmModule } from '@/domain/core/realm/realm.module';
-import { AccountModule } from '@/domain/realm/account/account.module';
+import { initCoreModules } from '@/domain/core';
+import { initRealmModules } from '@/domain/realm';
 
 const container = new Container();
 const registry = new OpenAPIRegistry();
@@ -21,8 +21,8 @@ void (async () => {
 
   await framework.init();
 
-  new RealmModule(container);
-  new AccountModule(container);
+  await initCoreModules(container);
+  await initRealmModules(container);
 
   await framework.listen();
 })();

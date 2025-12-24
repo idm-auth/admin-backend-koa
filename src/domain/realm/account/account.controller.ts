@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, Patch, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
@@ -23,10 +23,10 @@ export const AccountControllerSymbol = Symbol.for('AccountController');
   tags: ['Accounts'],
 })
 @Controller(AccountControllerSymbol, {
-  basePath: '/api/realm/:tenantId/accounts',
+  basePath: '/api/realm/:tenantId/account',
   multiTenant: true,
 })
-export class AccountController extends AbstractController<
+export class AccountController extends AbstractCrudController<
   AccountSchema,
   AccountDtoTypes
 > {
@@ -214,7 +214,7 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { password } = ctx.request.body;
     const account = await this.service.resetPassword(id, password);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
   @SwaggerDoc({
@@ -251,7 +251,7 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { currentPassword, newPassword } = ctx.request.body;
     const account = await this.service.updatePassword(id, currentPassword, newPassword);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
   @SwaggerDoc({
@@ -289,7 +289,7 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.addEmail(id, email);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
   @SwaggerDoc({
@@ -326,7 +326,7 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.removeEmail(id, email);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
   @SwaggerDoc({
@@ -363,7 +363,7 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.setPrimaryEmail(id, email);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
   @SwaggerDoc({
@@ -400,6 +400,6 @@ export class AccountController extends AbstractController<
     const { id } = ctx.params;
     const { isActive } = ctx.request.body;
     const account = await this.service.setActiveStatus(id, isActive);
-    ctx.body = this.mapper.toUpdateResponse(account);
+    ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 }
