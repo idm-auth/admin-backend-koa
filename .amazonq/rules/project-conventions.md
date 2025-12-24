@@ -1,5 +1,14 @@
 # Project Conventions
 
+## Project Phase: Foundation/Construction
+- Project is NOT in production - it's being built from scratch
+- Breaking changes are EXPECTED and ENCOURAGED when they improve architecture
+- Refactoring is part of the process - embrace it
+- When finding architectural flaws, FIX them completely, don't work around them
+- ALWAYS prioritize correctness over backward compatibility
+- ALWAYS suggest the architecturally correct solution, even if it requires refactoring
+- NEVER be defensive about breaking changes - the project is small and designed for this
+
 ## Framework
 - This project uses `koa-inversify-framework` developed locally at `.external/koa-inversify-framework/`
 - Framework provides: AbstractController, AbstractService, AbstractRepository, AbstractMapper, AbstractModule
@@ -57,14 +66,33 @@
 - Remove unused files immediately - do not leave dead code in the codebase
 - Example: `grep -r "from '@/path/to/old/file'" --include="*.ts" src/`
 
-
-
 ## TypeScript Rules
 - NEVER use `any` type - defeats the purpose of TypeScript
 - NEVER use type casting (`as`) - it's the same as using `any` and means incorrect typing
 - If you need to cast, the types are wrong - fix the types instead
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
+
+## Koa Context Typing
+- NEVER cast `ctx.params`, `ctx.state`, or `ctx.request.body`
+- ALWAYS extend Context inline with intersection types:
+  ```typescript
+  async (ctx: Context & { params: { id: string } }, next: Next) => {
+    const id = ctx.params.id; // Type-safe!
+  }
+  ```
+- Use optional properties when parameter may not exist:
+  ```typescript
+  ctx: Context & { params: { tenantId?: string } }
+  ```
+
+## Problem Solving Rules
+- NEVER remove functionality when encountering errors - ALWAYS investigate and fix properly
+- When something doesn't work, research the correct solution (check documentation, examples, types)
+- Removing features is NOT a solution - it's avoiding the problem
+- If unsure about the correct approach, ask for clarification before implementing
+- ALWAYS present the solution plan BEFORE implementing, especially when creating new files or making architectural changes
+- Wait for user confirmation before proceeding with file creation or major refactoring
 
 ## Decision Tracking Rules
 - ALWAYS track user rejections during the conversation

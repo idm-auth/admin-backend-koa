@@ -22,6 +22,10 @@ services:
       - ~/.aws:/home/dev-user/.aws:consistent
       - ../../auth-client-js:/workspace/.external/auth-client-js:consistent
       - ../../koa-inversify-framework:/workspace/.external/koa-inversify-framework:consistent
+      - ../../node_modules/backend-koa/koa-inversify-framework:/workspace/.external/koa-inversify-framework/node_modules:consistent
+      - ../../node_modules/backend-koa/auth-client-js:/workspace/.external/auth-client-js/node_modules:consistent
+      - ../../auth-client-js:/workspace/.external/koa-inversify-framework/.external/auth-client-js:consistent
+      - ../../node_modules/backend-koa/auth-client-js:/workspace/.external/koa-inversify-framework/.external/auth-client-js/node_modules:consistent
     ports:
       - 3000:3000
       - 9090:9090

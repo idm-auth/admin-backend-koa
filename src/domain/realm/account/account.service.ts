@@ -1,46 +1,32 @@
 import { AbstractService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework';
+import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { CreateInput } from 'koa-inversify-framework/common';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import {
-  Account,
   AccountEntity,
   AccountSchema,
 } from '@/domain/realm/account/account.entity';
-import {
-  AccountMapper,
-  AccountMapperSymbol,
-} from '@/domain/realm/account/account.mapper';
 import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
-import type {
-  ApplyBasicCreateCasting,
-  DeepPartial,
-  Require_id,
-  UpdateQuery,
-} from 'mongoose';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
-@Service(AccountServiceSymbol)
+@Service(AccountServiceSymbol, { multiTenant: true })
 export class AccountService extends AbstractService<
   AccountSchema,
   AccountDtoTypes
 > {
   @inject(AccountRepositorySymbol) protected repository!: AccountRepository;
-  @inject(AccountMapperSymbol) protected mapper!: AccountMapper;
-
-  protected getServiceName(): string {
-    return 'account';
-  }
 
   protected buildCreateData(
     dto: AccountDtoTypes['CreateRequestDto']
-  ): DeepPartial<ApplyBasicCreateCasting<Require_id<Account>>> {
+  ): CreateInput<AccountSchema> {
+    this.log.debug({ dto }, 'Building create data');
     return {
       emails: [{ email: dto.email, isPrimary: true }],
       password: dto.password,
@@ -48,18 +34,19 @@ export class AccountService extends AbstractService<
     };
   }
 
-  protected buildUpdateQuery(
-    data: AccountDtoTypes['UpdateRequestDto']
-  ): UpdateQuery<Account> {
-    return { $set: data };
+  protected buildUpdate(
+    entity: AccountEntity,
+    dto: AccountDtoTypes['UpdateRequestDto']
+  ): AccountEntity {
+    this.log.debug({ id: entity._id, dto }, 'Building update');
+    if (dto.isActive !== undefined) entity.isActive = dto.isActive;
+    return entity;
   }
 
   @TraceAsync('account.service.findByEmail')
-  async findByEmail(
-    dbName: string,
-    email: string
-  ): Promise<AccountEntity | null> {
-    return this.repository.findByEmail(dbName, email);
+  async findByEmail(email: string): Promise<AccountEntity | null> {
+    this.log.debug({ email }, 'Finding by email');
+    return this.repository.findByEmail(email);
   }
 
   @TraceAsync('account.service.comparePassword')
@@ -67,6 +54,7 @@ export class AccountService extends AbstractService<
     account: AccountEntity,
     password: string
   ): Promise<boolean> {
+    this.log.debug({ accountId: account._id }, 'Comparing password');
     return bcrypt.compare(password, account.password);
   }
 }

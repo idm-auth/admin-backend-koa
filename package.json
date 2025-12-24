@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "koa-inversify-framework": "file:.external/koa-inversify-framework",
+    "@idm-auth/client": "file:.external/auth-client-js",
     "bcrypt": "^6.0.0",
     "glob": "^13.0.0",
     "inversify": "^7.10.6",

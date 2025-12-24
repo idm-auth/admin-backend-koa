@@ -23,7 +23,7 @@ export class AccountMapper extends AbstractMapper<
       findOneResponseSchema: accountReadResponseSchema,
       updateResponseSchema: accountUpdateResponseSchema,
       deleteResponseSchema: accountReadResponseSchema,
-      paginatedResponseSchema: accountListItemResponseSchema,
+      paginatedItemSchema: accountListItemResponseSchema,
     };
     super(schemas);
   }

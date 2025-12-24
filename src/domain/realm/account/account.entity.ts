@@ -1,12 +1,6 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common/base';
+import { baseEntitySchema } from 'koa-inversify-framework/common';
 import bcrypt from 'bcrypt';
-import mongoose, {
-  ApplyBasicCreateCasting,
-  DeepPartial,
-  HydratedDocument,
-  InferSchemaType,
-  Require_id,
-} from 'mongoose';
+import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type Account = {
   isActive: boolean;
@@ -44,15 +38,4 @@ accountSchema.pre('save', async function () {
 });
 
 export type AccountSchema = typeof accountSchema;
-export type AccountMongoose = InferSchemaType<typeof accountSchema>;
-export type AccountEntity = HydratedDocument<
-  InferSchemaType<typeof accountSchema>
->;
-// export type AccountEntity = Document & BaseEntity & AccountMongoose;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const x: DeepPartial<ApplyBasicCreateCasting<Require_id<Account>>> = {
-  emails: [{ email: 'dto.email', isPrimary: true }],
-  password: 'dto.password',
-  isActive: true,
-};
+export type AccountEntity = HydratedDocument<InferSchemaType<typeof accountSchema>>;

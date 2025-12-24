@@ -1,22 +1,39 @@
 import { inject } from 'inversify';
 import { AbstractController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete } from 'koa-inversify-framework';
+import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
+import { Context } from 'koa';
 import {
   AccountService,
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
-import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
+import {
+  AccountMapper,
+  AccountMapperSymbol,
+} from '@/domain/realm/account/account.mapper';
+import { AccountDtoTypes, accountCreateSchema, accountUpdateSchema, accountBaseResponseSchema } from '@/domain/realm/account/account.dto';
 import { AccountSchema } from '@/domain/realm/account/account.entity';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
-@Controller(AccountControllerSymbol, { basePath: '/accounts' })
+@SwaggerDocController({
+  name: 'Accounts',
+  description: 'Account management',
+  tags: ['Accounts'],
+})
+@Controller(AccountControllerSymbol, {
+  basePath: '/api/realm/:tenantId/accounts',
+  multiTenant: true,
+})
 export class AccountController extends AbstractController<
   AccountSchema,
   AccountDtoTypes
 > {
-  constructor(@inject(AccountServiceSymbol) protected service: AccountService) {
+  constructor(
+    @inject(AccountServiceSymbol) protected service: AccountService,
+    @inject(AccountMapperSymbol) protected mapper: AccountMapper
+  ) {
     super();
   }
 
@@ -24,127 +41,142 @@ export class AccountController extends AbstractController<
     return 'realm.accounts';
   }
 
-  @Post('/:tenantId')
-  async create(ctx: any): Promise<void> {
+  @SwaggerDoc({
+    summary: 'Create account',
+    description: 'Creates a new account',
+    tags: ['Accounts'],
+    request: {
+      params: RequestParamsTenantIdSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountCreateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      201: {
+        description: 'Account created successfully',
+        content: {
+          'application/json': {
+            schema: accountBaseResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      409: commonErrorResponses[409],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountCreateSchema })
+  @Post('/')
+  async create(ctx: Context & { request: { body: { email: string; password: string } } }): Promise<void> {
     return super.create(ctx);
   }
 
-  @Get('/:tenantId')
-  async findAllPaginated(ctx: any): Promise<void> {
+  @SwaggerDoc({
+    summary: 'List accounts',
+    description: 'Returns paginated list of accounts',
+    tags: ['Accounts'],
+    request: {
+      params: RequestParamsTenantIdSchema,
+    },
+    responses: {
+      200: {
+        description: 'Paginated list of accounts',
+      },
+      400: commonErrorResponses[400],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsTenantIdSchema })
+  @Get('/')
+  async findAllPaginated(ctx: Context): Promise<void> {
     return super.findAllPaginated(ctx);
   }
 
-  @Get('/:tenantId/:id')
-  async findById(ctx: any): Promise<void> {
+  @SwaggerDoc({
+    summary: 'Get account by ID',
+    description: 'Returns a single account',
+    tags: ['Accounts'],
+    request: {
+      params: RequestParamsIdAndTenantIdSchema,
+    },
+    responses: {
+      200: {
+        description: 'Account found',
+        content: {
+          'application/json': {
+            schema: accountBaseResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      404: commonErrorResponses[404],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
+  @Get('/:id')
+  async findById(ctx: Context & { params: { id: string; tenantId?: string } }): Promise<void> {
     return super.findById(ctx);
   }
 
-  @Put('/:tenantId/:id')
-  async update(ctx: any): Promise<void> {
+  @SwaggerDoc({
+    summary: 'Update account',
+    description: 'Updates an existing account',
+    tags: ['Accounts'],
+    request: {
+      params: RequestParamsIdAndTenantIdSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: accountUpdateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Account updated successfully',
+        content: {
+          'application/json': {
+            schema: accountBaseResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      404: commonErrorResponses[404],
+      409: commonErrorResponses[409],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountUpdateSchema })
+  @Put('/:id')
+  async update(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { isActive?: boolean } } }): Promise<void> {
     return super.update(ctx);
   }
 
-  @Delete('/:tenantId/:id')
-  async delete(ctx: any): Promise<void> {
+  @SwaggerDoc({
+    summary: 'Delete account',
+    description: 'Deletes an account',
+    tags: ['Accounts'],
+    request: {
+      params: RequestParamsIdAndTenantIdSchema,
+    },
+    responses: {
+      200: {
+        description: 'Account deleted successfully',
+      },
+      400: commonErrorResponses[400],
+      404: commonErrorResponses[404],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
+  @Delete('/:id')
+  async delete(ctx: Context & { params: { id: string; tenantId?: string } }): Promise<void> {
     return super.delete(ctx);
   }
-
-  // CRUD methods inherited from AbstractController with default decorators
-
-  // Custom methods specific to Account (commented out for now, focus on CRUD first)
-
-  /*
-  // @Get('/email/:email')
-  // @Authorize({ operation: 'READ', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndEmailSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 404: errorSchema })
-  // @SwaggerDoc({ summary: 'Find account by email', tags: ['Accounts'] })
-  async findByEmail(ctx: Context): Promise<void> {
-    const { tenantId, email } = ctx.params;
-    const result = await this.service.findByEmail(tenantId, email);
-    if (!result) {
-      ctx.status = 404;
-      ctx.body = { error: 'Account not found' };
-      return;
-    }
-    ctx.body = result;
-  }
-
-  // @Post('/:id/email')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: addEmailSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 400: errorSchema })
-  // @SwaggerDoc({ summary: 'Add email to account', tags: ['Accounts'] })
-  async addEmail(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { email } = ctx.request.body;
-    const result = await this.service.addEmail(tenantId, id, email);
-    ctx.body = result;
-  }
-
-  // @Post('/:id/email/remove')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: removeEmailSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 400: errorSchema })
-  // @SwaggerDoc({ summary: 'Remove email from account', tags: ['Accounts'] })
-  async removeEmail(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { email } = ctx.request.body;
-    const result = await this.service.removeEmail(tenantId, id, email);
-    ctx.body = result;
-  }
-
-  // @Patch('/:id/email/primary')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: setPrimaryEmailSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 404: errorSchema })
-  // @SwaggerDoc({ summary: 'Set primary email', tags: ['Accounts'] })
-  async setPrimaryEmail(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { email } = ctx.request.body;
-    const result = await this.service.setPrimaryEmail(tenantId, id, email);
-    ctx.body = result;
-  }
-
-  // @Patch('/:id/reset-password')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: resetPasswordSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 404: errorSchema })
-  // @SwaggerDoc({ summary: 'Reset account password', tags: ['Accounts'] })
-  async resetPassword(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { password } = ctx.request.body;
-    const result = await this.service.resetPassword(tenantId, id, password);
-    ctx.body = result;
-  }
-
-  // @Patch('/:id/update-password')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: updatePasswordSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 400: errorSchema, 404: errorSchema })
-  // @SwaggerDoc({ summary: 'Update account password', tags: ['Accounts'] })
-  async updatePassword(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { currentPassword, newPassword } = ctx.request.body;
-    const result = await this.service.updatePassword(
-      tenantId,
-      id,
-      currentPassword,
-      newPassword
-    );
-    ctx.body = result;
-  }
-
-  // @Patch('/:id/active-status')
-  // @Authorize({ operation: 'UPDATE', resource: 'realm.accounts' })
-  // @ValidateRequest({ params: tenantIdAndIdSchema, body: setActiveStatusSchema })
-  // @ValidateResponse({ 200: accountResponseSchema, 404: errorSchema })
-  // @SwaggerDoc({ summary: 'Set account active status', tags: ['Accounts'] })
-  async setActiveStatus(ctx: Context): Promise<void> {
-    const { tenantId, id } = ctx.params;
-    const { isActive } = ctx.request.body;
-    const result = await this.service.setActiveStatus(tenantId, id, isActive);
-    ctx.body = result;
-  }
-  */
 }

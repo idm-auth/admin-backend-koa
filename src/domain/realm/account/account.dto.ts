@@ -1,6 +1,8 @@
-import { DocIdSchema, emailSchema, passwordSchema } from 'koa-inversify-framework/common/base';
-import { DtoTypes } from 'koa-inversify-framework/common';
+import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
 import { z } from 'zod';
+
+const emailSchema = z.string().email();
+const passwordSchema = z.string().min(8);
 
 export const accountCreateSchema = z.object({
   email: emailSchema,
@@ -48,5 +50,5 @@ export interface AccountDtoTypes extends DtoTypes {
   UpdateRequestDto: AccountUpdate;
   UpdateResponseDto: AccountUpdateResponse;
   DeleteResponseDto: AccountReadResponse;
-  PaginatedResponseDto: AccountListItemResponse;
+  PaginatedItemDto: AccountListItemResponse;
 }
