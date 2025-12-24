@@ -1,0 +1,30 @@
+import { AbstractService } from 'koa-inversify-framework/abstract';
+import { Service } from 'koa-inversify-framework/stereotype';
+import { CreateInput } from 'koa-inversify-framework/common';
+import { ApplicationDtoTypes } from '@/domain/realm/application/application.dto';
+import { ApplicationEntity, ApplicationSchema } from '@/domain/realm/application/application.entity';
+import { ApplicationRepository, ApplicationRepositorySymbol } from '@/domain/realm/application/application.repository';
+import { inject } from 'inversify';
+
+export const ApplicationServiceSymbol = Symbol.for('ApplicationService');
+
+@Service(ApplicationServiceSymbol, { multiTenant: true })
+export class ApplicationService extends AbstractService<ApplicationSchema, ApplicationDtoTypes> {
+  @inject(ApplicationRepositorySymbol) protected repository!: ApplicationRepository;
+
+  protected buildCreateData(dto: ApplicationDtoTypes['CreateRequestDto']): CreateInput<ApplicationSchema> {
+    return {
+      name: dto.name,
+      systemId: dto.systemId,
+      availableActions: dto.availableActions,
+      isActive: true,
+    };
+  }
+
+  protected buildUpdate(entity: ApplicationEntity, dto: ApplicationDtoTypes['UpdateRequestDto']): ApplicationEntity {
+    if (dto.name !== undefined) entity.name = dto.name;
+    if (dto.availableActions !== undefined) entity.availableActions = dto.availableActions;
+    if (dto.isActive !== undefined) entity.isActive = dto.isActive;
+    return entity;
+  }
+}

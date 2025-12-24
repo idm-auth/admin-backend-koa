@@ -26,6 +26,31 @@ export const accountUpdateSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+export const accountResetPasswordSchema = z.object({
+  password: passwordSchema,
+});
+
+export const accountUpdatePasswordSchema = z.object({
+  currentPassword: passwordSchema,
+  newPassword: passwordSchema,
+});
+
+export const accountAddEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export const accountRemoveEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export const accountSetPrimaryEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export const accountSetActiveStatusSchema = z.object({
+  isActive: z.boolean(),
+});
+
 export const accountUpdateResponseSchema = accountBaseResponseSchema;
 
 export const accountListItemResponseSchema = accountBaseResponseSchema;
@@ -40,6 +65,12 @@ export type AccountListItemResponse = z.infer<
   typeof accountListItemResponseSchema
 >;
 export type AccountReadResponse = z.infer<typeof accountReadResponseSchema>;
+export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
+export type AccountUpdatePassword = z.infer<typeof accountUpdatePasswordSchema>;
+export type AccountAddEmail = z.infer<typeof accountAddEmailSchema>;
+export type AccountRemoveEmail = z.infer<typeof accountRemoveEmailSchema>;
+export type AccountSetPrimaryEmail = z.infer<typeof accountSetPrimaryEmailSchema>;
+export type AccountSetActiveStatus = z.infer<typeof accountSetActiveStatusSchema>;
 
 export interface AccountDtoTypes extends DtoTypes {
   CreateRequestDto: AccountCreate;
