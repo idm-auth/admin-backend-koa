@@ -1,28 +1,37 @@
-import { initDotenv } from './plugins/dotenv.plugin';
-import { initKoa, listenKoa } from './plugins/koaServer.plugin';
-import { closeMainConnection, initMongo } from './plugins/mongo.plugin';
-import { flushLogs, getLogger, initPino } from './plugins/pino.plugin';
-import { initTelemetry, shutdownTelemetry } from './plugins/telemetry.plugin';
+import { Framework } from 'koa-inversify-framework';
+import { ContainerSymbol } from 'koa-inversify-framework';
+import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { Container } from 'inversify';
+import 'reflect-metadata';
+import { RealmTenantResolver } from '@/infrastructure/tenant/realmTenantResolver.provider';
+import { initCoreModulesPhase1, initCoreModulesPhase2 } from '@/domain/core';
+import { initRealmModules } from '@/domain/realm';
 
-// amazonq-ignore-next-line
-(async () => {
-  await initDotenv();
-  await initPino();
-  await initMongo();
-  await initTelemetry();
-  await initKoa();
-  await listenKoa();
+const container = new Container();
+const registry = new OpenAPIRegistry();
+const framework = new Framework();
+
+void (async () => {
+  container.bind(ContainerSymbol).toConstantValue(container);
+
+  framework
+    .setContainer(container)
+    .setRegistry(registry)
+    .setTenantResolver(RealmTenantResolver);
+
+  await framework.init();
+
+  await initCoreModulesPhase1(container);
+  await initRealmModules(container);
+  await initCoreModulesPhase2(container);
+
+  await framework.listen();
 })();
 
-const shutdown = async (signal: string) => {
-  const logger = await getLogger();
-  logger.info({ signal }, 'Shutdown signal received');
-  await shutdownTelemetry();
-  await closeMainConnection();
-  logger.info('Shutdown completed');
-  await flushLogs();
+const shutdown = async () => {
+  await framework.shutdown();
   process.exit(0);
 };
 
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => void shutdown());
+process.on('SIGINT', () => void shutdown());
