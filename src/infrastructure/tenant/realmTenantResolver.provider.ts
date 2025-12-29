@@ -17,4 +17,12 @@ export class RealmTenantResolver extends AbstractTenantResolver {
     this.logger.debug({ tenantId, dbName: realm.dbName }, 'Tenant resolution complete');
     return realm.dbName;
   }
+
+  async getTenantCorePublicUUID(): Promise<string> {
+    this.logger.debug('Resolving core tenant publicUUID');
+    const realmService = this.container.get<RealmService>(RealmServiceSymbol);
+    const coreRealm = await realmService.getRealmCore();
+    this.logger.debug({ publicUUID: coreRealm.publicUUID }, 'Core tenant resolved');
+    return coreRealm.publicUUID;
+  }
 }

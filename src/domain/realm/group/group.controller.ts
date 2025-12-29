@@ -2,8 +2,7 @@ import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { GroupService, GroupServiceSymbol } from '@/domain/realm/group/group.service';
 import { GroupMapper, GroupMapperSymbol } from '@/domain/realm/group/group.mapper';
 import { GroupDtoTypes, groupCreateSchema, groupUpdateSchema, groupBaseResponseSchema } from '@/domain/realm/group/group.dto';
@@ -60,7 +59,7 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: groupCreateSchema })
   @Post('/')
-  async create(ctx: Context): Promise<void> {
+  async create(ctx: ContextWithBody<GroupDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -106,7 +105,7 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -139,7 +138,7 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: groupUpdateSchema })
   @Put('/:id')
-  async update(ctx: Context): Promise<void> {
+  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, GroupDtoTypes['UpdateRequestDto']>): Promise<void> {
     return super.update(ctx);
   }
 
@@ -160,7 +159,7 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 }

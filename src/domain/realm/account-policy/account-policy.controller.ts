@@ -2,8 +2,7 @@ import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { AccountPolicyService, AccountPolicyServiceSymbol } from '@/domain/realm/account-policy/account-policy.service';
 import { AccountPolicyMapper, AccountPolicyMapperSymbol } from '@/domain/realm/account-policy/account-policy.mapper';
 import { AccountPolicyDtoTypes, accountPolicyCreateSchema, accountPolicyBaseResponseSchema } from '@/domain/realm/account-policy/account-policy.dto';
@@ -60,7 +59,7 @@ export class AccountPolicyController extends AbstractCrudController<AccountPolic
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountPolicyCreateSchema })
   @Post('/')
-  async create(ctx: Context): Promise<void> {
+  async create(ctx: ContextWithBody<AccountPolicyDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -106,7 +105,7 @@ export class AccountPolicyController extends AbstractCrudController<AccountPolic
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -127,7 +126,7 @@ export class AccountPolicyController extends AbstractCrudController<AccountPolic
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 }

@@ -2,8 +2,7 @@ import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, Patch, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
 import {
   AccountService,
   AccountServiceSymbol,
@@ -71,7 +70,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountCreateSchema })
   @Post('/')
-  async create(ctx: Context & { request: { body: { email: string; password: string } } }): Promise<void> {
+  async create(ctx: ContextWithBody<AccountDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -119,7 +118,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context & { params: { id: string; tenantId?: string } }): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -154,7 +153,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountUpdateSchema })
   @Put('/:id')
-  async update(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { isActive?: boolean } } }): Promise<void> {
+  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, AccountDtoTypes['UpdateRequestDto']>): Promise<void> {
     return super.update(ctx);
   }
 
@@ -176,7 +175,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context & { params: { id: string; tenantId?: string } }): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 
@@ -210,7 +209,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountResetPasswordSchema })
   @Patch('/:id/reset-password')
-  async resetPassword(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { password: string } } }): Promise<void> {
+  async resetPassword(ctx: ContextWithParamsAndBody<IdWithTenantParam, { password: string }>): Promise<void> {
     const { id } = ctx.params;
     const { password } = ctx.request.body;
     const account = await this.service.resetPassword(id, password);
@@ -247,7 +246,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountUpdatePasswordSchema })
   @Patch('/:id/update-password')
-  async updatePassword(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { currentPassword: string; newPassword: string } } }): Promise<void> {
+  async updatePassword(ctx: ContextWithParamsAndBody<IdWithTenantParam, { currentPassword: string; newPassword: string }>): Promise<void> {
     const { id } = ctx.params;
     const { currentPassword, newPassword } = ctx.request.body;
     const account = await this.service.updatePassword(id, currentPassword, newPassword);
@@ -285,7 +284,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountAddEmailSchema })
   @Post('/:id/email')
-  async addEmail(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { email: string } } }): Promise<void> {
+  async addEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.addEmail(id, email);
@@ -322,7 +321,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountRemoveEmailSchema })
   @Post('/:id/email/remove')
-  async removeEmail(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { email: string } } }): Promise<void> {
+  async removeEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.removeEmail(id, email);
@@ -359,7 +358,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountSetPrimaryEmailSchema })
   @Patch('/:id/email/primary')
-  async setPrimaryEmail(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { email: string } } }): Promise<void> {
+  async setPrimaryEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.setPrimaryEmail(id, email);
@@ -396,7 +395,7 @@ export class AccountController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountSetActiveStatusSchema })
   @Patch('/:id/active-status')
-  async setActiveStatus(ctx: Context & { params: { id: string; tenantId?: string }; request: { body: { isActive: boolean } } }): Promise<void> {
+  async setActiveStatus(ctx: ContextWithParamsAndBody<IdWithTenantParam, { isActive: boolean }>): Promise<void> {
     const { id } = ctx.params;
     const { isActive } = ctx.request.body;
     const account = await this.service.setActiveStatus(id, isActive);

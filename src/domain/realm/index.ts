@@ -10,6 +10,7 @@ import { GroupRoleModule } from '@/domain/realm/group-role/group-role.module';
 import { GroupPolicyModule } from '@/domain/realm/group-policy/group-policy.module';
 import { RolePolicyModule } from '@/domain/realm/role-policy/role-policy.module';
 import { ApplicationModule } from '@/domain/realm/application/application.module';
+import { ApplicationConfigurationModule } from '@/domain/realm/application-configuration/application-configuration.module';
 
 export async function initRealmModules(container: Container): Promise<void> {
   new AccountModule(container);
@@ -23,4 +24,5 @@ export async function initRealmModules(container: Container): Promise<void> {
   new GroupPolicyModule(container);
   new RolePolicyModule(container);
   new ApplicationModule(container);
+  new ApplicationConfigurationModule(container);
 }

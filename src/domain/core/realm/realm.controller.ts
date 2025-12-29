@@ -10,9 +10,8 @@ import {
   SwaggerDocController,
   ZodValidateRequest,
 } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses } from 'koa-inversify-framework/common';
+import { commonErrorResponses, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdParam } from 'koa-inversify-framework/common';
 import { RequestParamsIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
 import {
   RealmService,
   RealmServiceSymbol,
@@ -81,11 +80,7 @@ export class RealmController extends AbstractCrudController<
   })
   @ZodValidateRequest({ body: realmCreateSchema })
   @Post('/')
-  async create(
-    ctx: Context & {
-      request: { body: { name: string; dbName: string; description?: string } };
-    }
-  ): Promise<void> {
+  async create(ctx: ContextWithBody<RealmDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -129,7 +124,7 @@ export class RealmController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdSchema })
   @Get('/:id')
-  async findById(ctx: Context & { params: { id: string } }): Promise<void> {
+  async findById(ctx: ContextWithParams<IdParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -167,12 +162,7 @@ export class RealmController extends AbstractCrudController<
     body: realmUpdateSchema,
   })
   @Put('/:id')
-  async update(
-    ctx: Context & {
-      params: { id: string };
-      request: { body: { name?: string; description?: string } };
-    }
-  ): Promise<void> {
+  async update(ctx: ContextWithParamsAndBody<IdParam, RealmDtoTypes['UpdateRequestDto']>): Promise<void> {
     return super.update(ctx);
   }
 
@@ -194,7 +184,7 @@ export class RealmController extends AbstractCrudController<
   })
   @ZodValidateRequest({ params: RequestParamsIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context & { params: { id: string } }): Promise<void> {
+  async delete(ctx: ContextWithParams<IdParam>): Promise<void> {
     return super.delete(ctx);
   }
 }

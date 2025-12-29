@@ -3,14 +3,22 @@ import { Service } from 'koa-inversify-framework/stereotype';
 import { CreateInput } from 'koa-inversify-framework/common';
 import { RealmDtoTypes } from '@/domain/core/realm/realm.dto';
 import { RealmEntity, RealmSchema } from '@/domain/core/realm/realm.entity';
-import { RealmRepository, RealmRepositorySymbol } from '@/domain/core/realm/realm.repository';
+import {
+  RealmRepository,
+  RealmRepositorySymbol,
+} from '@/domain/core/realm/realm.repository';
 import { inject } from 'inversify';
+import { Env, EnvSymbol, EnvKey } from 'koa-inversify-framework/infrastructure';
 
 export const RealmServiceSymbol = Symbol.for('RealmService');
 
 @Service(RealmServiceSymbol)
-export class RealmService extends AbstractCrudService<RealmSchema, RealmDtoTypes> {
+export class RealmService extends AbstractCrudService<
+  RealmSchema,
+  RealmDtoTypes
+> {
   @inject(RealmRepositorySymbol) protected repository!: RealmRepository;
+  @inject(EnvSymbol) protected env!: Env;
 
   protected buildCreateData(
     dto: RealmDtoTypes['CreateRequestDto']
@@ -47,5 +55,12 @@ export class RealmService extends AbstractCrudService<RealmSchema, RealmDtoTypes
   async findByName(name: string): Promise<RealmEntity> {
     this.log.debug({ name }, 'Finding by name');
     return this.repository.findByName(name);
+  }
+
+  async getRealmCore(): Promise<RealmEntity> {
+    this.log.debug('Getting core realm');
+    return this.repository.findOne({
+      dbName: this.env.get(EnvKey.MONGODB_CORE_DBNAME),
+    });
   }
 }

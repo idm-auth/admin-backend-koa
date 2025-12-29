@@ -2,8 +2,7 @@ import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { PolicyService, PolicyServiceSymbol } from '@/domain/realm/policy/policy.service';
 import { PolicyMapper, PolicyMapperSymbol } from '@/domain/realm/policy/policy.mapper';
 import { PolicyDtoTypes, policyCreateSchema, policyUpdateSchema, policyBaseResponseSchema } from '@/domain/realm/policy/policy.dto';
@@ -60,7 +59,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: policyCreateSchema })
   @Post('/')
-  async create(ctx: Context): Promise<void> {
+  async create(ctx: ContextWithBody<PolicyDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -106,7 +105,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -139,7 +138,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: policyUpdateSchema })
   @Put('/:id')
-  async update(ctx: Context): Promise<void> {
+  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, PolicyDtoTypes['UpdateRequestDto']>): Promise<void> {
     return super.update(ctx);
   }
 
@@ -160,7 +159,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 }

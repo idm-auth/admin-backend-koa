@@ -1,12 +1,35 @@
 import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
-import { RoleService, RoleServiceSymbol } from '@/domain/realm/role/role.service';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  RoleService,
+  RoleServiceSymbol,
+} from '@/domain/realm/role/role.service';
 import { RoleMapper, RoleMapperSymbol } from '@/domain/realm/role/role.mapper';
-import { RoleDtoTypes, roleCreateSchema, roleUpdateSchema, roleBaseResponseSchema } from '@/domain/realm/role/role.dto';
+import {
+  RoleDtoTypes,
+  roleCreateSchema,
+  roleUpdateSchema,
+  roleBaseResponseSchema,
+} from '@/domain/realm/role/role.dto';
 import { RoleSchema } from '@/domain/realm/role/role.entity';
 
 export const RoleControllerSymbol = Symbol.for('RoleController');
@@ -20,7 +43,10 @@ export const RoleControllerSymbol = Symbol.for('RoleController');
   basePath: '/api/realm/:tenantId/role',
   multiTenant: true,
 })
-export class RoleController extends AbstractCrudController<RoleSchema, RoleDtoTypes> {
+export class RoleController extends AbstractCrudController<
+  RoleSchema,
+  RoleDtoTypes
+> {
   constructor(
     @inject(RoleServiceSymbol) protected service: RoleService,
     @inject(RoleMapperSymbol) protected mapper: RoleMapper
@@ -58,9 +84,12 @@ export class RoleController extends AbstractCrudController<RoleSchema, RoleDtoTy
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: roleCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: roleCreateSchema,
+  })
   @Post('/')
-  async create(ctx: Context): Promise<void> {
+  async create(ctx: ContextWithBody<RoleDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -106,7 +135,7 @@ export class RoleController extends AbstractCrudController<RoleSchema, RoleDtoTy
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -137,9 +166,12 @@ export class RoleController extends AbstractCrudController<RoleSchema, RoleDtoTy
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: roleUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: roleUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: Context): Promise<void> {
+  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, RoleDtoTypes['UpdateRequestDto']>): Promise<void> {
     return super.update(ctx);
   }
 
@@ -160,7 +192,7 @@ export class RoleController extends AbstractCrudController<RoleSchema, RoleDtoTy
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 }

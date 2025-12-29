@@ -2,8 +2,7 @@ import { inject } from 'inversify';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
 import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
-import { Context } from 'koa';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { AccountGroupService, AccountGroupServiceSymbol } from '@/domain/realm/account-group/account-group.service';
 import { AccountGroupMapper, AccountGroupMapperSymbol } from '@/domain/realm/account-group/account-group.mapper';
 import { AccountGroupDtoTypes, accountGroupCreateSchema, accountGroupBaseResponseSchema } from '@/domain/realm/account-group/account-group.dto';
@@ -60,7 +59,7 @@ export class AccountGroupController extends AbstractCrudController<AccountGroupS
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountGroupCreateSchema })
   @Post('/')
-  async create(ctx: Context): Promise<void> {
+  async create(ctx: ContextWithBody<AccountGroupDtoTypes['CreateRequestDto']>): Promise<void> {
     return super.create(ctx);
   }
 
@@ -106,7 +105,7 @@ export class AccountGroupController extends AbstractCrudController<AccountGroupS
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Get('/:id')
-  async findById(ctx: Context): Promise<void> {
+  async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
   }
 
@@ -127,7 +126,7 @@ export class AccountGroupController extends AbstractCrudController<AccountGroupS
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
   @Delete('/:id')
-  async delete(ctx: Context): Promise<void> {
+  async delete(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.delete(ctx);
   }
 }
