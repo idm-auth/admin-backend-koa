@@ -16,13 +16,13 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
  * Usage Pattern:
  * 1. Application registers in Application entity
  * 2. Create configs for each environment (dev, staging, prod)
- * 3. Application fetches config at startup: GET /app/:name/env/:environment
+ * 3. Application fetches config at startup: GET /app/:applicationId/env/:environment
  * 4. Config is flexible JSON structure (Record<string, any>)
  * 5. Optional JSON Schema for self-validation
  *
  * Example:
  * {
- *   name: "web-admin-uuid",
+ *   applicationId: ObjectId("..."),
  *   environment: "production",
  *   config: {
  *     api: { main: { url: "https://api.prod.com" } },
@@ -35,7 +35,7 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export const applicationConfigurationSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    applicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Application', required: true },
     environment: { type: String, required: true },
     config: { type: mongoose.Schema.Types.Mixed, default: {} },
     schema: { type: mongoose.Schema.Types.Mixed },
@@ -44,7 +44,7 @@ export const applicationConfigurationSchema = new mongoose.Schema(
 );
 applicationConfigurationSchema.add(baseEntitySchema);
 applicationConfigurationSchema.index(
-  { name: 1, environment: 1 },
+  { applicationId: 1, environment: 1 },
   { unique: true }
 );
 

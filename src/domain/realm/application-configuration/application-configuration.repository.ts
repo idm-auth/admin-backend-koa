@@ -17,9 +17,9 @@ export class ApplicationConfigurationRepository extends AbstractCrudMongoReposit
   }
 
   async findByApplicationAndEnvironment(
-    applicationName: string,
+    applicationId: string,
     environment: string
   ): Promise<ApplicationConfigurationEntity> {
-    return this.findOne({ name: applicationName, environment });
+    return this.findOne({ applicationId, environment });
   }
 }

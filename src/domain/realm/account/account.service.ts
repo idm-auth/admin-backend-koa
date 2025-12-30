@@ -13,7 +13,11 @@ import {
 } from '@/domain/realm/account/account.repository';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
-import { ConflictError, NotFoundError, ValidationError } from 'koa-inversify-framework/error';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from 'koa-inversify-framework/error';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
@@ -35,7 +39,9 @@ export class AccountService extends AbstractCrudService<
     };
   }
 
-  protected async beforeCreate(dto: AccountDtoTypes['CreateRequestDto']): Promise<void> {
+  protected async beforeCreate(
+    dto: AccountDtoTypes['CreateRequestDto']
+  ): Promise<void> {
     await this.validateEmailUnique(dto.email);
   }
 
@@ -51,7 +57,12 @@ export class AccountService extends AbstractCrudService<
   @TraceAsync('account.service.findByEmail')
   async findByEmail(email: string): Promise<AccountEntity> {
     this.log.debug({ email }, 'Finding by email');
-    return this.repository.findByEmail(email);
+    const account = await this.repository.findByEmail(email);
+    this.log.debug(
+      { emails: account.emails, _id: account._id },
+      'Found by email'
+    );
+    return account;
   }
 
   @TraceAsync('account.service.comparePassword')

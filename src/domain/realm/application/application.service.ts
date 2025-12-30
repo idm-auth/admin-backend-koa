@@ -1,5 +1,6 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
+import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { CreateInput } from 'koa-inversify-framework/common';
 import { ApplicationDtoTypes } from '@/domain/realm/application/application.dto';
 import { ApplicationEntity, ApplicationSchema } from '@/domain/realm/application/application.entity';
@@ -26,5 +27,10 @@ export class ApplicationService extends AbstractCrudService<ApplicationSchema, A
     if (dto.availableActions !== undefined) entity.availableActions = dto.availableActions;
     if (dto.isActive !== undefined) entity.isActive = dto.isActive;
     return entity;
+  }
+
+  @TraceAsync('application.service.findBySystemId')
+  async findBySystemId(systemId: string): Promise<ApplicationEntity> {
+    return this.repository.findBySystemId(systemId);
   }
 }

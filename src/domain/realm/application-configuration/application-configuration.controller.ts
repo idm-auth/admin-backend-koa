@@ -225,7 +225,7 @@ export class ApplicationConfigurationController extends AbstractCrudController<
     request: {
       params: z.object({
         tenantId: z.string(),
-        applicationName: z.string(),
+        applicationId: z.string(),
         environment: z.string(),
       }),
     },
@@ -243,21 +243,20 @@ export class ApplicationConfigurationController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @Get('/app/:applicationName/env/:environment')
+  @Get('/app/:applicationId/env/:environment')
   async getByApplicationAndEnvironment(
     ctx: ContextWithParams<{
-      applicationName: string;
+      applicationId: string;
       environment: string;
       tenantId?: string;
     }>
   ): Promise<void> {
-    const { applicationName, environment } = ctx.params;
-    // TenantId pode vir de params (rota multi-tenant) ou state (decorator @InjectCoreTenantId)
+    const { applicationId, environment } = ctx.params;
     const tenantId = ctx.params.tenantId;
 
     this.log.debug(
       {
-        applicationName,
+        applicationId,
         environment,
         tenantId,
       },
@@ -265,12 +264,12 @@ export class ApplicationConfigurationController extends AbstractCrudController<
     );
 
     const config = await this.service.getByApplicationAndEnvironment(
-      applicationName,
+      applicationId,
       environment
     );
 
     this.log.debug(
-      { applicationName, environment, tenantId, configId: config._id },
+      { applicationId, environment, tenantId, configId: config._id },
       'ApplicationConfigurationController.getByApplicationAndEnvironment - config found'
     );
 

@@ -11,6 +11,8 @@ import { GroupPolicyModule } from '@/domain/realm/group-policy/group-policy.modu
 import { RolePolicyModule } from '@/domain/realm/role-policy/role-policy.module';
 import { ApplicationModule } from '@/domain/realm/application/application.module';
 import { ApplicationConfigurationModule } from '@/domain/realm/application-configuration/application-configuration.module';
+import { JwtModule } from '@/domain/realm/jwt/jwt.module';
+import { AuthenticationModule } from '@/domain/realm/authentication/authentication.module';
 
 export async function initRealmModules(container: Container): Promise<void> {
   new AccountModule(container);
@@ -25,4 +27,6 @@ export async function initRealmModules(container: Container): Promise<void> {
   new RolePolicyModule(container);
   new ApplicationModule(container);
   new ApplicationConfigurationModule(container);
+  new JwtModule(container);
+  new AuthenticationModule(container);
 }

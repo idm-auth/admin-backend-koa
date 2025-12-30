@@ -9,7 +9,6 @@ export type Account = {
     isPrimary: boolean;
   }>;
   password: string;
-  salt: string;
 };
 
 export const accountSchema = new mongoose.Schema<Account>(
@@ -21,7 +20,6 @@ export const accountSchema = new mongoose.Schema<Account>(
       },
     ],
     password: { type: String, required: true },
-    salt: { type: String },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
@@ -32,8 +30,8 @@ accountSchema.index({ 'emails.email': 1 }, { unique: true, sparse: true });
 
 accountSchema.pre('save', async function () {
   if ((this.isNew || this.isModified('password')) && this.password) {
-    this.salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, this.salt);
+    const randomCost = Math.floor(Math.random() * 3) + 10;
+    this.password = await bcrypt.hash(this.password, randomCost);
   }
 });
 

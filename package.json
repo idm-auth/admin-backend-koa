@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/idm-auth/backend-koa#readme",
   "devDependencies": {
-    "npm-check-updates": "^19.2.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/bcrypt": "^6.0.0",
     "@types/mongoose": "^5.11.97",
@@ -42,17 +41,19 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "npm-check-updates": "^19.2.0",
     "prettier": "^3.7.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   },
   "dependencies": {
-    "koa-inversify-framework": "file:.external/koa-inversify-framework",
     "@idm-auth/client": "file:.external/auth-client-js",
     "bcrypt": "^6.0.0",
     "glob": "^13.0.0",
     "inversify": "^7.10.6",
+    "jsonwebtoken": "^9.0.3",
+    "koa-inversify-framework": "file:.external/koa-inversify-framework",
     "mongoose": "^9.0.1",
     "reflect-metadata": "^0.2.2",
     "uuid": "^13.0.0"

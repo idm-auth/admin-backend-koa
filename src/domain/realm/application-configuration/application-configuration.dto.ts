@@ -2,7 +2,7 @@ import { DocIdSchema, DtoTypes, MetadataSchema } from 'koa-inversify-framework/c
 import { z } from 'zod';
 
 export const applicationConfigurationCreateSchema = z.object({
-  name: z.string().min(1),
+  applicationId: DocIdSchema,
   environment: z.string().min(1),
   config: z.record(z.string(), z.any()).default({}),
   schema: z.record(z.string(), z.any()).optional(),
@@ -10,7 +10,7 @@ export const applicationConfigurationCreateSchema = z.object({
 
 export const applicationConfigurationResponseSchema = z.object({
   _id: DocIdSchema,
-  name: z.string(),
+  applicationId: DocIdSchema,
   environment: z.string(),
   config: z.record(z.string(), z.any()),
   schema: z.record(z.string(), z.any()).optional(),

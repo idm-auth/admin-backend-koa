@@ -1,7 +1,12 @@
 import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractController } from 'koa-inversify-framework/abstract';
-import { commonErrorResponses, HttpMethod } from 'koa-inversify-framework/common';
+import {
+  commonErrorResponses,
+  HttpMethod,
+  emailSchema,
+  passwordSchema,
+} from 'koa-inversify-framework/common';
 import {
   Get,
   InjectCoreTenantId,
@@ -49,7 +54,7 @@ export class CoreApplicationConfigurationController extends AbstractController {
     tags: ['Core Application Configuration'],
     request: {
       params: z.object({
-        applicationName: z.string(),
+        applicationId: z.string(),
         environment: z.string(),
       }),
     },
@@ -68,23 +73,23 @@ export class CoreApplicationConfigurationController extends AbstractController {
     },
   })
   @InjectCoreTenantId()
-  @Get('/app/:applicationName/env/:environment')
+  @Get('/app/:applicationId/env/:environment')
   async getByApplicationAndEnvironment(
     ctx: Context & {
       params: {
-        applicationName: string;
+        applicationId: string;
         environment: string;
         tenantId?: string;
       };
     } & { state: { tenantId?: string } }
   ): Promise<void> {
-    const { applicationName, environment } = ctx.params;
+    const { applicationId, environment } = ctx.params;
     const tenantId = ctx.state.tenantId!;
 
     const contextPath = this.env.get(EnvKey.SERVER_CONTEXT_PATH);
-    const targetPath = `${contextPath}/api/realm/:tenantId/application-configuration/app/:applicationName/env/:environment`;
+    const targetPath = `${contextPath}/api/realm/:tenantId/application-configuration/app/:applicationId/env/:environment`;
 
-    ctx.params = { tenantId, applicationName, environment };
+    ctx.params = { tenantId, applicationId, environment };
 
     await this.registerRouter.executeRoute(targetPath, HttpMethod.GET, ctx);
   }
@@ -100,8 +105,8 @@ export class CoreApplicationConfigurationController extends AbstractController {
           'application/json': {
             schema: z.object({
               adminAccount: z.object({
-                email: z.string().email(),
-                password: z.string().min(8),
+                email: emailSchema,
+                password: passwordSchema,
               }),
             }),
           },
