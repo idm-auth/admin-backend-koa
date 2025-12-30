@@ -11,7 +11,7 @@ export const AccountRepositorySymbol = Symbol.for('AccountRepository');
 @Repository(AccountRepositorySymbol, { multiTenant: true })
 export class AccountRepository extends AbstractCrudMongoRepository<AccountSchema> {
   constructor() {
-    super(accountSchema, 'accounts');
+    super(accountSchema, 'account');
   }
 
   async findByEmail(email: string): Promise<AccountEntity> {

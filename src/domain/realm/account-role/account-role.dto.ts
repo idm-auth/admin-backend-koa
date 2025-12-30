@@ -23,8 +23,8 @@ export interface AccountRoleDtoTypes extends DtoTypes {
   FindByIdResponseDto: AccountRoleResponse;
   FindOneResponseDto: AccountRoleResponse;
   FindAllResponseDto: AccountRoleResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: AccountRoleResponse;
+  UpdateResponseDto: AccountRoleResponse;
   DeleteResponseDto: AccountRoleResponse;
   PaginatedItemDto: AccountRoleResponse;
 }

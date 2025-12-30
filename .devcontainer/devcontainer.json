@@ -11,6 +11,8 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "typescript.tsserver.log": "verbose",
+        "typescript.tsserver.trace": "verbose",
         "amazonQ.enableLocalIndex": true,
         "workbench.colorCustomizations": {
           "activityBar.background": "#0528eecb",

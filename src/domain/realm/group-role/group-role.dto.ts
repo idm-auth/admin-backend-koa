@@ -23,8 +23,8 @@ export interface GroupRoleDtoTypes extends DtoTypes {
   FindByIdResponseDto: GroupRoleResponse;
   FindOneResponseDto: GroupRoleResponse;
   FindAllResponseDto: GroupRoleResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: GroupRoleResponse;
+  UpdateResponseDto: GroupRoleResponse;
   DeleteResponseDto: GroupRoleResponse;
   PaginatedItemDto: GroupRoleResponse;
 }

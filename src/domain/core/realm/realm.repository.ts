@@ -1,6 +1,10 @@
 import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
 import { Repository } from 'koa-inversify-framework/stereotype';
-import { RealmSchema, realmSchema, RealmEntity } from '@/domain/core/realm/realm.entity';
+import {
+  RealmSchema,
+  realmSchema,
+  RealmEntity,
+} from '@/domain/core/realm/realm.entity';
 
 export const RealmRepositorySymbol = Symbol.for('RealmRepository');
 

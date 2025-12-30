@@ -16,13 +16,13 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
  * Usage Pattern:
  * 1. Application registers in Application entity
  * 2. Create configs for each environment (dev, staging, prod)
- * 3. Application fetches config at startup: GET /app/:applicationId/env/:environment
+ * 3. Application fetches config at startup: GET /app/:name/env/:environment
  * 4. Config is flexible JSON structure (Record<string, any>)
  * 5. Optional JSON Schema for self-validation
  *
  * Example:
  * {
- *   applicationId: "web-admin-uuid",
+ *   name: "web-admin-uuid",
  *   environment: "production",
  *   config: {
  *     api: { main: { url: "https://api.prod.com" } },
@@ -32,16 +32,10 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
  *   schema: { ... } // Optional JSON Schema for validation
  * }
  */
-export type ApplicationConfiguration = {
-  applicationId: string;
-  environment: string;
-  config: Record<string, any>;
-  schema?: object;
-};
 
-export const applicationConfigurationSchema = new mongoose.Schema<ApplicationConfiguration>(
+export const applicationConfigurationSchema = new mongoose.Schema(
   {
-    applicationId: { type: String, required: true },
+    name: { type: String, required: true },
     environment: { type: String, required: true },
     config: { type: mongoose.Schema.Types.Mixed, default: {} },
     schema: { type: mongoose.Schema.Types.Mixed },
@@ -49,7 +43,13 @@ export const applicationConfigurationSchema = new mongoose.Schema<ApplicationCon
   { timestamps: true }
 );
 applicationConfigurationSchema.add(baseEntitySchema);
-applicationConfigurationSchema.index({ applicationId: 1, environment: 1 }, { unique: true });
+applicationConfigurationSchema.index(
+  { name: 1, environment: 1 },
+  { unique: true }
+);
 
-export type ApplicationConfigurationSchema = typeof applicationConfigurationSchema;
-export type ApplicationConfigurationEntity = HydratedDocument<InferSchemaType<typeof applicationConfigurationSchema>>;
+export type ApplicationConfigurationSchema =
+  typeof applicationConfigurationSchema;
+export type ApplicationConfigurationEntity = HydratedDocument<
+  InferSchemaType<typeof applicationConfigurationSchema>
+>;

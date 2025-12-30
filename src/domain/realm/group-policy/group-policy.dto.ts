@@ -23,8 +23,8 @@ export interface GroupPolicyDtoTypes extends DtoTypes {
   FindByIdResponseDto: GroupPolicyResponse;
   FindOneResponseDto: GroupPolicyResponse;
   FindAllResponseDto: GroupPolicyResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: GroupPolicyResponse;
+  UpdateResponseDto: GroupPolicyResponse;
   DeleteResponseDto: GroupPolicyResponse;
   PaginatedItemDto: GroupPolicyResponse;
 }

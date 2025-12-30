@@ -1,34 +1,45 @@
-import { inject } from 'inversify';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
 import {
-  Get,
-  Post,
-  Put,
-  Delete,
-  SwaggerDoc,
-  SwaggerDocController,
-  ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { z } from 'zod';
-import {
-  ApplicationConfigurationService,
-  ApplicationConfigurationServiceSymbol,
-} from '@/domain/realm/application-configuration/application-configuration.service';
+  applicationConfigurationCreateSchema,
+  ApplicationConfigurationDtoTypes,
+  applicationConfigurationResponseSchema,
+  applicationConfigurationUpdateSchema,
+} from '@/domain/realm/application-configuration/application-configuration.dto';
+import { ApplicationConfigurationSchema } from '@/domain/realm/application-configuration/application-configuration.entity';
 import {
   ApplicationConfigurationMapper,
   ApplicationConfigurationMapperSymbol,
 } from '@/domain/realm/application-configuration/application-configuration.mapper';
 import {
-  ApplicationConfigurationDtoTypes,
-  applicationConfigurationCreateSchema,
-  applicationConfigurationUpdateSchema,
-  applicationConfigurationResponseSchema,
-} from '@/domain/realm/application-configuration/application-configuration.dto';
-import { ApplicationConfigurationSchema } from '@/domain/realm/application-configuration/application-configuration.entity';
+  ApplicationConfigurationService,
+  ApplicationConfigurationServiceSymbol,
+} from '@/domain/realm/application-configuration/application-configuration.service';
+import { inject } from 'inversify';
+import { Context } from 'koa';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
+import {
+  commonErrorResponses,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+} from 'koa-inversify-framework/common';
+import {
+  Delete,
+  Get,
+  Post,
+  Put,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import { Controller } from 'koa-inversify-framework/stereotype';
+import { z } from 'zod';
 
-export const ApplicationConfigurationControllerSymbol = Symbol.for('ApplicationConfigurationController');
+export const ApplicationConfigurationControllerSymbol = Symbol.for(
+  'ApplicationConfigurationController'
+);
 
 @SwaggerDocController({
   name: 'Application Configuration',
@@ -44,8 +55,10 @@ export class ApplicationConfigurationController extends AbstractCrudController<
   ApplicationConfigurationDtoTypes
 > {
   constructor(
-    @inject(ApplicationConfigurationServiceSymbol) protected service: ApplicationConfigurationService,
-    @inject(ApplicationConfigurationMapperSymbol) protected mapper: ApplicationConfigurationMapper
+    @inject(ApplicationConfigurationServiceSymbol)
+    protected service: ApplicationConfigurationService,
+    @inject(ApplicationConfigurationMapperSymbol)
+    protected mapper: ApplicationConfigurationMapper
   ) {
     super();
   }
@@ -81,9 +94,14 @@ export class ApplicationConfigurationController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: applicationConfigurationCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: applicationConfigurationCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<ApplicationConfigurationDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<ApplicationConfigurationDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -163,9 +181,17 @@ export class ApplicationConfigurationController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: applicationConfigurationUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: applicationConfigurationUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, ApplicationConfigurationDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      ApplicationConfigurationDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 
@@ -193,12 +219,13 @@ export class ApplicationConfigurationController extends AbstractCrudController<
 
   @SwaggerDoc({
     summary: 'Get configuration by application and environment',
-    description: 'Returns configuration for specific application and environment (config server pattern)',
+    description:
+      'Returns configuration for specific application and environment (config server pattern)',
     tags: ['Application Configuration'],
     request: {
       params: z.object({
         tenantId: z.string(),
-        applicationId: z.string(),
+        applicationName: z.string(),
         environment: z.string(),
       }),
     },
@@ -216,26 +243,37 @@ export class ApplicationConfigurationController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @Get('/app/:applicationId/env/:environment')
+  @Get('/app/:applicationName/env/:environment')
   async getByApplicationAndEnvironment(
-    ctx: ContextWithParams<{ applicationId: string; environment: string; tenantId?: string }>
+    ctx: ContextWithParams<{
+      applicationName: string;
+      environment: string;
+      tenantId?: string;
+    }>
   ): Promise<void> {
-    const { applicationId, environment } = ctx.params;
+    const { applicationName, environment } = ctx.params;
     // TenantId pode vir de params (rota multi-tenant) ou state (decorator @InjectCoreTenantId)
-    const tenantId = ctx.state.tenantId || ctx.params.tenantId;
-    
+    const tenantId = ctx.params.tenantId;
+
     this.log.debug(
-      { applicationId, environment, tenantId, source: ctx.state.tenantId ? 'state' : 'params' },
+      {
+        applicationName,
+        environment,
+        tenantId,
+      },
       'ApplicationConfigurationController.getByApplicationAndEnvironment - fetching config'
     );
-    
-    const config = await this.service.getByApplicationAndEnvironment(applicationId, environment);
-    
+
+    const config = await this.service.getByApplicationAndEnvironment(
+      applicationName,
+      environment
+    );
+
     this.log.debug(
-      { applicationId, environment, tenantId, configId: config._id },
+      { applicationName, environment, tenantId, configId: config._id },
       'ApplicationConfigurationController.getByApplicationAndEnvironment - config found'
     );
-    
+
     ctx.body = this.mapper.toFindByIdResponseDto(config);
   }
 }

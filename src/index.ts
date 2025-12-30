@@ -1,5 +1,5 @@
 import { Framework } from 'koa-inversify-framework';
-import { ContainerSymbol } from 'koa-inversify-framework';
+import { ContainerSymbol } from 'koa-inversify-framework/infrastructure';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Container } from 'inversify';
 import 'reflect-metadata';

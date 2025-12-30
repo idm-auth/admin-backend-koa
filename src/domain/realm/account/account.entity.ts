@@ -38,4 +38,6 @@ accountSchema.pre('save', async function () {
 });
 
 export type AccountSchema = typeof accountSchema;
-export type AccountEntity = HydratedDocument<InferSchemaType<typeof accountSchema>>;
+export type AccountEntity = HydratedDocument<
+  InferSchemaType<typeof accountSchema>
+>;

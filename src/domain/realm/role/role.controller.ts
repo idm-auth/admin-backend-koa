@@ -1,36 +1,37 @@
-import { inject } from 'inversify';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
 import {
-  Get,
-  Post,
-  Put,
-  Delete,
-  SwaggerDoc,
-  SwaggerDocController,
-  ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
-import {
-  commonErrorResponses,
-  RequestParamsIdAndTenantIdSchema,
-  RequestParamsTenantIdSchema,
-  ContextWithBody,
-  ContextWithParams,
-  ContextWithParamsAndBody,
-  IdWithTenantParam,
-} from 'koa-inversify-framework/common';
+  roleBaseResponseSchema,
+  roleCreateSchema,
+  RoleDtoTypes,
+  roleUpdateSchema,
+} from '@/domain/realm/role/role.dto';
+import { RoleSchema } from '@/domain/realm/role/role.entity';
+import { RoleMapper, RoleMapperSymbol } from '@/domain/realm/role/role.mapper';
 import {
   RoleService,
   RoleServiceSymbol,
 } from '@/domain/realm/role/role.service';
-import { RoleMapper, RoleMapperSymbol } from '@/domain/realm/role/role.mapper';
+import { inject } from 'inversify';
+import { Context } from 'koa';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import {
-  RoleDtoTypes,
-  roleCreateSchema,
-  roleUpdateSchema,
-  roleBaseResponseSchema,
-} from '@/domain/realm/role/role.dto';
-import { RoleSchema } from '@/domain/realm/role/role.entity';
+  commonErrorResponses,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+} from 'koa-inversify-framework/common';
+import {
+  Delete,
+  Get,
+  Post,
+  Put,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import { Controller } from 'koa-inversify-framework/stereotype';
 
 export const RoleControllerSymbol = Symbol.for('RoleController');
 
@@ -89,7 +90,9 @@ export class RoleController extends AbstractCrudController<
     body: roleCreateSchema,
   })
   @Post('/')
-  async create(ctx: ContextWithBody<RoleDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<RoleDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -171,7 +174,12 @@ export class RoleController extends AbstractCrudController<
     body: roleUpdateSchema,
   })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, RoleDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      RoleDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 

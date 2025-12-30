@@ -13,20 +13,23 @@ import {
 } from '@/domain/realm/application-configuration/application-configuration.repository';
 import { inject } from 'inversify';
 
-export const ApplicationConfigurationServiceSymbol = Symbol.for('ApplicationConfigurationService');
+export const ApplicationConfigurationServiceSymbol = Symbol.for(
+  'ApplicationConfigurationService'
+);
 
 @Service(ApplicationConfigurationServiceSymbol, { multiTenant: true })
 export class ApplicationConfigurationService extends AbstractCrudService<
   ApplicationConfigurationSchema,
   ApplicationConfigurationDtoTypes
 > {
-  @inject(ApplicationConfigurationRepositorySymbol) protected repository!: ApplicationConfigurationRepository;
+  @inject(ApplicationConfigurationRepositorySymbol)
+  protected repository!: ApplicationConfigurationRepository;
 
   protected buildCreateData(
     dto: ApplicationConfigurationDtoTypes['CreateRequestDto']
   ): CreateInput<ApplicationConfigurationSchema> {
     return {
-      applicationId: dto.applicationId,
+      applicationName: dto.applicationName,
       environment: dto.environment,
       config: dto.config,
       schema: dto.schema,
@@ -42,11 +45,16 @@ export class ApplicationConfigurationService extends AbstractCrudService<
     return entity;
   }
 
-  @TraceAsync('application-configuration.service.getByApplicationAndEnvironment')
+  @TraceAsync(
+    'application-configuration.service.getByApplicationAndEnvironment'
+  )
   async getByApplicationAndEnvironment(
-    applicationId: string,
+    applicationName: string,
     environment: string
   ): Promise<ApplicationConfigurationEntity> {
-    return this.repository.findByApplicationAndEnvironment(applicationId, environment);
+    return this.repository.findByApplicationAndEnvironment(
+      applicationName,
+      environment
+    );
   }
 }

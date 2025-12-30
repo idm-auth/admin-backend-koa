@@ -7,6 +7,6 @@ export const GroupRepositorySymbol = Symbol.for('GroupRepository');
 @Repository(GroupRepositorySymbol, { multiTenant: true })
 export class GroupRepository extends AbstractCrudMongoRepository<GroupSchema> {
   constructor() {
-    super(groupSchema, 'groups');
+    super(groupSchema, 'group');
   }
 }

@@ -15,7 +15,9 @@ export const accountGroupBaseResponseSchema = z.object({
 });
 
 export type AccountGroupCreate = z.infer<typeof accountGroupCreateSchema>;
-export type AccountGroupResponse = z.infer<typeof accountGroupBaseResponseSchema>;
+export type AccountGroupResponse = z.infer<
+  typeof accountGroupBaseResponseSchema
+>;
 
 export interface AccountGroupDtoTypes extends DtoTypes {
   CreateRequestDto: AccountGroupCreate;
@@ -23,8 +25,8 @@ export interface AccountGroupDtoTypes extends DtoTypes {
   FindByIdResponseDto: AccountGroupResponse;
   FindOneResponseDto: AccountGroupResponse;
   FindAllResponseDto: AccountGroupResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: AccountGroupResponse;
+  UpdateResponseDto: AccountGroupResponse;
   DeleteResponseDto: AccountGroupResponse;
   PaginatedItemDto: AccountGroupResponse;
 }

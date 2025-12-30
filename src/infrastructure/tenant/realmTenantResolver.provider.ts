@@ -1,6 +1,12 @@
-import { AbstractTenantResolver, ContainerSymbol } from 'koa-inversify-framework';
+import {
+  AbstractTenantResolver,
+  ContainerSymbol,
+} from 'koa-inversify-framework/infrastructure';
 import { Configuration } from 'koa-inversify-framework/stereotype';
-import { RealmService, RealmServiceSymbol } from '@/domain/core/realm/realm.service';
+import {
+  RealmService,
+  RealmServiceSymbol,
+} from '@/domain/core/realm/realm.service';
 import { inject, Container } from 'inversify';
 
 export const RealmTenantResolverSymbol = Symbol.for('RealmTenantResolver');
@@ -14,7 +20,10 @@ export class RealmTenantResolver extends AbstractTenantResolver {
     this.logger.debug({ tenantId }, 'Resolving tenant dbName');
     const realmService = this.container.get<RealmService>(RealmServiceSymbol);
     const realm = await realmService.findByPublicUUID(tenantId);
-    this.logger.debug({ tenantId, dbName: realm.dbName }, 'Tenant resolution complete');
+    this.logger.debug(
+      { tenantId, dbName: realm.dbName },
+      'Tenant resolution complete'
+    );
     return realm.dbName;
   }
 
@@ -22,7 +31,10 @@ export class RealmTenantResolver extends AbstractTenantResolver {
     this.logger.debug('Resolving core tenant publicUUID');
     const realmService = this.container.get<RealmService>(RealmServiceSymbol);
     const coreRealm = await realmService.getRealmCore();
-    this.logger.debug({ publicUUID: coreRealm.publicUUID }, 'Core tenant resolved');
+    this.logger.debug(
+      { publicUUID: coreRealm.publicUUID },
+      'Core tenant resolved'
+    );
     return coreRealm.publicUUID;
   }
 }

@@ -7,6 +7,6 @@ export const ApplicationRepositorySymbol = Symbol.for('ApplicationRepository');
 @Repository(ApplicationRepositorySymbol, { multiTenant: true })
 export class ApplicationRepository extends AbstractCrudMongoRepository<ApplicationSchema> {
   constructor() {
-    super(applicationSchema, 'applications');
+    super(applicationSchema, 'application');
   }
 }

@@ -7,6 +7,6 @@ export const RolePolicyRepositorySymbol = Symbol.for('RolePolicyRepository');
 @Repository(RolePolicyRepositorySymbol, { multiTenant: true })
 export class RolePolicyRepository extends AbstractCrudMongoRepository<RolePolicySchema> {
   constructor() {
-    super(rolePolicySchema, 'role-policies');
+    super(rolePolicySchema, 'role-policy');
   }
 }

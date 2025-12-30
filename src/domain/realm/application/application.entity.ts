@@ -18,7 +18,6 @@ export type Application = {
 
 export const applicationSchema = new mongoose.Schema<Application>(
   {
-    _id: { type: String, default: uuidv4 },
     name: { type: String, required: true, index: true },
     systemId: { type: String, required: true, unique: true, index: true },
     availableActions: [
@@ -42,4 +41,6 @@ applicationSchema.index({ 'availableActions.resourceType': 1 });
 applicationSchema.index({ 'availableActions.pathPattern': 1 });
 
 export type ApplicationSchema = typeof applicationSchema;
-export type ApplicationEntity = HydratedDocument<InferSchemaType<typeof applicationSchema>>;
+export type ApplicationEntity = HydratedDocument<
+  InferSchemaType<typeof applicationSchema>
+>;

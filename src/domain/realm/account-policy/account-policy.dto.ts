@@ -15,7 +15,9 @@ export const accountPolicyBaseResponseSchema = z.object({
 });
 
 export type AccountPolicyCreate = z.infer<typeof accountPolicyCreateSchema>;
-export type AccountPolicyResponse = z.infer<typeof accountPolicyBaseResponseSchema>;
+export type AccountPolicyResponse = z.infer<
+  typeof accountPolicyBaseResponseSchema
+>;
 
 export interface AccountPolicyDtoTypes extends DtoTypes {
   CreateRequestDto: AccountPolicyCreate;
@@ -23,8 +25,8 @@ export interface AccountPolicyDtoTypes extends DtoTypes {
   FindByIdResponseDto: AccountPolicyResponse;
   FindOneResponseDto: AccountPolicyResponse;
   FindAllResponseDto: AccountPolicyResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: AccountPolicyResponse;
+  UpdateResponseDto: AccountPolicyResponse;
   DeleteResponseDto: AccountPolicyResponse;
   PaginatedItemDto: AccountPolicyResponse;
 }

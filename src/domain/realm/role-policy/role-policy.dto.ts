@@ -23,8 +23,8 @@ export interface RolePolicyDtoTypes extends DtoTypes {
   FindByIdResponseDto: RolePolicyResponse;
   FindOneResponseDto: RolePolicyResponse;
   FindAllResponseDto: RolePolicyResponse[];
-  UpdateRequestDto: never;
-  UpdateResponseDto: never;
+  UpdateRequestDto: RolePolicyResponse;
+  UpdateResponseDto: RolePolicyResponse;
   DeleteResponseDto: RolePolicyResponse;
   PaginatedItemDto: RolePolicyResponse;
 }

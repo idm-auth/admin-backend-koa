@@ -42,6 +42,12 @@
 - ALWAYS use `@/` alias for src imports: `import { App } from '@/infrastructure/core/app'`
 - NEVER use relative paths like `../../`
 - Reference: any file in `src/`
+- **CRITICAL: NEVER invent imports - ALWAYS verify they exist first**
+- **If an import doesn't exist, either:**
+  1. Search for the correct import path using fileSearch/fsRead
+  2. Export it from the framework if it should be public
+  3. Ask the user for the correct path
+- **NEVER write code with imports that don't exist - this breaks compilation**
 
 ## Module Pattern
 - Each domain module extends AbstractModule from framework
@@ -52,6 +58,7 @@
 ## Code Style Rules
 - Write MINIMAL code - only what's necessary
 - NO verbose comments - code must be self-documenting
+- NEVER remove documentation comments (JSDoc, TSDoc, block comments explaining architecture/design)
 - ONE responsibility per file/class
 
 ## Code Removal Rules
@@ -132,6 +139,12 @@
 - If unsure about the correct approach, ask for clarification before implementing
 - ALWAYS present the solution plan BEFORE implementing, especially when creating new files or making architectural changes
 - Wait for user confirmation before proceeding with file creation or major refactoring
+- **NEVER bypass the user's explicit architectural requirements, even if a "simpler" solution seems available**
+- **If the user says the request MUST go through Koa routes/middlewares, it MUST go through them - do NOT call services directly as a shortcut**
+- **ALWAYS respect the user's architectural decisions, even if they seem more complex than alternatives**
+- **CRITICAL: NEVER make conclusions without evidence - ALWAYS add debug logs first, check logs, then investigate**
+- **When debugging, ALWAYS add logs at key points to understand what's happening before drawing conclusions**
+- **If something doesn't work, add logs → check output → investigate → fix. Never skip the logging step**
 
 ## Decision Tracking Rules
 - ALWAYS track user rejections during the conversation
