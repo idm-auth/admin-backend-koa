@@ -4,6 +4,7 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 import { RealmTenantResolver } from '@/infrastructure/tenant/realmTenantResolver.provider';
+import { AppEnv } from '@/infrastructure/env/appEnv.provider';
 import { initCoreModulesPhase1, initCoreModulesPhase2 } from '@/domain/core';
 import { initRealmModules } from '@/domain/realm';
 
@@ -17,7 +18,8 @@ void (async () => {
   framework
     .setContainer(container)
     .setRegistry(registry)
-    .setTenantResolver(RealmTenantResolver);
+    .setTenantResolver(RealmTenantResolver)
+    .setEnv(AppEnv);
 
   await framework.init();
 

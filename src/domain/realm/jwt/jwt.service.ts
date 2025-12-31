@@ -20,7 +20,7 @@ export class JwtService extends AbstractService {
     return jwt.sign(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       config.config.jwt.secret,
-      { expiresIn: config.config.jwt.accessTokenExpiresIn }
+      { expiresIn: config.config.jwt.accessTokenExpiresIn } as jwt.SignOptions
     );
   }
 
@@ -31,7 +31,7 @@ export class JwtService extends AbstractService {
     return jwt.sign(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       config.config.jwt.secret,
-      { expiresIn: config.config.jwt.refreshTokenExpiresIn }
+      { expiresIn: config.config.jwt.refreshTokenExpiresIn } as jwt.SignOptions
     );
   }
 

@@ -9,7 +9,7 @@ export class JwtModule extends AbstractModule {
       .inSingletonScope();
   }
 
-  getControllerSymbol(): symbol | undefined {
-    return undefined;
+  getControllerSymbol(): symbol | null {
+    return null;
   }
 }

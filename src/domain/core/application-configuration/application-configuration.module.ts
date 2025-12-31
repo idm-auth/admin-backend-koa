@@ -16,6 +16,11 @@ export class CoreApplicationConfigurationModule extends AbstractModule {
 
   protected runBind(): void {
     this.container
+      .bind(CoreApplicationConfigurationServiceSymbol)
+      .to(CoreApplicationConfigurationService)
+      .inSingletonScope();
+
+    this.container
       .bind(CoreApplicationConfigurationControllerSymbol)
       .to(CoreApplicationConfigurationController)
       .inSingletonScope();

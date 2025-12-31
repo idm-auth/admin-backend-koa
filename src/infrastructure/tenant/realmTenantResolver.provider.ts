@@ -1,16 +1,17 @@
 import {
   AbstractTenantResolver,
-  ContainerSymbol,
-} from 'koa-inversify-framework/infrastructure';
+} from 'koa-inversify-framework/abstract';
+import { ContainerSymbol } from 'koa-inversify-framework/infrastructure';
 import { Configuration } from 'koa-inversify-framework/stereotype';
 import {
   RealmService,
   RealmServiceSymbol,
 } from '@/domain/core/realm/realm.service';
-import { inject, Container } from 'inversify';
+import { inject, Container, injectable } from 'inversify';
 
 export const RealmTenantResolverSymbol = Symbol.for('RealmTenantResolver');
 
+@injectable()
 @Configuration(RealmTenantResolverSymbol)
 export class RealmTenantResolver extends AbstractTenantResolver {
   @inject(ContainerSymbol)

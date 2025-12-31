@@ -14,11 +14,11 @@ import {
 } from '@/domain/realm/application-configuration/config/backend-api.config';
 import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 import { inject } from 'inversify';
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { CreateInput } from 'koa-inversify-framework/common';
+import { AbstractCrudService, AbstractEnv } from 'koa-inversify-framework/abstract';
+import { CreateInput, EnvKey } from 'koa-inversify-framework/common';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { ValidationError } from 'koa-inversify-framework/error';
-import { Env, EnvKey, EnvSymbol } from 'koa-inversify-framework/infrastructure';
+import { EnvSymbol } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 
 export const ApplicationConfigurationServiceSymbol = Symbol.for(
@@ -32,7 +32,7 @@ export class ApplicationConfigurationService extends AbstractCrudService<
 > {
   @inject(ApplicationConfigurationRepositorySymbol)
   protected repository!: ApplicationConfigurationRepository;
-  @inject(EnvSymbol) private env!: Env;
+  @inject(EnvSymbol) private env!: AbstractEnv;
   @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
 
   protected buildCreateData(

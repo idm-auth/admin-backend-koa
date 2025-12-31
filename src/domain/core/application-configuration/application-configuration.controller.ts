@@ -18,12 +18,15 @@ import { Controller } from 'koa-inversify-framework/stereotype';
 import {
   RegisterRouter,
   RegisterRouterSymbol,
-  Env,
-  EnvSymbol,
-  EnvKey,
 } from 'koa-inversify-framework/infrastructure';
+import { EnvSymbol, AbstractEnv } from 'koa-inversify-framework/abstract';
+import { EnvKey } from 'koa-inversify-framework/common';
 import { z } from 'zod';
 import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
+import {
+  CoreApplicationConfigurationService,
+  CoreApplicationConfigurationServiceSymbol,
+} from '@/domain/core/application-configuration/application-configuration.service';
 
 export const CoreApplicationConfigurationControllerSymbol = Symbol.for(
   'CoreApplicationConfigurationController'
@@ -42,7 +45,9 @@ export class CoreApplicationConfigurationController extends AbstractController {
     @inject(RegisterRouterSymbol)
     private readonly registerRouter: RegisterRouter,
     @inject(EnvSymbol)
-    private readonly env: Env
+    private readonly env: AbstractEnv,
+    @inject(CoreApplicationConfigurationServiceSymbol)
+    private readonly coreAppConfigService: CoreApplicationConfigurationService
   ) {
     super();
   }
@@ -144,8 +149,9 @@ export class CoreApplicationConfigurationController extends AbstractController {
       };
     }
   ): Promise<void> {
-    // TODO: Implement initSetup
-    ctx.body = { status: 200 };
+    const result = await this.coreAppConfigService.initSetup(ctx.request.body);
+    ctx.status = result.status;
+    ctx.body = result;
   }
 
   /**
@@ -188,8 +194,8 @@ export class CoreApplicationConfigurationController extends AbstractController {
   async repairDefaultSetup(
     ctx: Context & { state: { tenantId?: string } }
   ): Promise<void> {
-    // TODO: Implement repairDefaultSetup
     const tenantId = ctx.state.tenantId!;
-    ctx.body = { status: 200, tenantId };
+    const result = await this.coreAppConfigService.repairDefaultSetup(tenantId);
+    ctx.body = result;
   }
 }

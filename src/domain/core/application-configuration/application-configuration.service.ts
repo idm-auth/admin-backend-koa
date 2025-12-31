@@ -1,6 +1,18 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
+import { AbstractService, AbstractEnv } from 'koa-inversify-framework/abstract';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { Service } from 'koa-inversify-framework/stereotype';
+import { inject } from 'inversify';
+import { RealmService, RealmServiceSymbol } from '@/domain/core/realm/realm.service';
+import { AccountService, AccountServiceSymbol } from '@/domain/realm/account/account.service';
+import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
+import { ApplicationConfigurationService, ApplicationConfigurationServiceSymbol } from '@/domain/realm/application-configuration/application-configuration.service';
+import { EnvSymbol } from 'koa-inversify-framework/abstract';
+import { EnvKey } from 'koa-inversify-framework/common';
+import { NotFoundError } from 'koa-inversify-framework/error';
+import { BACKEND_API_APPLICATION_NAME } from '@/domain/realm/application-configuration/config/backend-api.config';
+
+const IAM_SYSTEM_ID = 'iam-system';
+const FRONTEND_APPLICATION_NAME = 'idm-core-web-admin';
 
 export const CoreApplicationConfigurationServiceSymbol = Symbol.for(
   'CoreApplicationConfigurationService'
@@ -8,6 +20,11 @@ export const CoreApplicationConfigurationServiceSymbol = Symbol.for(
 
 @Service(CoreApplicationConfigurationServiceSymbol)
 export class CoreApplicationConfigurationService extends AbstractService {
+  @inject(RealmServiceSymbol) private realmService!: RealmService;
+  @inject(AccountServiceSymbol) private accountService!: AccountService;
+  @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
+  @inject(ApplicationConfigurationServiceSymbol) private appConfigService!: ApplicationConfigurationService;
+  @inject(EnvSymbol) private env!: AbstractEnv;
 
   /**
    * Repair Default Setup
@@ -26,126 +43,24 @@ export class CoreApplicationConfigurationService extends AbstractService {
   async repairDefaultSetup(
     tenantId: string
   ): Promise<{ status: number; tenantId: string }> {
-    // TODO: Implement
-    return { status: 200, tenantId };
-    /*
-    const IAM_SYSTEM_ID = 'iam-system';
-
-    const applicationService = this.container.get(ApplicationServiceSymbol);
-    const roleService = this.container.get(RoleServiceSymbol);
-    const groupService = this.container.get(GroupServiceSymbol);
-    const policyService = this.container.get(PolicyServiceSymbol);
-    const rolePolicyService = this.container.get(RolePolicyServiceSymbol);
-    const groupRoleService = this.container.get(GroupRoleServiceSymbol);
-
-    // TODO: Generate availableActions from routes
-    const generatedActions: string[] = [];
-    this.log.info({ generatedActions }, 'Generated availableActions from routes');
-
-    // Check and create/update iam-system application
-    let iamSystemApp;
     try {
-      iamSystemApp = await applicationService.findBySystemId(tenantId, IAM_SYSTEM_ID);
-      iamSystemApp = await applicationService.update(tenantId, iamSystemApp.id, {
-        availableActions: generatedActions,
-      });
-      this.log.info({ applicationId: iamSystemApp.id }, 'IAM System application availableActions updated');
+      const iamSystemApp = await this.applicationService.findBySystemId(IAM_SYSTEM_ID);
+      this.log.info({ applicationId: iamSystemApp._id }, 'IAM System application already exists');
     } catch (error) {
       if (error instanceof NotFoundError) {
-        iamSystemApp = await applicationService.create(tenantId, {
+        const iamSystemApp = await this.applicationService.create({
           name: 'IAM System',
           systemId: IAM_SYSTEM_ID,
-          availableActions: generatedActions,
+          availableActions: [],
         });
-        this.log.info({ applicationId: iamSystemApp.id }, 'IAM System application created');
+        this.log.info({ applicationId: iamSystemApp._id }, 'IAM System application created');
       } else {
         throw error;
       }
-    }
-
-    // Check and create iam-admin role
-    let iamAdminRole;
-    try {
-      iamAdminRole = await roleService.findByName(tenantId, 'iam-admin');
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        iamAdminRole = await roleService.create(tenantId, {
-          name: 'iam-admin',
-          description: 'IAM System Administrator - Full access to all IAM resources',
-        });
-        this.log.info({ roleId: iamAdminRole.id }, 'IAM Admin role recreated');
-      } else {
-        throw error;
-      }
-    }
-
-    // Check and create iam-admin group
-    let iamAdminGroup;
-    try {
-      iamAdminGroup = await groupService.findByName(tenantId, 'iam-admin');
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        iamAdminGroup = await groupService.create(tenantId, {
-          name: 'iam-admin',
-          description: 'IAM System Administrators group',
-        });
-        this.log.info({ groupId: iamAdminGroup.id }, 'IAM Admin group recreated');
-      } else {
-        throw error;
-      }
-    }
-
-    // Check and create iam-admin-full-access policy
-    let iamAdminPolicy;
-    try {
-      iamAdminPolicy = await policyService.findByName(tenantId, 'iam-admin-full-access');
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        iamAdminPolicy = await policyService.create(tenantId, {
-          version: '2025-12-24',
-          name: 'iam-admin-full-access',
-          description: 'Full access to all IAM resources',
-          effect: 'Allow',
-          actions: ['iam-system:*:*'],
-          resources: ['grn:global:iam-system:*:*:*'],
-        });
-        this.log.info({ policyId: iamAdminPolicy.id }, 'IAM Admin policy recreated');
-      } else {
-        throw error;
-      }
-    }
-
-    // Check and create role-policy association
-    const rolePolicies = await rolePolicyService.findByRoleId(tenantId, iamAdminRole.id);
-    const hasPolicy = rolePolicies.find((rp: any) => rp.policyId === iamAdminPolicy.id);
-    if (!hasPolicy) {
-      await rolePolicyService.create(tenantId, {
-        roleId: iamAdminRole.id,
-        policyId: iamAdminPolicy.id,
-      });
-      this.log.info(
-        { roleId: iamAdminRole.id, policyId: iamAdminPolicy.id },
-        'IAM Admin role-policy association recreated'
-      );
-    }
-
-    // Check and create group-role association
-    const groupRoles = await groupRoleService.findByGroupId(tenantId, iamAdminGroup.id);
-    const hasRole = groupRoles.find((gr: any) => gr.roleId === iamAdminRole.id);
-    if (!hasRole) {
-      await groupRoleService.create(tenantId, {
-        groupId: iamAdminGroup.id,
-        roleId: iamAdminRole.id,
-      });
-      this.log.info(
-        { groupId: iamAdminGroup.id, roleId: iamAdminRole.id },
-        'IAM Admin group-role association recreated'
-      );
     }
 
     this.log.info({ tenantId }, 'Default setup repair completed');
     return { status: 200, tenantId };
-    */
   }
 
   /**
@@ -166,41 +81,93 @@ export class CoreApplicationConfigurationService extends AbstractService {
   async initSetup(data: {
     adminAccount: { email: string; password: string };
   }): Promise<{ status: number }> {
-    // TODO: Implement
-    return { status: 200 };
-    /*
-    const accountService = this.container.get(AccountServiceSymbol);
-    const groupService = this.container.get(GroupServiceSymbol);
-    const accountGroupService = this.container.get(AccountGroupServiceSymbol);
+    const coreRealm = await this.realmService.getRealmCore();
+    const tenantId = coreRealm.publicUUID;
+    const env = this.env.get(EnvKey.NODE_ENV);
 
-    // TODO: Check if config already exists (idempotent)
-    // For now, assume it doesn't exist
+    let backendApp;
+    try {
+      backendApp = await this.applicationService.findBySystemId(BACKEND_API_APPLICATION_NAME);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        backendApp = await this.applicationService.create({
+          name: 'Backend API',
+          systemId: BACKEND_API_APPLICATION_NAME,
+          availableActions: [],
+        });
+        this.log.info({ applicationId: backendApp._id }, 'Backend API application created');
+      } else {
+        throw error;
+      }
+    }
 
-    const realmCore = await this.realmService.initSetup();
+    let frontendApp;
+    try {
+      frontendApp = await this.applicationService.findBySystemId(FRONTEND_APPLICATION_NAME);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        frontendApp = await this.applicationService.create({
+          name: 'Web Admin',
+          systemId: FRONTEND_APPLICATION_NAME,
+          availableActions: [],
+        });
+        this.log.info({ applicationId: frontendApp._id }, 'Web Admin application created');
+      } else {
+        throw error;
+      }
+    }
 
-    // Create initial admin account
-    const adminAccount = await accountService.create(realmCore.publicUUID, data.adminAccount);
-    this.log.info({ accountId: adminAccount.id }, 'Initial admin account created');
+    try {
+      await this.appConfigService.getByApplicationAndEnvironment(
+        backendApp._id.toString(),
+        env
+      );
+      await this.appConfigService.getByApplicationAndEnvironment(
+        frontendApp._id.toString(),
+        env
+      );
+      this.log.info('Setup already exists');
+      return { status: 200 };
+    } catch (error) {
+      if (!(error instanceof NotFoundError)) {
+        throw error;
+      }
+    }
 
-    // Create/repair default system resources
-    await this.repairDefaultSetup(realmCore.publicUUID);
+    const adminAccount = await this.accountService.create(data.adminAccount);
+    this.log.info({ accountId: adminAccount._id }, 'Initial admin account created');
 
-    // Get group to associate admin account (guaranteed to exist after repair)
-    const iamAdminGroup = await groupService.findByName(realmCore.publicUUID, 'iam-admin');
+    await this.repairDefaultSetup(tenantId);
 
-    // Associate admin account with iam-admin group
-    await accountGroupService.create(realmCore.publicUUID, {
-      accountId: adminAccount.id,
-      groupId: iamAdminGroup.id,
+    await this.appConfigService.create({
+      applicationId: backendApp._id.toString(),
+      environment: env,
+      config: {
+        jwt: {
+          secret: 'default-jwt-secret-change-in-production',
+          accessTokenExpiresIn: '24h',
+          refreshTokenExpiresIn: '7d',
+        },
+      },
     });
-    this.log.info(
-      { accountId: adminAccount.id, groupId: iamAdminGroup.id },
-      'Admin account associated with iam-admin group'
-    );
+    this.log.info('Backend API configuration created');
 
-    // TODO: Save web admin configuration
+    await this.appConfigService.create({
+      applicationId: frontendApp._id.toString(),
+      environment: env,
+      config: {
+        api: {
+          main: {
+            url: this.env.get(EnvKey.IDM_URL),
+          },
+        },
+        coreRealm: {
+          publicUUID: tenantId,
+        },
+      },
+    });
+    this.log.info('Web Admin configuration created');
 
     return { status: 201 };
-    */
   }
 }
