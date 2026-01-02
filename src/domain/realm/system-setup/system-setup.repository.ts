@@ -4,7 +4,7 @@ import { SystemSetupSchema, systemSetupSchema } from './system-setup.entity';
 
 export const SystemSetupRepositorySymbol = Symbol.for('SystemSetupRepository');
 
-@Repository(SystemSetupRepositorySymbol, { multiTenant: false })
+@Repository(SystemSetupRepositorySymbol, { multiTenant: true })
 export class SystemSetupRepository extends AbstractCrudMongoRepository<SystemSetupSchema> {
   constructor() {
     super(systemSetupSchema, 'system-setup');

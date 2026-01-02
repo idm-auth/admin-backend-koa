@@ -5,6 +5,7 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 export type Application = {
   name: string;
   systemId: string;
+  description?: string;
   availableActions?: Array<{
     resourceType: string;
     pathPattern: string;
@@ -18,6 +19,7 @@ export const applicationSchema = new mongoose.Schema<Application>(
   {
     name: { type: String, required: true, index: true },
     systemId: { type: String, required: true, unique: true, index: true },
+    description: { type: String },
     availableActions: [
       {
         resourceType: { type: String, required: true },

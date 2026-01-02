@@ -94,30 +94,4 @@ export class SystemSetupController extends AbstractController {
     ctx.status = result.status;
     ctx.body = result;
   }
-
-  @SwaggerDoc({
-    summary: 'Repair default setup',
-    description: 'Checks and recreates default system resources if missing',
-    tags: ['System Setup'],
-    responses: {
-      200: {
-        description: 'Repair completed',
-        content: {
-          'application/json': {
-            schema: z.object({
-              status: z.literal(200),
-            }),
-          },
-        },
-      },
-      400: commonErrorResponses[400],
-      500: commonErrorResponses[500],
-    },
-  })
-  @InjectCoreTenantId()
-  @Post('/repair-default-setup')
-  async repairDefaultSetup(ctx: Context): Promise<void> {
-    const result = await this.systemSetupService.repairDefaultSetup();
-    ctx.body = result;
-  }
 }

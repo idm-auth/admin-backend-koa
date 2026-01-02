@@ -7,10 +7,9 @@ import {
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
 import {
-  ApplicationService,
-  ApplicationServiceSymbol,
-} from '@/domain/realm/application/application.service';
-import { AppEnv, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
+  SystemSetupService as RealmSystemSetupService,
+  SystemSetupServiceSymbol as RealmSystemSetupServiceSymbol,
+} from '@/domain/realm/system-setup/system-setup.service';
 import { inject } from 'inversify';
 import { AbstractService } from 'koa-inversify-framework/abstract';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
@@ -20,17 +19,16 @@ import {
   SystemSetupRepositorySymbol,
 } from './system-setup.repository';
 
-export const SystemSetupServiceSymbol = Symbol.for('SystemSetupService');
+export const SystemSetupServiceSymbol = Symbol.for('CoreSystemSetupService');
 
-@Service(SystemSetupServiceSymbol, { multiTenant: true })
+@Service(SystemSetupServiceSymbol)
 export class SystemSetupService extends AbstractService {
   @inject(SystemSetupRepositorySymbol)
   private repository!: SystemSetupRepository;
   @inject(RealmServiceSymbol) private realmService!: RealmService;
   @inject(AccountServiceSymbol) private accountService!: AccountService;
-  @inject(ApplicationServiceSymbol)
-  private applicationService!: ApplicationService;
-  @inject(AppEnvSymbol) private appEnv!: AppEnv;
+  @inject(RealmSystemSetupServiceSymbol)
+  private realmSystemSetupService!: RealmSystemSetupService;
 
   async isInitialSetupCompleted(): Promise<boolean> {
     const setup = await this.repository.findOne(
@@ -55,12 +53,6 @@ export class SystemSetupService extends AbstractService {
     this.log.info('Initial setup marked as completed');
   }
 
-  @TraceAsync('system-setup.service.repairDefaultSetup')
-  async repairDefaultSetup(): Promise<{ status: number }> {
-    // TODO: Repair realm-specific default setup (applications, configurations, etc)
-    return { status: 200 };
-  }
-
   @TraceAsync('system-setup.service.initSetup')
   async initSetup(data: {
     adminAccount: { email: string; password: string };
@@ -71,7 +63,7 @@ export class SystemSetupService extends AbstractService {
       return { status: 200 };
     }
 
-    await this.repairDefaultSetup();
+    await this.realmSystemSetupService.repairSetup();
 
     const adminAccount = await this.accountService.createFromDto(
       data.adminAccount
