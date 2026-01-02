@@ -35,7 +35,7 @@ import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export const applicationConfigurationSchema = new mongoose.Schema(
   {
-    applicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Application', required: true },
+    applicationId: { type: String, required: true },
     environment: { type: String, required: true },
     config: { type: mongoose.Schema.Types.Mixed, default: {} },
     schema: { type: mongoose.Schema.Types.Mixed },
@@ -52,4 +52,9 @@ export type ApplicationConfigurationSchema =
   typeof applicationConfigurationSchema;
 export type ApplicationConfigurationEntity = HydratedDocument<
   InferSchemaType<typeof applicationConfigurationSchema>
+>;
+
+export type ApplicationConfigurationCreate = Omit<
+  InferSchemaType<typeof applicationConfigurationSchema>,
+  'createdAt' | 'updatedAt'
 >;

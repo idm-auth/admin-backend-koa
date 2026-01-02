@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { GroupPolicyService, GroupPolicyServiceSymbol } from '@/domain/realm/group-policy/group-policy.service';
 import { GroupPolicyMapper, GroupPolicyMapperSymbol } from '@/domain/realm/group-policy/group-policy.mapper';
 import { GroupPolicyDtoTypes, groupPolicyCreateSchema, groupPolicyBaseResponseSchema } from '@/domain/realm/group-policy/group-policy.dto';
-import { GroupPolicySchema } from '@/domain/realm/group-policy/group-policy.entity';
+import { GroupPolicySchema, GroupPolicyCreate } from '@/domain/realm/group-policy/group-policy.entity';
 
 export const GroupPolicyControllerSymbol = Symbol.for('GroupPolicyController');
 
@@ -20,7 +20,7 @@ export const GroupPolicyControllerSymbol = Symbol.for('GroupPolicyController');
   basePath: '/api/realm/:tenantId/group-policy',
   multiTenant: true,
 })
-export class GroupPolicyController extends AbstractCrudController<GroupPolicySchema, GroupPolicyDtoTypes> {
+export class GroupPolicyController extends AbstractCrudController<GroupPolicySchema, GroupPolicyDtoTypes, GroupPolicyCreate> {
   constructor(
     @inject(GroupPolicyServiceSymbol) protected service: GroupPolicyService,
     @inject(GroupPolicyMapperSymbol) protected mapper: GroupPolicyMapper

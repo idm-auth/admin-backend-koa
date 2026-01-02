@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { AccountPolicyService, AccountPolicyServiceSymbol } from '@/domain/realm/account-policy/account-policy.service';
 import { AccountPolicyMapper, AccountPolicyMapperSymbol } from '@/domain/realm/account-policy/account-policy.mapper';
 import { AccountPolicyDtoTypes, accountPolicyCreateSchema, accountPolicyBaseResponseSchema } from '@/domain/realm/account-policy/account-policy.dto';
-import { AccountPolicySchema } from '@/domain/realm/account-policy/account-policy.entity';
+import { AccountPolicySchema, AccountPolicyCreate } from '@/domain/realm/account-policy/account-policy.entity';
 
 export const AccountPolicyControllerSymbol = Symbol.for('AccountPolicyController');
 
@@ -20,7 +20,7 @@ export const AccountPolicyControllerSymbol = Symbol.for('AccountPolicyController
   basePath: '/api/realm/:tenantId/account-policy',
   multiTenant: true,
 })
-export class AccountPolicyController extends AbstractCrudController<AccountPolicySchema, AccountPolicyDtoTypes> {
+export class AccountPolicyController extends AbstractCrudController<AccountPolicySchema, AccountPolicyDtoTypes, AccountPolicyCreate> {
   constructor(
     @inject(AccountPolicyServiceSymbol) protected service: AccountPolicyService,
     @inject(AccountPolicyMapperSymbol) protected mapper: AccountPolicyMapper

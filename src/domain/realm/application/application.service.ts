@@ -1,24 +1,22 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { CreateInput } from 'koa-inversify-framework/common';
 import { ApplicationDtoTypes } from '@/domain/realm/application/application.dto';
-import { ApplicationEntity, ApplicationSchema } from '@/domain/realm/application/application.entity';
+import { ApplicationCreate, ApplicationEntity, ApplicationSchema } from '@/domain/realm/application/application.entity';
 import { ApplicationRepository, ApplicationRepositorySymbol } from '@/domain/realm/application/application.repository';
 import { inject } from 'inversify';
 
 export const ApplicationServiceSymbol = Symbol.for('ApplicationService');
 
 @Service(ApplicationServiceSymbol, { multiTenant: true })
-export class ApplicationService extends AbstractCrudService<ApplicationSchema, ApplicationDtoTypes> {
+export class ApplicationService extends AbstractCrudService<ApplicationSchema, ApplicationDtoTypes, ApplicationCreate> {
   @inject(ApplicationRepositorySymbol) protected repository!: ApplicationRepository;
 
-  protected buildCreateData(dto: ApplicationDtoTypes['CreateRequestDto']): CreateInput<ApplicationSchema> {
+  protected buildCreateDataFromDto(dto: ApplicationDtoTypes['CreateRequestDto']): ApplicationCreate {
     return {
       name: dto.name,
       systemId: dto.systemId,
       availableActions: dto.availableActions,
-      isActive: true,
     };
   }
 

@@ -18,3 +18,4 @@ accountRoleSchema.index({ accountId: 1, roleId: 1 }, { unique: true });
 
 export type AccountRoleSchema = typeof accountRoleSchema;
 export type AccountRoleEntity = HydratedDocument<InferSchemaType<typeof accountRoleSchema>>;
+export type AccountRoleCreate = InferSchemaType<AccountRoleSchema>;

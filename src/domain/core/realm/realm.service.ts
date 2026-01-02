@@ -1,13 +1,17 @@
 import { RealmDtoTypes } from '@/domain/core/realm/realm.dto';
-import { RealmEntity, RealmSchema } from '@/domain/core/realm/realm.entity';
+import {
+  RealmCreate,
+  RealmEntity,
+  RealmSchema,
+} from '@/domain/core/realm/realm.entity';
 import {
   RealmRepository,
   RealmRepositorySymbol,
 } from '@/domain/core/realm/realm.repository';
 import { inject } from 'inversify';
-import { AbstractCrudService, AbstractEnv } from 'koa-inversify-framework/abstract';
-import { CreateInput, EnvKey } from 'koa-inversify-framework/common';
-import { EnvSymbol } from 'koa-inversify-framework/abstract';
+import { AbstractEnv, EnvSymbol } from 'koa-inversify-framework';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
+import { EnvKey } from 'koa-inversify-framework/common';
 import { Service } from 'koa-inversify-framework/stereotype';
 
 export const RealmServiceSymbol = Symbol.for('RealmService');
@@ -15,22 +19,29 @@ export const RealmServiceSymbol = Symbol.for('RealmService');
 @Service(RealmServiceSymbol)
 export class RealmService extends AbstractCrudService<
   RealmSchema,
-  RealmDtoTypes
+  RealmDtoTypes,
+  RealmCreate
 > {
   @inject(RealmRepositorySymbol) protected repository!: RealmRepository;
   @inject(EnvSymbol) protected env!: AbstractEnv;
 
-  protected buildCreateData(
+  async create(data: RealmCreate): Promise<RealmEntity> {
+    const realm = await super.create(data);
+
+    // TODO: Create default applications for realm
+    // TODO: Create default configurations for applications
+
+    return realm;
+  }
+
+  protected buildCreateDataFromDto(
     dto: RealmDtoTypes['CreateRequestDto']
-  ): CreateInput<RealmSchema> {
+  ): RealmCreate {
     this.log.debug({ dto }, 'Building create data');
     return {
       name: dto.name,
       description: dto.description,
       dbName: dto.dbName,
-      jwtConfig: {
-        expiresIn: dto.jwtConfig?.expiresIn || '24h',
-      },
     };
   }
 

@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { RolePolicyService, RolePolicyServiceSymbol } from '@/domain/realm/role-policy/role-policy.service';
 import { RolePolicyMapper, RolePolicyMapperSymbol } from '@/domain/realm/role-policy/role-policy.mapper';
 import { RolePolicyDtoTypes, rolePolicyCreateSchema, rolePolicyBaseResponseSchema } from '@/domain/realm/role-policy/role-policy.dto';
-import { RolePolicySchema } from '@/domain/realm/role-policy/role-policy.entity';
+import { RolePolicySchema, RolePolicyCreate } from '@/domain/realm/role-policy/role-policy.entity';
 
 export const RolePolicyControllerSymbol = Symbol.for('RolePolicyController');
 
@@ -20,7 +20,7 @@ export const RolePolicyControllerSymbol = Symbol.for('RolePolicyController');
   basePath: '/api/realm/:tenantId/role-policy',
   multiTenant: true,
 })
-export class RolePolicyController extends AbstractCrudController<RolePolicySchema, RolePolicyDtoTypes> {
+export class RolePolicyController extends AbstractCrudController<RolePolicySchema, RolePolicyDtoTypes, RolePolicyCreate> {
   constructor(
     @inject(RolePolicyServiceSymbol) protected service: RolePolicyService,
     @inject(RolePolicyMapperSymbol) protected mapper: RolePolicyMapper

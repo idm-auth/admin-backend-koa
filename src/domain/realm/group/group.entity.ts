@@ -17,3 +17,5 @@ groupSchema.add(baseEntitySchema);
 
 export type GroupSchema = typeof groupSchema;
 export type GroupEntity = HydratedDocument<InferSchemaType<typeof groupSchema>>;
+
+export type GroupCreate = InferSchemaType<typeof groupSchema>;

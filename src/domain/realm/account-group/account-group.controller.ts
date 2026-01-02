@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { AccountGroupService, AccountGroupServiceSymbol } from '@/domain/realm/account-group/account-group.service';
 import { AccountGroupMapper, AccountGroupMapperSymbol } from '@/domain/realm/account-group/account-group.mapper';
 import { AccountGroupDtoTypes, accountGroupCreateSchema, accountGroupBaseResponseSchema } from '@/domain/realm/account-group/account-group.dto';
-import { AccountGroupSchema } from '@/domain/realm/account-group/account-group.entity';
+import { AccountGroupSchema, AccountGroupCreate } from '@/domain/realm/account-group/account-group.entity';
 
 export const AccountGroupControllerSymbol = Symbol.for('AccountGroupController');
 
@@ -20,7 +20,7 @@ export const AccountGroupControllerSymbol = Symbol.for('AccountGroupController')
   basePath: '/api/realm/:tenantId/account-group',
   multiTenant: true,
 })
-export class AccountGroupController extends AbstractCrudController<AccountGroupSchema, AccountGroupDtoTypes> {
+export class AccountGroupController extends AbstractCrudController<AccountGroupSchema, AccountGroupDtoTypes, AccountGroupCreate> {
   constructor(
     @inject(AccountGroupServiceSymbol) protected service: AccountGroupService,
     @inject(AccountGroupMapperSymbol) protected mapper: AccountGroupMapper

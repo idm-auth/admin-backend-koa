@@ -4,7 +4,7 @@ import {
   applicationConfigurationResponseSchema,
   applicationConfigurationUpdateSchema,
 } from '@/domain/realm/application-configuration/application-configuration.dto';
-import { ApplicationConfigurationSchema } from '@/domain/realm/application-configuration/application-configuration.entity';
+import { ApplicationConfigurationSchema, ApplicationConfigurationCreate } from '@/domain/realm/application-configuration/application-configuration.entity';
 import {
   ApplicationConfigurationMapper,
   ApplicationConfigurationMapperSymbol,
@@ -52,7 +52,8 @@ export const ApplicationConfigurationControllerSymbol = Symbol.for(
 })
 export class ApplicationConfigurationController extends AbstractCrudController<
   ApplicationConfigurationSchema,
-  ApplicationConfigurationDtoTypes
+  ApplicationConfigurationDtoTypes,
+  ApplicationConfigurationCreate
 > {
   constructor(
     @inject(ApplicationConfigurationServiceSymbol)

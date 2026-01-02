@@ -1,6 +1,6 @@
+import { randomBytes } from 'crypto';
 import { baseEntitySchema } from 'koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
-import { randomBytes } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 export type Realm = {
@@ -44,3 +44,8 @@ realmSchema.add(baseEntitySchema);
 
 export type RealmSchema = typeof realmSchema;
 export type RealmEntity = HydratedDocument<InferSchemaType<typeof realmSchema>>;
+
+export type RealmCreate = Omit<
+  InferSchemaType<typeof realmSchema>,
+  'publicUUID' | 'jwtConfig'
+>;

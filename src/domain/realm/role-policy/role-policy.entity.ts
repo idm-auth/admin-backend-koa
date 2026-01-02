@@ -18,3 +18,5 @@ rolePolicySchema.index({ roleId: 1, policyId: 1 }, { unique: true });
 
 export type RolePolicySchema = typeof rolePolicySchema;
 export type RolePolicyEntity = HydratedDocument<InferSchemaType<typeof rolePolicySchema>>;
+
+export type RolePolicyCreate = InferSchemaType<typeof rolePolicySchema>;

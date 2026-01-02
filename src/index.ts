@@ -3,8 +3,8 @@ import { ContainerSymbol } from 'koa-inversify-framework/infrastructure';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Container } from 'inversify';
 import 'reflect-metadata';
-import { RealmTenantResolver } from '@/infrastructure/tenant/realmTenantResolver.provider';
-import { AppEnv } from '@/infrastructure/env/appEnv.provider';
+import { RealmTenantResolver, RealmTenantResolverSymbol } from '@/infrastructure/tenant/realmTenantResolver.provider';
+import { AppEnv, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
 import { initCoreModulesPhase1, initCoreModulesPhase2 } from '@/domain/core';
 import { initRealmModules } from '@/domain/realm';
 
@@ -18,8 +18,8 @@ void (async () => {
   framework
     .setContainer(container)
     .setRegistry(registry)
-    .setTenantResolver(RealmTenantResolver)
-    .setEnv(AppEnv);
+    .setTenantResolver(RealmTenantResolver, RealmTenantResolverSymbol)
+    .setEnv(AppEnv, AppEnvSymbol);
 
   await framework.init();
 

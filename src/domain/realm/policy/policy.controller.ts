@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { PolicyService, PolicyServiceSymbol } from '@/domain/realm/policy/policy.service';
 import { PolicyMapper, PolicyMapperSymbol } from '@/domain/realm/policy/policy.mapper';
 import { PolicyDtoTypes, policyCreateSchema, policyUpdateSchema, policyBaseResponseSchema } from '@/domain/realm/policy/policy.dto';
-import { PolicySchema } from '@/domain/realm/policy/policy.entity';
+import { PolicySchema, PolicyCreate } from '@/domain/realm/policy/policy.entity';
 
 export const PolicyControllerSymbol = Symbol.for('PolicyController');
 
@@ -20,7 +20,7 @@ export const PolicyControllerSymbol = Symbol.for('PolicyController');
   basePath: '/api/realm/:tenantId/policy',
   multiTenant: true,
 })
-export class PolicyController extends AbstractCrudController<PolicySchema, PolicyDtoTypes> {
+export class PolicyController extends AbstractCrudController<PolicySchema, PolicyDtoTypes, PolicyCreate> {
   constructor(
     @inject(PolicyServiceSymbol) protected service: PolicyService,
     @inject(PolicyMapperSymbol) protected mapper: PolicyMapper

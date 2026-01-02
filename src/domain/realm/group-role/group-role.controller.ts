@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { GroupRoleService, GroupRoleServiceSymbol } from '@/domain/realm/group-role/group-role.service';
 import { GroupRoleMapper, GroupRoleMapperSymbol } from '@/domain/realm/group-role/group-role.mapper';
 import { GroupRoleDtoTypes, groupRoleCreateSchema, groupRoleBaseResponseSchema } from '@/domain/realm/group-role/group-role.dto';
-import { GroupRoleSchema } from '@/domain/realm/group-role/group-role.entity';
+import { GroupRoleSchema, GroupRoleCreate } from '@/domain/realm/group-role/group-role.entity';
 
 export const GroupRoleControllerSymbol = Symbol.for('GroupRoleController');
 
@@ -20,7 +20,7 @@ export const GroupRoleControllerSymbol = Symbol.for('GroupRoleController');
   basePath: '/api/realm/:tenantId/group-role',
   multiTenant: true,
 })
-export class GroupRoleController extends AbstractCrudController<GroupRoleSchema, GroupRoleDtoTypes> {
+export class GroupRoleController extends AbstractCrudController<GroupRoleSchema, GroupRoleDtoTypes, GroupRoleCreate> {
   constructor(
     @inject(GroupRoleServiceSymbol) protected service: GroupRoleService,
     @inject(GroupRoleMapperSymbol) protected mapper: GroupRoleMapper

@@ -40,3 +40,5 @@ policySchema.add(baseEntitySchema);
 
 export type PolicySchema = typeof policySchema;
 export type PolicyEntity = HydratedDocument<InferSchemaType<typeof policySchema>>;
+
+export type PolicyCreate = InferSchemaType<typeof policySchema>;

@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 import { ApplicationMapper, ApplicationMapperSymbol } from '@/domain/realm/application/application.mapper';
 import { ApplicationDtoTypes, applicationCreateSchema, applicationUpdateSchema, applicationBaseResponseSchema } from '@/domain/realm/application/application.dto';
-import { ApplicationSchema } from '@/domain/realm/application/application.entity';
+import { ApplicationSchema, ApplicationCreate } from '@/domain/realm/application/application.entity';
 
 export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
 
@@ -20,7 +20,7 @@ export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
   basePath: '/api/realm/:tenantId/application',
   multiTenant: true,
 })
-export class ApplicationController extends AbstractCrudController<ApplicationSchema, ApplicationDtoTypes> {
+export class ApplicationController extends AbstractCrudController<ApplicationSchema, ApplicationDtoTypes, ApplicationCreate> {
   constructor(
     @inject(ApplicationServiceSymbol) protected service: ApplicationService,
     @inject(ApplicationMapperSymbol) protected mapper: ApplicationMapper

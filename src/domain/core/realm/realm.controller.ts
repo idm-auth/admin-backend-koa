@@ -27,7 +27,7 @@ import {
   realmUpdateSchema,
   realmFullResponseSchema,
 } from '@/domain/core/realm/realm.dto';
-import { RealmSchema } from '@/domain/core/realm/realm.entity';
+import { RealmSchema, RealmCreate } from '@/domain/core/realm/realm.entity';
 
 export const RealmControllerSymbol = Symbol.for('RealmController');
 
@@ -39,7 +39,8 @@ export const RealmControllerSymbol = Symbol.for('RealmController');
 @Controller(RealmControllerSymbol, { basePath: '/api/core/realm' })
 export class RealmController extends AbstractCrudController<
   RealmSchema,
-  RealmDtoTypes
+  RealmDtoTypes,
+  RealmCreate
 > {
   constructor(
     @inject(RealmServiceSymbol) protected service: RealmService,

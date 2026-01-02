@@ -1,9 +1,9 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { CreateInput } from 'koa-inversify-framework/common';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import {
+  AccountCreate,
   AccountEntity,
   AccountSchema,
 } from '@/domain/realm/account/account.entity';
@@ -24,18 +24,18 @@ export const AccountServiceSymbol = Symbol.for('AccountService');
 @Service(AccountServiceSymbol, { multiTenant: true })
 export class AccountService extends AbstractCrudService<
   AccountSchema,
-  AccountDtoTypes
+  AccountDtoTypes,
+  AccountCreate
 > {
   @inject(AccountRepositorySymbol) protected repository!: AccountRepository;
 
-  protected buildCreateData(
+  protected buildCreateDataFromDto(
     dto: AccountDtoTypes['CreateRequestDto']
-  ): CreateInput<AccountSchema> {
+  ): AccountCreate {
     this.log.debug({ dto }, 'Building create data');
     return {
       emails: [{ email: dto.email, isPrimary: true }],
       password: dto.password,
-      isActive: true,
     };
   }
 

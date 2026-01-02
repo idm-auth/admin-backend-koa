@@ -4,13 +4,10 @@ import { AbstractController } from 'koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
   HttpMethod,
-  emailSchema,
-  passwordSchema,
 } from 'koa-inversify-framework/common';
 import {
   Get,
   InjectCoreTenantId,
-  Post,
   SwaggerDoc,
   SwaggerDocController,
 } from 'koa-inversify-framework/decorator';
@@ -19,14 +16,10 @@ import {
   RegisterRouter,
   RegisterRouterSymbol,
 } from 'koa-inversify-framework/infrastructure';
-import { EnvSymbol, AbstractEnv } from 'koa-inversify-framework/abstract';
+import { EnvSymbol, AbstractEnv } from 'koa-inversify-framework';
 import { EnvKey } from 'koa-inversify-framework/common';
 import { z } from 'zod';
 import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
-import {
-  CoreApplicationConfigurationService,
-  CoreApplicationConfigurationServiceSymbol,
-} from '@/domain/core/application-configuration/application-configuration.service';
 
 export const CoreApplicationConfigurationControllerSymbol = Symbol.for(
   'CoreApplicationConfigurationController'
@@ -45,9 +38,7 @@ export class CoreApplicationConfigurationController extends AbstractController {
     @inject(RegisterRouterSymbol)
     private readonly registerRouter: RegisterRouter,
     @inject(EnvSymbol)
-    private readonly env: AbstractEnv,
-    @inject(CoreApplicationConfigurationServiceSymbol)
-    private readonly coreAppConfigService: CoreApplicationConfigurationService
+    private readonly env: AbstractEnv
   ) {
     super();
   }
@@ -97,105 +88,5 @@ export class CoreApplicationConfigurationController extends AbstractController {
     ctx.params = { tenantId, applicationId, environment };
 
     await this.registerRouter.executeRoute(targetPath, HttpMethod.GET, ctx);
-  }
-
-  @SwaggerDoc({
-    summary: 'Initialize system setup (core realm)',
-    description:
-      'Creates core realm, admin account, and default system resources',
-    tags: ['Core Application Configuration'],
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              adminAccount: z.object({
-                email: emailSchema,
-                password: passwordSchema,
-              }),
-            }),
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Setup already exists',
-        content: {
-          'application/json': {
-            schema: z.object({ status: z.literal(200) }),
-          },
-        },
-      },
-      201: {
-        description: 'Setup created successfully',
-        content: {
-          'application/json': {
-            schema: z.object({ status: z.literal(201) }),
-          },
-        },
-      },
-      400: commonErrorResponses[400],
-      500: commonErrorResponses[500],
-    },
-  })
-  @Post('/init-setup')
-  async initSetup(
-    ctx: Context & {
-      request: {
-        body: {
-          adminAccount: { email: string; password: string };
-        };
-      };
-    }
-  ): Promise<void> {
-    const result = await this.coreAppConfigService.initSetup(ctx.request.body);
-    ctx.status = result.status;
-    ctx.body = result;
-  }
-
-  /**
-   * EXCEPTION TO ARCHITECTURE RULE: Business logic in controller
-   *
-   * This function intentionally retrieves tenantId from core realm service
-   * instead of receiving it as a parameter. This is a documented exception
-   * because:
-   *
-   * 1. repairDefaultSetup MUST operate on core realm only
-   * 2. Forcing tenantId from core prevents accidental misuse on wrong tenant
-   * 3. This is an administrative operation, not a regular tenant-scoped API
-   * 4. Security: Ensures repair operations only affect the intended core realm
-   *
-   * This exception is acceptable because it enforces correctness and prevents
-   * dangerous operations on wrong tenants.
-   */
-  @SwaggerDoc({
-    summary: 'Repair default setup (core realm)',
-    description: 'Checks and recreates default system resources if missing',
-    tags: ['Core Application Configuration'],
-    responses: {
-      200: {
-        description: 'Repair completed',
-        content: {
-          'application/json': {
-            schema: z.object({
-              status: z.literal(200),
-              tenantId: z.string(),
-            }),
-          },
-        },
-      },
-      400: commonErrorResponses[400],
-      500: commonErrorResponses[500],
-    },
-  })
-  @InjectCoreTenantId()
-  @Post('/repair-default-setup')
-  async repairDefaultSetup(
-    ctx: Context & { state: { tenantId?: string } }
-  ): Promise<void> {
-    const tenantId = ctx.state.tenantId!;
-    const result = await this.coreAppConfigService.repairDefaultSetup(tenantId);
-    ctx.body = result;
   }
 }

@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { AccountRoleService, AccountRoleServiceSymbol } from '@/domain/realm/account-role/account-role.service';
 import { AccountRoleMapper, AccountRoleMapperSymbol } from '@/domain/realm/account-role/account-role.mapper';
 import { AccountRoleDtoTypes, accountRoleCreateSchema, accountRoleBaseResponseSchema } from '@/domain/realm/account-role/account-role.dto';
-import { AccountRoleSchema } from '@/domain/realm/account-role/account-role.entity';
+import { AccountRoleSchema, AccountRoleCreate } from '@/domain/realm/account-role/account-role.entity';
 
 export const AccountRoleControllerSymbol = Symbol.for('AccountRoleController');
 
@@ -20,7 +20,7 @@ export const AccountRoleControllerSymbol = Symbol.for('AccountRoleController');
   basePath: '/api/realm/:tenantId/account-role',
   multiTenant: true,
 })
-export class AccountRoleController extends AbstractCrudController<AccountRoleSchema, AccountRoleDtoTypes> {
+export class AccountRoleController extends AbstractCrudController<AccountRoleSchema, AccountRoleDtoTypes, AccountRoleCreate> {
   constructor(
     @inject(AccountRoleServiceSymbol) protected service: AccountRoleService,
     @inject(AccountRoleMapperSymbol) protected mapper: AccountRoleMapper

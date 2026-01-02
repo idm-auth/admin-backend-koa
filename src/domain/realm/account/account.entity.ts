@@ -39,3 +39,8 @@ export type AccountSchema = typeof accountSchema;
 export type AccountEntity = HydratedDocument<
   InferSchemaType<typeof accountSchema>
 >;
+
+export type AccountCreate = Omit<
+  InferSchemaType<typeof accountSchema>,
+  'isActive'
+>;

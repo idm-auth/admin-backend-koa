@@ -1,18 +1,17 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
-import { CreateInput } from 'koa-inversify-framework/common';
 import { RolePolicyDtoTypes } from '@/domain/realm/role-policy/role-policy.dto';
-import { RolePolicyEntity, RolePolicySchema } from '@/domain/realm/role-policy/role-policy.entity';
+import { RolePolicyCreate, RolePolicyEntity, RolePolicySchema } from '@/domain/realm/role-policy/role-policy.entity';
 import { RolePolicyRepository, RolePolicyRepositorySymbol } from '@/domain/realm/role-policy/role-policy.repository';
 import { inject } from 'inversify';
 
 export const RolePolicyServiceSymbol = Symbol.for('RolePolicyService');
 
 @Service(RolePolicyServiceSymbol, { multiTenant: true })
-export class RolePolicyService extends AbstractCrudService<RolePolicySchema, RolePolicyDtoTypes> {
+export class RolePolicyService extends AbstractCrudService<RolePolicySchema, RolePolicyDtoTypes, RolePolicyCreate> {
   @inject(RolePolicyRepositorySymbol) protected repository!: RolePolicyRepository;
 
-  protected buildCreateData(dto: RolePolicyDtoTypes['CreateRequestDto']): CreateInput<RolePolicySchema> {
+  protected buildCreateDataFromDto(dto: RolePolicyDtoTypes['CreateRequestDto']): RolePolicyCreate {
     return {
       roleId: dto.roleId,
       policyId: dto.policyId,

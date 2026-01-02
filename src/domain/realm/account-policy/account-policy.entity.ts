@@ -18,3 +18,4 @@ accountPolicySchema.index({ accountId: 1, policyId: 1 }, { unique: true });
 
 export type AccountPolicySchema = typeof accountPolicySchema;
 export type AccountPolicyEntity = HydratedDocument<InferSchemaType<typeof accountPolicySchema>>;
+export type AccountPolicyCreate = InferSchemaType<AccountPolicySchema>;

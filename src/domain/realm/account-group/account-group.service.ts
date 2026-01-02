@@ -1,18 +1,17 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
-import { CreateInput } from 'koa-inversify-framework/common';
 import { AccountGroupDtoTypes } from '@/domain/realm/account-group/account-group.dto';
-import { AccountGroupEntity, AccountGroupSchema } from '@/domain/realm/account-group/account-group.entity';
+import { AccountGroupEntity, AccountGroupSchema, AccountGroupCreate } from '@/domain/realm/account-group/account-group.entity';
 import { AccountGroupRepository, AccountGroupRepositorySymbol } from '@/domain/realm/account-group/account-group.repository';
 import { inject } from 'inversify';
 
 export const AccountGroupServiceSymbol = Symbol.for('AccountGroupService');
 
 @Service(AccountGroupServiceSymbol, { multiTenant: true })
-export class AccountGroupService extends AbstractCrudService<AccountGroupSchema, AccountGroupDtoTypes> {
+export class AccountGroupService extends AbstractCrudService<AccountGroupSchema, AccountGroupDtoTypes, AccountGroupCreate> {
   @inject(AccountGroupRepositorySymbol) protected repository!: AccountGroupRepository;
 
-  protected buildCreateData(dto: AccountGroupDtoTypes['CreateRequestDto']): CreateInput<AccountGroupSchema> {
+  protected buildCreateDataFromDto(dto: AccountGroupDtoTypes['CreateRequestDto']): AccountGroupCreate {
     return {
       accountId: dto.accountId,
       groupId: dto.groupId,

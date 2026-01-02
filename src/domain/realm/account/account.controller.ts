@@ -13,7 +13,7 @@ import {
   AccountMapperSymbol,
 } from '@/domain/realm/account/account.mapper';
 import { AccountDtoTypes, accountCreateSchema, accountUpdateSchema, accountBaseResponseSchema, accountResetPasswordSchema, accountUpdatePasswordSchema, accountAddEmailSchema, accountRemoveEmailSchema, accountSetPrimaryEmailSchema, accountSetActiveStatusSchema } from '@/domain/realm/account/account.dto';
-import { AccountSchema } from '@/domain/realm/account/account.entity';
+import { AccountCreate, AccountSchema } from '@/domain/realm/account/account.entity';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
@@ -28,7 +28,8 @@ export const AccountControllerSymbol = Symbol.for('AccountController');
 })
 export class AccountController extends AbstractCrudController<
   AccountSchema,
-  AccountDtoTypes
+  AccountDtoTypes,
+  AccountCreate
 > {
   constructor(
     @inject(AccountServiceSymbol) protected service: AccountService,

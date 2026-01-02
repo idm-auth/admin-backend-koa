@@ -4,7 +4,7 @@ import {
   RoleDtoTypes,
   roleUpdateSchema,
 } from '@/domain/realm/role/role.dto';
-import { RoleSchema } from '@/domain/realm/role/role.entity';
+import { RoleSchema, RoleCreate } from '@/domain/realm/role/role.entity';
 import { RoleMapper, RoleMapperSymbol } from '@/domain/realm/role/role.mapper';
 import {
   RoleService,
@@ -46,7 +46,8 @@ export const RoleControllerSymbol = Symbol.for('RoleController');
 })
 export class RoleController extends AbstractCrudController<
   RoleSchema,
-  RoleDtoTypes
+  RoleDtoTypes,
+  RoleCreate
 > {
   constructor(
     @inject(RoleServiceSymbol) protected service: RoleService,

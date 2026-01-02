@@ -18,3 +18,4 @@ accountGroupSchema.index({ accountId: 1, groupId: 1 }, { unique: true });
 
 export type AccountGroupSchema = typeof accountGroupSchema;
 export type AccountGroupEntity = HydratedDocument<InferSchemaType<typeof accountGroupSchema>>;
+export type AccountGroupCreate = InferSchemaType<AccountGroupSchema>;

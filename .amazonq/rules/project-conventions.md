@@ -1,6 +1,24 @@
+# CRITICAL: Read These Rules
+
+- ALWAYS read this ENTIRE rules file before making ANY changes to the codebase
+- Reading these rules will prevent 90% of errors and avoid wasting time with wrong assumptions
+- When in doubt about how something works (decorators, patterns, conventions), READ THE CODE first, then check these rules
+- Do NOT make assumptions - verify against rules and actual implementation
+- **NEVER invent or assume API signatures - ALWAYS read the actual code to understand:**
+  - Method parameters and return types
+  - Constructor dependencies and injection patterns
+  - Decorator usage and options
+  - Class inheritance and abstract method implementations
+- **Before writing code that uses a class/function/decorator:**
+  1. Use `fsRead` to read the source file
+  2. Understand the actual implementation
+  3. Follow the exact patterns used in existing code
+  4. Do NOT guess or make assumptions based on naming alone
+
 # Project Conventions
 
 ## Project Phase: Foundation/Construction
+
 - Project is NOT in production - it's being built from scratch
 - Breaking changes are EXPECTED and ENCOURAGED when they improve architecture
 - Refactoring is part of the process - embrace it
@@ -10,21 +28,24 @@
 - NEVER be defensive about breaking changes - the project is small and designed for this
 
 ## Framework
+
 - This project uses `koa-inversify-framework` developed locally at `.external/koa-inversify-framework/`
 - Framework provides: AbstractController, AbstractService, AbstractRepository, AbstractMapper, AbstractModule
-- Framework provides: @Controller, @Service, @Repository, @Mapper decorators
+- Framework provides: @Controller, @Service, @Repository, @Mapper, @Configuration decorators
 - Framework provides: @Get, @Post, @Put, @Patch, @Delete, @TraceAsync decorators
-- Framework provides: MongoDB, Logger, Telemetry, Swagger, Env providers
+- Framework provides: MongoDB, Logger, Telemetry, Swagger, Env, TenantResolver, ExecutionContext providers
 - Framework rules: `.external/koa-inversify-framework/.amazonq/rules/framework-conventions.md`
 - Framework usage guide: `.external/koa-inversify-framework/.doc/usage-guide.md`
 - Import from framework: `import { AbstractService } from 'koa-inversify-framework/abstract'`
 
 ## Naming Rules
+
 - ALWAYS use singular form: `infrastructure/`, `domain/`, `AppSymbol` (never plural)
 - DI symbols: PascalCase with `Symbol` suffix: `AppSymbol`, `KoaServerSymbol`
 - Provider files: `[name].provider.ts` format (e.g., `koaServer.provider.ts`)
 
 ## File Organization Rules
+
 - NEVER create separate `.type.ts` files - put interfaces/types in the same file as the class
 - ALWAYS export DI symbols in the same file as their class
 - Directory structure:
@@ -33,12 +54,24 @@
 - Each domain module has: entity, dto, repository, mapper, service, controller, module
 
 ## Dependency Injection Rules
+
 - Container: Inversify (provided by framework)
 - Symbol format: `export const [Name]Symbol = Symbol.for('Name')`
-- Framework decorators handle @injectable() automatically: @Controller, @Service, @Repository, @Mapper
+- Framework decorators handle @injectable() automatically: @Controller, @Service, @Repository, @Mapper, @Configuration
 - ALWAYS use `@inject(Symbol)` in constructors
 
+## @Configuration Decorator Rules - CRITICAL
+
+- `@Configuration(Symbol)` is a MARKER decorator - it does NOT register anything in the container
+- `@Configuration` only adds metadata to the class for documentation/tooling purposes
+- Container registration happens separately via `container.bind()` or framework methods like `setEnv()`, `setTenantResolver()`
+- NEVER remove `@Configuration` when adding framework registration - they don't conflict
+- `@Configuration` already includes `@injectable()` internally - NEVER add both decorators
+- Classes with `@Configuration` can still be registered by framework - the decorator doesn't interfere
+- Before removing `@Configuration`, READ THE DECORATOR CODE to understand what it does
+
 ## Import Rules
+
 - ALWAYS use `@/` alias for src imports: `import { App } from '@/infrastructure/core/app'`
 - NEVER use relative paths like `../../`
 - Reference: any file in `src/`
@@ -50,30 +83,35 @@
 - **NEVER write code with imports that don't exist - this breaks compilation**
 
 ## Module Pattern
+
 - Each domain module extends AbstractModule from framework
 - Module binds: Repository, Mapper, Service, Controller
 - Module returns controller symbol via getControllerSymbol()
 - Reference: `src/domain/realm/account/account.module.ts`
 
 ## Code Style Rules
+
 - Write MINIMAL code - only what's necessary
 - NO verbose comments - code must be self-documenting
 - NEVER remove documentation comments (JSDoc, TSDoc, block comments explaining architecture/design)
 - ONE responsibility per file/class
 
 ## Code Removal Rules
+
 - NEVER remove methods, functions, or exports without verification
 - ALWAYS search the codebase (including old/, tests/) to confirm code is not in use
 - Use grep/search tools to find all references before removing
 - Example: `grep -r "methodName" --include="*.ts" .`
 
 ## Refactoring Rules
+
 - After ANY refactoring or optimization, ALWAYS check for dead code and unused files
 - Search for imports of moved/changed code to ensure nothing is left behind
 - Remove unused files immediately - do not leave dead code in the codebase
 - Example: `grep -r "from '@/path/to/old/file'" --include="*.ts" src/`
 
 ## TypeScript Rules
+
 - NEVER use `any` type - defeats the purpose of TypeScript
 - NEVER use type casting (`as`) - it's the same as using `any` and means incorrect typing
 - If you need to cast, the types are wrong - fix the types instead
@@ -81,6 +119,7 @@
 - Type safety is non-negotiable
 
 ## Error Handling Pattern (Framework Convention)
+
 - **Fail Fast Philosophy**: Throw exceptions immediately when problems occur - NEVER hide issues by returning `null`
 - Repository methods THROW exceptions when data is not found (NotFoundError)
 - NEVER return `null` or `undefined` from repository methods - this hides the problem and pushes error handling to callers
@@ -92,17 +131,19 @@
   - Prevents null checks scattered throughout the codebase
   - TypeScript types accurately reflect reality (no optional chaining needed)
 - Custom repository methods MUST follow this pattern:
+
   ```typescript
   // ✅ CORRECT - throws NotFoundError if not found (fail fast)
   async findByEmail(email: string): Promise<Entity> {
     return this.findOne({ email }); // throws if not found
   }
-  
+
   // ❌ WRONG - returns null (hides the problem)
   async findByEmail(email: string): Promise<Entity | null> {
     return this.findOne({ email }) ?? null;
   }
   ```
+
 - When you need to check if entity exists without throwing:
   ```typescript
   // Use try/catch in service layer to handle the exception explicitly
@@ -120,12 +161,13 @@
   ```
 
 ## Koa Context Typing
+
 - NEVER cast `ctx.params`, `ctx.state`, or `ctx.request.body`
 - ALWAYS extend Context inline with intersection types:
   ```typescript
   async (ctx: Context & { params: { id: string } }, next: Next) => {
     const id = ctx.params.id; // Type-safe!
-  }
+  };
   ```
 - Use optional properties when parameter may not exist:
   ```typescript
@@ -133,6 +175,7 @@
   ```
 
 ## Problem Solving Rules
+
 - NEVER remove functionality when encountering errors - ALWAYS investigate and fix properly
 - When something doesn't work, research the correct solution (check documentation, examples, types)
 - Removing features is NOT a solution - it's avoiding the problem
@@ -147,6 +190,7 @@
 - **If something doesn't work, add logs → check output → investigate → fix. Never skip the logging step**
 
 ## Decision Tracking Rules
+
 - ALWAYS track user rejections during the conversation
 - If user rejects a solution (explicitly or implicitly), NEVER suggest it again
 - When user says "I don't want X" or rejects approach X, mark it as FORBIDDEN for this session
@@ -156,4 +200,3 @@
   - User explicitly says "no", "I don't want", "not that"
   - User ignores suggestion and asks for something else
   - User shows frustration after repeated suggestions
-

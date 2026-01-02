@@ -7,7 +7,7 @@ import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTe
 import { GroupService, GroupServiceSymbol } from '@/domain/realm/group/group.service';
 import { GroupMapper, GroupMapperSymbol } from '@/domain/realm/group/group.mapper';
 import { GroupDtoTypes, groupCreateSchema, groupUpdateSchema, groupBaseResponseSchema } from '@/domain/realm/group/group.dto';
-import { GroupSchema } from '@/domain/realm/group/group.entity';
+import { GroupSchema, GroupCreate } from '@/domain/realm/group/group.entity';
 
 export const GroupControllerSymbol = Symbol.for('GroupController');
 
@@ -20,7 +20,7 @@ export const GroupControllerSymbol = Symbol.for('GroupController');
   basePath: '/api/realm/:tenantId/group',
   multiTenant: true,
 })
-export class GroupController extends AbstractCrudController<GroupSchema, GroupDtoTypes> {
+export class GroupController extends AbstractCrudController<GroupSchema, GroupDtoTypes, GroupCreate> {
   constructor(
     @inject(GroupServiceSymbol) protected service: GroupService,
     @inject(GroupMapperSymbol) protected mapper: GroupMapper

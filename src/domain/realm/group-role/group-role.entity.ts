@@ -18,3 +18,5 @@ groupRoleSchema.index({ groupId: 1, roleId: 1 }, { unique: true });
 
 export type GroupRoleSchema = typeof groupRoleSchema;
 export type GroupRoleEntity = HydratedDocument<InferSchemaType<typeof groupRoleSchema>>;
+
+export type GroupRoleCreate = InferSchemaType<typeof groupRoleSchema>;

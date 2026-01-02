@@ -19,3 +19,5 @@ roleSchema.add(baseEntitySchema);
 
 export type RoleSchema = typeof roleSchema;
 export type RoleEntity = HydratedDocument<InferSchemaType<typeof roleSchema>>;
+
+export type RoleCreate = InferSchemaType<typeof roleSchema>;
