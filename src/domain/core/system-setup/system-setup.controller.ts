@@ -16,11 +16,11 @@ import { Controller } from 'koa-inversify-framework/stereotype';
 import { z } from 'zod';
 import {
   SystemSetupService,
-  SystemSetupServiceSymbol,
+  SystemSetupCoreServiceSymbol,
 } from '@/domain/core/system-setup/system-setup.service';
 
-export const SystemSetupControllerSymbol = Symbol.for(
-  'SystemSetupController'
+export const SystemSetupCoreControllerSymbol = Symbol.for(
+  'SystemSetupCoreController'
 );
 
 @SwaggerDocController({
@@ -28,12 +28,12 @@ export const SystemSetupControllerSymbol = Symbol.for(
   description: 'System initialization and repair operations',
   tags: ['System Setup'],
 })
-@Controller(SystemSetupControllerSymbol, {
+@Controller(SystemSetupCoreControllerSymbol, {
   basePath: '/api/core/system-setup',
 })
 export class SystemSetupController extends AbstractController {
   constructor(
-    @inject(SystemSetupServiceSymbol)
+    @inject(SystemSetupCoreServiceSymbol)
     private readonly systemSetupService: SystemSetupService
   ) {
     super();

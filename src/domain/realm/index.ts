@@ -13,6 +13,7 @@ import { ApplicationModule } from '@/domain/realm/application/application.module
 import { ApplicationConfigurationModule } from '@/domain/realm/application-configuration/application-configuration.module';
 import { JwtModule } from '@/domain/realm/jwt/jwt.module';
 import { AuthenticationModule } from '@/domain/realm/authentication/authentication.module';
+import { SystemSetupModule } from './system-setup/system-setup.module';
 
 export async function initRealmModules(container: Container): Promise<void> {
   new AccountModule(container);
@@ -29,4 +30,5 @@ export async function initRealmModules(container: Container): Promise<void> {
   new ApplicationConfigurationModule(container);
   new JwtModule(container);
   new AuthenticationModule(container);
+  new SystemSetupModule(container);
 }

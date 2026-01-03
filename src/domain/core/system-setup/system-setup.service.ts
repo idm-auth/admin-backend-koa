@@ -16,14 +16,14 @@ import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { Service } from 'koa-inversify-framework/stereotype';
 import {
   SystemSetupRepository,
-  SystemSetupRepositorySymbol,
+  SystemSetupCoreRepositorySymbol,
 } from './system-setup.repository';
 
-export const SystemSetupServiceSymbol = Symbol.for('CoreSystemSetupService');
+export const SystemSetupCoreServiceSymbol = Symbol.for('CoreSystemSetupService');
 
-@Service(SystemSetupServiceSymbol)
+@Service(SystemSetupCoreServiceSymbol)
 export class SystemSetupService extends AbstractService {
-  @inject(SystemSetupRepositorySymbol)
+  @inject(SystemSetupCoreRepositorySymbol)
   private repository!: SystemSetupRepository;
   @inject(RealmServiceSymbol) private realmService!: RealmService;
   @inject(AccountServiceSymbol) private accountService!: AccountService;
