@@ -28,7 +28,7 @@ export async function initRealmModules(container: Container): Promise<void> {
   new RolePolicyModule(container);
   new ApplicationModule(container);
   new ApplicationConfigurationModule(container);
+  new SystemSetupModule(container);
   new JwtModule(container);
   new AuthenticationModule(container);
-  new SystemSetupModule(container);
 }

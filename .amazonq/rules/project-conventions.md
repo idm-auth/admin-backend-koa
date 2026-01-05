@@ -117,6 +117,12 @@
 - If you need to cast, the types are wrong - fix the types instead
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
+- **ALWAYS use framework types for IDs:**
+  - Use `DocId` type (not `string`) for document IDs (_id fields)
+  - Use `DocIdSchema` for Zod validation of document IDs
+  - Import from: `import { DocId, DocIdSchema } from 'koa-inversify-framework/common'`
+  - Example: `async findById(id: DocId): Promise<Entity>`
+  - Example schema: `z.object({ id: DocIdSchema })`
 
 ## Error Handling Pattern (Framework Convention)
 

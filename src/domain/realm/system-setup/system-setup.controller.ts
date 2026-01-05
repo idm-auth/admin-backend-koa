@@ -1,40 +1,99 @@
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractController } from 'koa-inversify-framework/abstract';
-import { commonErrorResponses } from 'koa-inversify-framework/common';
-import {
-  Post,
-  SwaggerDoc,
-  SwaggerDocController,
-  ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
+import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
+import { Get, Put, Post, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
+import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
+import { SystemSetupService, SystemSetupServiceSymbol } from '@/domain/realm/system-setup/system-setup.service';
+import { SystemSetupMapper, SystemSetupMapperSymbol } from '@/domain/realm/system-setup/system-setup.mapper';
+import { SystemSetupDtoTypes, systemSetupUpdateSchema, systemSetupResponseSchema } from '@/domain/realm/system-setup/system-setup.dto';
+import { SystemSetupSchema } from '@/domain/shared/system-setup/system-setup.entity';
 import { z } from 'zod';
-import {
-  SystemSetupService,
-  SystemSetupServiceSymbol,
-} from '@/domain/realm/system-setup/system-setup.service';
-import { RequestParamsTenantIdSchema } from 'koa-inversify-framework/common';
 
-export const SystemSetupControllerSymbol = Symbol.for(
-  'SystemSetupController'
-);
+export const SystemSetupControllerSymbol = Symbol.for('SystemSetupController');
 
 @SwaggerDocController({
   name: 'Realm Setup',
-  description: 'Realm-specific setup and repair operations',
+  description: 'Realm-specific setup and configuration',
   tags: ['Realm Setup'],
 })
 @Controller(SystemSetupControllerSymbol, {
   basePath: '/api/realm/:tenantId/system-setup',
   multiTenant: true,
 })
-export class SystemSetupController extends AbstractController {
+export class SystemSetupController extends AbstractCrudController<SystemSetupSchema, SystemSetupDtoTypes, never> {
   constructor(
-    @inject(SystemSetupServiceSymbol)
-    private readonly systemSetupService: SystemSetupService
+    @inject(SystemSetupServiceSymbol) protected service: SystemSetupService,
+    @inject(SystemSetupMapperSymbol) protected mapper: SystemSetupMapper
   ) {
     super();
+  }
+
+  protected getResourceType(): string {
+    return 'realm.system-setup';
+  }
+
+  @SwaggerDoc({
+    summary: 'Get system setup',
+    description: 'Returns the system setup configuration',
+    tags: ['Realm Setup'],
+    request: {
+      params: RequestParamsTenantIdSchema,
+    },
+    responses: {
+      200: {
+        description: 'System setup found',
+        content: {
+          'application/json': {
+            schema: systemSetupResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      404: commonErrorResponses[404],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsTenantIdSchema })
+  @Get('/')
+  async getSetup(ctx: Context): Promise<void> {
+    const setup = await this.service.findOne({ setupKey: 'singleton' });
+    ctx.body = this.mapper.toFindOneResponseDto(setup);
+  }
+
+  @SwaggerDoc({
+    summary: 'Update JWT configuration',
+    description: 'Updates the JWT configuration for the realm',
+    tags: ['Realm Setup'],
+    request: {
+      params: RequestParamsTenantIdSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: systemSetupUpdateSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'JWT configuration updated successfully',
+        content: {
+          'application/json': {
+            schema: systemSetupResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: systemSetupUpdateSchema })
+  @Put('/jwt-config')
+  async updateJwtConfig(ctx: ContextWithParamsAndBody<{ tenantId: string }, SystemSetupDtoTypes['UpdateRequestDto']>): Promise<void> {
+    const setup = await this.service.findOne({ setupKey: 'singleton' });
+    const updated = await this.service.update(setup._id.toString(), ctx.request.body);
+    ctx.body = this.mapper.toUpdateResponseDto(updated);
   }
 
   @SwaggerDoc({
@@ -60,9 +119,9 @@ export class SystemSetupController extends AbstractController {
     },
   })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema })
-  @Post('/repair-setup')
+  @Post('/repair')
   async repairSetup(ctx: Context): Promise<void> {
-    const result = await this.systemSetupService.repairSetup();
+    const result = await this.service.repairSetup();
     ctx.body = result;
   }
 }

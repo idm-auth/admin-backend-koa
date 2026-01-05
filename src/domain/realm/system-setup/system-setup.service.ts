@@ -1,33 +1,56 @@
-import {
-  ApplicationService,
-  ApplicationServiceSymbol,
-} from '@/domain/realm/application/application.service';
-import { AppEnv, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
-import { inject } from 'inversify';
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
-import {
-  SystemSetupRepository,
-  SystemSetupRepositorySymbol,
-} from './system-setup.repository';
+import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { inject } from 'inversify';
+import { SystemSetupDtoTypes } from '@/domain/realm/system-setup/system-setup.dto';
+import { SystemSetupSchema, SystemSetupEntity } from '@/domain/shared/system-setup/system-setup.entity';
+import { SystemSetupRepository, SystemSetupRepositorySymbol } from './system-setup.repository';
+import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 
 export const SystemSetupServiceSymbol = Symbol.for('SystemSetupService');
 
 @Service(SystemSetupServiceSymbol, { multiTenant: true })
-export class SystemSetupService extends AbstractService {
-  @inject(SystemSetupRepositorySymbol)
-  private repository!: SystemSetupRepository;
-  @inject(ApplicationServiceSymbol)
-  private applicationService!: ApplicationService;
-  @inject(AppEnvSymbol) private appEnv!: AppEnv;
+export class SystemSetupService extends AbstractCrudService<
+  SystemSetupSchema,
+  SystemSetupDtoTypes,
+  never
+> {
+  @inject(SystemSetupRepositorySymbol) protected repository!: SystemSetupRepository;
+  @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
+
+  protected buildCreateDataFromDto(): never {
+    throw new Error('Create not supported');
+  }
+
+  protected buildUpdate(
+    entity: SystemSetupEntity,
+    dto: SystemSetupDtoTypes['UpdateRequestDto']
+  ): SystemSetupEntity {
+    this.log.debug({ id: entity._id, dto }, 'Building update');
+    if (dto.jwtSecret !== undefined) entity.jwtSecret = dto.jwtSecret;
+    if (dto.accessTokenExpiresIn !== undefined) entity.accessTokenExpiresIn = dto.accessTokenExpiresIn;
+    if (dto.refreshTokenExpiresIn !== undefined) entity.refreshTokenExpiresIn = dto.refreshTokenExpiresIn;
+    return entity;
+  }
 
   @TraceAsync('system-setup.service.repairSetup')
   async repairSetup(): Promise<{ status: number }> {
     await this.applicationService.upsertIdmAuthApplication();
-    // TODO: Upsert default configurations for applications
-    
+    await this.repository.upsert(
+      { setupKey: 'singleton' },
+      { setupKey: 'singleton', lastRepairAt: new Date() }
+    );
     this.log.info('Realm setup repair completed');
     return { status: 200 };
+  }
+
+  @TraceAsync('system-setup.service.getJwtConfig')
+  async getJwtConfig(): Promise<{ secret: string; accessTokenExpiresIn: string; refreshTokenExpiresIn: string }> {
+    const setup = await this.repository.findOne({ setupKey: 'singleton' });
+    return {
+      secret: setup.jwtSecret,
+      accessTokenExpiresIn: setup.accessTokenExpiresIn,
+      refreshTokenExpiresIn: setup.refreshTokenExpiresIn,
+    };
   }
 }

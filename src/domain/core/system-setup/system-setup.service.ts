@@ -1,57 +1,39 @@
-import {
-  RealmService,
-  RealmServiceSymbol,
-} from '@/domain/core/realm/realm.service';
-import {
-  AccountService,
-  AccountServiceSymbol,
-} from '@/domain/realm/account/account.service';
-import {
-  SystemSetupService as RealmSystemSetupService,
-  SystemSetupServiceSymbol as RealmSystemSetupServiceSymbol,
-} from '@/domain/realm/system-setup/system-setup.service';
+import { RealmService, RealmServiceSymbol } from '@/domain/core/realm/realm.service';
+import { AccountService, AccountServiceSymbol } from '@/domain/realm/account/account.service';
+import { SystemSetupService as RealmSystemSetupService, SystemSetupServiceSymbol as RealmSystemSetupServiceSymbol } from '@/domain/realm/system-setup/system-setup.service';
+import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
+import { ApplicationConfigurationService, ApplicationConfigurationServiceSymbol } from '@/domain/realm/application-configuration/application-configuration.service';
 import { inject } from 'inversify';
 import { AbstractService } from 'koa-inversify-framework/abstract';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { Service } from 'koa-inversify-framework/stereotype';
-import {
-  SystemSetupRepository,
-  SystemSetupCoreRepositorySymbol,
-} from './system-setup.repository';
+import { SystemSetupCoreRepositorySymbol, SystemSetupRepository } from './system-setup.repository';
 
-export const SystemSetupCoreServiceSymbol = Symbol.for('CoreSystemSetupService');
+export const SystemSetupCoreServiceSymbol = Symbol.for(
+  'CoreSystemSetupService'
+);
 
 @Service(SystemSetupCoreServiceSymbol)
 export class SystemSetupService extends AbstractService {
-  @inject(SystemSetupCoreRepositorySymbol)
-  private repository!: SystemSetupRepository;
+  @inject(SystemSetupCoreRepositorySymbol) private repository!: SystemSetupRepository;
   @inject(RealmServiceSymbol) private realmService!: RealmService;
   @inject(AccountServiceSymbol) private accountService!: AccountService;
-  @inject(RealmSystemSetupServiceSymbol)
-  private realmSystemSetupService!: RealmSystemSetupService;
+  @inject(RealmSystemSetupServiceSymbol) private realmSystemSetupService!: RealmSystemSetupService;
+  @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
+  @inject(ApplicationConfigurationServiceSymbol) private appConfigService!: ApplicationConfigurationService;
 
   async isInitialSetupCompleted(): Promise<boolean> {
     const setup = await this.repository.findOne(
       { setupKey: 'singleton' },
       { notFoundReturnNull: true }
     );
-    if (setup && setup.initialSetupCompleted) {
+    if (setup && setup.setupKey) {
       return true;
     }
     return false;
   }
 
-  async markInitialSetupCompleted(): Promise<void> {
-    await this.repository.upsert(
-      { setupKey: 'singleton' },
-      {
-        setupKey: 'singleton',
-        initialSetupCompleted: true,
-        initialSetupCompletedAt: new Date(),
-      }
-    );
-    this.log.info('Initial setup marked as completed');
-  }
+  async repairSetup(): Promise<void> {}
 
   @TraceAsync('system-setup.service.initSetup')
   async initSetup(data: {
@@ -63,7 +45,12 @@ export class SystemSetupService extends AbstractService {
       return { status: 200 };
     }
 
-    await this.realmSystemSetupService.repairSetup();
+    // criar a aplicação upsertIdmAuthApplication
+    const application = await this.applicationService.upsertIdmAuthApplication();
+    // criar configuração frontend
+    await this.appConfigService.upsertIdmAuthCoreFrontendConfig(application._id.toString());
+    // criar configuração backend
+    await this.appConfigService.upsertIdmAuthCoreBackendConfig(application._id.toString());
 
     const adminAccount = await this.accountService.createFromDto(
       data.adminAccount
@@ -73,7 +60,12 @@ export class SystemSetupService extends AbstractService {
       'Initial admin account created'
     );
 
-    await this.markInitialSetupCompleted();
+    await this.realmSystemSetupService.repairSetup();
+
+    await this.repository.upsert(
+      { setupKey: 'singleton' },
+      { setupKey: 'singleton' }
+    );
 
     return { status: 201 };
   }

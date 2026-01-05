@@ -1,26 +1,12 @@
 import { ApplicationConfigurationDtoTypes } from '@/domain/realm/application-configuration/application-configuration.dto';
-import {
-  ApplicationConfigurationCreate,
-  ApplicationConfigurationEntity,
-  ApplicationConfigurationSchema,
-} from '@/domain/realm/application-configuration/application-configuration.entity';
-import {
-  ApplicationConfigurationRepository,
-  ApplicationConfigurationRepositorySymbol,
-} from '@/domain/realm/application-configuration/application-configuration.repository';
-import {
-  BACKEND_API_APPLICATION_NAME,
-  BackendApiConfigEntity,
-  isBackendApiConfig,
-} from '@/domain/realm/application-configuration/config/backend-api.config';
-import {
-  ApplicationService,
-  ApplicationServiceSymbol,
-} from '@/domain/realm/application/application.service';
+import { ApplicationConfigurationCreate, ApplicationConfigurationEntity, ApplicationConfigurationSchema } from '@/domain/realm/application-configuration/application-configuration.entity';
+import { ApplicationConfigurationRepository, ApplicationConfigurationRepositorySymbol } from '@/domain/realm/application-configuration/application-configuration.repository';
+import { BACKEND_API_APPLICATION_NAME, BackendApiConfigEntity, isBackendApiConfig } from '@/domain/realm/application-configuration/config/backend-api.config';
+import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 import { inject } from 'inversify';
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { AbstractEnv } from 'koa-inversify-framework';
-import { EnvKey } from 'koa-inversify-framework/common';
+import { DocId, EnvKey } from 'koa-inversify-framework/common';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { ValidationError } from 'koa-inversify-framework/error';
 import { EnvSymbol } from 'koa-inversify-framework';
@@ -75,19 +61,31 @@ export class ApplicationConfigurationService extends AbstractCrudService<
     );
   }
 
-  // @TraceAsync('application-configuration.service.getBackendApiConfig')
-  // async getBackendApiConfig(): Promise<BackendApiConfigEntity> {
-  //   const env = this.env.get(EnvKey.NODE_ENV);
+  @TraceAsync('application-configuration.service.upsertIdmAuthCoreFrontendConfig')
+  async upsertIdmAuthCoreFrontendConfig(applicationId: DocId): Promise<ApplicationConfigurationEntity> {
+    const env = this.env.get(EnvKey.NODE_ENV);
+    const data: ApplicationConfigurationCreate = {
+      applicationId,
+      environment: env,
+      config: {},
+      schema: {},
+    };
+    const config = await this.repository.upsert({ applicationId, environment: env }, data);
+    this.log.info({ applicationId, env }, 'IDM Auth Core Frontend config upserted');
+    return config;
+  }
 
-  //   this.log.debug({ systemId: BACKEND_API_APPLICATION_NAME, env }, 'Getting backend API config');
-
-  //   const application = await this.applicationService.findBySystemId(BACKEND_API_APPLICATION_NAME);
-  //   const appConfig = await this.getByApplicationAndEnvironment(application._id.toString(), env);
-
-  //   if (!isBackendApiConfig(appConfig.config)) {
-  //     throw new ValidationError('Invalid backend-api configuration');
-  //   }
-
-  //   return appConfig as BackendApiConfigEntity;
-  // }
+  @TraceAsync('application-configuration.service.upsertIdmAuthCoreBackendConfig')
+  async upsertIdmAuthCoreBackendConfig(applicationId: DocId): Promise<ApplicationConfigurationEntity> {
+    const env = this.env.get(EnvKey.NODE_ENV);
+    const data: ApplicationConfigurationCreate = {
+      applicationId,
+      environment: env,
+      config: {},
+      schema: {},
+    };
+    const config = await this.repository.upsert({ applicationId, environment: env }, data);
+    this.log.info({ applicationId, env }, 'IDM Auth Core Backend config upserted');
+    return config;
+  }
 }
