@@ -10,8 +10,6 @@ export const accountRoleBaseResponseSchema = z.object({
   _id: DocIdSchema,
   accountId: DocIdSchema,
   roleId: DocIdSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type AccountRoleCreate = z.infer<typeof accountRoleCreateSchema>;

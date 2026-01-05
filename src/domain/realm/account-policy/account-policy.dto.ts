@@ -10,8 +10,6 @@ export const accountPolicyBaseResponseSchema = z.object({
   _id: DocIdSchema,
   accountId: DocIdSchema,
   policyId: DocIdSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type AccountPolicyCreate = z.infer<typeof accountPolicyCreateSchema>;

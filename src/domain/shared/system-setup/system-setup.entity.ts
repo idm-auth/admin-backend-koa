@@ -1,12 +1,14 @@
 import { baseEntitySchema } from 'koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
+const SYSTEM_SETUP_KEY = 'singleton';
+const SYSTEM_SETUP_VERSION = '1.0.0';
+
 export const systemSetupSchema = new mongoose.Schema(
   {
-    setupKey: { type: String, default: 'singleton', unique: true, index: true },
-    initialSetupCompleted: { type: Boolean, default: false },
-    initialSetupCompletedAt: { type: Date },
-    version: { type: String, default: '1.0.0' },
+    setupKey: { type: String, default: SYSTEM_SETUP_KEY, unique: true, index: true },
+    lastRepairAt: { type: Date },
+    version: { type: String, default: SYSTEM_SETUP_VERSION },
   },
   { timestamps: true }
 );

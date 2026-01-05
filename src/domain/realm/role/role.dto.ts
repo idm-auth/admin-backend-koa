@@ -12,8 +12,6 @@ export const roleBaseResponseSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
   permissions: z.array(z.string()).optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export const roleUpdateSchema = z.object({

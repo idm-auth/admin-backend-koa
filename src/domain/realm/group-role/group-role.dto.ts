@@ -10,8 +10,6 @@ export const groupRoleBaseResponseSchema = z.object({
   _id: DocIdSchema,
   groupId: DocIdSchema,
   roleId: DocIdSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type GroupRoleCreate = z.infer<typeof groupRoleCreateSchema>;

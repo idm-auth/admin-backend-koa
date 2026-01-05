@@ -5,11 +5,18 @@ import { POLICY_EFFECTS } from '@/domain/realm/policy/policy.entity';
 export const policyCreateSchema = z.object({
   version: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Version must be ISO date format (YYYY-MM-DD)')
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Version must be ISO date format (YYYY-MM-DD)'
+    )
     .refine(
       (v) => {
         const date = new Date(v);
-        return date instanceof Date && !isNaN(date.getTime()) && v === date.toISOString().split('T')[0];
+        return (
+          date instanceof Date &&
+          !isNaN(date.getTime()) &&
+          v === date.toISOString().split('T')[0]
+        );
       },
       { message: 'Version must be valid ISO date (YYYY-MM-DD)' }
     )
@@ -30,18 +37,23 @@ export const policyBaseResponseSchema = z.object({
   effect: z.enum(POLICY_EFFECTS),
   actions: z.array(z.string()),
   resources: z.array(z.string()),
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export const policyUpdateSchema = z.object({
   version: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Version must be ISO date format (YYYY-MM-DD)')
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Version must be ISO date format (YYYY-MM-DD)'
+    )
     .refine(
       (v) => {
         const date = new Date(v);
-        return date instanceof Date && !isNaN(date.getTime()) && v === date.toISOString().split('T')[0];
+        return (
+          date instanceof Date &&
+          !isNaN(date.getTime()) &&
+          v === date.toISOString().split('T')[0]
+        );
       },
       { message: 'Version must be valid ISO date (YYYY-MM-DD)' }
     )

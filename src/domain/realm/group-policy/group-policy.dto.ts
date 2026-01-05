@@ -10,8 +10,6 @@ export const groupPolicyBaseResponseSchema = z.object({
   _id: DocIdSchema,
   groupId: DocIdSchema,
   policyId: DocIdSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type GroupPolicyCreate = z.infer<typeof groupPolicyCreateSchema>;

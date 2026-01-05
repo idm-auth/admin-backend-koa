@@ -10,8 +10,6 @@ export const rolePolicyBaseResponseSchema = z.object({
   _id: DocIdSchema,
   roleId: DocIdSchema,
   policyId: DocIdSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type RolePolicyCreate = z.infer<typeof rolePolicyCreateSchema>;
