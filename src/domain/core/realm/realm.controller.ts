@@ -26,8 +26,10 @@ import {
   realmCreateSchema,
   realmUpdateSchema,
   realmFullResponseSchema,
+  realmBaseResponseSchema,
 } from '@/domain/core/realm/realm.dto';
 import { RealmSchema, RealmCreate } from '@/domain/core/realm/realm.entity';
+import { z } from 'zod';
 
 export const RealmControllerSymbol = Symbol.for('RealmController');
 
@@ -188,5 +190,39 @@ export class RealmController extends AbstractCrudController<
   @Delete('/:id')
   async delete(ctx: ContextWithParams<IdParam>): Promise<void> {
     return super.delete(ctx);
+  }
+
+  @SwaggerDoc({
+    summary: 'Get realm by publicUUID',
+    description: 'Returns a realm by its public UUID',
+    tags: ['Realm'],
+    request: {
+      params: z.object({
+        publicUUID: z.string().uuid(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Realm found',
+        content: {
+          'application/json': {
+            schema: realmBaseResponseSchema,
+          },
+        },
+      },
+      400: commonErrorResponses[400],
+      404: commonErrorResponses[404],
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({
+    params: z.object({ publicUUID: z.string().uuid() }),
+  })
+  @Get('/publicUUID/:publicUUID')
+  async findByPublicUUID(
+    ctx: ContextWithParams<{ publicUUID: string }>
+  ): Promise<void> {
+    const realm = await this.service.findByPublicUUID(ctx.params.publicUUID);
+    ctx.body = this.mapper.toFindByIdResponseDto(realm);
   }
 }

@@ -34,9 +34,9 @@ import { z } from 'zod';
 export const SystemSetupControllerSymbol = Symbol.for('SystemSetupController');
 
 @SwaggerDocController({
-  name: 'Realm Setup',
+  name: 'Realm System Setup',
   description: 'Realm-specific setup and configuration',
-  tags: ['Realm Setup'],
+  tags: ['Realm System Setup'],
 })
 @Controller(SystemSetupControllerSymbol, {
   basePath: '/api/realm/:tenantId/system-setup',
@@ -61,7 +61,7 @@ export class SystemSetupController extends AbstractCrudController<
   @SwaggerDoc({
     summary: 'Get system setup',
     description: 'Returns the system setup configuration',
-    tags: ['Realm Setup'],
+    tags: ['Realm System Setup'],
     request: {
       params: RequestParamsTenantIdSchema,
     },
@@ -89,7 +89,7 @@ export class SystemSetupController extends AbstractCrudController<
   @SwaggerDoc({
     summary: 'Update JWT configuration',
     description: 'Updates the JWT configuration for the realm',
-    tags: ['Realm Setup'],
+    tags: ['Realm System Setup'],
     request: {
       params: RequestParamsTenantIdSchema,
       body: {
@@ -135,7 +135,7 @@ export class SystemSetupController extends AbstractCrudController<
   @SwaggerDoc({
     summary: 'Repair realm setup',
     description: 'Checks and recreates default realm resources if missing',
-    tags: ['Realm Setup'],
+    tags: ['Realm System Setup'],
     request: {
       params: RequestParamsTenantIdSchema,
     },
