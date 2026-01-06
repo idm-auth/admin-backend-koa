@@ -1,13 +1,34 @@
+import {
+  SystemSetupDtoTypes,
+  systemSetupResponseSchema,
+  systemSetupUpdateSchema,
+} from '@/domain/realm/system-setup/system-setup.dto';
+import {
+  SystemSetupMapper,
+  SystemSetupMapperSymbol,
+} from '@/domain/realm/system-setup/system-setup.mapper';
+import {
+  SystemSetupService,
+  SystemSetupServiceSymbol,
+} from '@/domain/realm/system-setup/system-setup.service';
+import { SystemSetupSchema } from '@/domain/shared/system-setup/system-setup.entity';
 import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
+import {
+  commonErrorResponses,
+  ContextWithParamsAndBody,
+  RequestParamsTenantIdSchema,
+} from 'koa-inversify-framework/common';
+import {
+  Get,
+  Post,
+  Put,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Put, Post, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { SystemSetupService, SystemSetupServiceSymbol } from '@/domain/realm/system-setup/system-setup.service';
-import { SystemSetupMapper, SystemSetupMapperSymbol } from '@/domain/realm/system-setup/system-setup.mapper';
-import { SystemSetupDtoTypes, systemSetupUpdateSchema, systemSetupResponseSchema } from '@/domain/realm/system-setup/system-setup.dto';
-import { SystemSetupSchema } from '@/domain/shared/system-setup/system-setup.entity';
 import { z } from 'zod';
 
 export const SystemSetupControllerSymbol = Symbol.for('SystemSetupController');
@@ -21,7 +42,11 @@ export const SystemSetupControllerSymbol = Symbol.for('SystemSetupController');
   basePath: '/api/realm/:tenantId/system-setup',
   multiTenant: true,
 })
-export class SystemSetupController extends AbstractCrudController<SystemSetupSchema, SystemSetupDtoTypes, never> {
+export class SystemSetupController extends AbstractCrudController<
+  SystemSetupSchema,
+  SystemSetupDtoTypes,
+  never
+> {
   constructor(
     @inject(SystemSetupServiceSymbol) protected service: SystemSetupService,
     @inject(SystemSetupMapperSymbol) protected mapper: SystemSetupMapper
@@ -88,11 +113,22 @@ export class SystemSetupController extends AbstractCrudController<SystemSetupSch
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: systemSetupUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: systemSetupUpdateSchema,
+  })
   @Put('/jwt-config')
-  async updateJwtConfig(ctx: ContextWithParamsAndBody<{ tenantId: string }, SystemSetupDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async updateJwtConfig(
+    ctx: ContextWithParamsAndBody<
+      { tenantId: string },
+      SystemSetupDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     const setup = await this.service.findOne({ setupKey: 'singleton' });
-    const updated = await this.service.update(setup._id.toString(), ctx.request.body);
+    const updated = await this.service.updateFromDto(
+      setup._id.toString(),
+      ctx.request.body
+    );
     ctx.body = this.mapper.toUpdateResponseDto(updated);
   }
 

@@ -45,12 +45,13 @@ export class SystemSetupService extends AbstractService {
       return { status: 200 };
     }
 
-    // criar a aplicação upsertIdmAuthApplication
-    const application = await this.applicationService.upsertIdmAuthApplication();
-    // criar configuração frontend
-    await this.appConfigService.upsertIdmAuthCoreFrontendConfig(application._id.toString());
-    // criar configuração backend
-    await this.appConfigService.upsertIdmAuthCoreBackendConfig(application._id.toString());
+    // Criar aplicação API (backend)
+    const apiApplication = await this.applicationService.upsertIdmAuthCoreAPIApplication();
+    await this.appConfigService.upsertIdmAuthCoreAPIConfig(apiApplication._id.toString());
+
+    // Criar aplicação Web Admin (frontend)
+    const webAdminApplication = await this.applicationService.upsertIdmAuthCoreWebAdminApplication();
+    await this.appConfigService.upsertIdmAuthCoreWebAdminConfig(webAdminApplication._id.toString());
 
     const adminAccount = await this.accountService.createFromDto(
       data.adminAccount

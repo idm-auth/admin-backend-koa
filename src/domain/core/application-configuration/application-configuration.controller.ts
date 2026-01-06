@@ -1,8 +1,11 @@
+import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
 import { inject } from 'inversify';
 import { Context } from 'koa';
+import { AbstractEnv, EnvSymbol } from 'koa-inversify-framework';
 import { AbstractController } from 'koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
+  EnvKey,
   HttpMethod,
 } from 'koa-inversify-framework/common';
 import {
@@ -11,15 +14,12 @@ import {
   SwaggerDoc,
   SwaggerDocController,
 } from 'koa-inversify-framework/decorator';
-import { Controller } from 'koa-inversify-framework/stereotype';
 import {
   RegisterRouter,
   RegisterRouterSymbol,
 } from 'koa-inversify-framework/infrastructure';
-import { EnvSymbol, AbstractEnv } from 'koa-inversify-framework';
-import { EnvKey } from 'koa-inversify-framework/common';
+import { Controller } from 'koa-inversify-framework/stereotype';
 import { z } from 'zod';
-import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
 
 export const CoreApplicationConfigurationControllerSymbol = Symbol.for(
   'CoreApplicationConfigurationController'
@@ -50,7 +50,7 @@ export class CoreApplicationConfigurationController extends AbstractController {
     tags: ['Core Application Configuration'],
     request: {
       params: z.object({
-        applicationId: z.string(),
+        systemId: z.string(),
         environment: z.string(),
       }),
     },
@@ -69,24 +69,31 @@ export class CoreApplicationConfigurationController extends AbstractController {
     },
   })
   @InjectCoreTenantId()
-  @Get('/app/:applicationId/env/:environment')
+  @Get('/app/:systemId/env/:environment')
   async getByApplicationAndEnvironment(
     ctx: Context & {
       params: {
-        applicationId: string;
+        systemId: string;
         environment: string;
-        tenantId?: string;
       };
     } & { state: { tenantId?: string } }
   ): Promise<void> {
-    const { applicationId, environment } = ctx.params;
+    const { systemId, environment } = ctx.params;
     const tenantId = ctx.state.tenantId!;
-
     const contextPath = this.env.get(EnvKey.SERVER_CONTEXT_PATH);
-    const targetPath = `${contextPath}/api/realm/:tenantId/application-configuration/app/:applicationId/env/:environment`;
+    const targetPath =
+      `${contextPath}/api/realm/:tenantId/application-configuration/app/:systemId/env/:environment`.replace(
+        /\/\//g,
+        '/'
+      );
 
-    ctx.params = { tenantId, applicationId, environment };
+    this.log.debug(
+      { tenantId, targetPath, systemId, environment },
+      'Proxying to realm route'
+    );
 
-    await this.registerRouter.executeRoute(targetPath, HttpMethod.GET, ctx);
+    const newctx = Object.create(ctx) as Context;
+    newctx.params = { ...ctx.params, tenantId, systemId, environment };
+    await this.registerRouter.executeRoute(targetPath, HttpMethod.GET, newctx);
   }
 }

@@ -23,6 +23,9 @@ void (async () => {
 
   await framework.init();
 
+  const appEnv = container.get<AppEnv>(AppEnvSymbol);
+  await appEnv.init();
+
   await initCoreModulesPhase1(container);
   await initRealmModules(container);
   await initCoreModulesPhase2(container);

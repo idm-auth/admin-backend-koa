@@ -1,7 +1,5 @@
 import { ApplicationConfigurationEntity } from '@/domain/realm/application-configuration/application-configuration.entity';
 
-export const BACKEND_API_APPLICATION_NAME = 'idm-core-backend-api';
-
 export type BackendApiConfig = {
   jwt: {
     secret: string;
@@ -10,7 +8,10 @@ export type BackendApiConfig = {
   };
 };
 
-export type BackendApiConfigEntity = Omit<ApplicationConfigurationEntity, 'config'> & {
+export type BackendApiConfigEntity = Omit<
+  ApplicationConfigurationEntity,
+  'config'
+> & {
   config: BackendApiConfig;
 };
 
