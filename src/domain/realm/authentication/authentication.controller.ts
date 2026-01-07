@@ -107,6 +107,7 @@ export class AuthenticationController extends AbstractController {
           },
         },
       },
+      401: commonErrorResponses[401],
       500: commonErrorResponses[500],
     },
   })
@@ -118,7 +119,7 @@ export class AuthenticationController extends AbstractController {
   async validateToken(
     ctx: ContextWithBody<ValidateTokenRequest>
   ): Promise<void> {
-    const isValid = await this.service.validateToken(ctx.request.body.token);
-    ctx.body = { valid: isValid };
+    const result = await this.service.validateToken(ctx.request.body.token);
+    ctx.body = result;
   }
 }

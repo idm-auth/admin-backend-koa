@@ -28,6 +28,7 @@ export const validateTokenRequestSchema = z.object({
 
 export const validateTokenResponseSchema = z.object({
   valid: z.boolean(),
+  accountId: z.string().optional(),
 });
 
 export type LoginRequest = z.infer<typeof loginRequestSchema>;

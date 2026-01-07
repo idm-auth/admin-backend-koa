@@ -45,13 +45,13 @@ export class AuthenticationService extends AbstractService {
   }
 
   @TraceAsync('authentication.service.validateToken')
-  async validateToken(token: string): Promise<boolean> {
+  async validateToken(token: string): Promise<{ valid: boolean; accountId?: string }> {
     try {
-      await this.jwtService.verifyToken(token);
-      return true;
+      const payload = await this.jwtService.verifyToken(token);
+      return { valid: true, accountId: payload.accountId };
     } catch (error) {
       this.log.debug({ error }, 'Token validation failed');
-      return false;
+      return { valid: false };
     }
   }
 }
