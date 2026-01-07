@@ -2,7 +2,7 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
+import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest, Authenticated } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 import { ApplicationMapper, ApplicationMapperSymbol } from '@/domain/realm/application/application.mapper';
@@ -75,9 +75,11 @@ export class ApplicationController extends AbstractCrudController<ApplicationSch
         description: 'Paginated list of applications',
       },
       400: commonErrorResponses[400],
+      401: commonErrorResponses[401],
       500: commonErrorResponses[500],
     },
   })
+  @Authenticated({ required: true })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema })
   @Get('/')
   async findAllPaginated(ctx: Context): Promise<void> {

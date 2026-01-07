@@ -1,12 +1,33 @@
 import { AbstractController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Post, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsTenantIdSchema, ContextWithBody } from 'koa-inversify-framework/common';
+import {
+  Post,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+} from 'koa-inversify-framework/common';
 import { inject } from 'inversify';
-import { AuthenticationService, AuthenticationServiceSymbol } from '@/domain/realm/authentication/authentication.service';
-import { LoginRequest, loginRequestSchema, loginResponseSchema } from '@/domain/realm/authentication/authentication.dto';
+import {
+  AuthenticationService,
+  AuthenticationServiceSymbol,
+} from '@/domain/realm/authentication/authentication.service';
+import {
+  LoginRequest,
+  loginRequestSchema,
+  loginResponseSchema,
+  ValidateTokenRequest,
+  validateTokenRequestSchema,
+  validateTokenResponseSchema,
+} from '@/domain/realm/authentication/authentication.dto';
 
-export const AuthenticationControllerSymbol = Symbol.for('AuthenticationController');
+export const AuthenticationControllerSymbol = Symbol.for(
+  'AuthenticationController'
+);
 
 @SwaggerDocController({
   name: 'Authentication',
@@ -51,12 +72,53 @@ export class AuthenticationController extends AbstractController {
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: loginRequestSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: loginRequestSchema,
+  })
   @Post('/login')
   async login(ctx: ContextWithBody<LoginRequest>): Promise<void> {
     this.validateMultiTenantSetup(ctx);
     const result = await this.service.login(ctx.request.body);
     ctx.status = 200;
     ctx.body = result;
+  }
+
+  @SwaggerDoc({
+    summary: 'Validate token',
+    description: 'Validates authentication token (internal use)',
+    tags: ['Authentication'],
+    request: {
+      params: RequestParamsTenantIdSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: validateTokenRequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Token validation result',
+        content: {
+          'application/json': {
+            schema: validateTokenResponseSchema,
+          },
+        },
+      },
+      500: commonErrorResponses[500],
+    },
+  })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: validateTokenRequestSchema,
+  })
+  @Post('/validate')
+  async validateToken(
+    ctx: ContextWithBody<ValidateTokenRequest>
+  ): Promise<void> {
+    const isValid = await this.service.validateToken(ctx.request.body.token);
+    ctx.body = { valid: isValid };
   }
 }

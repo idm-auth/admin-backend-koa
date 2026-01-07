@@ -43,4 +43,15 @@ export class AuthenticationService extends AbstractService {
       throw error;
     }
   }
+
+  @TraceAsync('authentication.service.validateToken')
+  async validateToken(token: string): Promise<boolean> {
+    try {
+      await this.jwtService.verifyToken(token);
+      return true;
+    } catch (error) {
+      this.log.debug({ error }, 'Token validation failed');
+      return false;
+    }
+  }
 }
