@@ -92,7 +92,11 @@
 ## Code Style Rules
 
 - Write MINIMAL code - only what's necessary
-- NO verbose comments - code must be self-documenting
+- ALWAYS add comments explaining:
+  - Why the code exists (business logic, architectural decisions)
+  - How complex logic works (algorithms, non-obvious patterns)
+  - What the code does when it's not immediately clear from reading
+- Comments should explain the "why" and "how", not just repeat what the code says
 - NEVER remove documentation comments (JSDoc, TSDoc, block comments explaining architecture/design)
 - ONE responsibility per file/class
 

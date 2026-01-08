@@ -21,4 +21,8 @@ export class RealmRepository extends AbstractCrudMongoRepository<RealmSchema> {
   async findByName(name: string): Promise<RealmEntity> {
     return this.findOne({ name });
   }
+
+  async dropDatabase(dbName: string): Promise<void> {
+    await this.mongodb.dropDatabase(dbName);
+  }
 }

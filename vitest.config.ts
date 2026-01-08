@@ -1,21 +1,19 @@
 import { defineConfig } from 'vitest/config';
-import { resolve } from 'path';
+import path from 'path';
 
 export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['test/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/old/**'],
+    watch: false,
+    setupFiles: ['./test/setup/base.setup.ts'],
+    globalSetup: ['./test/setup/globalSetup.ts', './test/setup/globalTeardown.ts'],
+    exclude: ['**/node_modules/**', '**/old/**', '**/.external/**'],
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './src'),
+      '@test': path.resolve(__dirname, './test'),
     },
   },
-  define: {
-    __PKG_NAME__: JSON.stringify('backend-koa'),
-    __PKG_VERSION__: JSON.stringify('1.0.0'),
-  },
 });
-

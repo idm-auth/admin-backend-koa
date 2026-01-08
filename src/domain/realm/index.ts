@@ -15,7 +15,26 @@ import { JwtModule } from '@/domain/realm/jwt/jwt.module';
 import { AuthenticationModule } from '@/domain/realm/authentication/authentication.module';
 import { SystemSetupModule } from './system-setup/system-setup.module';
 
-export async function initRealmModules(container: Container): Promise<void> {
+/**
+ * Initialize Realm Modules - Phase 1
+ *
+ * Modules that must be initialized first.
+ */
+export async function initRealmModulesPhase1(
+  container: Container
+): Promise<void> {
+  new ApplicationModule(container);
+  new SystemSetupModule(container);
+}
+
+/**
+ * Initialize Realm Modules - Phase 2
+ *
+ * All other realm modules.
+ */
+export async function initRealmModulesPhase2(
+  container: Container
+): Promise<void> {
   new AccountModule(container);
   new RoleModule(container);
   new GroupModule(container);
@@ -26,9 +45,8 @@ export async function initRealmModules(container: Container): Promise<void> {
   new GroupRoleModule(container);
   new GroupPolicyModule(container);
   new RolePolicyModule(container);
-  new ApplicationModule(container);
+
   new ApplicationConfigurationModule(container);
-  new SystemSetupModule(container);
   new JwtModule(container);
   new AuthenticationModule(container);
 }

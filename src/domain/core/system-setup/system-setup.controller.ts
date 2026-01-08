@@ -79,7 +79,6 @@ export class SystemSetupController extends AbstractController {
       500: commonErrorResponses[500],
     },
   })
-  @InjectCoreTenantId()
   @Post('/init-setup')
   async initSetup(
     ctx: Context & {
@@ -90,6 +89,8 @@ export class SystemSetupController extends AbstractController {
       };
     }
   ): Promise<void> {
+    // NÃO usa @InjectCoreTenantId porque o realm core ainda não existe (ovo e galinha)
+    // O initSetup vai criar o realm core, então não podemos buscá-lo antes
     const result = await this.systemSetupService.initSetup(ctx.request.body);
     ctx.status = result.status;
     ctx.body = result;

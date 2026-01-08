@@ -8,6 +8,7 @@ import { AbstractService } from 'koa-inversify-framework/abstract';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { SystemSetupCoreRepositorySymbol, SystemSetupRepository } from './system-setup.repository';
+import { ExecutionContextProvider, ExecutionContextSymbol } from 'koa-inversify-framework/infrastructure';
 
 export const SystemSetupCoreServiceSymbol = Symbol.for(
   'CoreSystemSetupService'
@@ -21,6 +22,7 @@ export class SystemSetupService extends AbstractService {
   @inject(RealmSystemSetupServiceSymbol) private realmSystemSetupService!: RealmSystemSetupService;
   @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
   @inject(ApplicationConfigurationServiceSymbol) private appConfigService!: ApplicationConfigurationService;
+  @inject(ExecutionContextSymbol) private executionContext!: ExecutionContextProvider;
 
   async isInitialSetupCompleted(): Promise<boolean> {
     const setup = await this.repository.findOne(
@@ -39,6 +41,14 @@ export class SystemSetupService extends AbstractService {
   async initSetup(data: {
     adminAccount: { email: string; password: string };
   }): Promise<{ status: number }> {
+    // Garante que o realm core existe e obtém seu publicUUID
+    // RealmService encapsula a lógica de criar se não existir
+    const coreRealmPublicUUID = await this.realmService.ensureCoreRealmExists();
+
+    // Seta o tenantId com o publicUUID do realm core
+    // Serviços multi-tenant vão conseguir resolver o realm
+    this.executionContext.setTenantId(coreRealmPublicUUID);
+    
     const isCompleted = await this.isInitialSetupCompleted();
     if (isCompleted) {
       this.log.info('Setup already completed');
