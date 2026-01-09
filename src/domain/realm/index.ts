@@ -12,7 +12,8 @@ import { RolePolicyModule } from '@/domain/realm/role-policy/role-policy.module'
 import { ApplicationModule } from '@/domain/realm/application/application.module';
 import { ApplicationConfigurationModule } from '@/domain/realm/application-configuration/application-configuration.module';
 import { JwtModule } from '@/domain/realm/jwt/jwt.module';
-import { AuthenticationModule } from '@/domain/realm/authentication/authentication.module';
+import { AuthModule } from '@/domain/realm/auth/auth.module';
+import { AuthzModule } from '@/domain/realm/authz/authz.module';
 import { SystemSetupModule } from './system-setup/system-setup.module';
 
 /**
@@ -48,5 +49,6 @@ export async function initRealmModulesPhase2(
 
   new ApplicationConfigurationModule(container);
   new JwtModule(container);
-  new AuthenticationModule(container);
+  new AuthModule(container);
+  new AuthzModule(container);
 }

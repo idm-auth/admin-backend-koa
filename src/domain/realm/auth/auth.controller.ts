@@ -13,9 +13,9 @@ import {
 } from 'koa-inversify-framework/common';
 import { inject } from 'inversify';
 import {
-  AuthenticationService,
-  AuthenticationServiceSymbol,
-} from '@/domain/realm/authentication/authentication.service';
+  AuthService,
+  AuthServiceSymbol,
+} from '@/domain/realm/auth/auth.service';
 import {
   LoginRequest,
   loginRequestSchema,
@@ -23,24 +23,22 @@ import {
   ValidateTokenRequest,
   validateTokenRequestSchema,
   validateTokenResponseSchema,
-} from '@/domain/realm/authentication/authentication.dto';
+} from '@/domain/realm/auth/auth.dto';
 
-export const AuthenticationControllerSymbol = Symbol.for(
-  'AuthenticationController'
-);
+export const AuthControllerSymbol = Symbol.for('AuthController');
 
 @SwaggerDocController({
   name: 'Authentication',
   description: 'Authentication management',
   tags: ['Authentication'],
 })
-@Controller(AuthenticationControllerSymbol, {
-  basePath: '/api/realm/:tenantId/authentication',
+@Controller(AuthControllerSymbol, {
+  basePath: '/api/realm/:tenantId/auth',
   multiTenant: true,
 })
-export class AuthenticationController extends AbstractController {
+export class AuthController extends AbstractController {
   constructor(
-    @inject(AuthenticationServiceSymbol) private service: AuthenticationService
+    @inject(AuthServiceSymbol) private service: AuthService
   ) {
     super();
   }

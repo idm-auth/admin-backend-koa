@@ -4,19 +4,19 @@ import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { UnauthorizedError, NotFoundError } from 'koa-inversify-framework/error';
 import { inject } from 'inversify';
 import { AccountService, AccountServiceSymbol } from '@/domain/realm/account/account.service';
-import { LoginRequest, LoginResponse } from '@/domain/realm/authentication/authentication.dto';
-import { AuthenticationMapper, AuthenticationMapperSymbol } from '@/domain/realm/authentication/authentication.mapper';
+import { LoginRequest, LoginResponse } from '@/domain/realm/auth/auth.dto';
+import { AuthMapper, AuthMapperSymbol } from '@/domain/realm/auth/auth.mapper';
 import { JwtService, JwtServiceSymbol } from '@/domain/realm/jwt/jwt.service';
 
-export const AuthenticationServiceSymbol = Symbol.for('AuthenticationService');
+export const AuthServiceSymbol = Symbol.for('AuthService');
 
-@Service(AuthenticationServiceSymbol, { multiTenant: true })
-export class AuthenticationService extends AbstractService {
+@Service(AuthServiceSymbol, { multiTenant: true })
+export class AuthService extends AbstractService {
   @inject(AccountServiceSymbol) private accountService!: AccountService;
-  @inject(AuthenticationMapperSymbol) private mapper!: AuthenticationMapper;
+  @inject(AuthMapperSymbol) private mapper!: AuthMapper;
   @inject(JwtServiceSymbol) private jwtService!: JwtService;
 
-  @TraceAsync('authentication.service.login')
+  @TraceAsync('auth.service.login')
   async login(data: LoginRequest): Promise<LoginResponse> {
     this.log.info({ email: data.email }, 'Login attempt');
 
@@ -44,7 +44,7 @@ export class AuthenticationService extends AbstractService {
     }
   }
 
-  @TraceAsync('authentication.service.validateToken')
+  @TraceAsync('auth.service.validateToken')
   async validateToken(token: string): Promise<{ valid: boolean; accountId?: string }> {
     try {
       const payload = await this.jwtService.verifyToken(token);

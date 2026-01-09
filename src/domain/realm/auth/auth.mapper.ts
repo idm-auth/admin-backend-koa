@@ -1,12 +1,12 @@
 import { AbstractMapper } from 'koa-inversify-framework/abstract';
 import { Mapper } from 'koa-inversify-framework/stereotype';
-import { LoginResponse } from '@/domain/realm/authentication/authentication.dto';
+import { LoginResponse } from '@/domain/realm/auth/auth.dto';
 import { AccountEntity } from '@/domain/realm/account/account.entity';
 
-export const AuthenticationMapperSymbol = Symbol.for('AuthenticationMapper');
+export const AuthMapperSymbol = Symbol.for('AuthMapper');
 
-@Mapper(AuthenticationMapperSymbol)
-export class AuthenticationMapper extends AbstractMapper {
+@Mapper(AuthMapperSymbol)
+export class AuthMapper extends AbstractMapper {
   toLoginResponse(account: AccountEntity, token: string, refreshToken: string): LoginResponse {
     return {
       token,
