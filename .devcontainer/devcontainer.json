@@ -15,10 +15,10 @@
         "typescript.tsserver.trace": "verbose",
         "amazonQ.enableLocalIndex": true,
         "workbench.colorCustomizations": {
-          "activityBar.background": "#0528eecb",
-          "activityBar.activeBackground": "#0528eecb",
+          "activityBar.background": "#08a0ecce",
+          "activityBar.activeBackground": "#08a0ecce",
           "activityBar.inactiveForeground": "#ffffff",
-          "statusBar.background": "#0528eecb",
+          "statusBar.background": "#08a0ecce",
           "statusBar.foreground": "#ffffff"
         },
         "editor.bracketPairColorization.enabled": true,

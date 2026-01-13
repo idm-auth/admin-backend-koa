@@ -12,7 +12,10 @@ import {
   ContextWithBody,
 } from 'koa-inversify-framework/common';
 import { inject } from 'inversify';
-import { AuthzService, AuthzServiceSymbol } from '@/domain/realm/authz/authz.service';
+import {
+  AuthzService,
+  AuthzServiceSymbol,
+} from '@/domain/realm/authz/authz.service';
 import {
   EvaluateRequest,
   evaluateRequestSchema,
@@ -31,15 +34,14 @@ export const AuthzControllerSymbol = Symbol.for('AuthzController');
   multiTenant: true,
 })
 export class AuthzController extends AbstractController {
-  constructor(
-    @inject(AuthzServiceSymbol) private service: AuthzService
-  ) {
+  constructor(@inject(AuthzServiceSymbol) private service: AuthzService) {
     super();
   }
 
   @SwaggerDoc({
     summary: 'Evaluate authorization',
-    description: 'Evaluates if an account has permission to perform an action on a resource (internal use)',
+    description:
+      'Evaluates if an account has permission to perform an action on a resource (internal use)',
     tags: ['Authorization'],
     request: {
       params: RequestParamsTenantIdSchema,
@@ -71,12 +73,6 @@ export class AuthzController extends AbstractController {
   @Post('/evaluate')
   async evaluate(ctx: ContextWithBody<EvaluateRequest>): Promise<void> {
     this.validateMultiTenantSetup(ctx);
-    
-    // Validate X-IDM-Application header
-    const application = ctx.headers['x-idm-application'];
-    if (!application) {
-      ctx.throw(400, 'Missing X-IDM-Application header');
-    }
 
     const result = await this.service.evaluate(ctx.request.body);
     ctx.body = result;

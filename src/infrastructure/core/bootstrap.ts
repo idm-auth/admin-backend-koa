@@ -13,22 +13,25 @@ import {
   KoaServer,
   KoaServerSymbol,
 } from 'koa-inversify-framework/infrastructure';
+import type { NodeSDK } from '@opentelemetry/sdk-node';
 import type Koa from 'koa';
 
-export async function bootstrap(): Promise<{
-  framework: Framework;
+let framework: Framework;
+
+export async function bootstrap(sdk: NodeSDK): Promise<{
   container: Container;
   app: Koa;
 }> {
   const container = new Container();
   const registry = new OpenAPIRegistry();
-  const framework = new Framework();
+  framework = new Framework();
 
   container.bind(ContainerSymbol).toConstantValue(container);
 
   framework
     .setContainer(container)
     .setRegistry(registry)
+    .setTelemetry(sdk)
     .setTenantResolver(RealmTenantResolver, RealmTenantResolverSymbol)
     .setEnv(AppEnv, AppEnvSymbol);
 
@@ -44,5 +47,20 @@ export async function bootstrap(): Promise<{
 
   const koaServer = container.get<KoaServer>(KoaServerSymbol);
   const app = koaServer.getApp();
-  return { framework, container, app };
+  return { container, app };
+}
+
+export function getFramework(): Framework {
+  if (!framework) throw new Error('Framework not initialized');
+  return framework;
+}
+
+export async function listen(): Promise<void> {
+  if (!framework) throw new Error('Framework not initialized');
+  await framework.listen();
+}
+
+export async function shutdown(): Promise<void> {
+  if (!framework) throw new Error('Framework not initialized');
+  await framework.shutdown();
 }

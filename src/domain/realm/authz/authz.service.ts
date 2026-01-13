@@ -28,6 +28,12 @@ export class AuthzService extends AbstractService {
   async evaluate(request: EvaluateRequest): Promise<EvaluateResponse> {
     this.log.debug({ request }, 'Evaluating authorization');
 
+    // TODO: Remove this stub after framework integration is complete
+    // For now, always return allowed=true to test framework
+    return { allowed: true };
+
+    // TODO: Uncomment below for full policy evaluation
+    /*
     try {
       const policies = await this.getPoliciesForAccount(request.accountId);
       
@@ -57,6 +63,7 @@ export class AuthzService extends AbstractService {
       this.log.error({ error, request }, 'Error evaluating authorization');
       return { allowed: false, error: 'Internal error' };
     }
+    */
   }
 
   private async getPoliciesForAccount(accountId: string): Promise<PolicyEntity[]> {

@@ -1,17 +1,18 @@
-import { Framework } from 'koa-inversify-framework';
-import { bootstrap } from '@/infrastructure/core/bootstrap';
+// Precisa sempre ser o primeiro para carregar antes de tudo
+import { shutdownTelemetry, telemetrySdk } from '@/telemetry';
 
-let framework: Framework;
+import { bootstrap, listen, shutdown } from '@/infrastructure/core/bootstrap';
 
 void (async () => {
-  ({ framework } = await bootstrap());
-  await framework.listen();
+  await bootstrap(telemetrySdk);
+  await listen();
 })();
 
-const shutdown = async () => {
-  await framework.shutdown();
+const shutdownHandler = async () => {
+  await shutdown();
+  await shutdownTelemetry();
   process.exit(0);
 };
 
-process.on('SIGTERM', () => void shutdown());
-process.on('SIGINT', () => void shutdown());
+process.on('SIGTERM', () => void shutdownHandler());
+process.on('SIGINT', () => void shutdownHandler());

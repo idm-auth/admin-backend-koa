@@ -2,7 +2,7 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest, Authenticated } from 'koa-inversify-framework/decorator';
+import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest, Authenticated, Authorize } from 'koa-inversify-framework/decorator';
 import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
 import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
 import { ApplicationMapper, ApplicationMapperSymbol } from '@/domain/realm/application/application.mapper';
@@ -19,6 +19,8 @@ export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
 @Controller(ApplicationControllerSymbol, {
   basePath: '/api/realm/:tenantId/application',
   multiTenant: true,
+  system: 'iam',
+  resource: 'applications',
 })
 export class ApplicationController extends AbstractCrudController<ApplicationSchema, ApplicationDtoTypes, ApplicationCreate> {
   constructor(
@@ -76,10 +78,12 @@ export class ApplicationController extends AbstractCrudController<ApplicationSch
       },
       400: commonErrorResponses[400],
       401: commonErrorResponses[401],
+      403: commonErrorResponses[403],
       500: commonErrorResponses[500],
     },
   })
   @Authenticated({ required: true })
+  @Authorize({ operation: 'list' })
   @ZodValidateRequest({ params: RequestParamsTenantIdSchema })
   @Get('/')
   async findAllPaginated(ctx: Context): Promise<void> {
