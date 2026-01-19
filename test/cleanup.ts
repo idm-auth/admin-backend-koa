@@ -1,12 +1,16 @@
 import { AppEnv, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
 import { Container } from 'inversify';
-import { ContainerSymbol, MongoDB, MongoDBSymbol } from 'koa-inversify-framework/infrastructure';
+import {
+  ContainerSymbol,
+  MongoDB,
+  MongoDBSymbol,
+} from 'koa-inversify-framework/infrastructure';
 import { Framework } from 'koa-inversify-framework';
 import 'reflect-metadata';
 
 /**
  * Script para limpar bancos de teste órfãos.
- * 
+ *
  * Uso: npm run test:cleanup
  */
 async function cleanup() {
@@ -16,28 +20,29 @@ async function cleanup() {
 
     container.bind(ContainerSymbol).toConstantValue(container);
 
-    framework
-      .setContainer(container)
-      .setEnv(AppEnv, AppEnvSymbol);
+    framework.setContainer(container).setEnv(AppEnv, AppEnvSymbol);
 
     await framework.initCore(container);
-    
+
     const appEnv = container.get<AppEnv>(AppEnvSymbol);
     await appEnv.init();
-    
+
     await framework.initDB(container);
 
     const mongodb = container.get<MongoDB>(MongoDBSymbol);
     const conn = mongodb.getConn();
-    const adminDb = conn.db.admin();
+    const adminDb = conn.db?.admin();
+    if (!adminDb) {
+      throw new Error('No admin db');
+    }
     const dbList = await adminDb.listDatabases();
-    
+
     const testDbs = dbList.databases
-      .map(d => d.name)
-      .filter(n => n.startsWith('vi-test-db'));
+      .map((d) => d.name)
+      .filter((n) => n.startsWith('vi-test-db'));
 
     console.log(`🗑️  Found ${testDbs.length} test databases to clean:`);
-    testDbs.forEach(db => console.log(`   - ${db}`));
+    testDbs.forEach((db) => console.log(`   - ${db}`));
 
     for (const dbName of testDbs) {
       const db = conn.useDb(dbName, { useCache: false });

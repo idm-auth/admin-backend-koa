@@ -2,8 +2,25 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, Patch, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  Patch,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
 import {
   AccountService,
   AccountServiceSymbol,
@@ -12,8 +29,22 @@ import {
   AccountMapper,
   AccountMapperSymbol,
 } from '@/domain/realm/account/account.mapper';
-import { AccountDtoTypes, accountCreateSchema, accountUpdateSchema, accountBaseResponseSchema, accountResetPasswordSchema, accountUpdatePasswordSchema, accountAddEmailSchema, accountRemoveEmailSchema, accountSetPrimaryEmailSchema, accountSetActiveStatusSchema } from '@/domain/realm/account/account.dto';
-import { AccountCreate, AccountSchema } from '@/domain/realm/account/account.entity';
+import {
+  AccountDtoTypes,
+  accountCreateSchema,
+  accountUpdateSchema,
+  accountBaseResponseSchema,
+  accountResetPasswordSchema,
+  accountUpdatePasswordSchema,
+  accountAddEmailSchema,
+  accountRemoveEmailSchema,
+  accountSetPrimaryEmailSchema,
+  accountSetActiveStatusSchema,
+} from '@/domain/realm/account/account.dto';
+import {
+  AccountCreate,
+  AccountSchema,
+} from '@/domain/realm/account/account.entity';
 
 export const AccountControllerSymbol = Symbol.for('AccountController');
 
@@ -36,10 +67,6 @@ export class AccountController extends AbstractCrudController<
     @inject(AccountMapperSymbol) protected mapper: AccountMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.accounts';
   }
 
   @SwaggerDoc({
@@ -70,9 +97,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: accountCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<AccountDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<AccountDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -153,9 +185,17 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, AccountDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      AccountDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 
@@ -209,9 +249,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountResetPasswordSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountResetPasswordSchema,
+  })
   @Patch('/:id/reset-password')
-  async resetPassword(ctx: ContextWithParamsAndBody<IdWithTenantParam, { password: string }>): Promise<void> {
+  async resetPassword(
+    ctx: ContextWithParamsAndBody<IdWithTenantParam, { password: string }>
+  ): Promise<void> {
     const { id } = ctx.params;
     const { password } = ctx.request.body;
     const account = await this.service.resetPassword(id, password);
@@ -246,12 +291,24 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountUpdatePasswordSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountUpdatePasswordSchema,
+  })
   @Patch('/:id/update-password')
-  async updatePassword(ctx: ContextWithParamsAndBody<IdWithTenantParam, { currentPassword: string; newPassword: string }>): Promise<void> {
+  async updatePassword(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      { currentPassword: string; newPassword: string }
+    >
+  ): Promise<void> {
     const { id } = ctx.params;
     const { currentPassword, newPassword } = ctx.request.body;
-    const account = await this.service.updatePassword(id, currentPassword, newPassword);
+    const account = await this.service.updatePassword(
+      id,
+      currentPassword,
+      newPassword
+    );
     ctx.body = this.mapper.toUpdateResponseDto(account);
   }
 
@@ -284,9 +341,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountAddEmailSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountAddEmailSchema,
+  })
   @Post('/:id/email')
-  async addEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
+  async addEmail(
+    ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>
+  ): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.addEmail(id, email);
@@ -321,9 +383,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountRemoveEmailSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountRemoveEmailSchema,
+  })
   @Post('/:id/email/remove')
-  async removeEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
+  async removeEmail(
+    ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>
+  ): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.removeEmail(id, email);
@@ -358,9 +425,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountSetPrimaryEmailSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountSetPrimaryEmailSchema,
+  })
   @Patch('/:id/email/primary')
-  async setPrimaryEmail(ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>): Promise<void> {
+  async setPrimaryEmail(
+    ctx: ContextWithParamsAndBody<IdWithTenantParam, { email: string }>
+  ): Promise<void> {
     const { id } = ctx.params;
     const { email } = ctx.request.body;
     const account = await this.service.setPrimaryEmail(id, email);
@@ -395,9 +467,14 @@ export class AccountController extends AbstractCrudController<
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: accountSetActiveStatusSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: accountSetActiveStatusSchema,
+  })
   @Patch('/:id/active-status')
-  async setActiveStatus(ctx: ContextWithParamsAndBody<IdWithTenantParam, { isActive: boolean }>): Promise<void> {
+  async setActiveStatus(
+    ctx: ContextWithParamsAndBody<IdWithTenantParam, { isActive: boolean }>
+  ): Promise<void> {
     const { id } = ctx.params;
     const { isActive } = ctx.request.body;
     const account = await this.service.setActiveStatus(id, isActive);

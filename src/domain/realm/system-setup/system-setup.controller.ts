@@ -54,10 +54,6 @@ export class SystemSetupController extends AbstractCrudController<
     super();
   }
 
-  protected getResourceType(): string {
-    return 'realm.system-setup';
-  }
-
   @SwaggerDoc({
     summary: 'Get system setup',
     description: 'Returns the system setup configuration',

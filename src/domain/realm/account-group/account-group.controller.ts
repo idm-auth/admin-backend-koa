@@ -2,14 +2,43 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { AccountGroupService, AccountGroupServiceSymbol } from '@/domain/realm/account-group/account-group.service';
-import { AccountGroupMapper, AccountGroupMapperSymbol } from '@/domain/realm/account-group/account-group.mapper';
-import { AccountGroupDtoTypes, accountGroupCreateSchema, accountGroupBaseResponseSchema } from '@/domain/realm/account-group/account-group.dto';
-import { AccountGroupSchema, AccountGroupCreate } from '@/domain/realm/account-group/account-group.entity';
+import {
+  Get,
+  Post,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  AccountGroupService,
+  AccountGroupServiceSymbol,
+} from '@/domain/realm/account-group/account-group.service';
+import {
+  AccountGroupMapper,
+  AccountGroupMapperSymbol,
+} from '@/domain/realm/account-group/account-group.mapper';
+import {
+  AccountGroupDtoTypes,
+  accountGroupCreateSchema,
+  accountGroupBaseResponseSchema,
+} from '@/domain/realm/account-group/account-group.dto';
+import {
+  AccountGroupSchema,
+  AccountGroupCreate,
+} from '@/domain/realm/account-group/account-group.entity';
 
-export const AccountGroupControllerSymbol = Symbol.for('AccountGroupController');
+export const AccountGroupControllerSymbol = Symbol.for(
+  'AccountGroupController'
+);
 
 @SwaggerDocController({
   name: 'Account Groups',
@@ -20,16 +49,16 @@ export const AccountGroupControllerSymbol = Symbol.for('AccountGroupController')
   basePath: '/api/realm/:tenantId/account-group',
   multiTenant: true,
 })
-export class AccountGroupController extends AbstractCrudController<AccountGroupSchema, AccountGroupDtoTypes, AccountGroupCreate> {
+export class AccountGroupController extends AbstractCrudController<
+  AccountGroupSchema,
+  AccountGroupDtoTypes,
+  AccountGroupCreate
+> {
   constructor(
     @inject(AccountGroupServiceSymbol) protected service: AccountGroupService,
     @inject(AccountGroupMapperSymbol) protected mapper: AccountGroupMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.account-groups';
   }
 
   @SwaggerDoc({
@@ -58,9 +87,14 @@ export class AccountGroupController extends AbstractCrudController<AccountGroupS
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountGroupCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: accountGroupCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<AccountGroupDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<AccountGroupDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 

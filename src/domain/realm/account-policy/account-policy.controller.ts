@@ -2,14 +2,43 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { AccountPolicyService, AccountPolicyServiceSymbol } from '@/domain/realm/account-policy/account-policy.service';
-import { AccountPolicyMapper, AccountPolicyMapperSymbol } from '@/domain/realm/account-policy/account-policy.mapper';
-import { AccountPolicyDtoTypes, accountPolicyCreateSchema, accountPolicyBaseResponseSchema } from '@/domain/realm/account-policy/account-policy.dto';
-import { AccountPolicySchema, AccountPolicyCreate } from '@/domain/realm/account-policy/account-policy.entity';
+import {
+  Get,
+  Post,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  AccountPolicyService,
+  AccountPolicyServiceSymbol,
+} from '@/domain/realm/account-policy/account-policy.service';
+import {
+  AccountPolicyMapper,
+  AccountPolicyMapperSymbol,
+} from '@/domain/realm/account-policy/account-policy.mapper';
+import {
+  AccountPolicyDtoTypes,
+  accountPolicyCreateSchema,
+  accountPolicyBaseResponseSchema,
+} from '@/domain/realm/account-policy/account-policy.dto';
+import {
+  AccountPolicySchema,
+  AccountPolicyCreate,
+} from '@/domain/realm/account-policy/account-policy.entity';
 
-export const AccountPolicyControllerSymbol = Symbol.for('AccountPolicyController');
+export const AccountPolicyControllerSymbol = Symbol.for(
+  'AccountPolicyController'
+);
 
 @SwaggerDocController({
   name: 'Account Policies',
@@ -20,16 +49,16 @@ export const AccountPolicyControllerSymbol = Symbol.for('AccountPolicyController
   basePath: '/api/realm/:tenantId/account-policy',
   multiTenant: true,
 })
-export class AccountPolicyController extends AbstractCrudController<AccountPolicySchema, AccountPolicyDtoTypes, AccountPolicyCreate> {
+export class AccountPolicyController extends AbstractCrudController<
+  AccountPolicySchema,
+  AccountPolicyDtoTypes,
+  AccountPolicyCreate
+> {
   constructor(
     @inject(AccountPolicyServiceSymbol) protected service: AccountPolicyService,
     @inject(AccountPolicyMapperSymbol) protected mapper: AccountPolicyMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.account-policies';
   }
 
   @SwaggerDoc({
@@ -58,9 +87,14 @@ export class AccountPolicyController extends AbstractCrudController<AccountPolic
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountPolicyCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: accountPolicyCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<AccountPolicyDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<AccountPolicyDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 

@@ -11,7 +11,13 @@ import {
   SwaggerDocController,
   ZodValidateRequest,
 } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdParam } from 'koa-inversify-framework/common';
+import {
+  commonErrorResponses,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdParam,
+} from 'koa-inversify-framework/common';
 import { RequestParamsIdSchema } from 'koa-inversify-framework/common';
 import {
   RealmService,
@@ -51,10 +57,6 @@ export class RealmController extends AbstractCrudController<
     super();
   }
 
-  protected getResourceType(): string {
-    return 'core.realm';
-  }
-
   @SwaggerDoc({
     summary: 'Create realm',
     description: 'Creates a new realm',
@@ -84,7 +86,9 @@ export class RealmController extends AbstractCrudController<
   })
   @ZodValidateRequest({ body: realmCreateSchema })
   @Post('/')
-  async create(ctx: ContextWithBody<RealmDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<RealmDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -166,7 +170,9 @@ export class RealmController extends AbstractCrudController<
     body: realmUpdateSchema,
   })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdParam, RealmDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<IdParam, RealmDtoTypes['UpdateRequestDto']>
+  ): Promise<void> {
     return super.update(ctx);
   }
 

@@ -2,12 +2,39 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { AccountRoleService, AccountRoleServiceSymbol } from '@/domain/realm/account-role/account-role.service';
-import { AccountRoleMapper, AccountRoleMapperSymbol } from '@/domain/realm/account-role/account-role.mapper';
-import { AccountRoleDtoTypes, accountRoleCreateSchema, accountRoleBaseResponseSchema } from '@/domain/realm/account-role/account-role.dto';
-import { AccountRoleSchema, AccountRoleCreate } from '@/domain/realm/account-role/account-role.entity';
+import {
+  Get,
+  Post,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  AccountRoleService,
+  AccountRoleServiceSymbol,
+} from '@/domain/realm/account-role/account-role.service';
+import {
+  AccountRoleMapper,
+  AccountRoleMapperSymbol,
+} from '@/domain/realm/account-role/account-role.mapper';
+import {
+  AccountRoleDtoTypes,
+  accountRoleCreateSchema,
+  accountRoleBaseResponseSchema,
+} from '@/domain/realm/account-role/account-role.dto';
+import {
+  AccountRoleSchema,
+  AccountRoleCreate,
+} from '@/domain/realm/account-role/account-role.entity';
 
 export const AccountRoleControllerSymbol = Symbol.for('AccountRoleController');
 
@@ -20,16 +47,16 @@ export const AccountRoleControllerSymbol = Symbol.for('AccountRoleController');
   basePath: '/api/realm/:tenantId/account-role',
   multiTenant: true,
 })
-export class AccountRoleController extends AbstractCrudController<AccountRoleSchema, AccountRoleDtoTypes, AccountRoleCreate> {
+export class AccountRoleController extends AbstractCrudController<
+  AccountRoleSchema,
+  AccountRoleDtoTypes,
+  AccountRoleCreate
+> {
   constructor(
     @inject(AccountRoleServiceSymbol) protected service: AccountRoleService,
     @inject(AccountRoleMapperSymbol) protected mapper: AccountRoleMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.account-roles';
   }
 
   @SwaggerDoc({
@@ -58,9 +85,14 @@ export class AccountRoleController extends AbstractCrudController<AccountRoleSch
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: accountRoleCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: accountRoleCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<AccountRoleDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<AccountRoleDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 

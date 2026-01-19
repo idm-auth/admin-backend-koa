@@ -1,9 +1,12 @@
-import { bootstrap } from '@/infrastructure/core/bootstrap';
+import { bootstrap, getFramework } from '@/infrastructure/core/bootstrap';
+import { createTestNodeSDK } from '@test/utils/test-sdk';
 import { TEST_PASSWORD } from '@test/utils/test-constants';
 import request from 'supertest';
 
 export default async function globalSetup() {
-  const { framework, container, app } = await bootstrap();
+  const sdk = createTestNodeSDK();
+  const { container, app } = await bootstrap(sdk);
+  const framework = getFramework();
 
   const response = await request(app.callback())
     .post('/api/core/system-setup/init-setup')

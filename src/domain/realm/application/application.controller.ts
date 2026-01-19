@@ -2,12 +2,44 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest, Authenticated, Authorize } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
-import { ApplicationMapper, ApplicationMapperSymbol } from '@/domain/realm/application/application.mapper';
-import { ApplicationDtoTypes, applicationCreateSchema, applicationUpdateSchema, applicationBaseResponseSchema } from '@/domain/realm/application/application.dto';
-import { ApplicationSchema, ApplicationCreate } from '@/domain/realm/application/application.entity';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+  Authenticated,
+  Authorize,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  ApplicationService,
+  ApplicationServiceSymbol,
+} from '@/domain/realm/application/application.service';
+import {
+  ApplicationMapper,
+  ApplicationMapperSymbol,
+} from '@/domain/realm/application/application.mapper';
+import {
+  ApplicationDtoTypes,
+  applicationCreateSchema,
+  applicationUpdateSchema,
+  applicationBaseResponseSchema,
+} from '@/domain/realm/application/application.dto';
+import {
+  ApplicationSchema,
+  ApplicationCreate,
+} from '@/domain/realm/application/application.entity';
 
 export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
 
@@ -19,19 +51,19 @@ export const ApplicationControllerSymbol = Symbol.for('ApplicationController');
 @Controller(ApplicationControllerSymbol, {
   basePath: '/api/realm/:tenantId/application',
   multiTenant: true,
-  system: 'iam',
+  system: 'idm-auth-core-api',
   resource: 'applications',
 })
-export class ApplicationController extends AbstractCrudController<ApplicationSchema, ApplicationDtoTypes, ApplicationCreate> {
+export class ApplicationController extends AbstractCrudController<
+  ApplicationSchema,
+  ApplicationDtoTypes,
+  ApplicationCreate
+> {
   constructor(
     @inject(ApplicationServiceSymbol) protected service: ApplicationService,
     @inject(ApplicationMapperSymbol) protected mapper: ApplicationMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.applications';
   }
 
   @SwaggerDoc({
@@ -60,9 +92,14 @@ export class ApplicationController extends AbstractCrudController<ApplicationSch
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: applicationCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: applicationCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<ApplicationDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<ApplicationDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -111,6 +148,8 @@ export class ApplicationController extends AbstractCrudController<ApplicationSch
     },
   })
   @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema })
+  @Authenticated({ required: true })
+  @Authorize({ operation: 'read' })
   @Get('/:id')
   async findById(ctx: ContextWithParams<IdWithTenantParam>): Promise<void> {
     return super.findById(ctx);
@@ -143,9 +182,17 @@ export class ApplicationController extends AbstractCrudController<ApplicationSch
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: applicationUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: applicationUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, ApplicationDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      ApplicationDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 

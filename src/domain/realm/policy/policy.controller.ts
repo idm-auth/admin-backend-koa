@@ -2,12 +2,69 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { PolicyService, PolicyServiceSymbol } from '@/domain/realm/policy/policy.service';
-import { PolicyMapper, PolicyMapperSymbol } from '@/domain/realm/policy/policy.mapper';
-import { PolicyDtoTypes, policyCreateSchema, policyUpdateSchema, policyBaseResponseSchema } from '@/domain/realm/policy/policy.dto';
-import { PolicySchema, PolicyCreate } from '@/domain/realm/policy/policy.entity';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  PolicyService,
+  PolicyServiceSymbol,
+} from '@/domain/realm/policy/policy.service';
+import {
+  PolicyMapper,
+  PolicyMapperSymbol,
+} from '@/domain/realm/policy/policy.mapper';
+import {
+  PolicyDtoTypes,
+  policyCreateSchema,
+  policyUpdateSchema,
+  policyBaseResponseSchema,
+} from '@/domain/realm/policy/policy.dto';
+import {
+  PolicySchema,
+  PolicyCreate,
+  POLICY_EFFECTS,
+} from '@/domain/realm/policy/policy.entity';
+import { z } from 'zod';
+import { DocIdSchema } from 'koa-inversify-framework/common';
+
+const policyActionSchema = z.object({
+  system: z.string(),
+  resource: z.string(),
+  operation: z.string(),
+});
+
+const policyResourceSchema = z.object({
+  partition: z.string(),
+  system: z.string(),
+  region: z.string(),
+  tenantId: z.string(),
+  resourcePath: z.string(),
+});
+
+const policyResponseSchema = z.object({
+  _id: DocIdSchema,
+  version: z.string(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  effect: z.enum(POLICY_EFFECTS),
+  actions: z.array(policyActionSchema),
+  resources: z.array(policyResourceSchema),
+});
 
 export const PolicyControllerSymbol = Symbol.for('PolicyController');
 
@@ -20,16 +77,16 @@ export const PolicyControllerSymbol = Symbol.for('PolicyController');
   basePath: '/api/realm/:tenantId/policy',
   multiTenant: true,
 })
-export class PolicyController extends AbstractCrudController<PolicySchema, PolicyDtoTypes, PolicyCreate> {
+export class PolicyController extends AbstractCrudController<
+  PolicySchema,
+  PolicyDtoTypes,
+  PolicyCreate
+> {
   constructor(
     @inject(PolicyServiceSymbol) protected service: PolicyService,
     @inject(PolicyMapperSymbol) protected mapper: PolicyMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.policies';
   }
 
   @SwaggerDoc({
@@ -50,7 +107,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
         description: 'Policy created',
         content: {
           'application/json': {
-            schema: policyBaseResponseSchema,
+            schema: policyResponseSchema,
           },
         },
       },
@@ -58,9 +115,14 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: policyCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: policyCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<PolicyDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<PolicyDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -95,7 +157,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
         description: 'Policy found',
         content: {
           'application/json': {
-            schema: policyBaseResponseSchema,
+            schema: policyResponseSchema,
           },
         },
       },
@@ -128,7 +190,7 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
         description: 'Policy updated',
         content: {
           'application/json': {
-            schema: policyBaseResponseSchema,
+            schema: policyResponseSchema,
           },
         },
       },
@@ -137,9 +199,17 @@ export class PolicyController extends AbstractCrudController<PolicySchema, Polic
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: policyUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: policyUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, PolicyDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      PolicyDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 

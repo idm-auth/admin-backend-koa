@@ -2,14 +2,45 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { ApplicationActionService, ApplicationActionServiceSymbol } from '@/domain/realm/application-action/application-action.service';
-import { ApplicationActionMapper, ApplicationActionMapperSymbol } from '@/domain/realm/application-action/application-action.mapper';
-import { ApplicationActionDtoTypes, applicationActionCreateSchema, applicationActionUpdateSchema, applicationActionBaseResponseSchema } from '@/domain/realm/application-action/application-action.dto';
-import { ApplicationActionSchema, ApplicationActionCreate } from '@/domain/realm/application-action/application-action.entity';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  ApplicationActionService,
+  ApplicationActionServiceSymbol,
+} from '@/domain/realm/application-action/application-action.service';
+import {
+  ApplicationActionMapper,
+  ApplicationActionMapperSymbol,
+} from '@/domain/realm/application-action/application-action.mapper';
+import {
+  ApplicationActionDtoTypes,
+  applicationActionCreateSchema,
+  applicationActionUpdateSchema,
+  applicationActionBaseResponseSchema,
+} from '@/domain/realm/application-action/application-action.dto';
+import {
+  ApplicationActionSchema,
+  ApplicationActionCreate,
+} from '@/domain/realm/application-action/application-action.entity';
 
-export const ApplicationActionControllerSymbol = Symbol.for('ApplicationActionController');
+export const ApplicationActionControllerSymbol = Symbol.for(
+  'ApplicationActionController'
+);
 
 @SwaggerDocController({
   name: 'Application Actions',
@@ -20,16 +51,18 @@ export const ApplicationActionControllerSymbol = Symbol.for('ApplicationActionCo
   basePath: '/api/realm/:tenantId/application-action',
   multiTenant: true,
 })
-export class ApplicationActionController extends AbstractCrudController<ApplicationActionSchema, ApplicationActionDtoTypes, ApplicationActionCreate> {
+export class ApplicationActionController extends AbstractCrudController<
+  ApplicationActionSchema,
+  ApplicationActionDtoTypes,
+  ApplicationActionCreate
+> {
   constructor(
-    @inject(ApplicationActionServiceSymbol) protected service: ApplicationActionService,
-    @inject(ApplicationActionMapperSymbol) protected mapper: ApplicationActionMapper
+    @inject(ApplicationActionServiceSymbol)
+    protected service: ApplicationActionService,
+    @inject(ApplicationActionMapperSymbol)
+    protected mapper: ApplicationActionMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.application-actions';
   }
 
   @SwaggerDoc({
@@ -58,9 +91,14 @@ export class ApplicationActionController extends AbstractCrudController<Applicat
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: applicationActionCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: applicationActionCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<ApplicationActionDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<ApplicationActionDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -137,9 +175,15 @@ export class ApplicationActionController extends AbstractCrudController<Applicat
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: applicationActionUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: applicationActionUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithBody<ApplicationActionDtoTypes['UpdateRequestDto']> & ContextWithParams<IdWithTenantParam>): Promise<void> {
+  async update(
+    ctx: ContextWithBody<ApplicationActionDtoTypes['UpdateRequestDto']> &
+      ContextWithParams<IdWithTenantParam>
+  ): Promise<void> {
     return super.update(ctx);
   }
 

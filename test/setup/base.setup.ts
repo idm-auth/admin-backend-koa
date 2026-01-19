@@ -1,7 +1,7 @@
-import { bootstrap } from '@/infrastructure/core/bootstrap';
+import { bootstrap, getFramework } from '@/infrastructure/core/bootstrap';
+import { createTestNodeSDK } from '@test/utils/test-sdk';
 import { Container } from 'inversify';
 import type Koa from 'koa';
-import { Framework } from 'koa-inversify-framework';
 import { afterAll, beforeAll } from 'vitest';
 
 /**
@@ -30,17 +30,19 @@ import { afterAll, beforeAll } from 'vitest';
  * - O framework NÃO é reinicializado entre testes (performance)
  */
 
-let framework: Framework;
 let app: Koa;
 let container: Container;
 
 beforeAll(async () => {
-  ({ framework, container, app } = await bootstrap());
+  const sdk = createTestNodeSDK();
+  ({ container, app } = await bootstrap(sdk));
 });
 
 afterAll(async () => {
+  const framework = getFramework();
   await framework.shutdown();
 });
+
 
 // Exporta app para testes fazerem requisições HTTP
 export const getApp = () => app;

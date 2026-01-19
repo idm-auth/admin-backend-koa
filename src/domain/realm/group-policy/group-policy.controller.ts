@@ -2,12 +2,39 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { GroupPolicyService, GroupPolicyServiceSymbol } from '@/domain/realm/group-policy/group-policy.service';
-import { GroupPolicyMapper, GroupPolicyMapperSymbol } from '@/domain/realm/group-policy/group-policy.mapper';
-import { GroupPolicyDtoTypes, groupPolicyCreateSchema, groupPolicyBaseResponseSchema } from '@/domain/realm/group-policy/group-policy.dto';
-import { GroupPolicySchema, GroupPolicyCreate } from '@/domain/realm/group-policy/group-policy.entity';
+import {
+  Get,
+  Post,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  GroupPolicyService,
+  GroupPolicyServiceSymbol,
+} from '@/domain/realm/group-policy/group-policy.service';
+import {
+  GroupPolicyMapper,
+  GroupPolicyMapperSymbol,
+} from '@/domain/realm/group-policy/group-policy.mapper';
+import {
+  GroupPolicyDtoTypes,
+  groupPolicyCreateSchema,
+  groupPolicyBaseResponseSchema,
+} from '@/domain/realm/group-policy/group-policy.dto';
+import {
+  GroupPolicySchema,
+  GroupPolicyCreate,
+} from '@/domain/realm/group-policy/group-policy.entity';
 
 export const GroupPolicyControllerSymbol = Symbol.for('GroupPolicyController');
 
@@ -20,16 +47,16 @@ export const GroupPolicyControllerSymbol = Symbol.for('GroupPolicyController');
   basePath: '/api/realm/:tenantId/group-policy',
   multiTenant: true,
 })
-export class GroupPolicyController extends AbstractCrudController<GroupPolicySchema, GroupPolicyDtoTypes, GroupPolicyCreate> {
+export class GroupPolicyController extends AbstractCrudController<
+  GroupPolicySchema,
+  GroupPolicyDtoTypes,
+  GroupPolicyCreate
+> {
   constructor(
     @inject(GroupPolicyServiceSymbol) protected service: GroupPolicyService,
     @inject(GroupPolicyMapperSymbol) protected mapper: GroupPolicyMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.group-policies';
   }
 
   @SwaggerDoc({
@@ -58,9 +85,14 @@ export class GroupPolicyController extends AbstractCrudController<GroupPolicySch
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: groupPolicyCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: groupPolicyCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<GroupPolicyDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<GroupPolicyDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 

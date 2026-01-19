@@ -4,7 +4,10 @@ import {
   applicationConfigurationResponseSchema,
   applicationConfigurationUpdateSchema,
 } from '@/domain/realm/application-configuration/application-configuration.dto';
-import { ApplicationConfigurationSchema, ApplicationConfigurationCreate } from '@/domain/realm/application-configuration/application-configuration.entity';
+import {
+  ApplicationConfigurationSchema,
+  ApplicationConfigurationCreate,
+} from '@/domain/realm/application-configuration/application-configuration.entity';
 import {
   ApplicationConfigurationMapper,
   ApplicationConfigurationMapperSymbol,
@@ -62,10 +65,6 @@ export class ApplicationConfigurationController extends AbstractCrudController<
     protected mapper: ApplicationConfigurationMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.application-configuration';
   }
 
   @SwaggerDoc({

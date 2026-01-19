@@ -17,8 +17,8 @@ export class PolicyService extends AbstractCrudService<PolicySchema, PolicyDtoTy
       name: dto.name,
       description: dto.description,
       effect: dto.effect,
-      actions: dto.actions,
-      resources: dto.resources,
+      actions: dto.actions.map((action) => this.parseAction(action)),
+      resources: dto.resources.map((resource) => this.parseResource(resource)),
     };
   }
 
@@ -27,8 +27,24 @@ export class PolicyService extends AbstractCrudService<PolicySchema, PolicyDtoTy
     if (dto.name !== undefined) entity.name = dto.name;
     if (dto.description !== undefined) entity.description = dto.description;
     if (dto.effect !== undefined) entity.effect = dto.effect;
-    if (dto.actions !== undefined) entity.actions = dto.actions;
-    if (dto.resources !== undefined) entity.resources = dto.resources;
+    if (dto.actions !== undefined) entity.actions = dto.actions.map((action) => this.parseAction(action));
+    if (dto.resources !== undefined) entity.resources = dto.resources.map((resource) => this.parseResource(resource));
     return entity;
+  }
+
+  private parseAction(action: string) {
+    const [system, resource, operation] = action.split(':');
+    return { system, resource, operation };
+  }
+
+  private parseResource(resource: string) {
+    const [, partition, system, region, tenantId, ...resourcePathParts] = resource.split(':');
+    return {
+      partition,
+      system,
+      region,
+      tenantId,
+      resourcePath: resourcePathParts.join(':'),
+    };
   }
 }

@@ -1,14 +1,14 @@
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { grnSchema } from 'koa-inversify-framework/common';
+import { policyActionSchema } from 'koa-inversify-framework/common';
+import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
 export const evaluateRequestSchema = z.object({
-  accountId: z.string().min(1),
-  action: z.string().min(1),
-  resource: z.string().min(1),
-  partition: z.string().optional(),
-  region: z.string().optional(),
+  userToken: z.string().min(1),
+  grn: grnSchema,
+  action: policyActionSchema,
 });
 
 export const evaluateResponseSchema = z.object({

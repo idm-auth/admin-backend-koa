@@ -2,11 +2,38 @@ import { inject } from 'inversify';
 import { Context } from 'koa';
 import { AbstractCrudController } from 'koa-inversify-framework/abstract';
 import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, Post, Put, Delete, SwaggerDoc, SwaggerDocController, ZodValidateRequest } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses, RequestParamsIdAndTenantIdSchema, RequestParamsTenantIdSchema, ContextWithBody, ContextWithParams, ContextWithParamsAndBody, IdWithTenantParam } from 'koa-inversify-framework/common';
-import { GroupService, GroupServiceSymbol } from '@/domain/realm/group/group.service';
-import { GroupMapper, GroupMapperSymbol } from '@/domain/realm/group/group.mapper';
-import { GroupDtoTypes, groupCreateSchema, groupUpdateSchema, groupBaseResponseSchema } from '@/domain/realm/group/group.dto';
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  SwaggerDoc,
+  SwaggerDocController,
+  ZodValidateRequest,
+} from 'koa-inversify-framework/decorator';
+import {
+  commonErrorResponses,
+  RequestParamsIdAndTenantIdSchema,
+  RequestParamsTenantIdSchema,
+  ContextWithBody,
+  ContextWithParams,
+  ContextWithParamsAndBody,
+  IdWithTenantParam,
+} from 'koa-inversify-framework/common';
+import {
+  GroupService,
+  GroupServiceSymbol,
+} from '@/domain/realm/group/group.service';
+import {
+  GroupMapper,
+  GroupMapperSymbol,
+} from '@/domain/realm/group/group.mapper';
+import {
+  GroupDtoTypes,
+  groupCreateSchema,
+  groupUpdateSchema,
+  groupBaseResponseSchema,
+} from '@/domain/realm/group/group.dto';
 import { GroupSchema, GroupCreate } from '@/domain/realm/group/group.entity';
 
 export const GroupControllerSymbol = Symbol.for('GroupController');
@@ -20,16 +47,16 @@ export const GroupControllerSymbol = Symbol.for('GroupController');
   basePath: '/api/realm/:tenantId/group',
   multiTenant: true,
 })
-export class GroupController extends AbstractCrudController<GroupSchema, GroupDtoTypes, GroupCreate> {
+export class GroupController extends AbstractCrudController<
+  GroupSchema,
+  GroupDtoTypes,
+  GroupCreate
+> {
   constructor(
     @inject(GroupServiceSymbol) protected service: GroupService,
     @inject(GroupMapperSymbol) protected mapper: GroupMapper
   ) {
     super();
-  }
-
-  protected getResourceType(): string {
-    return 'realm.groups';
   }
 
   @SwaggerDoc({
@@ -58,9 +85,14 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsTenantIdSchema, body: groupCreateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsTenantIdSchema,
+    body: groupCreateSchema,
+  })
   @Post('/')
-  async create(ctx: ContextWithBody<GroupDtoTypes['CreateRequestDto']>): Promise<void> {
+  async create(
+    ctx: ContextWithBody<GroupDtoTypes['CreateRequestDto']>
+  ): Promise<void> {
     return super.create(ctx);
   }
 
@@ -137,9 +169,17 @@ export class GroupController extends AbstractCrudController<GroupSchema, GroupDt
       500: commonErrorResponses[500],
     },
   })
-  @ZodValidateRequest({ params: RequestParamsIdAndTenantIdSchema, body: groupUpdateSchema })
+  @ZodValidateRequest({
+    params: RequestParamsIdAndTenantIdSchema,
+    body: groupUpdateSchema,
+  })
   @Put('/:id')
-  async update(ctx: ContextWithParamsAndBody<IdWithTenantParam, GroupDtoTypes['UpdateRequestDto']>): Promise<void> {
+  async update(
+    ctx: ContextWithParamsAndBody<
+      IdWithTenantParam,
+      GroupDtoTypes['UpdateRequestDto']
+    >
+  ): Promise<void> {
     return super.update(ctx);
   }
 

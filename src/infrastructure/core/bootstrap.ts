@@ -31,7 +31,7 @@ export async function bootstrap(sdk: NodeSDK): Promise<{
   framework
     .setContainer(container)
     .setRegistry(registry)
-    .setTelemetry(sdk)
+    .setNodeSDK(sdk)
     .setTenantResolver(RealmTenantResolver, RealmTenantResolverSymbol)
     .setEnv(AppEnv, AppEnvSymbol);
 

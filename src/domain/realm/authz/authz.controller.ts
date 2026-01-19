@@ -71,10 +71,10 @@ export class AuthzController extends AbstractController {
     body: evaluateRequestSchema,
   })
   @Post('/evaluate')
-  async evaluate(ctx: ContextWithBody<EvaluateRequest>): Promise<void> {
+  async evaluate(ctx: ContextWithBody<EvaluateRequest> & { params: { tenantId: string } }): Promise<void> {
     this.validateMultiTenantSetup(ctx);
 
-    const result = await this.service.evaluate(ctx.request.body);
+    const result = await this.service.evaluate(ctx.params.tenantId, ctx.request.body);
     ctx.body = result;
   }
 }

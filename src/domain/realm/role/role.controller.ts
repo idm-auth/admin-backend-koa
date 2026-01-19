@@ -56,10 +56,6 @@ export class RoleController extends AbstractCrudController<
     super();
   }
 
-  protected getResourceType(): string {
-    return 'realm.roles';
-  }
-
   @SwaggerDoc({
     summary: 'Create role',
     tags: ['Roles'],

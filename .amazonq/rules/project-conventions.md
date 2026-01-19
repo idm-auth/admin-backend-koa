@@ -4,6 +4,39 @@
 - Reading these rules will prevent 90% of errors and avoid wasting time with wrong assumptions
 - When in doubt about how something works (decorators, patterns, conventions), READ THE CODE first, then check these rules
 - Do NOT make assumptions - verify against rules and actual implementation
+
+## MANDATORY: fsRead BEFORE ANY FILE MODIFICATION
+
+**THIS RULE IS ABSOLUTE. NO EXCEPTIONS. NO SHORTCUTS.**
+
+**COST OF SPEED: Every shortcut costs 10x more tokens in rework. Slow is fast.**
+
+Before modifying ANY existing file:
+1. Call `fsRead` on the file
+2. PLAN what you will change (tell user first)
+3. Wait for user confirmation or proceed if clear
+4. Make the modification
+
+If you have not read the file in THIS conversation, you CANNOT modify it.
+If you are unsure what is in the file, STOP and read it first.
+
+**REQUIRED FORMAT for any file modification:**
+```
+Reading [filename]...
+[fsRead]
+I will change [X] to [Y] because [reason].
+OK to proceed?
+```
+
+Then after confirmation: make the change.
+
+**If you skip fsRead or make changes without planning:**
+- The modification will be wrong
+- Tokens will be wasted on rework
+- User time will be wasted
+
+---
+
 - **NEVER invent or assume API signatures - ALWAYS read the actual code to understand:**
   - Method parameters and return types
   - Constructor dependencies and injection patterns
@@ -14,6 +47,20 @@
   2. Understand the actual implementation
   3. Follow the exact patterns used in existing code
   4. Do NOT guess or make assumptions based on naming alone
+
+## AI Behavior - CRITICAL OVERRIDE
+
+- **ALWAYS ask for clarification before making ANY code changes when there is ANY ambiguity**
+- **NEVER assume what the user wants - confirm first, then act**
+- **Economy comes from doing it right the first time, not from acting fast**
+- **If there's ANY doubt about:**
+  - Which file to modify (even if file names are similar)
+  - Where to place the code (inside a function, in a new file, etc.)
+  - What the user means by their instruction
+  - Whether to create new code or modify existing code
+  - **STOP and ASK - do not proceed with assumptions**
+- **Wasting tokens on clarification (50 tokens) is MUCH better than wasting tokens on rework (500+ tokens)**
+- **User frustration from wrong assumptions is worse than any token cost**
 
 # Project Conventions
 
@@ -189,9 +236,10 @@
 - NEVER remove functionality when encountering errors - ALWAYS investigate and fix properly
 - When something doesn't work, research the correct solution (check documentation, examples, types)
 - Removing features is NOT a solution - it's avoiding the problem
-- If unsure about the correct approach, ask for clarification before implementing
-- ALWAYS present the solution plan BEFORE implementing, especially when creating new files or making architectural changes
-- Wait for user confirmation before proceeding with file creation or major refactoring
+- **If unsure about the correct approach, STOP and ask for clarification before implementing**
+- **ALWAYS present the solution plan BEFORE implementing, especially when creating new files or making architectural changes**
+- **Wait for user confirmation before proceeding with file creation or major refactoring**
+- **When user request is ambiguous, list the possible interpretations and ask which one is correct**
 - **NEVER bypass the user's explicit architectural requirements, even if a "simpler" solution seems available**
 - **If the user says the request MUST go through Koa routes/middlewares, it MUST go through them - do NOT call services directly as a shortcut**
 - **ALWAYS respect the user's architectural decisions, even if they seem more complex than alternatives**
