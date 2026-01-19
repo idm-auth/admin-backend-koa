@@ -52,7 +52,7 @@ export class ApplicationActionService extends AbstractCrudService<
   ): QueryFilter<InferSchemaType<ApplicationActionSchema>> {
     const query: QueryFilter<InferSchemaType<ApplicationActionSchema>> = {};
 
-    if (filter?.applicationId) {
+    if (filter.applicationId) {
       query.applicationId = filter.applicationId as string;
     }
 
