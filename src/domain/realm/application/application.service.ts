@@ -5,7 +5,9 @@ import { ApplicationDtoTypes } from '@/domain/realm/application/application.dto'
 import { ApplicationCreate, ApplicationEntity, ApplicationSchema } from '@/domain/realm/application/application.entity';
 import { ApplicationRepository, ApplicationRepositorySymbol } from '@/domain/realm/application/application.repository';
 import { AppEnv, AppEnvKey, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
+import { PaginationFilter } from 'koa-inversify-framework/common';
 import { inject } from 'inversify';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const ApplicationServiceSymbol = Symbol.for('ApplicationService');
 
@@ -25,6 +27,12 @@ export class ApplicationService extends AbstractCrudService<ApplicationSchema, A
     if (dto.name !== undefined) entity.name = dto.name;
     if (dto.isActive !== undefined) entity.isActive = dto.isActive;
     return entity;
+  }
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<ApplicationSchema>> {
+    return {};
   }
 
   @TraceAsync('application.service.findBySystemId')

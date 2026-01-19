@@ -11,6 +11,7 @@ import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
+import { PaginationFilter } from 'koa-inversify-framework/common';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
 import {
@@ -18,6 +19,7 @@ import {
   NotFoundError,
   ValidationError,
 } from 'koa-inversify-framework/error';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');
 
@@ -52,6 +54,12 @@ export class AccountService extends AbstractCrudService<
     this.log.debug({ id: entity._id, dto }, 'Building update');
     if (dto.isActive !== undefined) entity.isActive = dto.isActive;
     return entity;
+  }
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<AccountSchema>> {
+    return {};
   }
 
   @TraceAsync('account.service.findByEmail')

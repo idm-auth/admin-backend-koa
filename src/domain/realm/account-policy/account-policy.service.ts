@@ -3,13 +3,21 @@ import { Service } from 'koa-inversify-framework/stereotype';
 import { AccountPolicyDtoTypes } from '@/domain/realm/account-policy/account-policy.dto';
 import { AccountPolicyEntity, AccountPolicySchema, AccountPolicyCreate } from '@/domain/realm/account-policy/account-policy.entity';
 import { AccountPolicyRepository, AccountPolicyRepositorySymbol } from '@/domain/realm/account-policy/account-policy.repository';
+import { PaginationFilter } from 'koa-inversify-framework/common';
 import { inject } from 'inversify';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const AccountPolicyServiceSymbol = Symbol.for('AccountPolicyService');
 
 @Service(AccountPolicyServiceSymbol, { multiTenant: true })
 export class AccountPolicyService extends AbstractCrudService<AccountPolicySchema, AccountPolicyDtoTypes, AccountPolicyCreate> {
   @inject(AccountPolicyRepositorySymbol) protected repository!: AccountPolicyRepository;
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<AccountPolicySchema>> {
+    return {};
+  }
 
   protected buildCreateDataFromDto(dto: AccountPolicyDtoTypes['CreateRequestDto']): AccountPolicyCreate {
     return {

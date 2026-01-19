@@ -15,6 +15,8 @@ import {
   ApplicationService,
   ApplicationServiceSymbol,
 } from '@/domain/realm/application/application.service';
+import { PaginationFilter } from 'koa-inversify-framework/common';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const SystemSetupServiceSymbol = Symbol.for('SystemSetupService');
 
@@ -28,6 +30,12 @@ export class SystemSetupService extends AbstractCrudService<
   protected repository!: SystemSetupRepository;
   @inject(ApplicationServiceSymbol)
   private applicationService!: ApplicationService;
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<SystemSetupSchema>> {
+    return {};
+  }
 
   protected buildCreateDataFromDto(): never {
     throw new Error('Create not supported');

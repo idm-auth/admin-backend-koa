@@ -10,6 +10,7 @@ import { GroupRoleModule } from '@/domain/realm/group-role/group-role.module';
 import { GroupPolicyModule } from '@/domain/realm/group-policy/group-policy.module';
 import { RolePolicyModule } from '@/domain/realm/role-policy/role-policy.module';
 import { ApplicationModule } from '@/domain/realm/application/application.module';
+import { ApplicationActionModule } from '@/domain/realm/application-action/application-action.module';
 import { ApplicationConfigurationModule } from '@/domain/realm/application-configuration/application-configuration.module';
 import { JwtModule } from '@/domain/realm/jwt/jwt.module';
 import { AuthModule } from '@/domain/realm/auth/auth.module';
@@ -47,6 +48,7 @@ export async function initRealmModulesPhase2(
   new GroupPolicyModule(container);
   new RolePolicyModule(container);
 
+  new ApplicationActionModule(container);
   new ApplicationConfigurationModule(container);
   new JwtModule(container);
   new AuthModule(container);

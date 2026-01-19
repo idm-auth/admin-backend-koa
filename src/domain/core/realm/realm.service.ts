@@ -15,13 +15,14 @@ import {
 import { inject, Container } from 'inversify';
 import { AbstractEnv, EnvSymbol } from 'koa-inversify-framework';
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { DocId, EnvKey } from 'koa-inversify-framework/common';
+import { DocId, EnvKey, PaginationFilter } from 'koa-inversify-framework/common';
 import {
   ContainerSymbol,
   ExecutionContextProvider,
   ExecutionContextSymbol,
 } from 'koa-inversify-framework/infrastructure';
 import { Service } from 'koa-inversify-framework/stereotype';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const RealmServiceSymbol = Symbol.for('RealmService');
 
@@ -36,6 +37,12 @@ export class RealmService extends AbstractCrudService<
   @inject(ContainerSymbol) private container!: Container;
   @inject(ExecutionContextSymbol)
   private executionContext!: ExecutionContextProvider;
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<RealmSchema>> {
+    return {};
+  }
 
   async create(data: RealmCreate): Promise<RealmEntity> {
     const realm = await super.create(data);

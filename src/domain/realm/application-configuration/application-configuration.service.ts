@@ -16,9 +16,10 @@ import { AppEnvKey } from '@/infrastructure/env/appEnv.provider';
 import { inject } from 'inversify';
 import { AbstractEnv, AbstractTenantResolver, EnvSymbol, TenantResolverSymbol } from 'koa-inversify-framework';
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { DocId, EnvKey, PublicUUID } from 'koa-inversify-framework/common';
+import { DocId, EnvKey, PublicUUID, PaginationFilter } from 'koa-inversify-framework/common';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
 import { Service } from 'koa-inversify-framework/stereotype';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const ApplicationConfigurationServiceSymbol = Symbol.for(
   'ApplicationConfigurationService'
@@ -67,6 +68,12 @@ export class ApplicationConfigurationService extends AbstractCrudService<
     if (dto.config !== undefined) entity.config = dto.config;
     if (dto.schema !== undefined) entity.schema = dto.schema;
     return entity;
+  }
+
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<ApplicationConfigurationSchema>> {
+    return {};
   }
 
   @TraceAsync(

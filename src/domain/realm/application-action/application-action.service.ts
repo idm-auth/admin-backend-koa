@@ -1,19 +1,36 @@
 import { AbstractCrudService } from 'koa-inversify-framework/abstract';
 import { Service } from 'koa-inversify-framework/stereotype';
 import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { DocId } from 'koa-inversify-framework/common';
+import { DocId, PaginationFilter } from 'koa-inversify-framework/common';
 import { ApplicationActionDtoTypes } from '@/domain/realm/application-action/application-action.dto';
-import { ApplicationActionEntity, ApplicationActionSchema, ApplicationActionCreate } from '@/domain/realm/application-action/application-action.entity';
-import { ApplicationActionRepository, ApplicationActionRepositorySymbol } from '@/domain/realm/application-action/application-action.repository';
+import {
+  ApplicationActionEntity,
+  ApplicationActionSchema,
+  ApplicationActionCreate,
+} from '@/domain/realm/application-action/application-action.entity';
+import {
+  ApplicationActionRepository,
+  ApplicationActionRepositorySymbol,
+} from '@/domain/realm/application-action/application-action.repository';
 import { inject } from 'inversify';
+import type { QueryFilter, InferSchemaType } from 'mongoose';
 
-export const ApplicationActionServiceSymbol = Symbol.for('ApplicationActionService');
+export const ApplicationActionServiceSymbol = Symbol.for(
+  'ApplicationActionService'
+);
 
 @Service(ApplicationActionServiceSymbol, { multiTenant: true })
-export class ApplicationActionService extends AbstractCrudService<ApplicationActionSchema, ApplicationActionDtoTypes, ApplicationActionCreate> {
-  @inject(ApplicationActionRepositorySymbol) protected repository!: ApplicationActionRepository;
+export class ApplicationActionService extends AbstractCrudService<
+  ApplicationActionSchema,
+  ApplicationActionDtoTypes,
+  ApplicationActionCreate
+> {
+  @inject(ApplicationActionRepositorySymbol)
+  protected repository!: ApplicationActionRepository;
 
-  protected buildCreateDataFromDto(dto: ApplicationActionDtoTypes['CreateRequestDto']): ApplicationActionCreate {
+  protected buildCreateDataFromDto(
+    dto: ApplicationActionDtoTypes['CreateRequestDto']
+  ): ApplicationActionCreate {
     return {
       applicationId: dto.applicationId,
       resourceType: dto.resourceType,
@@ -22,18 +39,37 @@ export class ApplicationActionService extends AbstractCrudService<ApplicationAct
     };
   }
 
-  protected buildUpdate(entity: ApplicationActionEntity, dto: ApplicationActionDtoTypes['UpdateRequestDto']): ApplicationActionEntity {
+  protected buildUpdate(
+    entity: ApplicationActionEntity,
+    dto: ApplicationActionDtoTypes['UpdateRequestDto']
+  ): ApplicationActionEntity {
     entity.operations = dto.operations;
     return entity;
   }
 
+  protected buildPaginationFilter(
+    filter: PaginationFilter
+  ): QueryFilter<InferSchemaType<ApplicationActionSchema>> {
+    const query: QueryFilter<InferSchemaType<ApplicationActionSchema>> = {};
+
+    if (filter?.applicationId) {
+      query.applicationId = filter.applicationId as string;
+    }
+
+    return query;
+  }
+
   @TraceAsync('application-action.service.findByApplicationId')
-  async findByApplicationId(applicationId: DocId): Promise<ApplicationActionEntity[]> {
+  async findByApplicationId(
+    applicationId: DocId
+  ): Promise<ApplicationActionEntity[]> {
     return this.repository.findMany({ applicationId });
   }
 
   @TraceAsync('application-action.service.findByResourceType')
-  async findByResourceType(resourceType: string): Promise<ApplicationActionEntity[]> {
+  async findByResourceType(
+    resourceType: string
+  ): Promise<ApplicationActionEntity[]> {
     return this.repository.findMany({ resourceType });
   }
 
