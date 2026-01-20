@@ -14,8 +14,8 @@ export const applicationActionBaseResponseSchema = z.object({
   resourceType: z.string(),
   pathPattern: z.string(),
   operations: z.array(z.string()),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.date().transform(d => d.toISOString()),
+  updatedAt: z.date().transform(d => d.toISOString()),
 });
 
 export const applicationActionUpdateSchema = z.object({
