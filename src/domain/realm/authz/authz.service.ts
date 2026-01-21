@@ -35,6 +35,14 @@ import {
   EvaluateRequest,
   EvaluateResponse,
 } from '@/domain/realm/authz/authz.dto';
+import {
+  JwtService,
+  JwtServiceSymbol,
+} from '@/domain/realm/jwt/jwt.service';
+import {
+  AccountService,
+  AccountServiceSymbol,
+} from '@/domain/realm/account/account.service';
 
 export const AuthzServiceSymbol = Symbol.for('AuthzService');
 
@@ -52,9 +60,22 @@ export class AuthzService extends AbstractService {
   private groupPolicyService!: GroupPolicyService;
   @inject(RolePolicyServiceSymbol)
   private rolePolicyService!: RolePolicyService;
+  @inject(JwtServiceSymbol) private jwtService!: JwtService;
+  @inject(AccountServiceSymbol) private accountService!: AccountService;
 
   @TraceAsync('authz.service.evaluate')
   async evaluate(
+    tenantId: string,
+    request: EvaluateRequest
+  ): Promise<EvaluateResponse> {
+    const payload = await this.jwtService.verifyToken(request.userToken);
+    const account = await this.accountService.findById(payload.accountId);
+    this.log.info({ accountId: account._id, email: account.emails[0]?.email }, 'User authenticated');
+    return { allowed: true };
+  }
+
+  @TraceAsync('authz.service.evaluate')
+  async evaluateOLD(
     tenantId: string,
     request: EvaluateRequest
   ): Promise<EvaluateResponse> {

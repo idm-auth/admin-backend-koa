@@ -3,6 +3,8 @@ import { AccountModule } from '@/domain/realm/account/account.module';
 import { RoleModule } from '@/domain/realm/role/role.module';
 import { GroupModule } from '@/domain/realm/group/group.module';
 import { PolicyModule } from '@/domain/realm/policy/policy.module';
+import { PolicyActionModule } from '@/domain/realm/policy-action/policy-action.module';
+import { PolicyResourceModule } from '@/domain/realm/policy-resource/policy-resource.module';
 import { AccountRoleModule } from '@/domain/realm/account-role/account-role.module';
 import { AccountGroupModule } from '@/domain/realm/account-group/account-group.module';
 import { AccountPolicyModule } from '@/domain/realm/account-policy/account-policy.module';
@@ -41,6 +43,8 @@ export async function initRealmModulesPhase2(
   new RoleModule(container);
   new GroupModule(container);
   new PolicyModule(container);
+  new PolicyActionModule(container);
+  new PolicyResourceModule(container);
   new AccountRoleModule(container);
   new AccountGroupModule(container);
   new AccountPolicyModule(container);

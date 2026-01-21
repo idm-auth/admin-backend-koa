@@ -39,8 +39,8 @@ export const policyCreateSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS),
-  actions: z.array(policyActionSchema).min(1),
-  resources: z.array(policyResourceSchema).min(1),
+  actions: z.array(policyActionSchema),
+  resources: z.array(policyResourceSchema),
 });
 
 export const policyBaseResponseSchema = z.object({
@@ -75,8 +75,8 @@ export const policyUpdateSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS).optional(),
-  actions: z.array(policyActionSchema).min(1).optional(),
-  resources: z.array(policyResourceSchema).min(1).optional(),
+  actions: z.array(policyActionSchema).optional(),
+  resources: z.array(policyResourceSchema).optional(),
 });
 
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;
