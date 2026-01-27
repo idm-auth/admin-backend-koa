@@ -2,20 +2,6 @@ import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
 import { z } from 'zod';
 import { POLICY_EFFECTS } from '@/domain/realm/policy/policy.entity';
 
-const policyActionSchema = z.object({
-  system: z.string(),
-  resource: z.string(),
-  operation: z.string(),
-});
-
-const policyResourceSchema = z.object({
-  partition: z.string(),
-  system: z.string(),
-  region: z.string(),
-  tenantId: z.string(),
-  resourcePath: z.string(),
-});
-
 export const policyCreateSchema = z.object({
   version: z
     .string()
@@ -39,8 +25,6 @@ export const policyCreateSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS),
-  actions: z.array(policyActionSchema),
-  resources: z.array(policyResourceSchema),
 });
 
 export const policyBaseResponseSchema = z.object({
@@ -49,8 +33,6 @@ export const policyBaseResponseSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
   effect: z.enum(POLICY_EFFECTS),
-  actions: z.array(policyActionSchema),
-  resources: z.array(policyResourceSchema),
 });
 
 export const policyUpdateSchema = z.object({
@@ -75,8 +57,6 @@ export const policyUpdateSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   effect: z.enum(POLICY_EFFECTS).optional(),
-  actions: z.array(policyActionSchema).optional(),
-  resources: z.array(policyResourceSchema).optional(),
 });
 
 export type PolicyCreate = z.infer<typeof policyCreateSchema>;

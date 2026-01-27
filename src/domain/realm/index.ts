@@ -42,9 +42,9 @@ export async function initRealmModulesPhase2(
   new AccountModule(container);
   new RoleModule(container);
   new GroupModule(container);
-  new PolicyModule(container);
   new PolicyActionModule(container);
   new PolicyResourceModule(container);
+  new PolicyModule(container);
   new AccountRoleModule(container);
   new AccountGroupModule(container);
   new AccountPolicyModule(container);

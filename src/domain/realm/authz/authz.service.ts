@@ -1,65 +1,32 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { inject } from 'inversify';
-import {
-  PolicyService,
-  PolicyServiceSymbol,
-} from '@/domain/realm/policy/policy.service';
-import {
-  AccountRoleService,
-  AccountRoleServiceSymbol,
-} from '@/domain/realm/account-role/account-role.service';
-import {
-  AccountPolicyService,
-  AccountPolicyServiceSymbol,
-} from '@/domain/realm/account-policy/account-policy.service';
-import {
-  AccountGroupService,
-  AccountGroupServiceSymbol,
-} from '@/domain/realm/account-group/account-group.service';
-import {
-  GroupRoleService,
-  GroupRoleServiceSymbol,
-} from '@/domain/realm/group-role/group-role.service';
-import {
-  GroupPolicyService,
-  GroupPolicyServiceSymbol,
-} from '@/domain/realm/group-policy/group-policy.service';
-import {
-  RolePolicyService,
-  RolePolicyServiceSymbol,
-} from '@/domain/realm/role-policy/role-policy.service';
-import { PolicyEntity } from '@/domain/realm/policy/policy.entity';
-import {
-  EvaluateRequest,
-  EvaluateResponse,
-} from '@/domain/realm/authz/authz.dto';
-import {
-  JwtService,
-  JwtServiceSymbol,
-} from '@/domain/realm/jwt/jwt.service';
 import {
   AccountService,
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
+import {
+  EvaluateRequest,
+  EvaluateResponse,
+} from '@/domain/realm/authz/authz.dto';
+import { JwtService, JwtServiceSymbol } from '@/domain/realm/jwt/jwt.service';
+import {
+  PolicyService,
+  PolicyServiceSymbol,
+} from '@/domain/realm/policy/policy.service';
+import { inject } from 'inversify';
+import {
+  parseAction,
+  parseGrn,
+  IdmAuthAction,
+  IdmAuthGrn,
+} from '@idm-auth/client';
+import { AbstractService } from 'koa-inversify-framework/abstract';
+import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { Service } from 'koa-inversify-framework/stereotype';
 
 export const AuthzServiceSymbol = Symbol.for('AuthzService');
 
 @Service(AuthzServiceSymbol, { multiTenant: true })
 export class AuthzService extends AbstractService {
   @inject(PolicyServiceSymbol) private policyService!: PolicyService;
-  @inject(AccountRoleServiceSymbol)
-  private accountRoleService!: AccountRoleService;
-  @inject(AccountPolicyServiceSymbol)
-  private accountPolicyService!: AccountPolicyService;
-  @inject(AccountGroupServiceSymbol)
-  private accountGroupService!: AccountGroupService;
-  @inject(GroupRoleServiceSymbol) private groupRoleService!: GroupRoleService;
-  @inject(GroupPolicyServiceSymbol)
-  private groupPolicyService!: GroupPolicyService;
-  @inject(RolePolicyServiceSymbol)
-  private rolePolicyService!: RolePolicyService;
   @inject(JwtServiceSymbol) private jwtService!: JwtService;
   @inject(AccountServiceSymbol) private accountService!: AccountService;
 
@@ -69,8 +36,51 @@ export class AuthzService extends AbstractService {
     request: EvaluateRequest
   ): Promise<EvaluateResponse> {
     const payload = await this.jwtService.verifyToken(request.userToken);
-    const account = await this.accountService.findById(payload.accountId);
-    this.log.info({ accountId: account._id, email: account.emails[0]?.email }, 'User authenticated');
+    const action = parseAction(request.action);
+    const grn = parseGrn(request.grn);
+
+    return this.evaluateByAccount(request, action, grn, payload.accountId);
+  }
+
+  private async evaluateByAccount(
+    request: EvaluateRequest,
+    action: IdmAuthAction,
+    grn: IdmAuthGrn,
+    accountId: string
+  ): Promise<EvaluateResponse> {
+    const account = await this.accountService.findById(accountId);
+    this.log.info(
+      { accountId: account._id, email: account.emails[0]?.email },
+      'User authenticated'
+    );
+
+    const policies = await this.policyService.findByAccountAndActions(
+      accountId,
+      action
+    );
+    this.log.debug({ policies }, 'evaluateByAccount: Policies found');
+
+    if (policies.length === 0) {
+      this.log.debug({ accountId }, 'No policies found - implicit deny');
+      return { allowed: false };
+    }
+
+    const hasAllow = policies.some((p) => p.effect === 'Allow');
+    const hasDeny = policies.some((p) => p.effect === 'Deny');
+
+    if (hasDeny) {
+      return { allowed: false };
+    }
+
+    if (hasAllow) {
+      return { allowed: true };
+    }
+
+    return { allowed: false };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async evaluateByRole(roleId: string): Promise<EvaluateResponse> {
     return { allowed: true };
   }
 

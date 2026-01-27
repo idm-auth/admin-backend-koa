@@ -117,6 +117,20 @@ Then after confirmation: make the change.
 - Classes with `@Configuration` can still be registered by framework - the decorator doesn't interfere
 - Before removing `@Configuration`, READ THE DECORATOR CODE to understand what it does
 
+## Abstract Class Reading Rule - CRITICAL
+
+- **ALWAYS read the abstract class BEFORE thinking about any solution**
+- When extending AbstractCrudMongoRepository, AbstractService, AbstractController, etc:
+  1. Read the abstract class first to understand available methods and properties
+  2. Check what's inherited (logger, decorators, patterns)
+  3. Then design your solution based on what's available
+- **NEVER assume what methods/properties exist - READ THE CODE FIRST**
+- This prevents:
+  - Using console.log instead of this.log
+  - Reinventing functionality that already exists
+  - Missing available utilities and helpers
+  - Writing code that doesn't follow framework patterns
+
 ## Import Rules
 
 - ALWAYS use `@/` alias for src imports: `import { App } from '@/infrastructure/core/app'`
