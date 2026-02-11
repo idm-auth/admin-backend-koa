@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@tsconfig/node24/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
     "module": "ESNext",
@@ -11,10 +11,22 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["src/*"],
-      "@test/*": ["test/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@test/*": [
+        "test/*"
+      ]
     }
   },
-  "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules", "dist", "old", ".external"]
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "old",
+    ".external"
+  ]
 }
