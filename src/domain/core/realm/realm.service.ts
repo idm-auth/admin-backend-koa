@@ -13,15 +13,19 @@ import {
   SystemSetupServiceSymbol,
 } from '@/domain/realm/system-setup/system-setup.service';
 import { inject, Container } from 'inversify';
-import { AbstractEnv, EnvSymbol } from 'koa-inversify-framework';
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { DocId, EnvKey, PaginationFilter } from 'koa-inversify-framework/common';
+import { AbstractEnv, EnvSymbol } from '@idm-auth/koa-inversify-framework';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import {
+  DocId,
+  EnvKey,
+  PaginationFilter,
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   ContainerSymbol,
   ExecutionContextProvider,
   ExecutionContextSymbol,
-} from 'koa-inversify-framework/infrastructure';
-import { Service } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const RealmServiceSymbol = Symbol.for('RealmService');

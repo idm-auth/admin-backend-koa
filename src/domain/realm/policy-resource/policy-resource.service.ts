@@ -1,17 +1,29 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 import { PolicyResourceDtoTypes } from '@/domain/realm/policy-resource/policy-resource.dto';
-import { PolicyResourceEntity, PolicyResourceSchema, PolicyResourceCreate } from '@/domain/realm/policy-resource/policy-resource.entity';
-import { PolicyResourceRepository, PolicyResourceRepositorySymbol } from '@/domain/realm/policy-resource/policy-resource.repository';
-import { PaginationFilter } from 'koa-inversify-framework/common';
+import {
+  PolicyResourceEntity,
+  PolicyResourceSchema,
+  PolicyResourceCreate,
+} from '@/domain/realm/policy-resource/policy-resource.entity';
+import {
+  PolicyResourceRepository,
+  PolicyResourceRepositorySymbol,
+} from '@/domain/realm/policy-resource/policy-resource.repository';
+import { PaginationFilter } from '@idm-auth/koa-inversify-framework/common';
 import { inject } from 'inversify';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const PolicyResourceServiceSymbol = Symbol.for('PolicyResourceService');
 
 @Service(PolicyResourceServiceSymbol, { multiTenant: true })
-export class PolicyResourceService extends AbstractCrudService<PolicyResourceSchema, PolicyResourceDtoTypes, PolicyResourceCreate> {
-  @inject(PolicyResourceRepositorySymbol) protected repository!: PolicyResourceRepository;
+export class PolicyResourceService extends AbstractCrudService<
+  PolicyResourceSchema,
+  PolicyResourceDtoTypes,
+  PolicyResourceCreate
+> {
+  @inject(PolicyResourceRepositorySymbol)
+  protected repository!: PolicyResourceRepository;
 
   protected buildPaginationFilter(
     filter: PaginationFilter
@@ -19,7 +31,9 @@ export class PolicyResourceService extends AbstractCrudService<PolicyResourceSch
     return {};
   }
 
-  protected buildCreateDataFromDto(dto: PolicyResourceDtoTypes['CreateRequestDto']): PolicyResourceCreate {
+  protected buildCreateDataFromDto(
+    dto: PolicyResourceDtoTypes['CreateRequestDto']
+  ): PolicyResourceCreate {
     return {
       policyId: dto.policyId,
       partition: dto.partition,
@@ -30,7 +44,10 @@ export class PolicyResourceService extends AbstractCrudService<PolicyResourceSch
     };
   }
 
-  protected buildUpdate(entity: PolicyResourceEntity, dto: PolicyResourceDtoTypes['UpdateRequestDto']): PolicyResourceEntity {
+  protected buildUpdate(
+    entity: PolicyResourceEntity,
+    dto: PolicyResourceDtoTypes['UpdateRequestDto']
+  ): PolicyResourceEntity {
     return entity;
   }
 }

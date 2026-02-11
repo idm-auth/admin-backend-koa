@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import bcrypt from 'bcrypt';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 

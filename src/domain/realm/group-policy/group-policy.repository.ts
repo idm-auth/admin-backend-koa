@@ -1,6 +1,9 @@
-import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
-import { Repository } from 'koa-inversify-framework/stereotype';
-import { GroupPolicySchema, groupPolicySchema } from '@/domain/realm/group-policy/group-policy.entity';
+import { AbstractCrudMongoRepository } from '@idm-auth/koa-inversify-framework/abstract';
+import { Repository } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  GroupPolicySchema,
+  groupPolicySchema,
+} from '@/domain/realm/group-policy/group-policy.entity';
 
 export const GroupPolicyRepositorySymbol = Symbol.for('GroupPolicyRepository');
 

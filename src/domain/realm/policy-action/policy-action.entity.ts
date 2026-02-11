@@ -1,4 +1,7 @@
-import { baseEntitySchema, DocId } from 'koa-inversify-framework/common';
+import {
+  baseEntitySchema,
+  DocId,
+} from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type PolicyAction = {

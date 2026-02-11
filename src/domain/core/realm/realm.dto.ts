@@ -1,7 +1,12 @@
-import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
+import {
+  DocIdSchema,
+  DtoTypes,
+} from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
-const expiresInSchema = z.string().regex(/^\d+[smhd]$/, 'Invalid time format (e.g., 24h, 7d)');
+const expiresInSchema = z
+  .string()
+  .regex(/^\d+[smhd]$/, 'Invalid time format (e.g., 24h, 7d)');
 
 export const realmCreateSchema = z.object({
   name: z.string().min(1),

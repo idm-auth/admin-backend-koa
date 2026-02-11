@@ -1,13 +1,13 @@
 import { AppEnv, AppEnvSymbol } from '@/infrastructure/env/appEnv.provider';
-import { EnvKey } from 'koa-inversify-framework/common';
+import { EnvKey } from '@idm-auth/koa-inversify-framework/common';
 import { Container } from 'inversify';
 import {
   ContainerSymbol,
   MongoDB,
   MongoDBSymbol,
-} from 'koa-inversify-framework/infrastructure';
-import { Framework } from 'koa-inversify-framework';
-import { EnvSymbol } from 'koa-inversify-framework';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
+import { Framework } from '@idm-auth/koa-inversify-framework';
+import { EnvSymbol } from '@idm-auth/koa-inversify-framework';
 import 'reflect-metadata';
 
 let teardownHappened = false;

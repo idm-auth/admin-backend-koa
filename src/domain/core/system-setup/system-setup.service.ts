@@ -1,14 +1,35 @@
-import { RealmService, RealmServiceSymbol } from '@/domain/core/realm/realm.service';
-import { AccountService, AccountServiceSymbol } from '@/domain/realm/account/account.service';
-import { SystemSetupService as RealmSystemSetupService, SystemSetupServiceSymbol as RealmSystemSetupServiceSymbol } from '@/domain/realm/system-setup/system-setup.service';
-import { ApplicationService, ApplicationServiceSymbol } from '@/domain/realm/application/application.service';
-import { ApplicationConfigurationService, ApplicationConfigurationServiceSymbol } from '@/domain/realm/application-configuration/application-configuration.service';
+import {
+  RealmService,
+  RealmServiceSymbol,
+} from '@/domain/core/realm/realm.service';
+import {
+  AccountService,
+  AccountServiceSymbol,
+} from '@/domain/realm/account/account.service';
+import {
+  SystemSetupService as RealmSystemSetupService,
+  SystemSetupServiceSymbol as RealmSystemSetupServiceSymbol,
+} from '@/domain/realm/system-setup/system-setup.service';
+import {
+  ApplicationService,
+  ApplicationServiceSymbol,
+} from '@/domain/realm/application/application.service';
+import {
+  ApplicationConfigurationService,
+  ApplicationConfigurationServiceSymbol,
+} from '@/domain/realm/application-configuration/application-configuration.service';
 import { inject } from 'inversify';
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { SystemSetupCoreRepositorySymbol, SystemSetupRepository } from './system-setup.repository';
-import { ExecutionContextProvider, ExecutionContextSymbol } from 'koa-inversify-framework/infrastructure';
+import { AbstractService } from '@idm-auth/koa-inversify-framework/abstract';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  SystemSetupCoreRepositorySymbol,
+  SystemSetupRepository,
+} from './system-setup.repository';
+import {
+  ExecutionContextProvider,
+  ExecutionContextSymbol,
+} from '@idm-auth/koa-inversify-framework/infrastructure';
 
 export const SystemSetupCoreServiceSymbol = Symbol.for(
   'CoreSystemSetupService'
@@ -16,13 +37,18 @@ export const SystemSetupCoreServiceSymbol = Symbol.for(
 
 @Service(SystemSetupCoreServiceSymbol)
 export class SystemSetupService extends AbstractService {
-  @inject(SystemSetupCoreRepositorySymbol) private repository!: SystemSetupRepository;
+  @inject(SystemSetupCoreRepositorySymbol)
+  private repository!: SystemSetupRepository;
   @inject(RealmServiceSymbol) private realmService!: RealmService;
   @inject(AccountServiceSymbol) private accountService!: AccountService;
-  @inject(RealmSystemSetupServiceSymbol) private realmSystemSetupService!: RealmSystemSetupService;
-  @inject(ApplicationServiceSymbol) private applicationService!: ApplicationService;
-  @inject(ApplicationConfigurationServiceSymbol) private appConfigService!: ApplicationConfigurationService;
-  @inject(ExecutionContextSymbol) private executionContext!: ExecutionContextProvider;
+  @inject(RealmSystemSetupServiceSymbol)
+  private realmSystemSetupService!: RealmSystemSetupService;
+  @inject(ApplicationServiceSymbol)
+  private applicationService!: ApplicationService;
+  @inject(ApplicationConfigurationServiceSymbol)
+  private appConfigService!: ApplicationConfigurationService;
+  @inject(ExecutionContextSymbol)
+  private executionContext!: ExecutionContextProvider;
 
   async isInitialSetupCompleted(): Promise<boolean> {
     const setup = await this.repository.findOne(
@@ -48,7 +74,7 @@ export class SystemSetupService extends AbstractService {
     // Seta o tenantId com o publicUUID do realm core
     // Serviços multi-tenant vão conseguir resolver o realm
     this.executionContext.setTenantId(coreRealmPublicUUID);
-    
+
     const isCompleted = await this.isInitialSetupCompleted();
     if (isCompleted) {
       this.log.info('Setup already completed');
@@ -56,12 +82,18 @@ export class SystemSetupService extends AbstractService {
     }
 
     // Criar aplicação API (backend)
-    const apiApplication = await this.applicationService.upsertIdmAuthCoreAPIApplication();
-    await this.appConfigService.upsertIdmAuthCoreAPIConfig(apiApplication._id.toString());
+    const apiApplication =
+      await this.applicationService.upsertIdmAuthCoreAPIApplication();
+    await this.appConfigService.upsertIdmAuthCoreAPIConfig(
+      apiApplication._id.toString()
+    );
 
     // Criar aplicação Web Admin (frontend)
-    const webAdminApplication = await this.applicationService.upsertIdmAuthCoreWebAdminApplication();
-    await this.appConfigService.upsertIdmAuthCoreWebAdminConfig(webAdminApplication._id.toString());
+    const webAdminApplication =
+      await this.applicationService.upsertIdmAuthCoreWebAdminApplication();
+    await this.appConfigService.upsertIdmAuthCoreWebAdminConfig(
+      webAdminApplication._id.toString()
+    );
 
     const adminAccount = await this.accountService.createFromDto(
       data.adminAccount

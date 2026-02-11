@@ -1,5 +1,5 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { DocIdSchema } from 'koa-inversify-framework/common';
+import { DocIdSchema } from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
 extendZodWithOpenApi(z);

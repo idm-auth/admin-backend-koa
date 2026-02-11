@@ -14,12 +14,12 @@ import {
 import { SystemSetupSchema } from '@/domain/shared/system-setup/system-setup.entity';
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from '@idm-auth/koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
   ContextWithParamsAndBody,
   RequestParamsTenantIdSchema,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   Get,
   Post,
@@ -27,8 +27,8 @@ import {
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
-import { Controller } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/koa-inversify-framework/decorator';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import { z } from 'zod';
 
 export const SystemSetupControllerSymbol = Symbol.for('SystemSetupController');

@@ -1,12 +1,12 @@
-import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
-import { Repository } from 'koa-inversify-framework/stereotype';
+import { AbstractCrudMongoRepository } from '@idm-auth/koa-inversify-framework/abstract';
+import { Repository } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   PolicySchema,
   policySchema,
   PolicyEntity,
 } from '@/domain/realm/policy/policy.entity';
-import { IdmAuthAction } from '@idm-auth/client';
-import { DocId } from 'koa-inversify-framework/common';
+import { IdmAuthAction } from '@idm-auth/auth-client';
+import { DocId } from '@idm-auth/koa-inversify-framework/common';
 import { inject } from 'inversify';
 import {
   PolicyActionRepository,
@@ -138,7 +138,10 @@ export class PolicyRepository extends AbstractCrudMongoRepository<PolicySchema> 
     this.log.debug({ pipeline }, 'findByAccountAndActions: Pipeline');
     const result =
       await policyActionCollection.aggregate<PolicyEntity>(pipeline);
-    this.log.debug({ policies: result }, 'findByAccountAndActions: Policies result');
+    this.log.debug(
+      { policies: result },
+      'findByAccountAndActions: Policies result'
+    );
     return result;
   }
 }

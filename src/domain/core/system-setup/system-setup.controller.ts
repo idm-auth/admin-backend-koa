@@ -1,18 +1,18 @@
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractController } from '@idm-auth/koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
   emailSchema,
   passwordSchema,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   InjectCoreTenantId,
   Post,
   SwaggerDoc,
   SwaggerDocController,
-} from 'koa-inversify-framework/decorator';
-import { Controller } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/koa-inversify-framework/decorator';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import { z } from 'zod';
 import {
   SystemSetupService,

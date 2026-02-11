@@ -4,11 +4,11 @@ import {
   RealmServiceSymbol,
 } from '@/domain/core/realm/realm.service';
 import { getContainer } from '@test/setup/base.setup';
-import { DocId } from 'koa-inversify-framework/common';
+import { DocId } from '@idm-auth/koa-inversify-framework/common';
 import {
   ExecutionContextProvider,
   ExecutionContextSymbol,
-} from 'koa-inversify-framework/infrastructure';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
 
 /**
  * Cria uma realm de teste usando o RealmService diretamente.

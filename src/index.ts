@@ -1,4 +1,4 @@
-import { createTelemetrySDK } from 'koa-inversify-framework/telemetry';
+import { createTelemetrySDK } from '@idm-auth/koa-inversify-framework/telemetry';
 import { trace } from '@opentelemetry/api';
 
 const sdk = createTelemetrySDK();

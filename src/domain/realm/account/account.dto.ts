@@ -1,4 +1,7 @@
-import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
+import {
+  DocIdSchema,
+  DtoTypes,
+} from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
 const emailSchema = z.string().email();
@@ -69,8 +72,12 @@ export type AccountResetPassword = z.infer<typeof accountResetPasswordSchema>;
 export type AccountUpdatePassword = z.infer<typeof accountUpdatePasswordSchema>;
 export type AccountAddEmail = z.infer<typeof accountAddEmailSchema>;
 export type AccountRemoveEmail = z.infer<typeof accountRemoveEmailSchema>;
-export type AccountSetPrimaryEmail = z.infer<typeof accountSetPrimaryEmailSchema>;
-export type AccountSetActiveStatus = z.infer<typeof accountSetActiveStatusSchema>;
+export type AccountSetPrimaryEmail = z.infer<
+  typeof accountSetPrimaryEmailSchema
+>;
+export type AccountSetActiveStatus = z.infer<
+  typeof accountSetActiveStatusSchema
+>;
 
 export interface AccountDtoTypes extends DtoTypes {
   CreateRequestDto: AccountCreate;

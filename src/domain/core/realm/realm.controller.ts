@@ -1,7 +1,7 @@
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
+import { AbstractCrudController } from '@idm-auth/koa-inversify-framework/abstract';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   Get,
   Post,
@@ -10,15 +10,15 @@ import {
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
+} from '@idm-auth/koa-inversify-framework/decorator';
 import {
   commonErrorResponses,
   ContextWithBody,
   ContextWithParams,
   ContextWithParamsAndBody,
   IdParam,
-} from 'koa-inversify-framework/common';
-import { RequestParamsIdSchema } from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
+import { RequestParamsIdSchema } from '@idm-auth/koa-inversify-framework/common';
 import {
   RealmService,
   RealmServiceSymbol,

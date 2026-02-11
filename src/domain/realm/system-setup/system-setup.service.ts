@@ -1,6 +1,6 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
 import { inject } from 'inversify';
 import { SystemSetupDtoTypes } from '@/domain/realm/system-setup/system-setup.dto';
 import {
@@ -15,7 +15,7 @@ import {
   ApplicationService,
   ApplicationServiceSymbol,
 } from '@/domain/realm/application/application.service';
-import { PaginationFilter } from 'koa-inversify-framework/common';
+import { PaginationFilter } from '@idm-auth/koa-inversify-framework/common';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const SystemSetupServiceSymbol = Symbol.for('SystemSetupService');

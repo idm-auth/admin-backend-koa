@@ -1,4 +1,7 @@
-import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
+import {
+  DocIdSchema,
+  DtoTypes,
+} from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
 export const applicationActionCreateSchema = z.object({
@@ -14,17 +17,23 @@ export const applicationActionBaseResponseSchema = z.object({
   resourceType: z.string(),
   pathPattern: z.string(),
   operations: z.array(z.string()),
-  createdAt: z.date().transform(d => d.toISOString()),
-  updatedAt: z.date().transform(d => d.toISOString()),
+  createdAt: z.date().transform((d) => d.toISOString()),
+  updatedAt: z.date().transform((d) => d.toISOString()),
 });
 
 export const applicationActionUpdateSchema = z.object({
   operations: z.array(z.string().min(1)).min(1),
 });
 
-export type ApplicationActionCreate = z.infer<typeof applicationActionCreateSchema>;
-export type ApplicationActionUpdate = z.infer<typeof applicationActionUpdateSchema>;
-export type ApplicationActionResponse = z.infer<typeof applicationActionBaseResponseSchema>;
+export type ApplicationActionCreate = z.infer<
+  typeof applicationActionCreateSchema
+>;
+export type ApplicationActionUpdate = z.infer<
+  typeof applicationActionUpdateSchema
+>;
+export type ApplicationActionResponse = z.infer<
+  typeof applicationActionBaseResponseSchema
+>;
 
 export interface ApplicationActionDtoTypes extends DtoTypes {
   CreateRequestDto: ApplicationActionCreate;

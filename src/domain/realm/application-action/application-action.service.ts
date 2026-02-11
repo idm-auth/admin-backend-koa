@@ -1,7 +1,10 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { DocId, PaginationFilter } from 'koa-inversify-framework/common';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
+import {
+  DocId,
+  PaginationFilter,
+} from '@idm-auth/koa-inversify-framework/common';
 import { ApplicationActionDtoTypes } from '@/domain/realm/application-action/application-action.dto';
 import {
   ApplicationActionEntity,

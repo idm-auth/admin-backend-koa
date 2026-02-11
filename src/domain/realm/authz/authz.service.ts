@@ -17,10 +17,10 @@ import {
   parseGrn,
   IdmAuthAction,
   IdmAuthGrn,
-} from '@idm-auth/client';
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { Service } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/auth-client';
+import { AbstractService } from '@idm-auth/koa-inversify-framework/abstract';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 
 export const AuthzServiceSymbol = Symbol.for('AuthzService');
 

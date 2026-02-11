@@ -1,4 +1,4 @@
-import { AbstractModule } from 'koa-inversify-framework/abstract';
+import { AbstractModule } from '@idm-auth/koa-inversify-framework/abstract';
 import { Container } from 'inversify';
 import {
   CoreApplicationConfigurationController,

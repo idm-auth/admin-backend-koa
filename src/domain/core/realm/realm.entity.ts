@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 

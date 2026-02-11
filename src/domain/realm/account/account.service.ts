@@ -1,6 +1,6 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
 import { AccountDtoTypes } from '@/domain/realm/account/account.dto';
 import {
   AccountCreate,
@@ -11,14 +11,14 @@ import {
   AccountRepository,
   AccountRepositorySymbol,
 } from '@/domain/realm/account/account.repository';
-import { PaginationFilter } from 'koa-inversify-framework/common';
+import { PaginationFilter } from '@idm-auth/koa-inversify-framework/common';
 import bcrypt from 'bcrypt';
 import { inject } from 'inversify';
 import {
   ConflictError,
   NotFoundError,
   ValidationError,
-} from 'koa-inversify-framework/error';
+} from '@idm-auth/koa-inversify-framework/error';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const AccountServiceSymbol = Symbol.for('AccountService');

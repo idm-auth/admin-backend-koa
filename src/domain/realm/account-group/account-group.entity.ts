@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type AccountGroup = {
@@ -17,5 +17,7 @@ accountGroupSchema.add(baseEntitySchema);
 accountGroupSchema.index({ accountId: 1, groupId: 1 }, { unique: true });
 
 export type AccountGroupSchema = typeof accountGroupSchema;
-export type AccountGroupEntity = HydratedDocument<InferSchemaType<typeof accountGroupSchema>>;
+export type AccountGroupEntity = HydratedDocument<
+  InferSchemaType<typeof accountGroupSchema>
+>;
 export type AccountGroupCreate = InferSchemaType<AccountGroupSchema>;

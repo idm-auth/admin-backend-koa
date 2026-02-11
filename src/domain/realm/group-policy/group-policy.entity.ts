@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type GroupPolicy = {
@@ -17,6 +17,8 @@ groupPolicySchema.add(baseEntitySchema);
 groupPolicySchema.index({ groupId: 1, policyId: 1 }, { unique: true });
 
 export type GroupPolicySchema = typeof groupPolicySchema;
-export type GroupPolicyEntity = HydratedDocument<InferSchemaType<typeof groupPolicySchema>>;
+export type GroupPolicyEntity = HydratedDocument<
+  InferSchemaType<typeof groupPolicySchema>
+>;
 
 export type GroupPolicyCreate = InferSchemaType<typeof groupPolicySchema>;

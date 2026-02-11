@@ -14,7 +14,7 @@ import {
   AccountService,
   AccountServiceSymbol,
 } from '@/domain/realm/account/account.service';
-import { AbstractModule } from 'koa-inversify-framework/abstract';
+import { AbstractModule } from '@idm-auth/koa-inversify-framework/abstract';
 
 export class AccountModule extends AbstractModule {
   protected runBind(): void {

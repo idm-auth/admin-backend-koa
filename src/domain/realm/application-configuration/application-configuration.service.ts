@@ -14,11 +14,21 @@ import {
 } from '@/domain/realm/application/application.service';
 import { AppEnvKey } from '@/infrastructure/env/appEnv.provider';
 import { inject } from 'inversify';
-import { AbstractEnv, AbstractTenantResolver, EnvSymbol, TenantResolverSymbol } from 'koa-inversify-framework';
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { DocId, EnvKey, PublicUUID, PaginationFilter } from 'koa-inversify-framework/common';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { Service } from 'koa-inversify-framework/stereotype';
+import {
+  AbstractEnv,
+  AbstractTenantResolver,
+  EnvSymbol,
+  TenantResolverSymbol,
+} from '@idm-auth/koa-inversify-framework';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import {
+  DocId,
+  EnvKey,
+  PublicUUID,
+  PaginationFilter,
+} from '@idm-auth/koa-inversify-framework/common';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const ApplicationConfigurationServiceSymbol = Symbol.for(
@@ -98,7 +108,8 @@ export class ApplicationConfigurationService extends AbstractCrudService<
   ): Promise<ApplicationConfigurationEntity> {
     const env = this.env.get(EnvKey.NODE_ENV);
 
-    const coreRealmPublicUUID = await this.tenantResolver.getTenantCorePublicUUID();
+    const coreRealmPublicUUID =
+      await this.tenantResolver.getTenantCorePublicUUID();
     const confData: IWebAdminConfig = {
       api: {
         idm: {

@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type GroupRole = {
@@ -17,6 +17,8 @@ groupRoleSchema.add(baseEntitySchema);
 groupRoleSchema.index({ groupId: 1, roleId: 1 }, { unique: true });
 
 export type GroupRoleSchema = typeof groupRoleSchema;
-export type GroupRoleEntity = HydratedDocument<InferSchemaType<typeof groupRoleSchema>>;
+export type GroupRoleEntity = HydratedDocument<
+  InferSchemaType<typeof groupRoleSchema>
+>;
 
 export type GroupRoleCreate = InferSchemaType<typeof groupRoleSchema>;

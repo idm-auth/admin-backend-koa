@@ -18,7 +18,7 @@ import {
 } from '@/domain/realm/application-configuration/application-configuration.service';
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
+import { AbstractCrudController } from '@idm-auth/koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
   ContextWithBody,
@@ -27,7 +27,7 @@ import {
   IdWithTenantParam,
   RequestParamsIdAndTenantIdSchema,
   RequestParamsTenantIdSchema,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   Delete,
   Get,
@@ -36,8 +36,8 @@ import {
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
-import { Controller } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/koa-inversify-framework/decorator';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import { z } from 'zod';
 
 export const ApplicationConfigurationControllerSymbol = Symbol.for(

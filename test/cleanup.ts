@@ -4,8 +4,8 @@ import {
   ContainerSymbol,
   MongoDB,
   MongoDBSymbol,
-} from 'koa-inversify-framework/infrastructure';
-import { Framework } from 'koa-inversify-framework';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
+import { Framework } from '@idm-auth/koa-inversify-framework';
 import 'reflect-metadata';
 
 /**

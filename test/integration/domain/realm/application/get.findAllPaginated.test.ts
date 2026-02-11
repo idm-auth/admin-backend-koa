@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, it } from 'vitest';
 import { createTestRealm, deleteTestRealm } from '@test/utils/realm.util';
-import { DocId } from 'koa-inversify-framework/common';
+import { DocId } from '@idm-auth/koa-inversify-framework/common';
 
 /**
  * Testes de integração para listagem paginada de Applications.

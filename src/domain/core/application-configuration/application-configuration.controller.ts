@@ -1,24 +1,24 @@
 import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractEnv, EnvSymbol } from 'koa-inversify-framework';
-import { AbstractController } from 'koa-inversify-framework/abstract';
+import { AbstractEnv, EnvSymbol } from '@idm-auth/koa-inversify-framework';
+import { AbstractController } from '@idm-auth/koa-inversify-framework/abstract';
 import {
   commonErrorResponses,
   EnvKey,
   HttpMethod,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   Get,
   InjectCoreTenantId,
   SwaggerDoc,
   SwaggerDocController,
-} from 'koa-inversify-framework/decorator';
+} from '@idm-auth/koa-inversify-framework/decorator';
 import {
   RegisterRouter,
   RegisterRouterSymbol,
-} from 'koa-inversify-framework/infrastructure';
-import { Controller } from 'koa-inversify-framework/stereotype';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import { z } from 'zod';
 
 export const CoreApplicationConfigurationControllerSymbol = Symbol.for(

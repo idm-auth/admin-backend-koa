@@ -1,5 +1,5 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { DocIdSchema } from 'koa-inversify-framework/common';
+import { DocIdSchema } from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
 extendZodWithOpenApi(z);
@@ -13,11 +13,12 @@ export const policyResourceCreateSchema = z.object({
   resourcePath: z.string().min(1),
 });
 
-export const policyResourceBaseResponseSchema = policyResourceCreateSchema.extend({
-  _id: DocIdSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+export const policyResourceBaseResponseSchema =
+  policyResourceCreateSchema.extend({
+    _id: DocIdSchema,
+    createdAt: z.date(),
+    updatedAt: z.date(),
+  });
 
 export type PolicyResourceDtoTypes = {
   CreateRequestDto: z.infer<typeof policyResourceCreateSchema>;

@@ -7,6 +7,7 @@ Precisamos expor rotas públicas (sem `:tenantId` na URL) que internamente opera
 ### Por que não fazer bypass?
 
 Controllers contêm decorators importantes que serão implementados:
+
 - `@Audit` - Auditoria de operações
 - `@Authentication` - Validação de autenticação
 - `@Authorization` - Controle de acesso
@@ -21,21 +22,27 @@ Controllers contêm decorators importantes que serão implementados:
 ## Soluções Consideradas
 
 ### ❌ Solução 1: Service Direto (Bypass)
+
 ```typescript
 ConfigService → ApplicationConfigurationService → Repository
 ```
+
 **Problema:** Pula o controller, perde todos os decorators.
 
 ### ❌ Solução 2: Controller → Controller
+
 ```typescript
 ConfigController → ApplicationConfigurationController
 ```
+
 **Problema:** Controllers não devem chamar outros controllers (anti-pattern).
 
 ### ❌ Solução 3: HTTP Internal Request
+
 ```typescript
 ConfigController → fetch(localhost:port/api/realm/:tenantId/...) → Controller
 ```
+
 **Problema:** Overhead de HTTP, complexidade desnecessária.
 
 ---
@@ -104,8 +111,9 @@ export function InjectCoreTenantId(): MethodDecorator {
 
     descriptor.value = async function (ctx: Context, next?: Next) {
       // Busca container
-      const container = (this as any).container || (global as any).__container__;
-      
+      const container =
+        (this as any).container || (global as any).__container__;
+
       if (!container) {
         throw new Error('@InjectCoreTenantId: Container not found.');
       }
@@ -132,9 +140,14 @@ export function InjectCoreTenantId(): MethodDecorator {
 ```typescript
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { Controller } from 'koa-inversify-framework/stereotype';
-import { Get, SwaggerDoc, SwaggerDocController, InjectCoreTenantId } from 'koa-inversify-framework/decorator';
-import { commonErrorResponses } from 'koa-inversify-framework/common';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  Get,
+  SwaggerDoc,
+  SwaggerDocController,
+  InjectCoreTenantId,
+} from '@idm-auth/koa-inversify-framework/decorator';
+import { commonErrorResponses } from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 import {
   ApplicationConfigurationController as MultiTenantController,
@@ -142,7 +155,9 @@ import {
 } from '@/domain/realm/application-configuration/application-configuration.controller';
 import { applicationConfigurationResponseSchema } from '@/domain/realm/application-configuration/application-configuration.dto';
 
-export const CoreApplicationConfigurationControllerSymbol = Symbol.for('CoreApplicationConfigurationController');
+export const CoreApplicationConfigurationControllerSymbol = Symbol.for(
+  'CoreApplicationConfigurationController'
+);
 
 @SwaggerDocController({
   name: 'Core Application Configuration',
@@ -154,12 +169,14 @@ export const CoreApplicationConfigurationControllerSymbol = Symbol.for('CoreAppl
 })
 export class CoreApplicationConfigurationController {
   constructor(
-    @inject(MultiTenantControllerSymbol) private multiTenantController: MultiTenantController
+    @inject(MultiTenantControllerSymbol)
+    private multiTenantController: MultiTenantController
   ) {}
 
   @SwaggerDoc({
     summary: 'Get configuration by application and environment (core realm)',
-    description: 'Returns configuration for specific application and environment from core realm',
+    description:
+      'Returns configuration for specific application and environment from core realm',
     tags: ['Core Application Configuration'],
     request: {
       params: z.object({
@@ -181,7 +198,7 @@ export class CoreApplicationConfigurationController {
       500: commonErrorResponses[500],
     },
   })
-  @InjectCoreTenantId()  // ← Decorator injeta core tenantId
+  @InjectCoreTenantId() // ← Decorator injeta core tenantId
   @Get('/app/:applicationId/env/:environment')
   async getByApplicationAndEnvironment(
     ctx: Context & { params: { applicationId: string; environment: string } }
@@ -194,7 +211,7 @@ export class CoreApplicationConfigurationController {
 ### 3. Module (`src/domain/core/application-configuration/application-configuration.module.ts`)
 
 ```typescript
-import { AbstractModule } from 'koa-inversify-framework/abstract';
+import { AbstractModule } from '@idm-auth/koa-inversify-framework/abstract';
 import {
   CoreApplicationConfigurationController,
   CoreApplicationConfigurationControllerSymbol,
@@ -232,6 +249,7 @@ export async function initCoreModules(container: Container): Promise<void> {
 ## Fluxo Completo
 
 ### Rota Multi-Tenant (já existe)
+
 ```
 GET /api/realm/:tenantId/application-configuration/app/:appId/env/:env
   ↓
@@ -242,6 +260,7 @@ Service → Repository
 ```
 
 ### Rota Pública (nova)
+
 ```
 GET /api/core/application-configuration/app/:appId/env/:env
   ↓
@@ -262,6 +281,7 @@ Service → Repository
 ## Casos de Uso
 
 ### 1. Config Server (Spring Cloud Style)
+
 ```bash
 # Aplicação busca config no startup (sem saber tenantId)
 curl http://api.example.com/api/core/application-configuration/app/web-admin-uuid/env/production
@@ -278,6 +298,7 @@ curl http://api.example.com/api/core/application-configuration/app/web-admin-uui
 ```
 
 ### 2. Admin Operations
+
 ```bash
 # Admin gerencia configs de qualquer tenant
 curl http://api.example.com/api/realm/tenant-123/application-configuration/app/app-uuid/env/dev
@@ -296,6 +317,7 @@ Este padrão pode ser aplicado a **qualquer domínio multi-tenant** que precise 
 3. Controller multi-tenant executa normalmente com todos decorators
 
 **Exemplos de uso futuro:**
+
 ```typescript
 // Accounts públicos (core realm)
 @Controller('/api/core/account')

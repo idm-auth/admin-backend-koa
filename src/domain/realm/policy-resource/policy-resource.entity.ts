@@ -1,4 +1,7 @@
-import { baseEntitySchema, DocId } from 'koa-inversify-framework/common';
+import {
+  baseEntitySchema,
+  DocId,
+} from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type PolicyResource = {
@@ -25,5 +28,7 @@ policyResourceSchema.add(baseEntitySchema);
 policyResourceSchema.index({ policyId: 1, system: 1, resourcePath: 1 });
 
 export type PolicyResourceSchema = typeof policyResourceSchema;
-export type PolicyResourceEntity = HydratedDocument<InferSchemaType<typeof policyResourceSchema>>;
+export type PolicyResourceEntity = HydratedDocument<
+  InferSchemaType<typeof policyResourceSchema>
+>;
 export type PolicyResourceCreate = InferSchemaType<typeof policyResourceSchema>;

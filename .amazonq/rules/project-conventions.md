@@ -12,6 +12,7 @@
 **COST OF SPEED: Every shortcut costs 10x more tokens in rework. Slow is fast.**
 
 Before modifying ANY existing file:
+
 1. Call `fsRead` on the file
 2. PLAN what you will change (tell user first)
 3. Wait for user confirmation or proceed if clear
@@ -21,6 +22,7 @@ If you have not read the file in THIS conversation, you CANNOT modify it.
 If you are unsure what is in the file, STOP and read it first.
 
 **REQUIRED FORMAT for any file modification:**
+
 ```
 Reading [filename]...
 [fsRead]
@@ -31,6 +33,7 @@ OK to proceed?
 Then after confirmation: make the change.
 
 **If you skip fsRead or make changes without planning:**
+
 - The modification will be wrong
 - Tokens will be wasted on rework
 - User time will be wasted
@@ -83,7 +86,7 @@ Then after confirmation: make the change.
 - Framework provides: MongoDB, Logger, Telemetry, Swagger, Env, TenantResolver, ExecutionContext providers
 - Framework rules: `.external/koa-inversify-framework/.amazonq/rules/framework-conventions.md`
 - Framework usage guide: `.external/koa-inversify-framework/.doc/usage-guide.md`
-- Import from framework: `import { AbstractService } from 'koa-inversify-framework/abstract'`
+- Import from framework: `import { AbstractService } from '@idm-auth/koa-inversify-framework/abstract'`
 
 ## Naming Rules
 
@@ -183,9 +186,9 @@ Then after confirmation: make the change.
 - ALWAYS provide proper type annotations and generics
 - Type safety is non-negotiable
 - **ALWAYS use framework types for IDs:**
-  - Use `DocId` type (not `string`) for document IDs (_id fields)
+  - Use `DocId` type (not `string`) for document IDs (\_id fields)
   - Use `DocIdSchema` for Zod validation of document IDs
-  - Import from: `import { DocId, DocIdSchema } from 'koa-inversify-framework/common'`
+  - Import from: `import { DocId, DocIdSchema } from '@idm-auth/koa-inversify-framework/common'`
   - Example: `async findById(id: DocId): Promise<Entity>`
   - Example schema: `z.object({ id: DocIdSchema })`
 

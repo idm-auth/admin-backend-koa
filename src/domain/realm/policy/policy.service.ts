@@ -1,6 +1,6 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
 import { PolicyDtoTypes } from '@/domain/realm/policy/policy.dto';
 import {
   PolicyCreate,
@@ -11,8 +11,11 @@ import {
   PolicyRepository,
   PolicyRepositorySymbol,
 } from '@/domain/realm/policy/policy.repository';
-import { PaginationFilter, DocId } from 'koa-inversify-framework/common';
-import { IdmAuthAction } from '@idm-auth/client';
+import {
+  PaginationFilter,
+  DocId,
+} from '@idm-auth/koa-inversify-framework/common';
+import { IdmAuthAction } from '@idm-auth/auth-client';
 import { inject } from 'inversify';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 

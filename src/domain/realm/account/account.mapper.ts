@@ -1,5 +1,8 @@
-import { AbstractCrudMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
-import { Mapper } from 'koa-inversify-framework/stereotype';
+import {
+  AbstractCrudMapper,
+  MapperSchemas,
+} from '@idm-auth/koa-inversify-framework/abstract';
+import { Mapper } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   AccountDtoTypes,
   accountCreateResponseSchema,

@@ -51,12 +51,12 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
-    "@idm-auth/client": "file:.external/auth-client-js",
+    "@idm-auth/auth-client": "^0.1.16",
+    "@idm-auth/koa-inversify-framework": "^1.0.4",
     "bcrypt": "^6.0.0",
     "glob": "^13.0.0",
     "inversify": "^7.10.6",
     "jsonwebtoken": "^9.0.3",
-    "koa-inversify-framework": "file:.external/koa-inversify-framework",
     "mongoose": "^9.0.1",
     "reflect-metadata": "^0.2.2",
     "uuid": "^13.0.0"

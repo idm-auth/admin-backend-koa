@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type ApplicationAction = {
@@ -18,8 +18,13 @@ export const applicationActionSchema = new mongoose.Schema<ApplicationAction>(
   { timestamps: true }
 );
 applicationActionSchema.add(baseEntitySchema);
-applicationActionSchema.index({ applicationId: 1, resourceType: 1, pathPattern: 1 }, { unique: true });
+applicationActionSchema.index(
+  { applicationId: 1, resourceType: 1, pathPattern: 1 },
+  { unique: true }
+);
 
 export type ApplicationActionSchema = typeof applicationActionSchema;
-export type ApplicationActionEntity = HydratedDocument<InferSchemaType<typeof applicationActionSchema>>;
+export type ApplicationActionEntity = HydratedDocument<
+  InferSchemaType<typeof applicationActionSchema>
+>;
 export type ApplicationActionCreate = InferSchemaType<ApplicationActionSchema>;

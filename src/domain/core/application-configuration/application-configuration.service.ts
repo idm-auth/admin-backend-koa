@@ -1,5 +1,5 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
+import { AbstractService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 
 export const CoreApplicationConfigurationServiceSymbol = Symbol.for(
   'CoreApplicationConfigurationService'
