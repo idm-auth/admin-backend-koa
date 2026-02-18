@@ -23,6 +23,7 @@ await esbuild.build({
     'inversify',
     'reflect-metadata',
     'swagger-ui-dist',
+    'axios',
   ],
   define: {
     '__PKG_NAME__': JSON.stringify(pkg.name),
