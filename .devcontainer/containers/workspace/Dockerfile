@@ -12,6 +12,7 @@ RUN apt update -qq \
   sudo \
   curl \
   jq \
+  gh \
   procps \
   iputils-ping \
   ca-certificates \

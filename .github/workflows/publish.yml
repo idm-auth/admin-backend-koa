@@ -52,9 +52,3 @@ jobs:
         run: |
           docker push $GHCR_REGISTRY/$GHCR_REPOSITORY:$IMAGE_TAG
           docker push $GHCR_REGISTRY/$GHCR_REPOSITORY:latest
-
-      - name: Make image public
-        run: |
-          gh api --method PATCH /user/packages/container/${{ github.event.repository.name }}/access -f visibility=public
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
