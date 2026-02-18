@@ -264,6 +264,24 @@ Then after confirmation: make the change.
 - **When debugging, ALWAYS add logs at key points to understand what's happening before drawing conclusions**
 - **If something doesn't work, add logs → check output → investigate → fix. Never skip the logging step**
 
+## Solution Approach Rules - CRITICAL
+
+- **NEVER suggest multiple solutions and let user pick** - this leads to guessing
+- **ALWAYS analyze the problem completely BEFORE suggesting any solution**
+- **Test your solution locally FIRST before presenting it to the user**
+- **Present ONE correct solution, not multiple options**
+- **NEVER iterate blindly** - when a solution fails:
+  1. Read the error message carefully
+  2. Understand WHY it failed
+  3. Fix the root cause
+  4. Test again
+  5. Do NOT try random alternatives
+- **NEVER make assumptions about how things should work** - verify against actual code and documentation
+- **When you don't know the correct approach, STOP and ASK the user** - don't guess
+- **NEVER use workarounds or hacks** - always find and fix the root cause
+- **ALWAYS verify assumptions against reality** - don't assume `external: ['*']` is correct, verify what actually needs to be external
+- **NEVER suggest quick fixes that hide problems** - fix the architecture properly
+
 ## Decision Tracking Rules
 
 - ALWAYS track user rejections during the conversation

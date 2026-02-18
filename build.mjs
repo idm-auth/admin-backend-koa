@@ -24,6 +24,9 @@ await esbuild.build({
     'reflect-metadata',
     'swagger-ui-dist',
     'axios',
+    'bcrypt',
+    'jsonwebtoken',
+    '@idm-auth/*',
   ],
   define: {
     '__PKG_NAME__': JSON.stringify(pkg.name),
