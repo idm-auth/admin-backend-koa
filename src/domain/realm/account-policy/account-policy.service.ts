@@ -1,17 +1,29 @@
-import { AbstractCrudService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
+import { AbstractCrudService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
 import { AccountPolicyDtoTypes } from '@/domain/realm/account-policy/account-policy.dto';
-import { AccountPolicyEntity, AccountPolicySchema, AccountPolicyCreate } from '@/domain/realm/account-policy/account-policy.entity';
-import { AccountPolicyRepository, AccountPolicyRepositorySymbol } from '@/domain/realm/account-policy/account-policy.repository';
-import { PaginationFilter } from 'koa-inversify-framework/common';
+import {
+  AccountPolicyEntity,
+  AccountPolicySchema,
+  AccountPolicyCreate,
+} from '@/domain/realm/account-policy/account-policy.entity';
+import {
+  AccountPolicyRepository,
+  AccountPolicyRepositorySymbol,
+} from '@/domain/realm/account-policy/account-policy.repository';
+import { PaginationFilter } from '@idm-auth/koa-inversify-framework/common';
 import { inject } from 'inversify';
 import type { QueryFilter, InferSchemaType } from 'mongoose';
 
 export const AccountPolicyServiceSymbol = Symbol.for('AccountPolicyService');
 
 @Service(AccountPolicyServiceSymbol, { multiTenant: true })
-export class AccountPolicyService extends AbstractCrudService<AccountPolicySchema, AccountPolicyDtoTypes, AccountPolicyCreate> {
-  @inject(AccountPolicyRepositorySymbol) protected repository!: AccountPolicyRepository;
+export class AccountPolicyService extends AbstractCrudService<
+  AccountPolicySchema,
+  AccountPolicyDtoTypes,
+  AccountPolicyCreate
+> {
+  @inject(AccountPolicyRepositorySymbol)
+  protected repository!: AccountPolicyRepository;
 
   protected buildPaginationFilter(
     filter: PaginationFilter
@@ -19,14 +31,19 @@ export class AccountPolicyService extends AbstractCrudService<AccountPolicySchem
     return {};
   }
 
-  protected buildCreateDataFromDto(dto: AccountPolicyDtoTypes['CreateRequestDto']): AccountPolicyCreate {
+  protected buildCreateDataFromDto(
+    dto: AccountPolicyDtoTypes['CreateRequestDto']
+  ): AccountPolicyCreate {
     return {
       accountId: dto.accountId,
       policyId: dto.policyId,
     };
   }
 
-  protected buildUpdate(entity: AccountPolicyEntity, dto: AccountPolicyDtoTypes['UpdateRequestDto']): AccountPolicyEntity {
+  protected buildUpdate(
+    entity: AccountPolicyEntity,
+    dto: AccountPolicyDtoTypes['UpdateRequestDto']
+  ): AccountPolicyEntity {
     return entity;
   }
 }

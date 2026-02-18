@@ -1,6 +1,9 @@
-import { AbstractCrudMongoRepository } from 'koa-inversify-framework/abstract';
-import { Repository } from 'koa-inversify-framework/stereotype';
-import { AccountRoleSchema, accountRoleSchema } from '@/domain/realm/account-role/account-role.entity';
+import { AbstractCrudMongoRepository } from '@idm-auth/koa-inversify-framework/abstract';
+import { Repository } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  AccountRoleSchema,
+  accountRoleSchema,
+} from '@/domain/realm/account-role/account-role.entity';
 
 export const AccountRoleRepositorySymbol = Symbol.for('AccountRoleRepository');
 

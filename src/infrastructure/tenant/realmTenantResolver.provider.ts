@@ -3,9 +3,9 @@ import {
   RealmServiceSymbol,
 } from '@/domain/core/realm/realm.service';
 import { Container, inject } from 'inversify';
-import { AbstractTenantResolver } from 'koa-inversify-framework';
-import { ContainerSymbol } from 'koa-inversify-framework/infrastructure';
-import { Configuration } from 'koa-inversify-framework/stereotype';
+import { AbstractTenantResolver } from '@idm-auth/koa-inversify-framework';
+import { ContainerSymbol } from '@idm-auth/koa-inversify-framework/infrastructure';
+import { Configuration } from '@idm-auth/koa-inversify-framework/stereotype';
 
 export const RealmTenantResolverSymbol = Symbol.for('RealmTenantResolver');
 

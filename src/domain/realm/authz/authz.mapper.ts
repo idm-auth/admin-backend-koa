@@ -1,5 +1,5 @@
-import { AbstractMapper } from 'koa-inversify-framework/abstract';
-import { Mapper } from 'koa-inversify-framework/stereotype';
+import { AbstractMapper } from '@idm-auth/koa-inversify-framework/abstract';
+import { Mapper } from '@idm-auth/koa-inversify-framework/stereotype';
 
 export const AuthzMapperSymbol = Symbol.for('AuthzMapper');
 

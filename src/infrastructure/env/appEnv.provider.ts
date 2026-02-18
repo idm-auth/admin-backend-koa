@@ -1,6 +1,6 @@
-import { AbstractEnv } from 'koa-inversify-framework';
-import { EnvKey } from 'koa-inversify-framework/common';
-import { Configuration } from 'koa-inversify-framework/stereotype';
+import { AbstractEnv } from '@idm-auth/koa-inversify-framework';
+import { EnvKey } from '@idm-auth/koa-inversify-framework/common';
+import { Configuration } from '@idm-auth/koa-inversify-framework/stereotype';
 
 export enum AppEnvKey {
   IDM_AUTH_CORE_API_SYSTEM_ID = 'IDM_AUTH_CORE_API_SYSTEM_ID',

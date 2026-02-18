@@ -1,16 +1,16 @@
-import { AbstractController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
+import { AbstractController } from '@idm-auth/koa-inversify-framework/abstract';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   Post,
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
+} from '@idm-auth/koa-inversify-framework/decorator';
 import {
   commonErrorResponses,
   RequestParamsTenantIdSchema,
   ContextWithBody,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import { inject } from 'inversify';
 import {
   AuthService,
@@ -37,9 +37,7 @@ export const AuthControllerSymbol = Symbol.for('AuthController');
   multiTenant: true,
 })
 export class AuthController extends AbstractController {
-  constructor(
-    @inject(AuthServiceSymbol) private service: AuthService
-  ) {
+  constructor(@inject(AuthServiceSymbol) private service: AuthService) {
     super();
   }
 

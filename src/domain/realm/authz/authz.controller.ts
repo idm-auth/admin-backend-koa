@@ -1,16 +1,16 @@
-import { AbstractController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
+import { AbstractController } from '@idm-auth/koa-inversify-framework/abstract';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   Post,
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
+} from '@idm-auth/koa-inversify-framework/decorator';
 import {
   commonErrorResponses,
   RequestParamsTenantIdSchema,
   ContextWithBody,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import { inject } from 'inversify';
 import {
   AuthzService,
@@ -71,10 +71,15 @@ export class AuthzController extends AbstractController {
     body: evaluateRequestSchema,
   })
   @Post('/evaluate')
-  async evaluate(ctx: ContextWithBody<EvaluateRequest> & { params: { tenantId: string } }): Promise<void> {
+  async evaluate(
+    ctx: ContextWithBody<EvaluateRequest> & { params: { tenantId: string } }
+  ): Promise<void> {
     this.validateMultiTenantSetup(ctx);
 
-    const result = await this.service.evaluate(ctx.params.tenantId, ctx.request.body);
+    const result = await this.service.evaluate(
+      ctx.params.tenantId,
+      ctx.request.body
+    );
     ctx.body = result;
   }
 }

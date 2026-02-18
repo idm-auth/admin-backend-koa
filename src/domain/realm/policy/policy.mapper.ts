@@ -1,12 +1,21 @@
-import { AbstractCrudMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
-import { Mapper } from 'koa-inversify-framework/stereotype';
-import { PolicyDtoTypes, policyBaseResponseSchema } from '@/domain/realm/policy/policy.dto';
+import {
+  AbstractCrudMapper,
+  MapperSchemas,
+} from '@idm-auth/koa-inversify-framework/abstract';
+import { Mapper } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  PolicyDtoTypes,
+  policyBaseResponseSchema,
+} from '@/domain/realm/policy/policy.dto';
 import { PolicySchema } from '@/domain/realm/policy/policy.entity';
 
 export const PolicyMapperSymbol = Symbol.for('PolicyMapper');
 
 @Mapper(PolicyMapperSymbol)
-export class PolicyMapper extends AbstractCrudMapper<PolicySchema, PolicyDtoTypes> {
+export class PolicyMapper extends AbstractCrudMapper<
+  PolicySchema,
+  PolicyDtoTypes
+> {
   constructor() {
     const schemas: MapperSchemas<PolicyDtoTypes> = {
       createResponseSchema: policyBaseResponseSchema,

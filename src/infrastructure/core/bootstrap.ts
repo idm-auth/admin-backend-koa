@@ -7,12 +7,12 @@ import {
 } from '@/infrastructure/tenant/realmTenantResolver.provider';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Container } from 'inversify';
-import { Framework } from 'koa-inversify-framework';
+import { Framework } from '@idm-auth/koa-inversify-framework';
 import {
   ContainerSymbol,
   KoaServer,
   KoaServerSymbol,
-} from 'koa-inversify-framework/infrastructure';
+} from '@idm-auth/koa-inversify-framework/infrastructure';
 import type { NodeSDK } from '@opentelemetry/sdk-node';
 import type Koa from 'koa';
 

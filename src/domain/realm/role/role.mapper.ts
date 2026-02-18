@@ -1,6 +1,12 @@
-import { AbstractCrudMapper, MapperSchemas } from 'koa-inversify-framework/abstract';
-import { Mapper } from 'koa-inversify-framework/stereotype';
-import { RoleDtoTypes, roleBaseResponseSchema } from '@/domain/realm/role/role.dto';
+import {
+  AbstractCrudMapper,
+  MapperSchemas,
+} from '@idm-auth/koa-inversify-framework/abstract';
+import { Mapper } from '@idm-auth/koa-inversify-framework/stereotype';
+import {
+  RoleDtoTypes,
+  roleBaseResponseSchema,
+} from '@/domain/realm/role/role.dto';
 import { RoleSchema } from '@/domain/realm/role/role.entity';
 
 export const RoleMapperSymbol = Symbol.for('RoleMapper');

@@ -1,9 +1,15 @@
-import { AbstractService } from 'koa-inversify-framework/abstract';
-import { Service } from 'koa-inversify-framework/stereotype';
-import { TraceAsync } from 'koa-inversify-framework/decorator';
-import { UnauthorizedError, NotFoundError } from 'koa-inversify-framework/error';
+import { AbstractService } from '@idm-auth/koa-inversify-framework/abstract';
+import { Service } from '@idm-auth/koa-inversify-framework/stereotype';
+import { TraceAsync } from '@idm-auth/koa-inversify-framework/decorator';
+import {
+  UnauthorizedError,
+  NotFoundError,
+} from '@idm-auth/koa-inversify-framework/error';
 import { inject } from 'inversify';
-import { AccountService, AccountServiceSymbol } from '@/domain/realm/account/account.service';
+import {
+  AccountService,
+  AccountServiceSymbol,
+} from '@/domain/realm/account/account.service';
 import { LoginRequest, LoginResponse } from '@/domain/realm/auth/auth.dto';
 import { AuthMapper, AuthMapperSymbol } from '@/domain/realm/auth/auth.mapper';
 import { JwtService, JwtServiceSymbol } from '@/domain/realm/jwt/jwt.service';
@@ -22,7 +28,10 @@ export class AuthService extends AbstractService {
 
     try {
       const account = await this.accountService.findByEmail(data.email);
-      const isValid = await this.accountService.comparePassword(account, data.password);
+      const isValid = await this.accountService.comparePassword(
+        account,
+        data.password
+      );
 
       if (!isValid) {
         this.log.warn({ email: data.email }, 'Invalid password');
@@ -31,8 +40,12 @@ export class AuthService extends AbstractService {
 
       this.log.info({ accountId: account._id }, 'Login successful');
 
-      const token = await this.jwtService.generateToken({ accountId: account._id.toString() });
-      const refreshToken = await this.jwtService.generateRefreshToken({ accountId: account._id.toString() });
+      const token = await this.jwtService.generateToken({
+        accountId: account._id.toString(),
+      });
+      const refreshToken = await this.jwtService.generateRefreshToken({
+        accountId: account._id.toString(),
+      });
 
       return this.mapper.toLoginResponse(account, token, refreshToken);
     } catch (error) {
@@ -45,7 +58,9 @@ export class AuthService extends AbstractService {
   }
 
   @TraceAsync('auth.service.validateToken')
-  async validateToken(token: string): Promise<{ valid: boolean; accountId?: string }> {
+  async validateToken(
+    token: string
+  ): Promise<{ valid: boolean; accountId?: string }> {
     try {
       const payload = await this.jwtService.verifyToken(token);
       return { valid: true, accountId: payload.accountId };

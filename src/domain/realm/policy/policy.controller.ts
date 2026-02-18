@@ -1,7 +1,7 @@
 import { inject } from 'inversify';
 import { Context } from 'koa';
-import { AbstractCrudController } from 'koa-inversify-framework/abstract';
-import { Controller } from 'koa-inversify-framework/stereotype';
+import { AbstractCrudController } from '@idm-auth/koa-inversify-framework/abstract';
+import { Controller } from '@idm-auth/koa-inversify-framework/stereotype';
 import {
   Get,
   Post,
@@ -10,7 +10,7 @@ import {
   SwaggerDoc,
   SwaggerDocController,
   ZodValidateRequest,
-} from 'koa-inversify-framework/decorator';
+} from '@idm-auth/koa-inversify-framework/decorator';
 import {
   commonErrorResponses,
   RequestParamsIdAndTenantIdSchema,
@@ -19,7 +19,7 @@ import {
   ContextWithParams,
   ContextWithParamsAndBody,
   IdWithTenantParam,
-} from 'koa-inversify-framework/common';
+} from '@idm-auth/koa-inversify-framework/common';
 import {
   PolicyService,
   PolicyServiceSymbol,
@@ -40,7 +40,7 @@ import {
   POLICY_EFFECTS,
 } from '@/domain/realm/policy/policy.entity';
 import { z } from 'zod';
-import { DocIdSchema } from 'koa-inversify-framework/common';
+import { DocIdSchema } from '@idm-auth/koa-inversify-framework/common';
 
 const policyActionSchema = z.object({
   system: z.string(),

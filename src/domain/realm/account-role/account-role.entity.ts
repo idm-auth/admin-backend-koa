@@ -1,4 +1,4 @@
-import { baseEntitySchema } from 'koa-inversify-framework/common';
+import { baseEntitySchema } from '@idm-auth/koa-inversify-framework/common';
 import mongoose, { HydratedDocument, InferSchemaType } from 'mongoose';
 
 export type AccountRole = {
@@ -17,5 +17,7 @@ accountRoleSchema.add(baseEntitySchema);
 accountRoleSchema.index({ accountId: 1, roleId: 1 }, { unique: true });
 
 export type AccountRoleSchema = typeof accountRoleSchema;
-export type AccountRoleEntity = HydratedDocument<InferSchemaType<typeof accountRoleSchema>>;
+export type AccountRoleEntity = HydratedDocument<
+  InferSchemaType<typeof accountRoleSchema>
+>;
 export type AccountRoleCreate = InferSchemaType<AccountRoleSchema>;

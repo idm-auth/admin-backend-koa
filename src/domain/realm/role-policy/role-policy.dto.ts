@@ -1,4 +1,7 @@
-import { DocIdSchema, DtoTypes } from 'koa-inversify-framework/common';
+import {
+  DocIdSchema,
+  DtoTypes,
+} from '@idm-auth/koa-inversify-framework/common';
 import { z } from 'zod';
 
 export const rolePolicyCreateSchema = z.object({
