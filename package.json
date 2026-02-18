@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@idm-auth/auth-client": "^0.1.16",
-    "@idm-auth/koa-inversify-framework": "^1.0.4",
+    "@idm-auth/koa-inversify-framework": "^1.0.5",
     "bcrypt": "^6.0.0",
     "inversify": "^7.10.6",
     "jsonwebtoken": "^9.0.3",
