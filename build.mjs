@@ -4,12 +4,13 @@ import { readFileSync } from 'fs';
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 await esbuild.build({
-  entryPoints: ['src/index.ts'],
+  entryPoints: ['src/instrumentation.ts', 'src/index.ts'],
   bundle: true,
   platform: 'node',
   target: 'node18',
-  outfile: 'dist/index.js',
+  outdir: 'dist',
   format: 'esm',
+  splitting: true,
   external: [
     'mongoose',
     'pino',
